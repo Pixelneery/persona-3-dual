@@ -29,16 +29,25 @@ Iwatodai Dorm (WIP)
 ## Features
 
 - **Animated Intro & Main Menu** — Multi-layer 2D compositing with sinusoidal sprite/background animations, fade effects, and a custom logo split across two stitched sprites. The sub-screen has a static layer plus an animated attributions layer. "Press Start" animates independently of screen brightness.
-- **State Machine Architecture** — View-based state machine with clean scene separation (Intro → Main Menu → Iwatodai Dorm). Each scene has its own `.cpp`/`.h` pair with dedicated init and cleanup functions.
+- **State Machine Architecture** — View-based state machine with clean scene separation (Disclaimers → Intro → Main Menu → Iwatodai Dorm). Each scene has its own `.cpp`/`.h` pair with dedicated init and cleanup functions.
 - **2D Graphics Pipeline** — Manual VRAM bank allocation supporting 4 simultaneous background layers with extended palette support. VRAM placement is calculated via tile-count analysis to prevent memory corruption.
 - **3D Environment** — Fixed-function 3D rendering with display list geometry, UV-mapped textures, and free camera controls (rotate + translate). The camera orbits and follows the player, updating movement direction relative to facing angle.
 - **Collision & Interaction System** — Tile-based 2D collision map overlaid on the 3D world. Zones are typed (wall, save point, scene transition, NPC trigger) to drive interactivity like zone loading and character encounters.
-- **Dialogue Controller** — Fully-featured dialogue system with character-by-character text animation, per-line character portraits, branching dialogue trees with d-pad navigation, and scrollable history. Dialogue is authored in plain header files.
-- **Decoupled Controller Architecture** — Character movement, camera, and dialogue are each in separate files, making the codebase modular and easy to extend.
-- **Audio** — MP3 playback via a ported `nds-libmad` library, streaming audio in via NitroFS. Also supports SFX
-- **Video** - Video playback via streaming in frames, paired with the audio solution above to stitch together a full video with audio. Uses NitroFS.
-- **Custom Tooling** — Python utilities built alongside the engine: `obj2bin.py` converts Wavefront OBJ files (with UV data) to DS display list binaries; a Blockbench texture → header file converter is also included. A Markdown → dialogue header generator is planned.
+- **Dialogue Controller** — Fully-featured dialogue system with character-by-character text animation, per-line character portraits, branching dialogue trees with d-pad navigation, scrollable history, and automatic word-wrapping. Dialogue is authored in plain Markdown and converted to header files via a custom generator.
+- **Decoupled Controller Architecture** — Character movement, camera, dialogue, music, and video are each in separate controller files, making the codebase modular and easy to extend.
+- **Audio** — PCM audio streaming via NitroFS with loop point support for seamless section looping. Also supports SFX via Maxmod.
+- **Video** — Optimised video playback at 8-bit colour, 15fps, with audio and video frames interleaved in a single file and streamed via a ring buffer. Uses NitroFS.
+- **Custom Tooling** — Python utilities built alongside the engine: `obj2bin.py` converts Wavefront OBJ files (with UV data) to DS display list binaries; a Blockbench texture → header file converter; a Markdown → dialogue header generator with automatic line-breaking; and a world offset calculator. Asset conversion is integrated into the build system via `make`.
 - **Hand-modelled Assets** — 10+ low-poly environment models built in Blockbench: receptionist desk, dining table, chairs (2 variants), wardrobe, side table, lamps, TV, and doors.
+
+---
+
+Key changes made:
+- **State Machine** — added Disclaimers as the first scene
+- **Dialogue Controller** — added auto word-wrapping and Markdown sourcing
+- **Audio** — updated from mp3/libmad to PCM streaming with loop points and Maxmod SFX
+- **Video** — replaced the old frame-streaming description with the optimised interleaved ring-buffer approach
+- **Custom Tooling** — added the Markdown dialogue generator, world offset calculator, and build system integration; also cleaned up the `obj2bin.py` link formatting
 
 ---
 
@@ -59,17 +68,24 @@ Iwatodai Dorm (WIP)
 ## Roadmap
 
 - [x] Intro sequence with animated backgrounds and sprites
+- [x] Disclaimers screen
 - [x] Main menu with interactive option selector
 - [x] 3D environment rendering with UV-mapped textures
 - [x] Basic camera controls
 - [x] Character model + movement controls
 - [x] Collision + interaction detection
-- [x] Dialogue system
-- [x] Music/SFX playback
-- [x] Video playback
-- [ ] Combat system
-- [ ] Iwatodai Dorm — fully detailed environment
-- [ ] Additional scenes (world map, school room, Tartarus)
+- [x] Dialogue system with branching, portraits, and scrollable history
+- [x] Auto word-wrap + Markdown → header dialogue generator
+- [x] Music/SFX playback (PCM streaming via NitroFS, loop points, Maxmod SFX)
+- [x] Video playback (8-bit, 15fps, interleaved audio+video, ring buffer)
+- [x] Custom intro video (Persona 3 Dual logo added)
+- [x] Automated asset conversion pipeline (integrated into `make`)
+- [ ] Character walk animation + AnimationController
+- [ ] Proper character 3D model
+- [ ] Combat system (UI layout, selection wheel, battle logic)
+- [ ] Iwatodai Dorm — fully detailed environment with proper textures
+- [ ] Additional scenes (world map, school classroom, Tartarus)
+- [ ] Transition polish (remove garbage frame between Disclaimers → Video)
 
 ---
 
