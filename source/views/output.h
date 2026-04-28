@@ -2,6 +2,11 @@
 #include <nds.h>
 #include "controllers/AnimationController.h"
 
+// Auto-generated Animation Enums
+enum Anim_character {
+    ANIM_CHARACTER_WALK = 0,
+};
+
 static const u32 character_dl_0[] = {
     0, 
 };

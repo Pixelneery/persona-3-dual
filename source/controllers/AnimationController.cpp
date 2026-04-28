@@ -1,4 +1,4 @@
-#include "AnimationController.h"
+#include "controllers/AnimationController.h"
 
 AnimationController::AnimationController() {}
 
@@ -6,7 +6,7 @@ void AnimationController::loadModel(const vector<AnimNode>& nodes, const vector<
     modelNodes = nodes;
     animations = anims;
     
-    // Auto-link children and find root nodes
+    // auto-link children and find root nodes
     rootNodes.clear();
     for (int i = 0; i < (int)modelNodes.size(); i++) {
         modelNodes[i].children.clear(); // Safety clear
@@ -22,26 +22,56 @@ void AnimationController::loadModel(const vector<AnimNode>& nodes, const vector<
     }
 }
 
-void AnimationController::play(int animIndex, bool loop) {
+void AnimationController::set(int animIndex, bool loop) {
     if (animIndex < 0 || animIndex >= (int)animations.size()) return;
-    
     currentAnimIndex = animIndex;
     currentFrame = 0;
+    isFinishing = false;
     isLooping = loop;
-    active = true;
+}
+
+void AnimationController::play() {
+    if (currentAnimIndex == -1) return;
+    isPlaying = true;
+    isFinishing = false;
+    
+    // Only reset the frame if the animation is fully stopped or finished.
+    // This allows play() to act as "resume" if it was hard-paused mid-animation.
+    if (currentFrame >= animations[currentAnimIndex].duration - 1) {
+        currentFrame = 0;
+    }
+}
+
+void AnimationController::stop() {
+    isPlaying = false;
+    isFinishing = false;
+    currentFrame = 0;
+}
+
+void AnimationController::pause() {
+    // Flags the animation to stop looping once it hits its maximum duration
+    isFinishing = true;
 }
 
 void AnimationController::update() {
-    if (!active || currentAnimIndex == -1) return;
+    if (!isPlaying || currentAnimIndex == -1) return;
 
     currentFrame++;
     
     if (currentFrame >= animations[currentAnimIndex].duration) {
-        if (isLooping) {
-            currentFrame = 0;
+        if (isFinishing || !isLooping) {
+            isPlaying = false;
+            isFinishing = false;
+            
+            // If it's a 1-shot animation, hold on the final frame.
+            // If it was gracefully paused while looping, snap cleanly to 0.
+            if (!isLooping) {
+                currentFrame = animations[currentAnimIndex].duration - 1;
+            } else {
+                currentFrame = 0; 
+            }
         } else {
-            active = false;
-            currentFrame = animations[currentAnimIndex].duration - 1; // Hold last frame
+            currentFrame = 0; // Loop seamlessly
         }
     }
 }
@@ -65,7 +95,7 @@ Keyframe AnimationController::getInterpolatedFrame(const AnimTrack& track, int t
 
     int range = k2.time - k1.time;
     int progress = time - k1.time;
-    int t = (progress << 12) / range; // Fixed point lerp
+    int t = (progress << 12) / range; // fixed point lerp
 
     Keyframe result;
     result.time = time;
@@ -97,15 +127,15 @@ void AnimationController::renderNode(int nodeId) {
         AnimTrack& track = animations[currentAnimIndex].nodeTracks[nodeId];
         Keyframe current = getInterpolatedFrame(track, currentFrame);
 
-        // 1. Move to the joint's pivot point + the animation's position offset
+        // move to the joint's pivot point + the animation's position offset
         glTranslatef32(node.pivotX + current.posX, node.pivotY + current.posY, node.pivotZ + current.posZ);
         
-        // 2. Rotate around the pivot point
+        // rotate around the pivot point
         glRotateZi(current.rotZ);
         glRotateYi(current.rotY);
         glRotateXi(current.rotX);
         
-        // 3. Move back from the pivot point so the geometry aligns
+        // move back from the pivot point so the geometry aligns
         glTranslatef32(-node.pivotX, -node.pivotY, -node.pivotZ);
     }
 
