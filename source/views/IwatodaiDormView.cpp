@@ -2,7 +2,10 @@
 #include <stdio.h>
 #include "core/globals.h"
 #include "math.h"
-#include "IwatodaiDormView.h"
+#include "IwatodaiDormView.h" 
+#include "output.h"
+
+AnimationController myCharacter;
 
 // assets
 // 3D models
@@ -105,6 +108,12 @@ void IwatodaiDormView::Init() {
 
     // point to music
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
+
+    // 1. One-line setup! (The function name matches your JSON filename)
+    LoadAnimation_character(myCharacter); 
+    
+    // 2. Play the first animation (index 0), set looping to true
+    myCharacter.play(0, true);
 }
 
 ViewState IwatodaiDormView::Update() {
@@ -139,6 +148,8 @@ ViewState IwatodaiDormView::Update() {
         }
     }
 
+    myCharacter.update();
+
     // update camera position
     gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
         camPos.targetX, camPos.targetY, camPos.targetZ,
@@ -157,6 +168,13 @@ ViewState IwatodaiDormView::Update() {
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         DrawPlayerModel();
     glPopMatrix(1);
+
+    glPushMatrix();
+            // Move the character to where they should be in the world
+            glTranslatef32(inttof32(0), 0, inttof32(0)); 
+            // Render the animated hierarchy
+            myCharacter.render(); 
+        glPopMatrix(1);
 
     glFlush(0);
 
