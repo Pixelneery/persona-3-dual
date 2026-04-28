@@ -133,14 +133,14 @@ python3 video2vid.py input.mp4 output --bits 8 --fps 15
 
 ---
 
-### `obj2bin.py` — 3D model converter
+### `obj2bin.py` — 3D environment converter
 
-Converts a Wavefront `.obj` into a binary NDS display-list `.bin`.
+Converts a Wavefront `.obj` into a binary NDS display-list `.bin`. Used for converting environment models
 
 | | |
 |---|---|
-| **Input** | `assets/models/<name>[_WxH].obj` |
-| **Output** | `assets/models/<name>.bin` |
+| **Input** | `assets/environments/<name>[_WxH].obj` |
+| **Output** | `assets/environments/<name>.bin` |
 
 **Filename encoding — texture size**
 
@@ -156,7 +156,7 @@ skybox_512x256.obj  →  --texsize 512 256
 **Make flag — global fallback**
 
 ```bash
-make models MODEL_TEXSIZE='128 128'   # default when no _WxH in filename
+make environments ENVIRONMENT_TEXSIZE='128 128'   # default when no _WxH in filename
 ```
 
 **Optional vertex color**
@@ -164,11 +164,16 @@ make models MODEL_TEXSIZE='128 128'   # default when no _WxH in filename
 Not in the Makefile rule (uncommon). Call manually if you need it:
 
 ```bash
-python3 tools/obj2dl.py assets/models/floor.obj assets/models/floor.bin \
+python3 tools/obj2bin.py assets/models/floor.obj assets/models/floor.bin \
   --texsize 256 256 --color 255 128 0
 ```
 
 obj2bin.py *input* *output* --texsize *w* *h*
+
+---
+
+### `obj2anim.py` — 3D (animated) model converter
+TODO: Add description
 
 ---
 

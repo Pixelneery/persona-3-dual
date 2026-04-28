@@ -39,7 +39,7 @@ VENV_PYTHON     := $(HOME)/.venv/bin/python3
 ASSETS_DIALOGUE := $(CURDIR)/assets/dialogue
 ASSETS_MUSIC    := $(CURDIR)/assets/music
 ASSETS_VIDEO    := $(CURDIR)/assets/video
-ASSETS_ENVIRONMENTS   := $(CURDIR)/assets/environments
+ASSETS_ENVIRONMENTS     := $(CURDIR)/assets/environments
 ASSETS_ENVIRONMENTS_BIN := $(CURDIR)/assets/environments/bin
 ASSETS_MAPS     := $(CURDIR)/assets/maps
 
