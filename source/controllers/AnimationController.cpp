@@ -9,14 +9,14 @@ void AnimationController::loadModel(const vector<AnimNode>& nodes, const vector<
     // auto-link children and find root nodes
     rootNodes.clear();
     for (int i = 0; i < (int)modelNodes.size(); i++) {
-        modelNodes[i].children.clear(); // Safety clear
+        modelNodes[i].children.clear(); // safety clear
     }
 
     for (int i = 0; i < (int)modelNodes.size(); i++) {
         if (modelNodes[i].parentId == -1) {
             rootNodes.push_back(i);
         } else if (modelNodes[i].parentId >= 0 && modelNodes[i].parentId < (int)modelNodes.size()) {
-            // Register as child to its parent
+            // register as child to its parent
             modelNodes[modelNodes[i].parentId].children.push_back(i);
         }
     }
@@ -35,8 +35,8 @@ void AnimationController::play() {
     isPlaying = true;
     isFinishing = false;
     
-    // Only reset the frame if the animation is fully stopped or finished.
-    // This allows play() to act as "resume" if it was hard-paused mid-animation.
+    // only reset the frame if the animation is fully stopped or finished
+    // this allows play() to act as resume if it was hard-paused mid-animation
     if (currentFrame >= animations[currentAnimIndex].duration - 1) {
         currentFrame = 0;
     }
@@ -49,7 +49,7 @@ void AnimationController::stop() {
 }
 
 void AnimationController::pause() {
-    // Flags the animation to stop looping once it hits its maximum duration
+    // flags the animation to stop looping once it hits its maximum duration
     isFinishing = true;
 }
 
@@ -63,8 +63,8 @@ void AnimationController::update() {
             isPlaying = false;
             isFinishing = false;
             
-            // If it's a 1-shot animation, hold on the final frame.
-            // If it was gracefully paused while looping, snap cleanly to 0.
+            // if it's a 1-shot animation, hold on the final frame
+            // if it was gracefully paused while looping, snap cleanly to 0
             if (!isLooping) {
                 currentFrame = animations[currentAnimIndex].duration - 1;
             } else {

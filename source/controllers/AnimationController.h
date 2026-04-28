@@ -41,7 +41,7 @@ class AnimationController {
         // loads the auto-generated data
         void loadModel(const vector<AnimNode>& nodes, const vector<Animation>& anims);
         
-        // --- Playback Controls ---
+        // Playback Controls
         void set(int animIndex, bool loop = true); // Sets the active animation, frame to 0, and looping state
         void play();             // Starts playing the current animation
         void stop();             // Instantly stops the animation and skips to frame 0
@@ -66,8 +66,8 @@ class AnimationController {
         int currentAnimIndex = -1;
         int currentFrame = 0;
         bool isPlaying = false;
-        bool isFinishing = false; // Flags if the animation is winding down
-        bool isLooping = true;    // Flags if the animation repeats automatically
+        bool isFinishing = false; // flags if the animation is winding down
+        bool isLooping = true;    // flags if the animation repeats automatically
         
         vector<int> rootNodes; 
 };

@@ -2,8 +2,8 @@
     var exportAction;
 
     Plugin.register('ds_anim_exporter', {
-        title: 'DS Homebrew Anim Exporter',
-        author: 'DS Engine Pipeline',
+        title: 'NDS Animation Exporter',
+        author: 'Persona 3 Dual Project',
         description: 'Automates exporting Hierarchical JSON and isolated OBJs to a ZIP file.',
         version: '1.0.6', // Export Pivot Points added
         variant: 'both', 
@@ -46,7 +46,7 @@
                 parent: parentId,
                 name: group.name,
                 obj: objFileName,
-                origin: group.origin // <--- THE NEW CRUCIAL LINE
+                origin: group.origin
             });
 
             allGeometry.forEach(el => el.export = false);
