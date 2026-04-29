@@ -2,6 +2,8 @@
 
 A Nintendo DS demake of **Persona 3**, developed in C++ using devkitpro. This project is a personal deep-dive into embedded systems and low-level graphics programming, building a game engine from scratch without external game libraries.
 
+### Want to help? Join the [Discord!](https://discord.gg/TPBXX8tmSG) Any help, big or small, would be greatly appreciated!
+
 This project began as a way to explore more embedded programming in a fun way. I always wanted to make a game, so I thought why not use embedded to make a game? I decided on developing a game for the Nintendo DS as it was my first ever game console, and I grew up with it. It is a portable, sleek, and popular game console with a large homebrew and hacking community and supports basic 3D, which is what I wanted. Plus, it has some unique hardware like dual screens, a touch screen, and microphone to use if I ever want to (which I plan to!).
 
 I chose to make a demake of one of my favourite games, Persona 3, for a few reasons. I really enjoyed the game and there wasn't an official DS version (or any custom version for the DS that I found). Also, Persona has a lot of 2D graphics which would make game development easier in my opinion. And I'm not awefully creative, so basing my game on a pre-existing game would allow me to really focus on coding while also giving me a good story, basic gameplay mechanics, and assets to use and base my own custom assets off of.
