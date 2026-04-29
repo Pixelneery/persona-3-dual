@@ -3,14 +3,13 @@
 #include "core/globals.h"
 #include "math.h"
 #include "IwatodaiDormView.h" 
-#include "output.h"
+#include "models/character.h"
 
 AnimationController myCharacter;
 
 // assets
 // 3D models
 #include "iwatodaiDorm_256x256_bin.h"
-#include "character_32x32_bin.h"
 
 // textures
 #include "character.h"
