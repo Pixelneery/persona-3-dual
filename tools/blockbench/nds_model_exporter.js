@@ -1,16 +1,16 @@
 (function() {
     var exportAction;
 
-    Plugin.register('ds_anim_exporter', {
-        title: 'NDS Animation Exporter',
-        author: 'Persona 3 Dual Project',
-        description: 'Automates exporting Hierarchical JSON and isolated OBJs to a ZIP file.',
-        version: '1.0.6', // Export Pivot Points added
+    Plugin.register('nds_model_exporter', {
+        title: 'NDS Model Exporter',
+        author: 'Taha Rashid',
+        description: 'Automates exporting Hierarchical JSON and isolated OBJs to a ZIP file. Auto-detects texture size. Built for the Persona 3 Dual project.',
+        version: '1.0.7',
         variant: 'both', 
         
         onload() {
-            exportAction = new Action('export_ds_anim', {
-                name: 'Export DS Animation Engine Data (ZIP)',
+            exportAction = new Action('export_nds_model', {
+                name: 'Export NDS Model (ZIP)',
                 description: 'Exports model parts and animation data to a ZIP file.',
                 icon: 'archive',
                 click: function() { runExportPipeline(); }
@@ -21,7 +21,21 @@
     });
 
     function runExportPipeline() {
-        let modelName = (Project.name || 'model').replace(/[^a-zA-Z0-9]/g, '_');
+        // grab the base name of the project
+        let baseName = (Project.name || 'model').replace(/[^a-zA-Z0-9]/g, '_');
+        
+        // auto-detect texture dimensions
+        let texSuffix = "";
+        if (typeof Texture !== 'undefined' && Texture.all.length > 0) {
+            // grab the resolution of the first texture applied to the model
+            let texW = Texture.all[0].width;
+            let texH = Texture.all[0].height;
+            texSuffix = `_${texW}x${texH}`;
+        }
+        
+        // combine them (e.g., "player" + "_64x64" = "player_64x64")
+        let modelName = baseName + texSuffix;
+
         let zip = new window.JSZip(); 
         let dsJson = { nodes: [], animations: {} };
 
@@ -111,10 +125,10 @@
             Blockbench.export({
                 type: 'Zip Archive',
                 extensions: ['zip'],
-                name: `${modelName}_ds_export`,
+                name: `${modelName}`,
                 content: content,
                 savetype: 'zip'
-            }, () => Blockbench.showQuickMessage(`Exported with Pivot Points!`));
+            }, () => Blockbench.showQuickMessage(`Exported ${modelName}`));
         });
     }
 })();
