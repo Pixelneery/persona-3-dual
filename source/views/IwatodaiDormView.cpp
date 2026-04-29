@@ -3,7 +3,7 @@
 #include "core/globals.h"
 #include "math.h"
 #include "IwatodaiDormView.h" 
-#include "models/character.h"
+#include "models/character_32x32.h"
 
 AnimationController myCharacter;
 
@@ -108,10 +108,10 @@ void IwatodaiDormView::Init() {
     // point to music
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
 
-    // setup character animation
-    LoadAnimation_character(myCharacter); 
+    // setup character model
+    LoadModel_character(myCharacter); 
     // play the first animation & set looping to true
-    myCharacter.set(ANIM_CHARACTER_WALK, true);
+    myCharacter.set(MODEL_CHARACTER_WALK, true);
     myCharacter.play();
 }
 

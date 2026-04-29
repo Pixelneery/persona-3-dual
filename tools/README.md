@@ -172,7 +172,7 @@ obj2bin.py *input* *output* --texsize *w* *h*
 
 ---
 
-### `obj2anim.py` — 3D (animated) model converter
+### `obj2model.py` — 3D (animated) model converter
 
 Compiles a hierarchical `.json` skeleton and its associated `.obj` body parts into a zero-boilerplate C++ header for the `AnimationController`.
 
@@ -184,7 +184,7 @@ Compiles a hierarchical `.json` skeleton and its associated `.obj` body parts in
 **Make flag — global fallback**
 
 ```bash
-make anims ANIM_TEXSIZE='128 128'   # fallback texture size for animated models
+make models MODEL_TEXSIZE='128 128'   # fallback texture size for animated models
 ```
 
 **Workflow & Blockbench Plugin**
@@ -193,7 +193,7 @@ This tool expects a `.json` file generated exclusively by the custom `ds_anim_ex
 
 **Example Output (`source/models/player.h`):**
 
-`python3 tools/obj2anim.py input.json output.bin --texsize w h`
+`python3 tools/obj2model.py input.json output.bin --texsize w h`
 
 ---
 

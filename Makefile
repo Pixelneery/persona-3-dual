@@ -54,7 +54,7 @@ NITRO_VIDEO     := $(CURDIR)/nitrofiles/video
 #   VIDEO_FPS    — frames per second for video encoding         [default: 15]
 #   VIDEO_SIZE   — output resolution WxH                        [default: 256x192]
 #   ENVIRONMENT_TEXSIZE— fallback texture size when not in filename   [default: 256 256]
-#   ANIM_TEXSIZE — fallback texture size for animated models          [default: 32 32]
+#   MODEL_TEXSIZE — fallback texture size for animated models          [default: 32 32]
 #   DLG_FLAGS    — extra flags forwarded to dlg2dialogue.py     [default: (none)]
 #   MAP_FLAGS    — extra flags forwarded to texture2collision.py[default: (none)]
 #---------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ VIDEO_BITS    ?= 8
 VIDEO_FPS     ?= 15
 VIDEO_SIZE    ?= 256x192
 ENVIRONMENT_TEXSIZE ?= 256 256
-ANIM_TEXSIZE  ?= 32 32
+MODEL_TEXSIZE ?= 32 32
 DLG_FLAGS     ?=
 MAP_FLAGS     ?=
 
@@ -74,7 +74,7 @@ MP3_FILES       := $(wildcard $(ASSETS_MUSIC)/*.mp3)
 MP4_FILES       := $(wildcard $(ASSETS_VIDEO)/*.mp4)
 OBJ_FILES       := $(wildcard $(ASSETS_ENVIRONMENTS)/*.obj)
 MAP_FILES       := $(wildcard $(ASSETS_MAPS)/*.png)
-ANIM_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
+MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 
 #---------------------------------------------------------------------------------
 # Derive output paths
@@ -85,7 +85,7 @@ VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(NITRO_VIDEO)/%.vid)
 ENVIRONMENT_OUT    := $(OBJ_FILES:$(ASSETS_ENVIRONMENTS)/%.obj=$(ASSETS_ENVIRONMENTS_BIN)/%.bin)
 MAP_OUT      := $(MAP_FILES:$(ASSETS_MAPS)/%.png=$(CURDIR)/source/maps/%.h)
 OFFSET_OUT   := $(OBJ_FILES:$(ASSETS_ENVIRONMENTS)/%.obj=$(CURDIR)/source/maps/%_offsets.h)
-ANIM_OUT     := $(foreach file,$(ANIM_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
+MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -165,7 +165,7 @@ export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean assets dialogue music video environments maps offsets anims help
+.PHONY: $(BUILD) clean assets dialogue music video environments maps offsets models help
 
 #---------------------------------------------------------------------------------
 # Main build — DEFAULT TARGET
@@ -188,7 +188,7 @@ help:
 	@echo "  make music        .mp3  →  nitrofiles/music/*.pcm"
 	@echo "  make video        .mp4  →  nitrofiles/video/*.vid"
 	@echo "  make environments .obj  →  assets/environments/*.bin"
-	@echo "  make anims        .json →  source/models/*.h"
+	@echo "  make models       .json →  source/models/*.h"
 	@echo "  make maps         .png  →  source/maps/*.h (collision)"
 	@echo "  make offsets      .obj  →  source/maps/*_offsets.h (auto TILE_SIZE)"
 	@echo "  make clean        Remove build artefacts"
@@ -198,7 +198,7 @@ help:
 	@echo "  VIDEO_FPS=$(VIDEO_FPS)         frames per second"
 	@echo "  VIDEO_SIZE=$(VIDEO_SIZE)   output resolution"
 	@echo "  ENVIRONMENT_TEXSIZE='$(ENVIRONMENT_TEXSIZE)'  fallback tex size"
-	@echo "  ANIM_TEXSIZE='$(ANIM_TEXSIZE)'        fallback tex size for anims"
+	@echo "  MODEL_TEXSIZE='$(MODEL_TEXSIZE)'        fallback tex size for models"
 	@echo "  DLG_FLAGS='$(DLG_FLAGS)'         extra flags for dlg2dialogue.py"
 	@echo "  MAP_FLAGS='$(MAP_FLAGS)'         extra flags for texture2collision.py"
 	@echo ""
@@ -206,7 +206,7 @@ help:
 #---------------------------------------------------------------------------------
 # Asset conversion - create output dirs, then run each converter
 #---------------------------------------------------------------------------------
-assets: dirs dialogue music video environments maps offsets anims
+assets: dirs dialogue music video environments maps offsets models
 
 dirs:
 	@mkdir -p $(CURDIR)/source/dialogue
@@ -272,16 +272,19 @@ environments: $(ENVIRONMENT_OUT)
 # Animated Models (JSON -> H)
 # Reads nested JSONs: assets/models/<name>/<name>.json
 # Outputs header: source/models/<name>.h
+# Extracts _WxH from filename, falls back to MODEL_TEXSIZE
 #---------------------------------------------------------------------------------
-define ANIM_TEMPLATE
+define MODEL_TEMPLATE
 $$(CURDIR)/source/models/$$(notdir $(1:.json=.h)): $(1) | dirs
-	@echo "  ANIM  $$(notdir $$<)"
-	@$$(VENV_PYTHON) $$(TOOLS_DIR)/obj2anim.py $$< $$(CURDIR)/source/models/$$(notdir $(1:.json=.bin)) --texsize $$(ANIM_TEXSIZE)
+	@echo "  MODEL $$(notdir $$<)"
+	@_ts=$$$$(echo "$$(notdir $(1:.json=))" | grep -oE '[0-9]+x[0-9]+$$$$' | tr 'x' ' '); \
+	_texsize=$$$${_ts:-$$(MODEL_TEXSIZE)}; \
+	$$(VENV_PYTHON) $$(TOOLS_DIR)/obj2model.py $$< $$(CURDIR)/source/models/$$(notdir $(1:.json=.bin)) --texsize $$$$_texsize
 endef
 
-$(foreach file,$(ANIM_JSON_FILES),$(eval $(call ANIM_TEMPLATE,$(file))))
+$(foreach file,$(MODEL_JSON_FILES),$(eval $(call MODEL_TEMPLATE,$(file))))
 
-anims: $(ANIM_OUT)
+models: $(MODEL_OUT)
 
 #---------------------------------------------------------------------------------
 # Collision maps
@@ -322,7 +325,7 @@ clean:
 			$(ENVIRONMENT_OUT) \
 			$(MAP_OUT) \
 			$(OFFSET_OUT) \
-			$(ANIM_OUT)
+			$(MODEL_OUT)
 
 #---------------------------------------------------------------------------------
 else

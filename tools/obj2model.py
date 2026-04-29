@@ -92,9 +92,17 @@ def convert_obj(input_file, output_file, tex_width=None, tex_height=None, vertex
         out.write(struct.pack('<I', len(words)))
         for w in words: out.write(w)
 
-def convert_anim_json(input_file, output_file, tex_width=None, tex_height=None, vertex_color=None):
+def convert_model_json(input_file, output_file, tex_width=None, tex_height=None, vertex_color=None):
     base_dir = os.path.dirname(input_file)
-    model_name = os.path.splitext(os.path.basename(input_file))[0].replace('-', '_')
+    
+    # Strip off the _WxH if it exists so the enums and functions are clean (e.g., player_64x64 -> player)
+    raw_name = os.path.splitext(os.path.basename(input_file))[0].replace('-', '_')
+    if 'x' in raw_name:
+        parts = raw_name.rsplit('_', 1)
+        if len(parts) > 1 and 'x' in parts[1]:
+            raw_name = parts[0]
+            
+    model_name = raw_name
     
     with open(input_file, 'r') as f:
         data = json.load(f)
@@ -105,11 +113,11 @@ def convert_anim_json(input_file, output_file, tex_width=None, tex_height=None, 
         out.write(f"#pragma once\n#include <nds.h>\n#include \"controllers/AnimationController.h\"\n\n")
         
         # --- GENERATE ENUMS FOR TYPE SAFETY ---
-        out.write(f"// Auto-generated Animation Enums\n")
-        out.write(f"enum Anim_{model_name} {{\n")
+        out.write(f"// Auto-generated Model Enums\n")
+        out.write(f"enum Model_{model_name} {{\n")
         anim_names = list(data['animations'].keys())
         for i, anim_name in enumerate(anim_names):
-            out.write(f"    ANIM_{model_name.upper()}_{anim_name.upper()} = {i},\n")
+            out.write(f"    MODEL_{model_name.upper()}_{anim_name.upper()} = {i},\n")
         out.write("};\n\n")
 
         node_count = len(data['nodes'])
@@ -140,7 +148,7 @@ def convert_anim_json(input_file, output_file, tex_width=None, tex_height=None, 
                 out.write("};\n")
 
         # 3. LOADER FUNCTION
-        out.write(f"\ninline void LoadAnimation_{model_name}(AnimationController& ctrl) {{\n")
+        out.write(f"\ninline void LoadModel_{model_name}(AnimationController& ctrl) {{\n")
         out.write(f"    std::vector<AnimNode> nodes({node_count});\n")
         
         for node in data['nodes']:
@@ -185,7 +193,7 @@ if __name__ == "__main__":
     color  = tuple(args.color) if args.color else None
 
     if args.input.endswith('.json'):
-        convert_anim_json(args.input, args.output, tex_width=tw, tex_height=th, vertex_color=color)
+        convert_model_json(args.input, args.output, tex_width=tw, tex_height=th, vertex_color=color)
     else:
         convert_obj(args.input, args.output, tex_width=tw, tex_height=th, vertex_color=color)
         print(f"Converted {args.input} -> {args.output}")
