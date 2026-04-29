@@ -22,9 +22,6 @@ class IwatodaiDormView : public View {
             // camera pos
             cameraPosition camPos;
             // world
-            // const float tileSize = 0.0625f;
-            // const float worldOffsetX = 1.8125f;
-            // const float worldOffsetZ = 1.6875f;
             const float tileSize = TILE_SIZE;
             const float worldOffsetX = WORLD_OFFSET_X;
             const float worldOffsetZ = WORLD_OFFSET_Z;
