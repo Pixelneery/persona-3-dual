@@ -145,7 +145,7 @@ def compute_bounds(vertices):
     return (min(xs), max(xs)), (min(ys), max(ys)), (min(zs), max(zs))
 
 
-def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h):
+def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding=False):
     """
     Converts a list of faces into NDS FIFO words.
     offset = (ox, oy, oz) subtracted from each vertex before scaling.
@@ -155,6 +155,9 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h):
     ox, oy, oz = offset
 
     for face in faces:
+        if flip_winding and len(face) >= 2:
+            face = [face[1], face[0]] + face[2:]
+
         n = len(face)
         if n == 4:
             prim = GL_QUADS
@@ -165,7 +168,8 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h):
             for i in range(1, n - 1):
                 sub = [face[0], face[i], face[i + 1]]
                 words += build_display_list([sub], vertices, texcoords,
-                                             scale, offset, tex_w, tex_h)
+                                             scale, offset, tex_w, tex_h,
+                                             flip_winding=flip_winding)
             continue
 
         words.append(pack_cmds(FIFO_BEGIN))
@@ -232,10 +236,18 @@ def nearest_valid_tex_size(n):
     return 1024
 
 
+def convert_blender_zup_vertices(vertices):
+    """Convert Blender Z-up vertices to NDS Y-up vertices.
+    Blender exports using X right, Y forward, Z up. The NDS pipeline expects
+    X right, Y up, Z forward.
+    """
+    return [(x, z, y) for x, y, z in vertices]
+
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def convert(obj_path, output_dir, scale=None, target_size=4.0,
-            center=True, extra_mapping=None, tiles=None):
+            center=True, extra_mapping=None, tiles=None, blender_source=False):
 
     obj_path   = os.path.abspath(obj_path)
     output_dir = os.path.abspath(output_dir)
@@ -261,6 +273,10 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0,
     vertices, texcoords, groups = parse_obj(obj_path)
     print(f"  {len(vertices)} vertices, {sum(len(g['faces']) for g in groups)} faces, "
           f"{len(groups)} material groups")
+
+    if blender_source:
+        print("  Converting from Blender Z-up coordinates to NDS Y-up coordinates...")
+        vertices = convert_blender_zup_vertices(vertices)
 
     # ── Compute scale ─────────────────────────────────────────────────────────
     (xmin, xmax), (ymin, ymax), (zmin, zmax) = compute_bounds(vertices)
@@ -342,7 +358,8 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0,
             th = nearest_valid_tex_size(th)
 
         words = build_display_list(faces, vertices, texcoords,
-                                    scale, offset, tw, th)
+                                    scale, offset, tw, th,
+                                    flip_winding=blender_source)
         dl_groups.append((tex_key, words, tw, th))
         print(f"  [{tex_key}] {len(faces)} faces, "
               f"tex {tw}x{th}, {len(words)} FIFO words")
@@ -523,6 +540,8 @@ if __name__ == '__main__':
     parser.add_argument('--tiles',      type=float, nargs=4, metavar=('START_X', 'START_Z', 'COLS', 'ROWS'),
                         default=None,
                         help='Injects collision macros into header (e.g. --tiles 0 0 64 64)')
+    parser.add_argument('--source-blender', action='store_true',
+                        help='Treat the input OBJ as Blender Z-up coordinates and convert to NDS Y-up')
     args = parser.parse_args()
 
     extra = None
@@ -538,4 +557,5 @@ if __name__ == '__main__':
         center=not args.no_center,
         extra_mapping=extra,
         tiles=args.tiles,
+        blender_source=args.source_blender,
     )

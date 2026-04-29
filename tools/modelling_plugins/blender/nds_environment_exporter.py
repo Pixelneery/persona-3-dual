@@ -459,6 +459,7 @@ class NDS_OT_ExportEnvironment(bpy.types.Operator, ExportHelper):
         if prefs.mapping_file: 
             cmd += ['--mapping', bpy.path.abspath(prefs.mapping_file)]
             
+        cmd += ['--source-blender']
         if self.inject_tiles:
             cmd += [
                 '--tiles', 

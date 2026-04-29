@@ -176,7 +176,7 @@ Before exporting, apply all transforms:
 
 **Coordinate space**
 
-Blender uses Z-up, Y-forward. The NDS uses a different convention. The exporter does **not** perform any axis conversion — it exports coordinates as-is in Blender's armature local space. Build your model in whatever orientation it needs to be in the game, or handle axis conversion in your NDS rendering code.
+Blender uses Z-up, Y-forward. The NDS uses a different convention. The Blender exporter now converts coordinates automatically from Blender Z-up into NDS Y-up when it calls the converter. If you export a raw OBJ manually, pass `--source-blender` to `obj2nds_environment.py`.
 
 ---
 
@@ -317,7 +317,7 @@ Include the `.h` in your NDS project and call the load function once during init
 | No constraint/IK/driver baking | Blender | Bake actions manually before export if used |
 | Euler XYZ rotation only | Blender | Set bone rotation mode to XYZ Euler to avoid gimbal issues |
 | Scale must be applied | Blender | Run `Ctrl+A → All Transforms` before export |
-| No axis conversion | Blender | Export is in Blender's coordinate space; handle in engine if needed |
+| Blender Z-up → NDS Y-up conversion available | Blender | The Blender exporter passes `--source-blender` automatically; raw OBJ exports can use the same flag |
 | No scale keyframes | Both | NDS animation has no scale channel |
 | Bone ordering = creation order | Blender | Node IDs depend on the order bones were added to the armature |
 | N-gons are triangulated | Blender | Quads and tris are kept as-is; 5+ vert faces are split |

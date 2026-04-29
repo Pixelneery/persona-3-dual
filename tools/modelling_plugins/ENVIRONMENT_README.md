@@ -134,6 +134,8 @@ python obj2nds_environment.py iwatodai_dorm.obj output/ --target-size 4.0
 
 This produces `iwatodai_dorm_env.h` and `iwatodai_dorm_textures.txt` in `output/`.
 
+If the OBJ was exported from Blender, pass `--source-blender` to preserve the correct NDS axis orientation. The Blender add-on exports with this conversion automatically.
+
 Or use the one-command build script which also runs GRIT:
 
 ```bash

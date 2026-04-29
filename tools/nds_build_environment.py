@@ -80,6 +80,8 @@ def main():
     parser.add_argument('--grit-flags', type=str,
                         default='-ftc -fh -gb -gB16 -pu16',
                         help='GRIT command-line flags (default: -ftc -fh -gb -gB16 -pu16)')
+    parser.add_argument('--source-blender', action='store_true',
+                        help='Treat the input OBJ as Blender Z-up coordinates and convert to NDS Y-up')
     parser.add_argument('--tiles',      type=float, nargs=4, metavar=('START_X', 'START_Z', 'COLS', 'ROWS'),
                         default=None, help='Injects collision macros into header (e.g. --tiles 0 0 64 64)')
     args = parser.parse_args()
@@ -98,6 +100,8 @@ def main():
         cmd += ['--no-center']
     if args.mapping:
         cmd += ['--mapping', args.mapping]
+    if args.source_blender:
+        cmd += ['--source-blender']
     if args.tiles:
         cmd += ['--tiles'] + [str(t) for t in args.tiles]
 
