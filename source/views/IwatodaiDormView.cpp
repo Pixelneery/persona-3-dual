@@ -112,7 +112,8 @@ void IwatodaiDormView::Init() {
     LoadModel_character(myCharacter); 
     // play the first animation & set looping to true
     myCharacter.set(MODEL_CHARACTER_WALK, true);
-    myCharacter.play(); // DEBUG
+    // TODO: play/pause animation on walk
+    myCharacter.play();
 }
 
 ViewState IwatodaiDormView::Update() {
