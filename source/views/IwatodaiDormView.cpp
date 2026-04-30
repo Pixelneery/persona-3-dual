@@ -4,8 +4,7 @@
 #include "math.h"
 #include "IwatodaiDormView.h" 
 
-// 3D models
-#include "controllers/AnimationController.h"
+// model
 #include "models/character_32x32.h"
 #include "character.h"
 // environment
@@ -17,11 +16,8 @@
 #include "dialogue/demo_dialogue.h"
 
 // texture IDs
-int iwatodaiTextureIds[IWATODAI_DORM_TEX_COUNT];
 int characterTextureId;
-
-AnimationController myCharacter;
-iwatodai_dorm_Environment iwatodaiDormEnvData;
+iwatodai_dorm_Environment iwatodaiDormEnv;
 
 void IwatodaiDormView::Init() {
     videoSetMode(MODE_0_3D);
@@ -85,15 +81,15 @@ void IwatodaiDormView::Init() {
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
 
     // setup character model
-    myCharacter.loadModel("nitro:/models/character_32x32.bin");
-    myCharacter.set(MODEL_CHARACTER_32X32_WALK, true);
-    myCharacter.play();
+    characterAnimationCtrl.loadModel("nitro:/models/character_32x32.bin");
+    characterAnimationCtrl.set(MODEL_CHARACTER_32X32_WALK, true);
+    characterAnimationCtrl.play();
 
     // setup environment model
     const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = {
         textureBitmap
     };
-    iwatodaiDormEnvData.Load("nitro:/environments/iwatodai_dorm/iwatodai_dorm_env.bin", bitmaps);
+    iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
 }
 
 ViewState IwatodaiDormView::Update() {
@@ -135,7 +131,7 @@ ViewState IwatodaiDormView::Update() {
 
     // draw environment
     glPushMatrix();
-        iwatodaiDormEnvData.Draw();
+        iwatodaiDormEnv.draw();
     glPopMatrix(1);
 
     // draw character
@@ -146,7 +142,7 @@ ViewState IwatodaiDormView::Update() {
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         // draw character
         glBindTexture(GL_TEXTURE_2D, characterTextureId);
-        myCharacter.render();
+        characterAnimationCtrl.render();
     glPopMatrix(1);
 
     glFlush(0);
@@ -163,7 +159,7 @@ ViewState IwatodaiDormView::Update() {
     // update controllers
     dialogueCtrl.update(keys);
     musicCtrl.update();
-    myCharacter.update();
+    characterAnimationCtrl.update();
 
     return ViewState::KEEP_CURRENT;
 }
@@ -174,7 +170,7 @@ void IwatodaiDormView::Cleanup() {
     consoleClear();
 
     // reset textures
-    iwatodaiDormEnvData.Free();
+    iwatodaiDormEnv.cleanup();
     glDeleteTextures(1, &characterTextureId);
 
     // reset vram

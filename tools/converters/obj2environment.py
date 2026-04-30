@@ -256,7 +256,7 @@ def convert(obj_path, output_dir, config):
         h.write(f"            textureIDs[i] = 0;\n")
         h.write(f"        }}\n    }}\n\n")
 
-        h.write(f"    bool Load(const char* filepath, const unsigned int* bitmaps[{safe_n}]) {{\n")
+        h.write(f"    bool load(const char* filepath, const unsigned int* bitmaps[{safe_n}]) {{\n")
         if n > 0:
             h.write(f"        FILE* file = fopen(filepath, \"rb\");\n")
             h.write(f"        if (!file) return false;\n\n")
@@ -290,14 +290,14 @@ def convert(obj_path, output_dir, config):
             h.write("        return true;\n")
         h.write("    }\n\n")
 
-        h.write(f"    void Draw() {{\n")
+        h.write(f"    void draw() {{\n")
         for i, (tex_key, _, _, _) in enumerate(dl_groups):
             h.write(f"        glBindTexture(GL_TEXTURE_2D, textureIDs[{i}]);\n")
             h.write(f"        if (displayLists[{i}]) {{\n")
             h.write(f"            glCallList(displayLists[{i}]);\n        }}\n")
         h.write("    }\n\n")
 
-        h.write(f"    void Free() {{\n")
+        h.write(f"    void cleanup() {{\n")
         if n > 0:
             h.write(f"        for (u32 i = 0; i < {n}; i++) {{\n")
             h.write(f"            if (displayLists[i]) {{\n")
