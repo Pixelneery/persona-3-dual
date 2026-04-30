@@ -1,7 +1,0 @@
-# Textures required for iwatodai_dorm
-# Run GRIT on each of these files to produce .h + .s pairs
-# Suggested GRIT flags: -ftb -fh -gb -gB16 -pu16
-
-# Slot 0  (256x256)  variable: textureBitmap
-/Users/taharashid/Desktop/temp/texture.png
-
