@@ -48,17 +48,6 @@ NITRO_MUSIC     := $(CURDIR)/nitrofiles/music
 NITRO_VIDEO     := $(CURDIR)/nitrofiles/video
 
 #---------------------------------------------------------------------------------
-# Per-tool flags (override on the command line, e.g. make VIDEO_FPS=24)
-#---------------------------------------------------------------------------------
-VIDEO_BITS    ?= 8
-VIDEO_FPS     ?= 15
-VIDEO_SIZE    ?= 256x192
-MODEL_TEXSIZE ?= 32 32
-DLG_FLAGS     ?=
-MAP_FLAGS     ?=
-ENV_FLAGS     ?=
-
-#---------------------------------------------------------------------------------
 # Collect source files
 #---------------------------------------------------------------------------------
 DLG_FILES       := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
@@ -178,7 +167,7 @@ $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(
 	@echo "  DLG   $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@cd $(CURDIR)/source/dialogue && \
-		$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $* $(DLG_FLAGS)
+		$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $*
 dialogue: $(DIALOGUE_OUT)
 
 #---------------------------------------------------------------------------------
@@ -192,8 +181,7 @@ music: $(MUSIC_OUT)
 $(NITRO_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.json)
 	@echo "  VID   $(notdir $<)"
 	@mkdir -p $(dir $@)
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(basename $@) \
-		--bits $(VIDEO_BITS) --fps $(VIDEO_FPS) --size $(VIDEO_SIZE)
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(basename $@)
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
@@ -201,7 +189,7 @@ define ENV_TEMPLATE
 $$(CURDIR)/source/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) $$(wildcard $(1:.obj=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
 	@echo "  ENV   $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
-	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(dir $$@) $$(ENV_FLAGS)
+	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(dir $$@)
 	@touch $$@
 endef
 
@@ -225,7 +213,7 @@ models: $(MODEL_OUT)
 $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.png $(wildcard $(ASSETS_MAPS)/%.build.json)
 	@echo "  MAP   $(notdir $<)"
 	@mkdir -p $(dir $@)
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@ $(MAP_FLAGS)
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@
 
 maps: $(MAP_OUT)
 

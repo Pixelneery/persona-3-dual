@@ -3,20 +3,20 @@
 #include "core/globals.h"
 #include "math.h"
 #include "IwatodaiDormView.h" 
-#include "models/character_32x32.h"
 
 // 3D models
+#include "models/character_32x32.h"
 #include "character.h"
 // environment
 #include "environments/iwatodai_dorm/texture.h"
-// collision
+// collision (deprecated)
 #include "maps/iwatodaiDorm_0_0_44_33.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
 // texture IDs
-static int iwatodaiTextureIds[IWATODAI_DORM_TEX_COUNT];
-static int characterTextureId;
+int iwatodaiTextureIds[IWATODAI_DORM_TEX_COUNT];
+int characterTextureId;
 
 AnimationController myCharacter;
 
@@ -51,7 +51,7 @@ void IwatodaiDormView::Init() {
     glBindTexture(GL_TEXTURE_2D, characterTextureId);
     glTexImage2D(
         GL_TEXTURE_2D, 0,
-        GL_RGBA,
+        GL_RGB,
         TEXTURE_SIZE_32, TEXTURE_SIZE_32,
         0,
         TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,

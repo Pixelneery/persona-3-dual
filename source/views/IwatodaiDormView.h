@@ -33,8 +33,8 @@ class IwatodaiDormView : public View {
             const float distance = 0.5f; 
             const float lookAhead = 0.3f;
             // set character initial translation position
-            const float translateX = 0;
-            const float translateZ = 0;
+            const float translateX = -1;
+            const float translateZ = -1;
             const float angle = -1.6;
             const float characterFacingAngle = 91.67;
         DialogueController dialogueCtrl;
