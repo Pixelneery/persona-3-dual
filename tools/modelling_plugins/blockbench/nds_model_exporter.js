@@ -22,17 +22,7 @@
 
     function runExportPipeline() {
         // grab the base name of the project
-        let baseName = (Project.name || 'model').replace(/[^a-zA-Z0-9]/g, '_');
-        
-        // auto-detect texture dimensions
-        let texSuffix = "";
-        if (typeof Texture !== 'undefined' && Texture.all.length > 0) {
-            let texW = Texture.all[0].width;
-            let texH = Texture.all[0].height;
-            texSuffix = `_${texW}x${texH}`;
-        }
-        
-        let modelName = baseName + texSuffix;
+        let modelName = (Project.name || 'model').replace(/[^a-zA-Z0-9]/g, '_');
 
         let zip = new window.JSZip(); 
         let dsJson = { nodes: [], animations: {} };

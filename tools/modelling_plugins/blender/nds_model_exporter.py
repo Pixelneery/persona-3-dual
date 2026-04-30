@@ -51,20 +51,6 @@ def sanitize(name: str) -> str:
     return re.sub(r'[^a-zA-Z0-9]', '_', name)
 
 
-def detect_texture_size(mesh_objects):
-    """Walk material nodes looking for an Image Texture node."""
-    for obj in mesh_objects:
-        for mat in obj.data.materials:
-            if mat is None:
-                continue
-            if mat.use_nodes:
-                for node in mat.node_tree.nodes:
-                    if node.type == 'TEX_IMAGE' and node.image:
-                        img = node.image
-                        return img.size[0], img.size[1]
-    return None, None
-
-
 def bone_index(armature, bone_name: str, bone_list: list) -> int:
     for i, b in enumerate(bone_list):
         if b.name == bone_name:
@@ -271,11 +257,7 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
 
         arm_obj.data.pose_position = 'REST'
         bone_list = list(arm_obj.data.bones) 
-
-        tex_w, tex_h = detect_texture_size(mesh_objects)
-        base_name = sanitize(arm_obj.name or "model")
-        tex_suffix = f"_{tex_w}x{tex_h}" if (tex_w and tex_h) else ""
-        model_name = base_name + tex_suffix
+        model_name = sanitize(arm_obj.name or "model")
 
         # Build ZIP
         zip_buffer = io.BytesIO()
