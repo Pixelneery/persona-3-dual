@@ -10,6 +10,12 @@ Examples:
 
     # Crop region (left, top, width, height)
     python3 texture2collision.py texture.png map_data.h 0 0 64 64
+
+Note:
+    This is a legacy script that will be deprecated in favour of a newer workflow supporting obj2environment.py and obj2model.py
+    It was currently used for the early prototype's simple collision map, but will be removed once we switch to the new workflow.
+    The new workflow is planned to use .json files and coordinate data to define collision areas, rather than relying on pixel 
+    colours in a texture. This will allow for more flexibility and better integration with the 3D models.
 """
 
 import sys
@@ -28,7 +34,7 @@ except ImportError:
 # Format: (R, G, B): tile_value
 TILE_COLORS = {
     # WORLD
-    (197, 0, 0): 1,         # Collision
+    (197, 0, 0): 0,         # Collision (NOTE: it was 1, now set to 0 to allow no collision)
     (197, 194, 0): 2,       # Save
     (0, 92, 197): 3,        # Prev Scene
     (56, 197, 0): 4,        # Next Scene
