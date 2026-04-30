@@ -3,6 +3,7 @@
 #---------------------------------------------------------------------------------
 
 .SECONDARY:
+.SECONDEXPANSION:
 
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM")
@@ -55,7 +56,7 @@ VIDEO_SIZE    ?= 256x192
 MODEL_TEXSIZE ?= 32 32
 DLG_FLAGS     ?=
 MAP_FLAGS     ?=
-ENV_FLAGS     ?= --source-blender
+ENV_FLAGS     ?=
 
 #---------------------------------------------------------------------------------
 # Collect source files
@@ -208,15 +209,16 @@ $(foreach file,$(ENV_OBJ_FILES),$(eval $(call ENV_TEMPLATE,$(file))))
 environments: $(ENVIRONMENT_OUT)
 
 #---------------------------------------------------------------------------------
-define MODEL_TEMPLATE
-$$(CURDIR)/source/models/$$(notdir $(1:.json=.h)): $(1) $$(wildcard $(1:.json=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
-	@echo "  MODEL $$(notdir $$<)"
-	@mkdir -p $$(dir $$@)
-	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$@
-	@touch $$@
-endef
-
-$(foreach file,$(MODEL_JSON_FILES),$(eval $(call MODEL_TEMPLATE,$(file))))
+# Prerequisites use .SECONDEXPANSION: % matches the directory stem, $$* gives
+# the stem in the second pass for the filename, enabling wildcard to correctly
+# locate the optional sidecar or parent-level .build.json at match time.
+$(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
+        $$(wildcard $(ASSETS_MODELS)/%/$$*.build.json) \
+        $$(wildcard $(ASSETS_MODELS)/$$*.build.json)
+	@echo "  MODEL $(notdir $<)"
+	@mkdir -p $(dir $@)
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@
+	@touch $@
 models: $(MODEL_OUT)
 
 #---------------------------------------------------------------------------------
