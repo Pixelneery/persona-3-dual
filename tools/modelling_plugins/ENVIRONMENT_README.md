@@ -1,4 +1,4 @@
-# Persona 3 Dual: Environment Pipeline
+# Persona 3 Dual: Environment Pipeline (OUTDATED README)
 
 This document details the automated workflow for converting 3D models and textures into Nintendo DS-compatible Assembly (`.s`) and C++ headers (`.h`). 
 

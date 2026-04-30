@@ -1,4 +1,4 @@
-# Persona 3 Dual: Animated Model Pipeline
+# Persona 3 Dual: Animated Model Pipeline (OUTDATED README)
 
 This document details the automated workflow for converting rigged 3D models and their animations into Nintendo DS-compatible hierarchical display lists and keyframe arrays.
 
