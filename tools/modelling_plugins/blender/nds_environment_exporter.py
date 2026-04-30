@@ -8,7 +8,7 @@ Exports a scene to NDS display list.
 bl_info = {
     "name": "NDS Environment Exporter",
     "author": "Taha Rashid",
-    "version": (2, 2, 0),
+    "version": (2, 2, 1),
     "blender": (3, 0, 0),
     "location": "File > Export > NDS Environment (.h)",
     "description": "Exports scene to NDS display list.",
@@ -164,7 +164,7 @@ class NDS_OT_ExportEnvironment(bpy.types.Operator, ExportHelper):
     centre_model:  BoolProperty(name="Centre Model",  default=True)
     selection_only:BoolProperty(name="Selection Only",default=False)
     skip_grit:     BoolProperty(name="Skip GRIT",     default=False)
-    grit_flags:    StringProperty(name="GRIT Flags",  default="-ftc -fh -gb -gB16 -pu16")
+    grit_flags:    StringProperty(name="GRIT Flags",  default="-fts -fh -gb -gB16 -pu16")
 
     def draw(self, context):
         layout = self.layout

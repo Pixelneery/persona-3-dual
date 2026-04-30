@@ -93,6 +93,10 @@ def main():
         run([grit, png] + flags + ['-o', os.path.join(output_dir, stem)],
             f'GRIT: {os.path.basename(png)} → {stem}.h + {stem}.s')
 
+     # Clean up the temporary texture list
+    if os.path.exists(tex_list):
+        os.remove(tex_list)
+        
     print(f"\n{'='*60}\n  BUILD COMPLETE  →  {output_dir}/")
     print(f"    #include \"{base_name}_env.h\"")
     for png in pngs:
