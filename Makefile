@@ -76,9 +76,8 @@ VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(NITRO_VIDEO)/%.vid)
 MAP_OUT      := $(MAP_FILES:$(ASSETS_MAPS)/%.png=$(CURDIR)/source/maps/%.h)
 MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
 
-# Dynamically append generated environment folders so Make compiles the .s files
+# Keep track of environment directories so Make knows where to find the generated .s files later
 ENV_OUT_DIRS    := $(foreach file,$(ENV_OBJ_FILES),source/environments/$(notdir $(patsubst %/,%,$(dir $(file)))))
-SOURCES         += $(ENV_OUT_DIRS)
 ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments/$(notdir $(patsubst %/,%,$(dir $(file))))/$(notdir $(file:.obj=_env.h)))
 
 #---------------------------------------------------------------------------------
@@ -116,9 +115,12 @@ export TOPDIR   :=  $(CURDIR)
 
 export OUTPUT   :=  $(CURDIR)/$(TARGET)
 
+# Add ENV_OUT_DIRS to VPATH so Make can find the .s files, but without adding them 
+# to SOURCES where the wildcard would accidentally duplicate them.
 export VPATH    :=  $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
                     $(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
-                    $(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir))
+                    $(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir)) \
+                    $(foreach dir,$(ENV_OUT_DIRS),$(CURDIR)/$(dir))
 
 export DEPSDIR  :=  $(CURDIR)/$(BUILD)
 
