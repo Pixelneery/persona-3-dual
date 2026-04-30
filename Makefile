@@ -128,8 +128,8 @@ else
     export LD := $(CXX)
 endif
 
-ENV_S_OFILES    :=  $(foreach file,$(ENV_OBJ_FILES),$(notdir $(file:.obj=_env.o))) \
-                    $(foreach file,$(wildcard $(ASSETS_ENVIRONMENTS)/*/*.png),$(notdir $(file:.png=.o)))
+# FIX: Removed the .obj=_env.o compilation requirement for environments
+ENV_S_OFILES    :=  $(foreach file,$(wildcard $(ASSETS_ENVIRONMENTS)/*/*.png),$(notdir $(file:.png=.o)))
 
 SFILES          :=  $(filter-out $(ENV_S_OFILES:.o=.s),$(SFILES))
 
@@ -159,8 +159,9 @@ help:
 
 assets: dirs dialogue music video environments maps models
 
+# FIX: Added nitrofiles/environments directory creation
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/nitrofiles/models
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/nitrofiles/models $(CURDIR)/nitrofiles/environments
 
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(ASSETS_DIALOGUE)/%.build.json)
@@ -185,11 +186,13 @@ $(NITRO_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.j
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
+# FIX: Adjusted output to nitrofiles and added the mv command for the .h file
 define ENV_TEMPLATE
 $$(CURDIR)/source/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) $$(wildcard $(1:.obj=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
 	@echo "  ENV   $$(notdir $$<)"
-	@mkdir -p $$(dir $$@)
-	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(dir $$@)
+	@mkdir -p $$(dir $$@) $$(CURDIR)/nitrofiles/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))
+	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(CURDIR)/nitrofiles/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))
+	@mv $$(CURDIR)/nitrofiles/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)) $$@
 	@touch $$@
 endef
 
@@ -218,11 +221,12 @@ $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.png $(wildcard $(ASSETS_MAPS)/%.buil
 maps: $(MAP_OUT)
 
 #---------------------------------------------------------------------------------
+# FIX: Added nitrofiles/environments to the clean targets
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(DIALOGUE_OUT) $(MUSIC_OUT) $(VIDEO_OUT) $(MAP_OUT) $(MODEL_OUT) $(CURDIR)/source/dialogue/*_dialogue.cpp $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/nitrofiles/models/*
+	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/nitrofiles/models/* $(CURDIR)/nitrofiles/environments/*
 
 #---------------------------------------------------------------------------------
 else

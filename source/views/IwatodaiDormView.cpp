@@ -9,6 +9,7 @@
 #include "models/character_32x32.h"
 #include "character.h"
 // environment
+#include "environments/iwatodai_dorm/iwatodai_dorm_env.h"
 #include "environments/iwatodai_dorm/texture.h"
 // collision (deprecated)
 #include "maps/iwatodaiDorm.h"
@@ -20,6 +21,7 @@ int iwatodaiTextureIds[IWATODAI_DORM_TEX_COUNT];
 int characterTextureId;
 
 AnimationController myCharacter;
+iwatodai_dorm_Environment iwatodaiDormEnvData;
 
 void IwatodaiDormView::Init() {
     videoSetMode(MODE_0_3D);
@@ -91,7 +93,7 @@ void IwatodaiDormView::Init() {
     const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = {
         textureBitmap
     };
-    Load_iwatodai_dorm(iwatodaiTextureIds, bitmaps);
+    iwatodaiDormEnvData.Load("nitro:/environments/iwatodai_dorm/iwatodai_dorm_env.bin", bitmaps);
 }
 
 ViewState IwatodaiDormView::Update() {
@@ -133,7 +135,7 @@ ViewState IwatodaiDormView::Update() {
 
     // draw environment
     glPushMatrix();
-        Draw_iwatodai_dorm(iwatodaiTextureIds);
+        iwatodaiDormEnvData.Draw();
     glPopMatrix(1);
 
     // draw character
@@ -172,7 +174,7 @@ void IwatodaiDormView::Cleanup() {
     consoleClear();
 
     // reset textures
-    Delete_iwatodai_dorm(iwatodaiTextureIds);
+    iwatodaiDormEnvData.Free();
     glDeleteTextures(1, &characterTextureId);
 
     // reset vram

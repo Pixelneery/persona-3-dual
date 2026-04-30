@@ -16,7 +16,9 @@ def floattov16(f):
     return max(-32768, min(32767, int(f * (1 << 12)))) & 0xFFFF
 
 def floattot16(f):
-    return max(-32768, min(32767, int(f * (1 << 4)))) & 0xFFFF
+    # FIX 3: Removed the min/max clamp!
+    # Tiled textures MUST be allowed to infinitely modulo wrap using 16-bit overflow.
+    return int(f * (1 << 4)) & 0xFFFF
 
 def pack_cmds(c1, c2=FIFO_NOP, c3=FIFO_NOP, c4=FIFO_NOP):
     return struct.pack('<I', (c4 << 24) | (c3 << 16) | (c2 << 8) | c1)
@@ -73,7 +75,7 @@ def compute_bounds(vertices):
 def convert_blender_zup(vertices):
     return [(x, z, y) for x, y, z in vertices]
 
-def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding=False):
+def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding=False, blender_source=False):
     words = []
     ox, oy, oz = offset
     for face in faces:
@@ -84,15 +86,19 @@ def build_display_list(faces, vertices, texcoords, scale, offset, tex_w, tex_h, 
         elif n == 3: prim = GL_TRIANGLES
         else:
             for i in range(1, n - 1):
-                words += build_display_list([face[0], face[i], face[i+1]], vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding)
+                words += build_display_list([face[0], face[i], face[i+1]], vertices, texcoords, scale, offset, tex_w, tex_h, flip_winding, blender_source)
             continue
         words.append(pack_cmds(FIFO_BEGIN))
         words.append(struct.pack('<I', prim))
         for vi, vti in face:
             if vti is not None and tex_w and tex_h:
-                u, v = texcoords[vti]
+                u, v_orig = texcoords[vti]
+                
+                # FIX 2: Only flip the V axis if the user explicitly came from Blender.
+                v = (1.0 - v_orig) if blender_source else v_orig
+                
                 u16 = floattot16(u * tex_w)
-                v16 = floattot16((1.0 - v) * tex_h)
+                v16 = floattot16(v * tex_h)
                 words.append(pack_cmds(FIFO_TEXCOORD))
                 words.append(struct.pack('<I', (u16 & 0xFFFF) | ((v16 & 0xFFFF) << 16)))
             vx, vy, vz = vertices[vi]
@@ -121,11 +127,8 @@ def nearest_valid_tex_size(n):
 def convert(obj_path, output_dir, config):
     scale = config.get("scale", None)
     target_size = config.get("target_size", 4.0)
-    
     center = config.get("center", True)
-    if config.get("no_center"):
-        center = False
-        
+    if config.get("no_center"): center = False
     blender_source = config.get("source_blender", False)
     
     extra_mapping = None
@@ -152,12 +155,9 @@ def convert(obj_path, output_dir, config):
                 break
     mat_to_tex = parse_mtl(mtl_path, extra_mapping)
 
-    print(f"Parsing {os.path.basename(obj_path)} ...")
     vertices, texcoords, groups = parse_obj(obj_path)
-    print(f"  {len(vertices)} vertices, {sum(len(g['faces']) for g in groups)} faces, {len(groups)} material groups")
 
     if blender_source:
-        print("  Converting Blender Z-up → NDS Y-up")
         vertices = convert_blender_zup(vertices)
 
     (xmin, xmax), (ymin, ymax), (zmin, zmax) = compute_bounds(vertices)
@@ -165,16 +165,12 @@ def convert(obj_path, output_dir, config):
 
     if scale is None:
         scale = (target_size / max_dim) if max_dim > 0 else 1.0
-        print(f"  Auto-scale: {scale:.6f}  (target {target_size} NDS units, model {max_dim:.3f})")
-    else:
-        print(f"  Manual scale: {scale:.6f}")
-
+    
     if center:
         ox = (xmin + xmax) / 2.0; oy = ymin; oz = (zmin + zmax) / 2.0
     else:
         ox = oy = oz = 0.0
     offset = (ox, oy, oz)
-    print(f"  Center offset: ({ox:.3f}, {oy:.3f}, {oz:.3f})")
 
     trans_min_x = (xmin - ox) * scale; trans_max_x = (xmax - ox) * scale
     trans_min_z = (zmin - oz) * scale; trans_max_z = (zmax - oz) * scale
@@ -189,7 +185,6 @@ def convert(obj_path, output_dir, config):
         if not faces: continue
         tex_rel = mat_to_tex.get(mat)
         if tex_rel is None:
-            print(f"  WARNING: no texture for '{mat}' — rendering without UV")
             tex_key = '__no_texture__'
         else:
             tex_abs = os.path.join(obj_dir, tex_rel)
@@ -197,48 +192,46 @@ def convert(obj_path, output_dir, config):
             tex_paths[tex_key] = tex_abs
         merged[tex_key].extend(faces)
 
-    print(f"  Texture groups: {len(merged)}")
-
     dl_groups = []
     for tex_key, faces in merged.items():
         tex_abs = tex_paths.get(tex_key)
         tw, th  = find_texture_size(tex_abs) if tex_abs else (None, None)
-        if tw: tw = nearest_valid_tex_size(tw)
-        if th: th = nearest_valid_tex_size(th)
-        words = build_display_list(faces, vertices, texcoords, scale, offset, tw, th, flip_winding=blender_source)
+        
+        # FIX 1: Fatal Error if texture file name inside the .mtl doesn't exist on disk
+        if tw is None or th is None:
+            print(f"\n[FATAL ERROR] Could not find or read texture image: {tex_abs}")
+            print(f"-> If you recently renamed your .png file, you MUST open your .mtl or .json file and rename the internal reference to match!")
+            sys.exit(1)
+            
+        tw = nearest_valid_tex_size(tw)
+        th = nearest_valid_tex_size(th)
+        
+        # Added blender_source argument pass-through
+        words = build_display_list(faces, vertices, texcoords, scale, offset, tw, th, flip_winding=blender_source, blender_source=blender_source)
         dl_groups.append((tex_key, words, tw, th))
-        print(f"  [{tex_key}] {len(faces)} faces, {tw}x{th}, {len(words)} words")
 
+    bin_path      = os.path.join(output_dir, f'{base_name}_env.bin')
     header_path   = os.path.join(output_dir, f'{base_name}_env.h')
-    s_path        = os.path.join(output_dir, f'{base_name}_env.s')
     tex_list_path = os.path.join(output_dir, f'{base_name}_textures.txt')
     n = len(dl_groups)
+    safe_n = max(n, 1)
 
-    with open(s_path, 'w') as s:
-        s.write(f"@ Auto-generated by obj2environment.py\n")
-        s.write(f"\t.section .rodata\n")
-        s.write(f"\t.align 2\n\n")
-        for i, (tex_key, words, tw, th) in enumerate(dl_groups):
-            dl_name = f"{base_name}_dl_{i}"
-            s.write(f"\t.global {dl_name}\n")
-            s.write(f"{dl_name}:\n")
-            s.write(f"\t.word {len(words)} @ count\n")
-            for j in range(0, len(words), 8):
-                chunk = words[j:j+8]
-                vals = [f"0x{struct.unpack('<I', w)[0]:08X}" for w in chunk]
-                s.write(f"\t.word " + ", ".join(vals) + "\n")
-            s.write("\n")
-    print(f"Wrote: {s_path}")
+    with open(bin_path, 'wb') as f:
+        f.write(b'ENV1')
+        f.write(struct.pack('<I', n))
+        for _, words, _, _ in dl_groups:
+            f.write(struct.pack('<I', len(words)))
+            for w in words:
+                f.write(w)
+    print(f"Wrote: {bin_path}")
 
     with open(header_path, 'w') as h:
         h.write(f"#pragma once\n// Auto-generated by obj2environment.py\n")
         h.write(f"// Source: {os.path.basename(obj_path)}\n")
         h.write(f"// Scale: {scale:.6f}  Centred: {center}\n")
-        h.write(f"// DO NOT EDIT — regenerate from source.\n\n#include <nds.h>\n\n")
-        h.write("#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n")
-        for i in range(n):
-            h.write(f"extern const u32 {base_name}_dl_{i}[];\n")
-        h.write("\n#ifdef __cplusplus\n}\n#endif\n\n")
+        h.write(f"// DO NOT EDIT — regenerate from source.\n\n")
+        h.write(f"#include <nds.h>\n#include <stdio.h>\n#include <stdlib.h>\n\n")
+        
         h.write("// --- World Bounds ---\n")
         h.write(f"#define {base_name.upper()}_WORLD_OFFSET_X {world_offset_x:.6f}f\n"
                 f"#define {base_name.upper()}_WORLD_OFFSET_Z {world_offset_z:.6f}f\n"
@@ -250,27 +243,69 @@ def convert(obj_path, output_dir, config):
             h.write(f"    {base_name.upper()}_TEX_{sanitize(os.path.splitext(tex_key)[0]).upper()} = {i},\n")
         h.write(f"    {base_name.upper()}_TEX_COUNT = {n}\n}};\n\n")
 
-        h.write(f"static const int {base_name}_tex_widths[{n}]  = {{\n    " + ', '.join(str(tw or 0) for _, _, tw, _ in dl_groups) + "\n};\n")
-        h.write(f"static const int {base_name}_tex_heights[{n}] = {{\n    " + ', '.join(str(th or 0) for _, _, _, th in dl_groups) + "\n};\n\n")
+        h.write(f"class {base_name}_Environment {{\n")
+        h.write(f"public:\n")
+        h.write(f"    u32* displayLists[{safe_n}];\n")
+        h.write(f"    u32 dlSizes[{safe_n}];\n")
+        h.write(f"    int textureIDs[{safe_n}];\n\n")
+        
+        h.write(f"    {base_name}_Environment() {{\n")
+        h.write(f"        for (int i = 0; i < {safe_n}; i++) {{\n")
+        h.write(f"            displayLists[i] = NULL;\n")
+        h.write(f"            dlSizes[i] = 0;\n")
+        h.write(f"            textureIDs[i] = 0;\n")
+        h.write(f"        }}\n    }}\n\n")
 
-        h.write(f"inline void Load_{base_name}(int ids[{n}], const unsigned int* bitmaps[{n}]) {{\n")
-        for i, (tex_key, _, tw, th) in enumerate(dl_groups):
-            nw = f"TEXTURE_SIZE_{tw}" if tw else "TEXTURE_SIZE_8"
-            nh = f"TEXTURE_SIZE_{th}" if th else "TEXTURE_SIZE_8"
-            h.write(f"    glGenTextures(1, &ids[{i}]);\n"
-                    f"    glBindTexture(GL_TEXTURE_2D, ids[{i}]);\n"
-                    f"    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, {nw}, {nh}, 0,\n"
-                    f"        TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,\n"
-                    f"        bitmaps[{i}]);\n")
-        h.write("}\n\n")
+        h.write(f"    bool Load(const char* filepath, const unsigned int* bitmaps[{safe_n}]) {{\n")
+        if n > 0:
+            h.write(f"        FILE* file = fopen(filepath, \"rb\");\n")
+            h.write(f"        if (!file) return false;\n\n")
+            h.write(f"        char magic[4];\n")
+            h.write(f"        fread(magic, 1, 4, file);\n")
+            h.write(f"        if (magic[0] != 'E' || magic[1] != 'N' || magic[2] != 'V' || magic[3] != '1') {{\n")
+            h.write(f"            fclose(file);\n            return false;\n        }}\n\n")
+            h.write(f"        u32 groupCount;\n        fread(&groupCount, sizeof(u32), 1, file);\n")
+            h.write(f"        if (groupCount != {n}) {{\n            fclose(file);\n            return false;\n        }}\n\n")
+            h.write(f"        for (u32 i = 0; i < groupCount; i++) {{\n")
+            h.write(f"            fread(&dlSizes[i], sizeof(u32), 1, file);\n")
+            h.write(f"            displayLists[i] = (u32*)malloc((dlSizes[i] + 1) * sizeof(u32));\n")
+            h.write(f"            displayLists[i][0] = dlSizes[i];\n")
+            h.write(f"            if (dlSizes[i] > 0) {{\n")
+            h.write(f"                fread(&displayLists[i][1], sizeof(u32), dlSizes[i], file);\n")
+            h.write(f"            }}\n        }}\n")
+            h.write(f"        fclose(file);\n\n")
+            
+            h.write(f"        // Bind Textures to VRAM\n")
+            for i, (tex_key, _, tw, th) in enumerate(dl_groups):
+                nw = f"TEXTURE_SIZE_{tw}" if tw else "TEXTURE_SIZE_8"
+                nh = f"TEXTURE_SIZE_{th}" if th else "TEXTURE_SIZE_8"
+                h.write(f"        if (bitmaps[{i}]) {{\n")
+                h.write(f"            glGenTextures(1, &textureIDs[{i}]);\n")
+                h.write(f"            glBindTexture(GL_TEXTURE_2D, textureIDs[{i}]);\n")
+                h.write(f"            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, {nw}, {nh}, 0,\n")
+                h.write(f"                TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T, bitmaps[{i}]);\n")
+                h.write(f"        }}\n")
+            h.write(f"        return true;\n")
+        else:
+            h.write("        return true;\n")
+        h.write("    }\n\n")
 
-        h.write(f"inline void Draw_{base_name}(const int ids[{n}]) {{\n")
+        h.write(f"    void Draw() {{\n")
         for i, (tex_key, _, _, _) in enumerate(dl_groups):
-            h.write(f"    glBindTexture(GL_TEXTURE_2D, ids[{i}]);  // {tex_key}\n"
-                    f"    glCallList((u32*){base_name}_dl_{i});\n")
-        h.write("}\n\n")
+            h.write(f"        glBindTexture(GL_TEXTURE_2D, textureIDs[{i}]);\n")
+            h.write(f"        if (displayLists[{i}]) {{\n")
+            h.write(f"            glCallList(displayLists[{i}]);\n        }}\n")
+        h.write("    }\n\n")
 
-        h.write(f"inline void Delete_{base_name}(int ids[{n}]) {{\n    glDeleteTextures({n}, ids);\n}}\n")
+        h.write(f"    void Free() {{\n")
+        if n > 0:
+            h.write(f"        for (u32 i = 0; i < {n}; i++) {{\n")
+            h.write(f"            if (displayLists[i]) {{\n")
+            h.write(f"                free(displayLists[i]);\n")
+            h.write(f"                displayLists[i] = NULL;\n            }}\n        }}\n")
+            h.write(f"        glDeleteTextures({n}, textureIDs);\n")
+        h.write("    }\n")
+        h.write("};\n")
 
     print(f"Wrote: {header_path}")
 
