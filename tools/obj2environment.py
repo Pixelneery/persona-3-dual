@@ -269,10 +269,11 @@ def convert(obj_path, output_dir, scale=None, target_size=4.0, center=True,
                 f"// DO NOT EDIT — regenerate from source.\n\n"
                 f"#include <nds.h>\n\n")
 
-        # External declarations for the assembly display lists
+        # Declare assembly lists directly
+        h.write("#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n")
         for i in range(n):
             h.write(f"extern const u32 {base_name}_dl_{i}[];\n")
-        h.write("\n")
+        h.write("\n#ifdef __cplusplus\n}\n#endif\n\n")
 
         h.write("// --- World Bounds ---\n")
         h.write(f"#define {base_name.upper()}_WORLD_OFFSET_X {world_offset_x:.6f}f\n"

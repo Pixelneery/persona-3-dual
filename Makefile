@@ -19,7 +19,7 @@ include $(DEVKITARM)/ds_rules
 TARGET      :=  $(shell basename $(CURDIR))
 BUILD       :=  build
 SOURCES     :=  source source/views source/controllers source/core source/dialogue source/models source/environments
-DATA        :=  assets/environments/bin
+DATA        :=  
 INCLUDES    :=  include source
 GRAPHICS    :=  assets/graphics
 SFX         :=  assets/sfx
@@ -39,8 +39,7 @@ VENV_PYTHON     := $(HOME)/.venv/bin/python3
 ASSETS_DIALOGUE := $(CURDIR)/assets/dialogue
 ASSETS_MUSIC    := $(CURDIR)/assets/music
 ASSETS_VIDEO    := $(CURDIR)/assets/video
-ASSETS_ENVIRONMENTS     := $(CURDIR)/assets/environments
-ASSETS_ENVIRONMENTS_BIN := $(CURDIR)/assets/environments/bin
+ASSETS_ENVIRONMENTS := $(CURDIR)/assets/environments
 ASSETS_MODELS   := $(CURDIR)/assets/models
 ASSETS_MAPS     := $(CURDIR)/assets/maps
 
@@ -49,22 +48,14 @@ NITRO_VIDEO     := $(CURDIR)/nitrofiles/video
 
 #---------------------------------------------------------------------------------
 # Per-tool flags (override on the command line, e.g. make VIDEO_FPS=24)
-#
-#   VIDEO_BITS   — colour depth for video encoding: 8 or 16    [default: 8]
-#   VIDEO_FPS    — frames per second for video encoding         [default: 15]
-#   VIDEO_SIZE   — output resolution WxH                        [default: 256x192]
-#   ENVIRONMENT_TEXSIZE— fallback texture size when not in filename   [default: 256 256]
-#   MODEL_TEXSIZE — fallback texture size for animated models          [default: 32 32]
-#   DLG_FLAGS    — extra flags forwarded to dlg2dialogue.py     [default: (none)]
-#   MAP_FLAGS    — extra flags forwarded to texture2collision.py[default: (none)]
 #---------------------------------------------------------------------------------
 VIDEO_BITS    ?= 8
 VIDEO_FPS     ?= 15
 VIDEO_SIZE    ?= 256x192
-ENVIRONMENT_TEXSIZE ?= 256 256
 MODEL_TEXSIZE ?= 32 32
 DLG_FLAGS     ?=
 MAP_FLAGS     ?=
+ENV_FLAGS     ?= --source-blender
 
 #---------------------------------------------------------------------------------
 # Collect source files
@@ -72,20 +63,23 @@ MAP_FLAGS     ?=
 DLG_FILES       := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
 MP3_FILES       := $(wildcard $(ASSETS_MUSIC)/*.mp3)
 MP4_FILES       := $(wildcard $(ASSETS_VIDEO)/*.mp4)
-OBJ_FILES       := $(wildcard $(ASSETS_ENVIRONMENTS)/*.obj)
+ENV_OBJ_FILES   := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.obj)
 MAP_FILES       := $(wildcard $(ASSETS_MAPS)/*.png)
 MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 
 #---------------------------------------------------------------------------------
-# Derive output paths
+# Derive output paths & dynamically add environment output dirs to SOURCES
 #---------------------------------------------------------------------------------
 DIALOGUE_OUT := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%.h)
 MUSIC_OUT    := $(MP3_FILES:$(ASSETS_MUSIC)/%.mp3=$(NITRO_MUSIC)/%.pcm)
 VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(NITRO_VIDEO)/%.vid)
-ENVIRONMENT_OUT    := $(OBJ_FILES:$(ASSETS_ENVIRONMENTS)/%.obj=$(ASSETS_ENVIRONMENTS_BIN)/%.bin)
 MAP_OUT      := $(MAP_FILES:$(ASSETS_MAPS)/%.png=$(CURDIR)/source/maps/%.h)
-OFFSET_OUT   := $(OBJ_FILES:$(ASSETS_ENVIRONMENTS)/%.obj=$(CURDIR)/source/maps/%_offsets.h)
 MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
+
+# Dynamically append generated environment folders so Make compiles the .s files
+ENV_OUT_DIRS    := $(foreach file,$(ENV_OBJ_FILES),source/environments/$(notdir $(patsubst %/,%,$(dir $(file)))))
+SOURCES         += $(ENV_OUT_DIRS)
+ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments/$(notdir $(patsubst %/,%,$(dir $(file))))/$(notdir $(file:.obj=_env.h)))
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -140,7 +134,7 @@ CPPFILES    +=  $(notdir $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=%_dialogue.cpp))
 # Remove duplicates if wildcard found already-generated files
 CPPFILES    :=  $(sort $(CPPFILES))
 SFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES    :=  $(notdir $(ENVIRONMENT_OUT)) soundbank.bin
+BINFILES    :=  soundbank.bin
 PNGFILES    :=  $(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 
 export SFXFILES :=  $(foreach dir,$(notdir $(wildcard $(SFX)/*.*)),$(CURDIR)/$(SFX)/$(dir))
@@ -154,9 +148,14 @@ else
     export LD := $(CXX)
 endif
 
+# Explicitly map the incoming environment assets to their future .o object files
+ENV_S_OFILES    :=  $(foreach file,$(ENV_OBJ_FILES),$(notdir $(file:.obj=_env.o))) \
+                    $(foreach file,$(wildcard $(ASSETS_ENVIRONMENTS)/*/*.png),$(notdir $(file:.png=.o)))
+
 export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
                     $(PNGFILES:.png=.o) \
-                    $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+                    $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o) \
+                    $(ENV_S_OFILES)
 
 export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
                     $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
@@ -165,7 +164,7 @@ export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean assets dialogue music video environments maps offsets models help
+.PHONY: $(BUILD) clean assets dialogue music video environments maps models help
 
 #---------------------------------------------------------------------------------
 # Main build — DEFAULT TARGET
@@ -187,32 +186,31 @@ help:
 	@echo "  make dialogue     .dlg  →  source/dialogue/*.h + .cpp"
 	@echo "  make music        .mp3  →  nitrofiles/music/*.pcm"
 	@echo "  make video        .mp4  →  nitrofiles/video/*.vid"
-	@echo "  make environments .obj  →  assets/environments/*.bin"
+	@echo "  make environments .obj  →  source/environments/<name>/*"
 	@echo "  make models       .json →  source/models/*.h"
 	@echo "  make maps         .png  →  source/maps/*.h (collision)"
-	@echo "  make offsets      .obj  →  source/maps/*_offsets.h (auto TILE_SIZE)"
 	@echo "  make clean        Remove build artefacts"
 	@echo ""
 	@echo "  Overridable flags (pass on command line):"
 	@echo "  VIDEO_BITS=$(VIDEO_BITS)        8 or 16 colour depth"
 	@echo "  VIDEO_FPS=$(VIDEO_FPS)         frames per second"
 	@echo "  VIDEO_SIZE=$(VIDEO_SIZE)   output resolution"
-	@echo "  ENVIRONMENT_TEXSIZE='$(ENVIRONMENT_TEXSIZE)'  fallback tex size"
 	@echo "  MODEL_TEXSIZE='$(MODEL_TEXSIZE)'        fallback tex size for models"
 	@echo "  DLG_FLAGS='$(DLG_FLAGS)'         extra flags for dlg2dialogue.py"
 	@echo "  MAP_FLAGS='$(MAP_FLAGS)'         extra flags for texture2collision.py"
+	@echo "  ENV_FLAGS='$(ENV_FLAGS)'         extra flags for nds_build_environment.py"
 	@echo ""
 
 #---------------------------------------------------------------------------------
 # Asset conversion - create output dirs, then run each converter
 #---------------------------------------------------------------------------------
-assets: dirs dialogue music video environments maps offsets models
+assets: dirs dialogue music video environments maps models
 
 dirs:
 	@mkdir -p $(CURDIR)/source/dialogue
 	@mkdir -p $(CURDIR)/source/maps
 	@mkdir -p $(CURDIR)/source/models
-	@mkdir -p $(ASSETS_ENVIRONMENTS_BIN)
+	@mkdir -p $(CURDIR)/source/environments
 	@mkdir -p $(NITRO_MUSIC)
 	@mkdir -p $(NITRO_VIDEO)
 
@@ -255,16 +253,17 @@ video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
 # Environments
-# Input:   assets/environments/<name>.obj           → --texsize 256 256  (ENVIRONMENT_TEXSIZE)
-#          assets/environments/<name>_128x128.obj   → --texsize 128 128  (from filename)
-#          assets/environments/<name>_64x64.obj     → --texsize 64 64
-# Output:  assets/environments/<name>.bin
+# Input:   assets/environments/<name>/<name>.obj
+# Output:  source/environments/<name>/<name>_env.h (plus .s and texture files)
 #---------------------------------------------------------------------------------
-$(ASSETS_ENVIRONMENTS_BIN)/%.bin: $(ASSETS_ENVIRONMENTS)/%.obj | dirs
-	@echo "  BIN   $(notdir $<)"
-	$(eval _ts := $(shell echo "$*" | grep -oE '[0-9]+x[0-9]+$$' | tr 'x' ' '))
-	$(eval _texsize := $(if $(_ts),$(_ts),$(ENVIRONMENT_TEXSIZE)))
-	@$(VENV_PYTHON) $(TOOLS_DIR)/obj2bin.py $< $@ --texsize $(_texsize)
+define ENV_TEMPLATE
+$$(CURDIR)/source/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) | dirs
+	@echo "  ENV   $$(notdir $$<)"
+	@mkdir -p $$(dir $$@)
+	@$$(VENV_PYTHON) $$(TOOLS_DIR)/nds_build_environment.py $$< $$(dir $$@) $$(ENV_FLAGS)
+endef
+
+$(foreach file,$(ENV_OBJ_FILES),$(eval $(call ENV_TEMPLATE,$(file))))
 
 environments: $(ENVIRONMENT_OUT)
 
@@ -303,15 +302,6 @@ $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.png | dirs
 
 maps: $(MAP_OUT)
 
-#---------------------------------------------------------------------------------
-# World offsets
-#---------------------------------------------------------------------------------
-$(CURDIR)/source/maps/%_offsets.h: $(ASSETS_ENVIRONMENTS)/%.obj | dirs
-	@echo "  OFF   $(notdir $<)"
-	@$(VENV_PYTHON) $(TOOLS_DIR)/obj2offsets.py $< -o $@
-
-offsets: $(OFFSET_OUT)
-
 
 #---------------------------------------------------------------------------------
 clean:
@@ -322,10 +312,9 @@ clean:
 			$(CURDIR)/source/dialogue/*_dialogue.h \
 			$(MUSIC_OUT) \
 			$(VIDEO_OUT) \
-			$(ENVIRONMENT_OUT) \
 			$(MAP_OUT) \
-			$(OFFSET_OUT) \
 			$(MODEL_OUT)
+	@rm -rf $(CURDIR)/source/environments/*
 
 #---------------------------------------------------------------------------------
 else
