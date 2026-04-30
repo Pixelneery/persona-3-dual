@@ -10,7 +10,7 @@
 #include "character.h"
 // environment
 #include "environments/iwatodai_dorm/iwatodai_dorm_env.h"
-#include "environments/iwatodai_dorm/texture.h"
+#include "texture.h"
 // collision (deprecated)
 #include "maps/iwatodaiDorm.h"
 // dialogue

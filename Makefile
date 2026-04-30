@@ -22,7 +22,10 @@ BUILD       :=  build
 SOURCES     :=  source source/views source/controllers source/core source/dialogue source/models source/environments
 DATA        :=  
 INCLUDES    :=  include source
-GRAPHICS    :=  assets/graphics
+
+# Add environment subdirectories directly to the GRAPHICS build pipeline
+GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*)
+
 SFX         :=  assets/sfx
 NITRODATA   :=  nitrofiles
 
@@ -128,15 +131,10 @@ else
     export LD := $(CXX)
 endif
 
-# FIX: Removed the .obj=_env.o compilation requirement for environments
-ENV_S_OFILES    :=  $(foreach file,$(wildcard $(ASSETS_ENVIRONMENTS)/*/*.png),$(notdir $(file:.png=.o)))
-
-SFILES          :=  $(filter-out $(ENV_S_OFILES:.o=.s),$(SFILES))
-
+# Cleaned up redundant environment rules; native GRAPHICS mapping handles this flawlessly
 export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
                     $(PNGFILES:.png=.o) \
-                    $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o) \
-                    $(ENV_S_OFILES)
+                    $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 
 export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
                     $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
@@ -159,7 +157,6 @@ help:
 
 assets: dirs dialogue music video environments maps models
 
-# FIX: Added nitrofiles/environments directory creation
 dirs:
 	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/nitrofiles/models $(CURDIR)/nitrofiles/environments
 
@@ -186,7 +183,6 @@ $(NITRO_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.j
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
-# FIX: Adjusted output to nitrofiles and added the mv command for the .h file
 define ENV_TEMPLATE
 $$(CURDIR)/source/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) $$(wildcard $(1:.obj=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
 	@echo "  ENV   $$(notdir $$<)"
@@ -221,7 +217,6 @@ $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.png $(wildcard $(ASSETS_MAPS)/%.buil
 maps: $(MAP_OUT)
 
 #---------------------------------------------------------------------------------
-# FIX: Added nitrofiles/environments to the clean targets
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
