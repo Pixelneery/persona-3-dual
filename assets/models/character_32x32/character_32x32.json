@@ -4,7 +4,7 @@
       "id": 0,
       "parent": -1,
       "name": "Root",
-      "obj": "character_n0.obj",
+      "obj": "character_32x32_n0.obj",
       "origin": [
         -0.46667,
         0.65333,
@@ -15,7 +15,7 @@
       "id": 1,
       "parent": 0,
       "name": "Torso",
-      "obj": "character_n1.obj",
+      "obj": "character_32x32_n1.obj",
       "origin": [
         0,
         0,
@@ -26,7 +26,7 @@
       "id": 2,
       "parent": 0,
       "name": "Left Thigh",
-      "obj": "character_n2.obj",
+      "obj": "character_32x32_n2.obj",
       "origin": [
         0,
         0,
@@ -37,7 +37,7 @@
       "id": 3,
       "parent": 0,
       "name": "Right Thigh",
-      "obj": "character_n3.obj",
+      "obj": "character_32x32_n3.obj",
       "origin": [
         -1.4,
         1.96,
@@ -48,7 +48,7 @@
       "id": 4,
       "parent": 1,
       "name": "Neck",
-      "obj": "character_n4.obj",
+      "obj": "character_32x32_n4.obj",
       "origin": [
         0,
         0,
@@ -59,7 +59,7 @@
       "id": 5,
       "parent": 4,
       "name": "Head",
-      "obj": "character_n5.obj",
+      "obj": "character_32x32_n5.obj",
       "origin": [
         0,
         0,
@@ -70,7 +70,7 @@
       "id": 6,
       "parent": 1,
       "name": "Left Shoulder",
-      "obj": "character_n6.obj",
+      "obj": "character_32x32_n6.obj",
       "origin": [
         2.5,
         0,
@@ -81,7 +81,7 @@
       "id": 7,
       "parent": 1,
       "name": "Right Shoulder",
-      "obj": "character_n7.obj",
+      "obj": "character_32x32_n7.obj",
       "origin": [
         0.4496,
         1.73822,
@@ -92,7 +92,7 @@
       "id": 8,
       "parent": 7,
       "name": "Right Arm",
-      "obj": "character_n8.obj",
+      "obj": "character_32x32_n8.obj",
       "origin": [
         0,
         0,
@@ -103,7 +103,7 @@
       "id": 9,
       "parent": 6,
       "name": "Left Arm",
-      "obj": "character_n9.obj",
+      "obj": "character_32x32_n9.obj",
       "origin": [
         2.5,
         0,
@@ -114,7 +114,7 @@
       "id": 10,
       "parent": 2,
       "name": "Left Leg",
-      "obj": "character_n10.obj",
+      "obj": "character_32x32_n10.obj",
       "origin": [
         0,
         0,
@@ -125,7 +125,7 @@
       "id": 11,
       "parent": 10,
       "name": "Left Shoe",
-      "obj": "character_n11.obj",
+      "obj": "character_32x32_n11.obj",
       "origin": [
         0,
         0,
@@ -136,7 +136,7 @@
       "id": 12,
       "parent": 3,
       "name": "Right Leg",
-      "obj": "character_n12.obj",
+      "obj": "character_32x32_n12.obj",
       "origin": [
         -1.4,
         1.96,
@@ -147,7 +147,7 @@
       "id": 13,
       "parent": 12,
       "name": "Right Shoe",
-      "obj": "character_n13.obj",
+      "obj": "character_32x32_n13.obj",
       "origin": [
         -1.4,
         1.96,

@@ -82,8 +82,8 @@ void IwatodaiDormView::Init() {
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
 
     // setup character model
-    LoadModel_character(myCharacter); 
-    myCharacter.set(MODEL_CHARACTER_WALK, true);
+    LoadModel_character_32x32(myCharacter); 
+    myCharacter.set(MODEL_CHARACTER_32X32_WALK, true);
     // TODO: play/pause animation on walk
     myCharacter.play();
 

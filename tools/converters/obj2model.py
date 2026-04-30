@@ -9,11 +9,8 @@ FIFO_TEXCOORD = 0x22
 FIFO_BEGIN    = 0x40
 FIFO_VERTEX16 = 0x23
 FIFO_NOP      = 0x00
-
 GL_TRIANGLES = 0
 GL_QUADS     = 1
-
-VALID_SIZES = {8, 16, 32, 64, 128, 256, 512, 1024}
 
 def floattov16(f):
     v = int(f * (1 << 12))
@@ -120,23 +117,18 @@ def convert_obj(input_file, output_file, tex_width=None, tex_height=None, vertex
     with open(output_file, 'wb') as out:
         out.write(struct.pack('<I', len(words)))
         for w in words: out.write(w)
+        
+    return output_file
 
 def convert_model_json(input_file, output_file, tex_width=None, tex_height=None, vertex_color=None, scale=None, target_size=4.0, center=True, blender_source=False):
     base_dir = os.path.dirname(input_file)
-    raw_name = os.path.splitext(os.path.basename(input_file))[0].replace('-', '_')
-    if 'x' in raw_name:
-        parts = raw_name.rsplit('_', 1)
-        if len(parts) > 1 and 'x' in parts[1]:
-            raw_name = parts[0]
-            
-    model_name = raw_name
+    model_name = os.path.splitext(os.path.basename(input_file))[0].replace('-', '_')
     
     with open(input_file, 'r') as f:
         data = json.load(f)
     
-    header_out = output_file.replace('.bin', '.h')
+    header_out = output_file if output_file.endswith('.h') else os.path.splitext(output_file)[0] + '.h'
     
-    # 1. Pre-pass: calculate unified scale and offset
     all_verts = []
     obj_data = {}
     for node in data['nodes']:
@@ -162,7 +154,6 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
         print(f"  Manual scale: {scale:.6f}")
         
     if center:
-        # NDS convention usually places the Y origin at the bottom min(ys)
         offset = ((min(xs)+max(xs))/2.0, min(ys), (min(zs)+max(zs))/2.0)
     else:
         offset = (0.0, 0.0, 0.0)
@@ -179,7 +170,6 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
 
         node_count = len(data['nodes'])
         
-        # 2. Compile Display Lists
         for node in data['nodes']:
             nid = node['id']
             v, vt, f = obj_data[nid]
@@ -191,7 +181,6 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
                 out.write(f"0x{val:08X}, ")
             out.write("\n};\n\n")
 
-        # 3. Compile Keyframes
         for anim_name, anim_data in data['animations'].items():
             for node_id, keyframes in anim_data['tracks'].items():
                 out.write(f"static const Keyframe {model_name}_{anim_name}_n{node_id}[] = {{\n")
@@ -207,14 +196,17 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
                     ry = to_s16((rot[1] / 360.0) * 32768)
                     rz = to_s16((rot[2] / 360.0) * 32768)
                     
+                    # Blockbench JSON is 16x larger than its OBJ geometry. Blender is 1:1.
+                    bb_scale = 1.0 if blender_source else 16.0
+                    
                     # Scale positions (no offset because keyframe pos is a delta local transform)
-                    px = to_s16(floattov16(pos[0] * scale))
-                    py = to_s16(floattov16(pos[1] * scale))
-                    pz = to_s16(floattov16(pos[2] * scale))
+                    px = to_s16(floattov16((pos[0] / bb_scale) * scale))
+                    py = to_s16(floattov16((pos[1] / bb_scale) * scale))
+                    pz = to_s16(floattov16((pos[2] / bb_scale) * scale))
+                    
                     out.write(f"    {{{kf['time']}, {rx}, {ry}, {rz}, {px}, {py}, {pz}}},\n")
                 out.write("};\n")
 
-        # 4. LOADER FUNCTION
         out.write(f"\ninline void LoadModel_{model_name}(AnimationController& ctrl) {{\n")
         out.write(f"    std::vector<AnimNode> nodes({node_count});\n")
         
@@ -226,10 +218,13 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
             if blender_source:
                 origin = [origin[0], origin[2], origin[1]]
                 
+            # Blockbench JSON is 16x larger than its OBJ geometry. Blender is 1:1.
+            bb_scale = 1.0 if blender_source else 16.0
+                
             # Origin is absolute position in armature space, so apply offset AND scale
-            ox = to_s16(floattov16((origin[0] - offset[0]) * scale))
-            oy = to_s16(floattov16((origin[1] - offset[1]) * scale))
-            oz = to_s16(floattov16((origin[2] - offset[2]) * scale))
+            ox = to_s16(floattov16(((origin[0] / bb_scale) - offset[0]) * scale))
+            oy = to_s16(floattov16(((origin[1] / bb_scale) - offset[1]) * scale))
+            oz = to_s16(floattov16(((origin[2] / bb_scale) - offset[2]) * scale))
 
             out.write(f"    nodes[{nid}].id = {nid};\n")
             out.write(f"    nodes[{nid}].parentId = {pid};\n")
@@ -252,11 +247,43 @@ def convert_model_json(input_file, output_file, tex_width=None, tex_height=None,
             out.write(f"    anims.push_back(a);\n")
 
         out.write(f"    ctrl.loadModel(nodes, anims);\n}}\n")
+        
+    return header_out
+
+def convert(input_file, output_file, config):
+    tex_w, tex_h = None, None
+    texsize = config.get("texsize")
+    if isinstance(texsize, list) and len(texsize) >= 2:
+        tex_w, tex_h = texsize[0], texsize[1]
+    elif isinstance(texsize, str):
+        parts = texsize.split()
+        if len(parts) >= 2:
+            tex_w, tex_h = int(parts[0]), int(parts[1])
+
+    vertex_color = config.get("color")
+    if isinstance(vertex_color, list) and len(vertex_color) == 3:
+        vertex_color = tuple(vertex_color)
+
+    scale = config.get("scale")
+    target_size = config.get("target_size", 4.0)
+    
+    center = config.get("center", True)
+    if config.get("no_center"):
+        center = False
+
+    blender_source = config.get("source_blender", False)
+
+    if input_file.endswith('.json'):
+        final_out = convert_model_json(input_file, output_file, tex_width=tex_w, tex_height=tex_h, vertex_color=vertex_color, scale=scale, target_size=target_size, center=center, blender_source=blender_source)
+    else:
+        final_out = convert_obj(input_file, output_file, tex_width=tex_w, tex_height=tex_h, vertex_color=vertex_color, scale=scale, target_size=target_size, center=center, blender_source=blender_source)
+        
+    print(f"Converted {input_file} -> {final_out}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Convert OBJ/JSON to NDS display list with scaling')
+    parser = argparse.ArgumentParser(description='Convert OBJ/JSON to NDS display list')
     parser.add_argument('input', help='Input .obj or .json file')
-    parser.add_argument('output', help='Output .bin file')
+    parser.add_argument('output', help='Output .bin or .h file')
     parser.add_argument('--texsize', nargs=2, type=int, metavar=('W', 'H'))
     parser.add_argument('--color', nargs=3, type=int, metavar=('R', 'G', 'B'))
     parser.add_argument('--scale', type=float, default=None)
@@ -265,21 +292,12 @@ if __name__ == "__main__":
     parser.add_argument('--source-blender', action='store_true')
     args = parser.parse_args()
 
-    tw, th = (args.texsize[0], args.texsize[1]) if args.texsize else (None, None)
-    color  = tuple(args.color) if args.color else None
-
-    if args.input.endswith('.json'):
-        convert_model_json(
-            args.input, args.output,
-            tex_width=tw, tex_height=th, vertex_color=color,
-            scale=args.scale, target_size=args.target_size,
-            center=not args.no_center, blender_source=args.source_blender
-        )
-    else:
-        convert_obj(
-            args.input, args.output,
-            tex_width=tw, tex_height=th, vertex_color=color,
-            scale=args.scale, target_size=args.target_size,
-            center=not args.no_center, blender_source=args.source_blender
-        )
-        print(f"Converted {args.input} -> {args.output}")
+    cli_config = {
+        "texsize": args.texsize,
+        "color": args.color,
+        "scale": args.scale,
+        "target_size": args.target_size,
+        "no_center": args.no_center,
+        "source_blender": args.source_blender
+    }
+    convert(args.input, args.output, cli_config)

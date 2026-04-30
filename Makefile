@@ -106,17 +106,11 @@ LIBS    := -lmm9 -lfat -lnds9
 LIBDIRS :=  $(LIBNDS) $(PORTLIBS)
 
 #---------------------------------------------------------------------------------
-# no real need to edit anything past this point unless you need to add additional
-# rules for different file extensions
-#---------------------------------------------------------------------------------
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 #---------------------------------------------------------------------------------
 export TOPDIR   :=  $(CURDIR)
-
 export OUTPUT   :=  $(CURDIR)/$(TARGET)
 
-# Add ENV_OUT_DIRS to VPATH so Make can find the .s files, but without adding them 
-# to SOURCES where the wildcard would accidentally duplicate them.
 export VPATH    :=  $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
                     $(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
                     $(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir)) \
@@ -130,10 +124,7 @@ endif
 
 CFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES    :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-# Dialogue .cpp files are generated. Derive from source .dlg list so they're
-# known at parse time even on a clean build (wildcard would find nothing).
 CPPFILES    +=  $(notdir $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=%_dialogue.cpp))
-# Remove duplicates if wildcard found already-generated files
 CPPFILES    :=  $(sort $(CPPFILES))
 SFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES    :=  soundbank.bin
@@ -141,20 +132,15 @@ PNGFILES    :=  $(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 
 export SFXFILES :=  $(foreach dir,$(notdir $(wildcard $(SFX)/*.*)),$(CURDIR)/$(SFX)/$(dir))
 
-#---------------------------------------------------------------------------------
-# use CXX for linking C++ projects, CC for standard C
-#---------------------------------------------------------------------------------
 ifeq ($(strip $(CPPFILES)),)
     export LD := $(CC)
 else
     export LD := $(CXX)
 endif
 
-# Explicitly map the incoming environment assets to their future .o object files
 ENV_S_OFILES    :=  $(foreach file,$(ENV_OBJ_FILES),$(notdir $(file:.obj=_env.o))) \
                     $(foreach file,$(wildcard $(ASSETS_ENVIRONMENTS)/*/*.png),$(notdir $(file:.png=.o)))
 
-# Filter the generated files out of the wildcard SFILES so they aren't counted twice
 SFILES          :=  $(filter-out $(ENV_S_OFILES:.o=.s),$(SFILES))
 
 export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
@@ -172,153 +158,80 @@ export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 .PHONY: $(BUILD) clean assets dialogue music video environments maps models help
 
 #---------------------------------------------------------------------------------
-# Main build — DEFAULT TARGET
-#---------------------------------------------------------------------------------
 $(BUILD):
 	@$(MAKE) --no-print-directory assets
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
-#---------------------------------------------------------------------------------
-# help — list all targets and flags
-#---------------------------------------------------------------------------------
 help:
-	@echo ""
-	@echo "  Persona 3 Dual — build targets"
-	@echo "  ──────────────────────────────────────────────────────"
-	@echo "  make              Build everything (assets + NDS ROM)"
+	@echo "  make              Build everything"
 	@echo "  make assets       Run all asset converters"
-	@echo "  make dialogue     .dlg  →  source/dialogue/*.h + .cpp"
-	@echo "  make music        .mp3  →  nitrofiles/music/*.pcm"
-	@echo "  make video        .mp4  →  nitrofiles/video/*.vid"
-	@echo "  make environments .obj  →  source/environments/<name>/*"
-	@echo "  make models       .json →  source/models/*.h"
-	@echo "  make maps         .png  →  source/maps/*.h (collision)"
-	@echo "  make clean        Remove build artefacts"
-	@echo ""
-	@echo "  Overridable flags (pass on command line):"
-	@echo "  VIDEO_BITS=$(VIDEO_BITS)        8 or 16 colour depth"
-	@echo "  VIDEO_FPS=$(VIDEO_FPS)         frames per second"
-	@echo "  VIDEO_SIZE=$(VIDEO_SIZE)   output resolution"
-	@echo "  MODEL_TEXSIZE='$(MODEL_TEXSIZE)'        fallback tex size for models"
-	@echo "  DLG_FLAGS='$(DLG_FLAGS)'         extra flags for dlg2dialogue.py"
-	@echo "  MAP_FLAGS='$(MAP_FLAGS)'         extra flags for texture2collision.py"
-	@echo "  ENV_FLAGS='$(ENV_FLAGS)'         extra flags for nds_build_environment.py"
-	@echo ""
 
-#---------------------------------------------------------------------------------
-# Asset conversion - create output dirs, then run each converter
-#---------------------------------------------------------------------------------
 assets: dirs dialogue music video environments maps models
 
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue
-	@mkdir -p $(CURDIR)/source/maps
-	@mkdir -p $(CURDIR)/source/models
-	@mkdir -p $(CURDIR)/source/environments
-	@mkdir -p $(NITRO_MUSIC)
-	@mkdir -p $(NITRO_VIDEO)
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO)
 
 #---------------------------------------------------------------------------------
-# Dialogue
-# Input:   assets/dialogue/<name>.dlg
-# Output:  source/dialogue/<name>_dialogue.h  +  source/dialogue/<name>_dialogue.cpp
-# Flags:   DLG_FLAGS  (e.g. --stdout for debug)
-#---------------------------------------------------------------------------------
-$(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg | dirs
+$(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(ASSETS_DIALOGUE)/%.build.json)
 	@echo "  DLG   $(notdir $<)"
+	@mkdir -p $(dir $@)
 	@cd $(CURDIR)/source/dialogue && \
-		$(VENV_PYTHON) $(TOOLS_DIR)/dlg2dialogue.py $< -o $* $(DLG_FLAGS)
-
+		$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $* $(DLG_FLAGS)
 dialogue: $(DIALOGUE_OUT)
 
 #---------------------------------------------------------------------------------
-# Music
-# Input:   assets/music/<name>.mp3
-# Output:  nitrofiles/music/<name>.pcm   (s16le, 32 kHz, stereo)
-#---------------------------------------------------------------------------------
-$(NITRO_MUSIC)/%.pcm: $(ASSETS_MUSIC)/%.mp3 | dirs
+$(NITRO_MUSIC)/%.pcm: $(ASSETS_MUSIC)/%.mp3
 	@echo "  PCM   $(notdir $<)"
+	@mkdir -p $(dir $@)
 	@ffmpeg -i $< -f s16le -ar 32000 -ac 2 $@ -y -loglevel error
-
 music: $(MUSIC_OUT)
 
 #---------------------------------------------------------------------------------
-# Video
-# Input:   assets/video/<name>.mp4
-# Output:  nitrofiles/video/<name>.vid   (interleaved audio+video)
-# Flags:   VIDEO_BITS, VIDEO_FPS, VIDEO_SIZE
-#---------------------------------------------------------------------------------
-$(NITRO_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 | dirs
-	@echo "  VID   $(notdir $<)  [$(VIDEO_BITS)bpp @ $(VIDEO_FPS)fps $(VIDEO_SIZE)]"
-	@$(VENV_PYTHON) $(TOOLS_DIR)/video2vid.py $< $(basename $@) \
+$(NITRO_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.json)
+	@echo "  VID   $(notdir $<)"
+	@mkdir -p $(dir $@)
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(basename $@) \
 		--bits $(VIDEO_BITS) --fps $(VIDEO_FPS) --size $(VIDEO_SIZE)
-
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
-# Environments
-# Input:   assets/environments/<name>/<name>.obj
-# Output:  source/environments/<name>/<name>_env.h (plus .s and texture files)
-#---------------------------------------------------------------------------------
 define ENV_TEMPLATE
-$$(CURDIR)/source/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) | dirs
+$$(CURDIR)/source/environments/$$(notdir $$(patsubst %/,%,$$(dir $(1))))/$$(notdir $(1:.obj=_env.h)): $(1) $$(wildcard $$(dir $(1))/*.png) $$(wildcard $$(dir $(1))/*.mtl) $$(wildcard $(1:.obj=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
 	@echo "  ENV   $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
-	@$$(VENV_PYTHON) $$(TOOLS_DIR)/nds_build_environment.py $$< $$(dir $$@) $$(ENV_FLAGS)
+	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$(dir $$@) $$(ENV_FLAGS)
+	@touch $$@
 endef
 
 $(foreach file,$(ENV_OBJ_FILES),$(eval $(call ENV_TEMPLATE,$(file))))
-
 environments: $(ENVIRONMENT_OUT)
 
 #---------------------------------------------------------------------------------
-# Animated Models (JSON -> H)
-# Reads nested JSONs: assets/models/<name>/<name>.json
-# Outputs header: source/models/<name>.h
-# Extracts _WxH from filename, falls back to MODEL_TEXSIZE
-#---------------------------------------------------------------------------------
 define MODEL_TEMPLATE
-$$(CURDIR)/source/models/$$(notdir $(1:.json=.h)): $(1) | dirs
+$$(CURDIR)/source/models/$$(notdir $(1:.json=.h)): $(1) $$(wildcard $(1:.json=.build.json)) $$(wildcard $$(patsubst %/,%,$$(dir $(1))).build.json) $$(TOOLS_DIR)/build_asset.py
 	@echo "  MODEL $$(notdir $$<)"
-	@_ts=$$$$(echo "$$(notdir $(1:.json=))" | grep -oE '[0-9]+x[0-9]+$$$$' | tr 'x' ' '); \
-	_texsize=$$$${_ts:-$$(MODEL_TEXSIZE)}; \
-	$$(VENV_PYTHON) $$(TOOLS_DIR)/obj2model.py $$< $$(CURDIR)/source/models/$$(notdir $(1:.json=.bin)) --texsize $$$$_texsize
+	@mkdir -p $$(dir $$@)
+	@$$(VENV_PYTHON) $$(TOOLS_DIR)/build_asset.py $$< $$@
+	@touch $$@
 endef
 
 $(foreach file,$(MODEL_JSON_FILES),$(eval $(call MODEL_TEMPLATE,$(file))))
-
 models: $(MODEL_OUT)
 
 #---------------------------------------------------------------------------------
-# Collision maps
-#---------------------------------------------------------------------------------
-$(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.png | dirs
+$(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.png $(wildcard $(ASSETS_MAPS)/%.build.json)
 	@echo "  MAP   $(notdir $<)"
-	$(eval _crop_raw := $(shell echo "$*" | grep -oE '(_[0-9]+){4}$$'))
-	$(eval _crop_args := $(if $(_crop_raw),$(shell echo "$(_crop_raw)" | tr -d '_' | \
-		awk '{print substr($$0,1,1)," ",substr($$0,2,1)," ",substr($$0,3,1)," ",substr($$0,4,1)}' \
-		| sed 's/  */ /g' | xargs | \
-		python3 -c "import sys,re; t=sys.stdin.read().strip(); \
-		nums=re.findall(r'[0-9]+','$(shell echo "$*" | grep -oE "([0-9]+_){3}[0-9]+$$")'); \
-		print(' '.join(nums)) if nums else print('')"),))
-	$(eval _crop_args := $(shell echo "$*" | grep -oE '([0-9]+_){3}[0-9]+$$' | tr '_' ' '))
-	@$(VENV_PYTHON) $(TOOLS_DIR)/texture2collision.py $< $@ $(_crop_args) $(MAP_FLAGS)
+	@mkdir -p $(dir $@)
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@ $(MAP_FLAGS)
 
 maps: $(MAP_OUT)
-
 
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
-	@rm -f  $(DIALOGUE_OUT) \
-			$(CURDIR)/source/dialogue/*_dialogue.cpp \
-			$(CURDIR)/source/dialogue/*_dialogue.h \
-			$(MUSIC_OUT) \
-			$(VIDEO_OUT) \
-			$(MAP_OUT) \
-			$(MODEL_OUT)
+	@rm -f $(DIALOGUE_OUT) $(MUSIC_OUT) $(VIDEO_OUT) $(MAP_OUT) $(MODEL_OUT) $(CURDIR)/source/dialogue/*_dialogue.cpp $(CURDIR)/source/dialogue/*_dialogue.h
 	@rm -rf $(CURDIR)/source/environments/*
 
 #---------------------------------------------------------------------------------
@@ -326,39 +239,23 @@ else
 
 DEPENDS :=  $(OFILES:.o=.d)
 
-#---------------------------------------------------------------------------------
-# main targets
-#---------------------------------------------------------------------------------
 $(OUTPUT).nds   :   $(OUTPUT).elf
 $(OUTPUT).nds   :   $(shell find $(TOPDIR)/$(NITRODATA))
 $(OUTPUT).elf   :   $(OFILES)
 
-#---------------------------------------------------------------------------------
-# rule to build soundbank from music files
-#---------------------------------------------------------------------------------
 soundbank.bin soundbank.h : $(SFXFILES)
-#---------------------------------------------------------------------------------
 	@mmutil $^ -d -osoundbank.bin -hsoundbank.h
 
-#---------------------------------------------------------------------------------
 %.bin.o :   %.bin
-#---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
 
-#---------------------------------------------------------------------------------
 %.mp3.o :   %.mp3
-#---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
 
-#---------------------------------------------------------------------------------
 %.s %.h : %.png %.grit
-#---------------------------------------------------------------------------------
 	grit $< -fts -o$*
 
 -include $(DEPENDS)
-
-#---------------------------------------------------------------------------------------
 endif
-#---------------------------------------------------------------------------------------
