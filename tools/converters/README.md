@@ -1,41 +1,187 @@
-# Persona 3 Dual Asset Compilation Pipeline
+Here is the updated `README.md` reflecting your new unified `build_asset.py` workflow and the shift toward `.build.json` sidecar configuration files. 
 
-This project uses a master dispatcher script (`tools/build_asset.py`) orchestrated by the Makefile to compile all assets dynamically. Instead of relying on gigantic strings of shell flags or embedding parameters in filenames, we store compiler overrides in `.build.json` "sidecar" files.
+I've removed the outdated Makefile flag overrides and filename-encoding rules, replacing them with instructions on how the new JSON-based configuration pipeline works.
 
-## How the Toolchain Works
+***
 
-When you type `make` in your terminal, the build system discovers all `.zip`, `.obj`, `.png`, and `.mp4` raw assets. 
+# Persona 3 Dual — Asset Pipeline
 
-For each asset, the `build_asset.py` dispatcher:
-1. Locates the file (e.g., `assets/models/akihiko.zip`).
-2. Checks if an identical `.build.json` file sits next to it (e.g., `assets/models/akihiko.build.json`).
-3. Uses the file extension (or the `"asset_type"` key) to load the correct converter script.
-4. Passes the JSON dictionary to the converter module.
+> Everything in `assets/` is source. Everything in `source/` or `nitrofiles/` are generated.  
+> **Never hand-edit generated files** — run `make assets` instead.
 
-## How to Make a `.build.json` Sidecar
+---
 
-A `.build.json` file is just a simple JSON file that overrides default build configurations. 
+## Quick Start
 
-### 1. Basic Structure
-The naming convention is identical to the source asset:
-* Asset: `assets/environments/iwatodai_dorm/iwatodai_dorm.obj`
-* JSON:  `assets/environments/iwatodai_dorm/iwatodai_dorm.build.json`
+```bash
+# First time only — set up venv (No external dependencies like Pillow required!)
+python3 -m venv ~/.venv
+source ~/.venv/bin/activate
 
-### 2. Available Configuration Flags
+# Full build (assets + ROM)
+make
 
-Here is an example `.build.json` translating common CLI flags. If a flag is omitted, the compiler defaults to standard behaviour.
+# Asset conversion only
+make assets
 
-```json
-{
-    "asset_type": "obj2model",        // (Optional) Forces a specific script
-    "target_size": 4.0,               // (--target-size 4.0) Auto-scales longest edge
-    "scale_factor": 0.054,            // (--scale 0.054) Only applied if "scale_mode" is "manual"
-    "center": true,                   // Centers origin (use false for --no-center)
-    "source_blender": true,           // (--source-blender) Reorients Z-up to Y-up
-    "texsize": [64, 64],              // (--texsize 64 64) Force 64x64 texture mappings
-    "crop": [0, 0, 44, 33],           // (--crop 0 0 44 33) Specifically for texture2collision
-    "skip_grit": false,               // (--skip-grit) For environments
-    "grit_flags": "-ftc -fh -gb -gB16 -pu16",
-    "bits": 16,                       // (--bits 16) For Video encoding
-    "fps": 24                         // (--fps 24) For Video encoding
-}
+# One category at a time
+make dialogue
+make music
+make video
+make environments
+make models
+make maps
+
+# See all targets and flags
+make help
+```
+
+---
+
+## Configuration (`.build.json`)
+
+The pipeline uses a unified Python wrapper (`build_asset.py`) to process assets. Instead of cluttering filenames with crop coordinates or overriding Makefile variables, **all asset configuration is now handled via `.build.json` sidecar files.**
+
+Place a `.build.json` file next to your asset with the same base name (e.g., `tartarus.png` and `tartarus.build.json`). For grouped assets like environments or models, you can also place a directory-level `.build.json` to apply settings to everything inside that folder.
+
+---
+
+## Directory Layout
+
+```text
+assets/
+  dialogue/       .dlg scripts          → source/dialogue/
+  music/          .mp3 music            → nitrofiles/music/
+  sfx/            .wav SFX              → soundbank.bin (via mmutil)
+  video/          .mp4 cutscenes        → nitrofiles/video/
+  environments/   .obj static rooms     → nitrofiles/environments/ & source/environments/
+  models/         .json animated models → nitrofiles/models/ & source/models/
+  maps/           .png collision maps   → source/maps/
+
+source/
+  dialogue/       *_dialogue.h + .cpp   (auto-generated)
+  environments/   *_env.h               (auto-generated wrappers)
+  models/         *.h                   (auto-generated animation enums)
+  maps/           *.h                   (auto-generated collision arrays)
+
+nitrofiles/
+  music/          *.pcm                 (auto-generated)
+  video/          *.vid                 (auto-generated)
+  environments/   *.bin                 (auto-generated display lists)
+  models/         *.bin                 (auto-generated rigs/tracks)
+
+tools/
+  build_asset.py          (Unified configuration wrapper)
+  dlg2dialogue.py
+  nds_build_environment.py
+  obj2environment.py
+  obj2model.py
+  texture2collision.py
+  video2vid.py
+```
+
+---
+
+## Tools Reference
+
+---
+
+### `nds_build_environment.py` — 3D Static Environment Pipeline
+
+Converts an `.obj` + `.mtl` + `.png` collection into a zero-boilerplate C++ header, a raw `.bin` display list file, and auto-generated `.grit` sidecar files for native Make compilation.
+
+*(See `ENVIRONMENT_README.md` for full details and Blender plugin instructions).*
+
+| | |
+|---|---|
+| **Input** | `assets/environments/<name>/<name>.obj` (plus textures) |
+| **Output** | `nitrofiles/environments/<name>.bin`, `source/environments/<name>_env.h`, and `.grit` sidecars |
+| **Config** | `assets/environments/<name>/<name>.build.json` (e.g., `{"no_center": true, "source_blender": true}`) |
+
+---
+
+### `obj2model.py` — 3D Animated Model Converter
+
+Compiles a hierarchical `.json` skeleton and per-bone `.obj` parts into a highly optimized binary format and a C++ header containing animation enums. Strips redundant keyframes automatically to save NDS memory.
+
+*(See `MODEL_README.md` for full details on Blockbench/Blender plugin usage).*
+
+| | |
+|---|---|
+| **Input** | `assets/models/<name>/<name>.json` (plus isolated `.obj`s) |
+| **Output** | `nitrofiles/models/<name>.bin` and `source/models/<name>.h` |
+| **Config** | `assets/models/<name>/<name>.build.json` (e.g., `{"texsize": [128, 128], "source_blender": true}`) |
+
+---
+
+### `texture2collision.py` — Collision Map Converter
+
+Converts a 2D PNG into a `uint8_t collision_map[H][W]` C header. This is fully decoupled from 3D model bounds, allowing absolute physical scaling.
+
+| | |
+|---|---|
+| **Input** | `assets/maps/<name>.png` |
+| **Output** | `source/maps/<name>.h` |
+| **Config** | `<name>.build.json` (e.g., `{"crop": [32, 0, 64, 64]}` to crop x, y, width, height) |
+
+**Tile values** (edit JSON palette or source code to map colors):
+
+| Value | Meaning |
+|---|---|
+| `0` | Walkable / Default |
+| `1` | Collision wall |
+| `2` | Save point |
+| `3` | Prev scene |
+| `4` | Next scene |
+| `100` | Character spawn |
+
+---
+
+### `dlg2dialogue.py` — Dialogue Compiler
+
+Compiles a `.dlg` scene script into a C++ header + source pair for the `DialogueController`. Generates robust background loading arrays, choice branching, and label-based jump matrices.
+
+| | |
+|---|---|
+| **Input** | `assets/dialogue/<name>.dlg` |
+| **Output** | `source/dialogue/<name>_dialogue.h` + `.cpp` |
+| **Config** | `<name>.build.json` (e.g., `{"stdout": true}` for debugging) |
+
+---
+
+### `ffmpeg` — Music Converter (PCM)
+
+Converts MP3s to raw 16-bit stereo PCM at 32 kHz for `maxmod`.
+
+| | |
+|---|---|
+| **Input** | `assets/music/<name>.mp3` |
+| **Output** | `nitrofiles/music/<name>.pcm` |
+
+---
+
+### `video2vid.py` — Video Encoder
+
+Encodes an MP4 video into a custom, interleaved `.vid` format containing raw video frames (pal8 or bgr555) perfectly synced with 16-bit PCM audio chunks.
+
+| | |
+|---|---|
+| **Input** | `assets/video/<name>.mp4` |
+| **Output** | `nitrofiles/video/<name>.vid` |
+| **Config** | `<name>.build.json` (e.g., `{"fps": 24, "bits": 16, "size": "256x192"}`) |
+
+---
+
+## Incremental Builds
+
+Make tracks input → output dependencies. Re-running `make assets` only reconverts files whose source is **newer** than the output (this includes changes to `.build.json` files). To force a full reconvert:
+
+```bash
+make clean && make assets
+```
+
+To force a single category without cleaning:
+
+```bash
+touch assets/environments/dorm/dorm.obj && make environments
+```

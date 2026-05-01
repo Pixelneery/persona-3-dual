@@ -1,135 +1,111 @@
-# Persona 3 Dual: Environment Pipeline (OUTDATED README)
+# NDS Environment Exporter Toolchain
 
-This document details the automated workflow for converting 3D models and textures into Nintendo DS-compatible Assembly (`.s`) and C++ headers (`.h`). 
+This toolchain provides a seamless pipeline for exporting 3D environments from Blender (or standalone OBJ files) directly into optimized, hardware-ready Nintendo DS display lists. 
 
-This pipeline is strictly decoupled from the physics engine; it handles visuals, display lists, and texture VRAM loading only.
-
----
-
-## 1. Project Structure
-
-The build system relies on a strict input-output directory mapping.
-
-* **Input Directory:** `assets/environments/<environment_name>/`
-* **Required Files:** Your `.obj` mesh, `.mtl` material file, and all associated `.png` textures MUST be grouped together in this folder.
-* **Output Directory:** `source/environments/<environment_name>/` 
-
-During compilation, the pipeline automatically generates the `_env.h` file, the raw `.s` display lists, and runs GRIT on all textures, placing the final results into the output directory.
+It handles geometry scaling, Z-up to Y-up coordinate conversion, material parsing, and automatic generation of C++ headers and GRIT sidecar files for easy integration into devkitARM Makefiles.
 
 ---
 
-## 2. The Automated Make Workflow
+## 📦 Installation
 
-The easiest way to process environments is to let the `Makefile` handle it. The build system watches your asset folders and only recompiles when changes are detected.
+### 1. Command Line Tools (Standalone)
+The CLI pipeline requires Python 3. No external dependencies are needed.
+1. Place `nds_build_environment.py` and `obj2environment.py` in your project's `tools/` directory (or anywhere accessible).
+2. Ensure you have standard NDS development tools (devkitARM, GRIT) installed if you are building the output.
 
-### Make Commands
+### 2. Blender Plugin
+1. Open Blender (3.0+).
+2. Go to **Edit > Preferences > Add-ons**.
+3. Click **Install...** and select `nds_environment_exporter.py`.
+4. Check the box to enable **Import-Export: NDS Environment Exporter**.
+5. **⚠️ CRITICAL:** Expand the add-on details in the Preferences window. Under **Paths**, set the **Build Script** field to the absolute path of your `nds_build_environment.py` file. The exporter will not run without this.
 
-| Command | Action |
-| :--- | :--- |
-| `make` | Builds the entire ROM, triggering environment conversion if any `.obj` or `.png` files have been modified. |
-| `make environments` | Runs the conversion pipeline strictly for the 3D environments without building the rest of the ROM. |
-| `make clean` | Wipes the `source/environments/` directory to force a fresh conversion on the next build. |
+---
 
-### Make Overrides
+## 🚀 How to Use
 
-By default, the Makefile passes `--source-blender` to the Python script to automatically fix the Z-up (Blender) to Y-up (NDS) coordinate mismatch. You can override this from the command line if using assets from different 3D software:
+### Via Blender (Recommended)
+This is the fastest way to get your scenes into your game engine.
+1. Select the mesh objects you want to export. Ensure your materials use `Image Texture` nodes connected to the `Base Color`.
+2. Go to **File > Export > NDS Environment (.h)**.
+3. Configure your export settings in the right-hand panel (Geometry scale, texture flags, etc.).
+4. Click Export. The plugin will automatically:
+    * Triangulate and export a temporary `.obj` and `.mtl`.
+    * Package your `.png` textures into the output directory.
+    * Run the CLI build script to generate the `.bin`, `.h`, and `.grit` files.
 
+### Via Command Line
+If you already have an `.obj` file or are running a batch build script:
 ```bash
-make ENV_FLAGS=""
+python nds_build_environment.py models/tartarus_block1.obj data/env/ --source-blender --target-size 8.0
 ```
 
 ---
 
-## 3. Blender Plugin Setup & Usage
+## 📄 Output Files
 
-If you prefer to export directly from your 3D workspace to a custom directory, you can use the included Blender Addon (`nds_environment_exporter.py`).
-
-### Installation
-
-1.  Open Blender and navigate to **Edit > Preferences > Add-ons**.
-2.  Click **Install** and select `nds_environment_exporter.py`.
-3.  Enable the Add-on.
-4.  Expand the Add-on preferences and set the **Build Script** path to the absolute location of `nds_build_environment.py` on your machine.
-
-### Usage
-
-1.  Select the objects you wish to export.
-2.  Navigate to **File > Export > NDS Environment (.h)**.
-3.  Configure your settings in the export window.
-4.  Click Export. The plugin will silently run the CLI pipeline and generate the NDS files in your chosen directory.
-
-### Plugin Settings
-
-| Setting | Description |
-| :--- | :--- |
-| **Scale Mode** | Choose between `Auto Size` (scales the longest dimension to a target unit size) or `Manual Scale` (applies a flat multiplier). |
-| **Centre Model** | Automatically centers the geometry around `(0,0,0)` in world space. |
-| **Selection Only** | Exports only the actively highlighted meshes. |
-| **Skip GRIT** | Generates the 3D display list but bypasses texture `.s` conversion. |
+For an input named `scene.obj`, the pipeline generates:
+* **`scene.bin`**: The raw binary file containing the packed NDS display lists (FIFO commands, v16 vertices, t16 texcoords).
+* **`scene.h`**: A C++ wrapper class (`scene_Environment`) with `load()`, `draw()`, and `cleanup()` methods, plus world bounding box definitions.
+* **`[texture_name].png`**: Copied from your source materials.
+* **`[texture_name].grit`**: Auto-generated sidecar files containing your GRIT flags (e.g., `-gb -gB16 -pu16`) so your devkitARM Makefile automatically converts them during the build step.
 
 ---
 
-## 4. Command Line Interface (CLI)
+## 💻 Engine Integration Example
 
-The pipeline is powered by `nds_build_environment.py`, a wrapper that manages the OBJ converter and GRIT texture processor. You can run it manually for debugging or custom automation.
+Here is how you would load and draw an exported environment inside your engine, such as the Persona 3 Dual custom engine:
 
-**Basic Usage:**
-```bash
-python3 tools/nds_build_environment.py input.obj output_dir/ [options]
-```
-
-**CLI Arguments:**
-
-| Argument | Action |
-| :--- | :--- |
-| `--target-size FLOAT` | Auto-scales the model so its longest axis equals this value in NDS units (Default: 4.0). |
-| `--scale FLOAT` | Applies an explicit, manual scale multiplier. Overrides `--target-size`. |
-| `--no-center` | Prevents the script from translating the model to the origin. |
-| `--source-blender` | Rotates the vertices from Blender's Z-up system to the NDS Y-up system. |
-| `--mapping FILE` | Path to a JSON file explicitly mapping material names to PNG textures. |
-| `--skip-grit` | Skips texture processing. |
-| `--grit-flags STRING` | Custom flags passed to GRIT (Default: `-fts -fh -gb -gB16 -pu16`). |
-
----
-
-## 5. C++ Integration
-
-Once the build is complete, implementing the environment in your C++ View requires just a few lines of code.
-
-**1. Include the Header**
 ```cpp
-#include "environments/my_room/my_room_env.h"
-```
+#include <nds.h>
+#include "scene.h" // The auto-generated header
 
-**2. Initialize Memory**
-```cpp
-// Allocate an array for the OpenGL texture IDs
-static int myRoomTextureIds[MY_ROOM_TEX_COUNT];
+// Create your environment instance
+scene_Environment currentLevel;
 
-void MyView::Init() {
-    // Group the GRIT-generated bitmaps in slot order
-    const unsigned int* bitmaps[MY_ROOM_TEX_COUNT] = {
-        floorBitmap, 
-        wallsBitmap
+void initLevel() {
+    // 1. You must provide the compiled GRIT bitmaps in the exact order 
+    //    specified by the generated enum in scene.h.
+    const unsigned int* textureData[SCENE_TEX_COUNT] = {
+        (const unsigned int*)floor_texBitmap, 
+        (const unsigned int*)wall_texBitmap
     };
-    
-    // Load textures into VRAM
-    Load_my_room(myRoomTextureIds, bitmaps);
+
+    // 2. Load the binary display list from the filesystem (e.g., NitroFS)
+    //    and bind the textures to VRAM.
+    bool success = currentLevel.load("nitro:/env/scene.bin", textureData);
+    if (!success) {
+        printf("Failed to load environment!\n");
+    }
+}
+
+void renderLevel() {
+    // 3. Simply call draw() within your rendering loop
+    currentLevel.draw();
+}
+
+void unloadLevel() {
+    // 4. Free allocated memory and delete OpenGL textures
+    currentLevel.cleanup();
 }
 ```
 
-**3. Render the Scene**
-```cpp
-void MyView::Update() {
-    glPushMatrix();
-        Draw_my_room(myRoomTextureIds);
-    glPopMatrix(1);
-}
-```
+---
 
-**4. Cleanup**
-```cpp
-void MyView::Cleanup() {
-    Delete_my_room(myRoomTextureIds);
-}
-```
+## ⚙️ Quick Reference
+
+### Exporter Settings (Blender & CLI)
+
+| Parameter / Flag | Description | Default |
+| :--- | :--- | :--- |
+| `Scale Mode` / `--scale`, `--target-size` | **Auto** scales the largest dimension of the mesh to `--target-size`. **Manual** multiplies vertices by `--scale`. | Auto, `4.0` |
+| `Centre Model` / `--no-center` | Calculates the bounding box and translates the geometry so the origin is at the bottom-center of the mesh. | Enabled |
+| `Selection Only` | (Blender Only) Exports only currently selected objects. | Disabled |
+| `--source-blender` | Applies Blender's Z-up coordinate system to the NDS Y-up system and flips texture V-coordinates. | Auto via Plugin |
+| `Skip GRIT` / `--skip-grit` | Prevents the generation of `.grit` sidecar files next to the output textures. | Disabled |
+| `GRIT Flags` / `--grit-flags` | The pixel formatting flags written to the `.grit` sidecar files. | `-gb -gB16 -pu16` |
+
+### Technical Notes & Quirks
+* **Texture Wrapping:** Tiled textures perfectly modulo wrap. The exporter uses 16-bit overflow (`floattot16`) to natively support infinite UV scrolling without clamping.
+* **Valid Texture Sizes:** NDS hardware strictly requires power-of-two texture dimensions (8, 16, 32... 1024). The script automatically snaps your texture metadata to the nearest valid dimension.
+* **VRAM Limits:** Remember that while the script exports unlimited geometry, your engine is still bound by NDS VRAM and vertex limits per frame. Group dense geometry accordingly.

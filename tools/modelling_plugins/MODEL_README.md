@@ -1,132 +1,84 @@
-# Persona 3 Dual: Animated Model Pipeline (OUTDATED README)
+# NDS Model Exporter Toolchain
 
-This document details the automated workflow for converting rigged 3D models and their animations into Nintendo DS-compatible hierarchical display lists and keyframe arrays.
+This toolchain provides a complete workflow for exporting animated, hierarchical 3D models from **Blender** or **Blockbench** into a highly optimized, hardware-ready Nintendo DS binary format. 
 
-Unlike static environments, animated models are exported as a collection of isolated `.obj` files (one per bone/node) tied together by a central `.json` file containing the skeletal hierarchy and animation tracks.
-
----
-
-## 1. Project Structure & Naming Conventions
-
-The build system relies on a strict input-output mapping and a specific naming convention to auto-detect texture sizes.
-
-* **Input Directory:** `assets/models/<model_name>/`
-* **Required Files:** The extracted contents of your exporter's `.zip` file (the `.json` file and all `_nX.obj` files) MUST be placed here.
-* **Texture Scaling (CRITICAL):** The NDS requires texture sizes to be powers of two. To automatically pass the correct scale to the compiler, append the resolution to your filename: 
-  * `player_64x64.json`
-  * If omitted (e.g., `enemy.json`), the Makefile falls back to the default `MODEL_TEXSIZE` (32x32).
-
-**Output:** The pipeline parses the JSON and outputs a single lightweight header at `source/models/<model_name>.h`.
+The pipeline bridges the gap between modern 3D software and NDS hardware by baking skeletal meshes into per-bone `.obj` files, extracting animation keyframes, and compiling them into pre-calculated display lists and transformation tracks.
 
 ---
 
-## 2. The Automated Make Workflow
+## 📦 Installation
 
-The `Makefile` watches your `assets/models/` directory and will automatically recompile headers if the `.json` or `.obj` files change.
+### 1. Command Line Converter (`obj2model.py`)
+This standalone script converts the exported `.json` hierarchy into the final `.bin` and `.h` files.
+1. Requires Python 3. No external dependencies.
+2. Place `obj2model.py` in your project's `tools/` directory.
 
-### Make Commands
+### 2. Blender Plugin (`nds_model_exporter.py`)
+1. Open Blender (3.0+ or 4.x).
+2. Go to **Edit > Preferences > Add-ons**.
+3. Click **Install...** and select `nds_model_exporter.py`.
+4. Check the box to enable **Import-Export: NDS Model Exporter**.
 
-| Command | Action |
-| :--- | :--- |
-| `make` | Builds the entire ROM, triggering model conversion if any JSON files have been modified. |
-| `make models` | Runs the conversion pipeline strictly for the animated models without building the rest of the ROM. |
-| `make clean` | Wipes the generated `source/models/` directory. |
-
----
-
-## 3. Authoring Tools
-
-You can build and animate your models using either Blender or Blockbench. Both plugins output a standardized `.zip` file containing your `.json` and per-node `.obj` files. **You must extract this `.zip` into your `assets/models/<name>/` folder before building.**
-
-### A. Blender Plugin (`nds_model_exporter.py`)
-Best for complex armatures, weighted meshes, and NLA-track animations.
-
-**Setup:**
-1. Go to **Edit > Preferences > Add-ons > Install**.
-2. Select `nds_model_exporter.py` and enable it.
-
-**Modeling Conventions:**
-* **Bones = Nodes:** One armature bone becomes one NDS node.
-* **Vertex Groups:** Geometry is bound to a bone via Vertex Groups. The vertex group name **must exactly match** the bone name. Unassigned vertices are ignored.
-* **Animations:** The plugin automatically exports the active Action, plus all stashed NLA tracks as separate animations.
-* **Textures:** Apply your single texture image to the active material. The plugin will attempt to auto-detect its size to append to the filename.
-
-**Exporting:**
-* Select your Armature.
-* Go to **File > Export > NDS Model (.zip)**.
-
-### B. Blockbench Plugin (`nds_model_exporter.js`)
-Best for rigid, low-poly, Minecraft-style modeling and strict hierarchical animations.
-
-**Setup:**
-1. Go to **File > Plugins > Load Plugin from File**.
-2. Select `nds_model_exporter.js`.
-
-**Modeling Conventions:**
-* **Groups = Nodes:** Every Group/Folder in your outliner becomes an NDS node. Nested groups become child nodes.
-* **Geometry:** Any Cubes or Meshes inside a Group belong to that node.
-* **Animations:** All animations in the Blockbench Animation tab are exported. Time is automatically converted from seconds to 60 FPS keyframes.
-
-**Exporting:**
-* Go to **File > Export > Export NDS Model (ZIP)**.
+### 3. Blockbench Plugin (`nds_model_exporter.js`)
+1. Open Blockbench.
+2. Go to **File > Plugins**.
+3. Click the **Load Plugin from File** icon (folder icon).
+4. Select `nds_model_exporter.js`.
 
 ---
 
-## 4. Command Line Interface (CLI)
+## 🚀 How to Use
 
-The pipeline is powered by `obj2model.py`. You can run it manually for debugging or custom automation.
+### Step 1A: Exporting from Blender
+1. **Setup your Rig:** Use an **Armature** with Mesh children. Your meshes must be weighted to specific bones using **Vertex Groups** named exactly after the bones.
+2. **Setup your Material:** Your mesh must use a single image texture node linked to the Base Color.
+3. Select your Armature and parented Meshes.
+4. Go to **File > Export > NDS Model (.zip)**.
+5. Save the file. The plugin extracts animation actions/NLA strips and isolates the geometry per bone based on vertex weight.
 
-**Basic Usage:**
-```bash
-python3 tools/obj2model.py assets/models/player/player_64x64.json source/models/player.bin [options]
-```
+### Step 1B: Exporting from Blockbench
+1. **Setup your Hierarchy:** Use **Groups** (folders) to act as your "bones". Place cubes and meshes inside these groups.
+2. Create your animations in the Animate tab.
+3. Go to **File > Export > Export NDS Model (ZIP)**.
+4. The plugin automatically converts the Blockbench groups and keyframes (rotation/position) into the NDS hierarchy.
 
-**CLI Arguments:**
+### Step 2: Compiling the Binary
+Both plugins output a `.zip` file containing a `modelName.json` and a collection of `modelName_nX.obj` files.
 
-| Argument | Action |
-| :--- | :--- |
-| `--texsize W H` | Explicitly defines the width and height of the texture (e.g., `--texsize 64 64`). |
-| `--color R G B` | Applies a flat vertex color (0-255) to the entire model (e.g., `--color 255 128 0`). |
-
-*(Note: The script outputs a `.h` file despite the `.bin` output target name in the CLI, due to internal handling of the JSON conversion vs standard OBJ conversion).*
+1. **Extract the `.zip` file** to a working directory.
+2. Run `obj2model.py` against the generated `.json` file:
+   ```bash
+   # From Blockbench
+   python obj2model.py my_model.json my_model.bin --texsize 128 128
+   
+   # From Blender (Requires the --source-blender flag for coordinate fixing)
+   python obj2model.py my_blender_model.json my_blender_model.bin --source-blender --texsize 256 256
+   ```
 
 ---
 
-## 5. C++ Integration
+## 📄 Output Files
 
-Once the build is complete, integrating the animated model into your C++ engine is entirely handled by the `AnimationController`.
+The final `obj2model.py` compilation yields:
+* **`[model_name].bin`**: A raw binary (`MDL1` magic) containing the node hierarchy, pre-calculated global pivot points, packed FIFO display lists per node, and optimized keyframe animation tracks.
+* **`[model_name].h`**: A C++ header containing a generated `enum` representing your animation tracks by name (e.g., `MODEL_MYMODEL_WALK`, `MODEL_MYMODEL_RUN`), allowing you to trigger them safely in your engine.
 
-**1. Include the Header**
-```cpp
-#include "models/player.h" // Matches your JSON filename without the _WxH suffix
-```
+---
 
-**2. Initialize the Controller**
-```cpp
-AnimationController myPlayer;
+## ⚙️ Quick Reference: CLI Flags
 
-void MyView::Init() {
-    // Pass the controller to the auto-generated Load function
-    LoadModel_player(myPlayer);
-    
-    // Use the auto-generated Enums for type-safe animation triggering
-    myPlayer.set(MODEL_PLAYER_WALK, true); // true = loop
-    myPlayer.play();
-}
-```
+| Flag | Description | Default |
+| :--- | :--- | :--- |
+| `input` | Path to the `.json` (from the extracted ZIP) or a single `.obj`. | *Required* |
+| `output` | Path to the destination `.bin` file. | *Required* |
+| `--texsize W H` | Provides texture width and height to correctly calculate hardware UV coordinates (`t16`). | `None` |
+| `--color R G B` | Applies a flat vertex color (0-255) to the entire model. | `None` |
+| `--scale` | Manually forces a scale multiplier on all vertex positions and animation translations. | Auto |
+| `--target-size` | Auto-scales the model so its largest bounding box dimension matches this value. | `4.0` |
+| `--no-center` | Prevents the script from automatically shifting the model's origin to its bottom-center. | Centered |
+| `--source-blender`| **Required for Blender exports.** Applies Z-up to Y-up conversions, flips UV V-axis, and adjusts scale logic (Blockbench divides pivots by 16.0, Blender uses 1.0). | Disabled |
 
-**3. Update and Render**
-```cpp
-void MyView::Update() {
-    // Tick the animation forward
-    myPlayer.update();
-    
-    glPushMatrix();
-        // Bind the model's texture
-        glBindTexture(GL_TEXTURE_2D, playerTextureId);
-        
-        // Render the hierarchical display lists
-        myPlayer.render();
-    glPopMatrix(1);
-}
-```
+### Technical Notes & Quirks
+* **Keyframe Optimization:** The `obj2model.py` script automatically strips redundant linear keyframes to save NDS memory. If three consecutive frames share the exact same rotation and position, the middle frame is deleted.
+* **Animation Baking:** Ensure your Blender animations are baked into standard Actions or NLA tracks. Procedural constraints/IK might require visual keying before export to accurately capture world transforms.
+* **Hardware Precision:** Vertex coordinates and positions are clamped and packed into standard NDS 16-bit fixed-point (`v16`). Rotations use a 16-bit angle format (0 to 32767 mapped across 360 degrees).
