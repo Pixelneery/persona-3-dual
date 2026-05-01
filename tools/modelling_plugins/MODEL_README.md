@@ -6,7 +6,7 @@ The pipeline bridges the gap between modern 3D software and NDS hardware by baki
 
 ---
 
-## 📦 Installation
+## Installation
 
 ### 1. Command Line Converter (`obj2model.py`)
 This standalone script converts the exported `.json` hierarchy into the final `.bin` and `.h` files.
@@ -27,7 +27,7 @@ This standalone script converts the exported `.json` hierarchy into the final `.
 
 ---
 
-## 🚀 How to Use
+## How to Use
 
 ### Step 1A: Exporting from Blender
 1. **Setup your Rig:** Use an **Armature** with Mesh children. Your meshes must be weighted to specific bones using **Vertex Groups** named exactly after the bones.
@@ -57,7 +57,7 @@ Both plugins output a `.zip` file containing a `modelName.json` and a collection
 
 ---
 
-## 📄 Output Files
+## Output Files
 
 The final `obj2model.py` compilation yields:
 * **`[model_name].bin`**: A raw binary (`MDL1` magic) containing the node hierarchy, pre-calculated global pivot points, packed FIFO display lists per node, and optimized keyframe animation tracks.
@@ -65,7 +65,7 @@ The final `obj2model.py` compilation yields:
 
 ---
 
-## ⚙️ Quick Reference: CLI Flags
+## Quick Reference: CLI Flags
 
 | Flag | Description | Default |
 | :--- | :--- | :--- |

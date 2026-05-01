@@ -90,7 +90,7 @@ tools/
 
 Converts an `.obj` + `.mtl` + `.png` collection into a zero-boilerplate C++ header, a raw `.bin` display list file, and auto-generated `.grit` sidecar files for native Make compilation.
 
-*(See `ENVIRONMENT_README.md` for full details and Blender plugin instructions).*
+*(See `ENVIRONMENT_README.md` for full details).*
 
 | | |
 |---|---|
