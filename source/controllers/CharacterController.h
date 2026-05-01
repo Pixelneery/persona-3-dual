@@ -1,5 +1,6 @@
 #pragma once
 #include <stdint.h>
+#include "./geometry.h"
 
 // TODO: move this to globals?
 enum class TileType {
@@ -41,7 +42,7 @@ class CharacterController {
         const float tileSize;
         const float worldOffsetX;
         const float worldOffsetZ;
-        const float characterRadius;
+        const Point2D<float> characterSize;
 
         // movement and viewpoint
         const float speed;
@@ -51,15 +52,16 @@ class CharacterController {
 
         // translation (mutable)
         float angle = 0.0;
-        float translateX = 0.0;
-        float translateZ = 0.0;
+        Point2D<float> characterTranslate = Point2D<float>(0.0, 0.0);
+        // float translateX = 0.0;
+       // float translateZ = 0.0;
         float characterFacingAngle = 0.0f;
 
         CharacterController(
             int iMapWidth, int iMapHeight, const uint8_t* iCollisionMap, 
-            float iTileSize, float iWorldOffsetX, float iWorldOffsetZ, float iCharacterRadius,
+            float iTileSize, float iWorldOffsetX, float iWorldOffsetZ, Point2D<float> iCharacterSize,
             float iSpeed, float iAngleIncrement, float iDistance, float iLookAhead,
-            float iAngle, float iTranslateX, float iTranslateZ, float iCharacterFacingAngle
+            float iAngle, Point2D<float> iCharacterTranslate, float iCharacterFacingAngle
         ) : 
             mapWidth(iMapWidth),
             mapHeight(iMapHeight),
@@ -67,7 +69,7 @@ class CharacterController {
             tileSize(iTileSize),
             worldOffsetX(iWorldOffsetX),
             worldOffsetZ(iWorldOffsetZ),
-            characterRadius(iCharacterRadius),
+            characterSize(iCharacterSize),
             speed(iSpeed),
             angleIncrement(iAngleIncrement),
             distance(iDistance),
@@ -75,8 +77,7 @@ class CharacterController {
         {
             // set inital position
             angle = iAngle;
-            translateX = iTranslateX;
-            translateZ = iTranslateZ;
+            characterTranslate = iCharacterTranslate;
             characterFacingAngle = iCharacterFacingAngle;
         };
 
@@ -85,6 +86,6 @@ class CharacterController {
         TileType isTileAt();
     
     private:
-        TileType isTileAt(float worldX, float worldZ);
-        int isTileWalkable(float worldX, float worldZ);
+        TileType isTileAt(int tileX, int TileY);
+        bool isTileWalkable(float worldX, float worldZ);
 };

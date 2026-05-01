@@ -3,6 +3,7 @@
 #include "controllers/DialogueController.h"
 #include "controllers/CharacterController.h"
 #include "maps/iwatodaiDorm_256x256_offsets.h"
+#include <nds/arm9/console.h>
 
 // implementing from View
 class IwatodaiDormView : public View {
@@ -28,15 +29,14 @@ class IwatodaiDormView : public View {
             const float tileSize = TILE_SIZE;
             const float worldOffsetX = WORLD_OFFSET_X;
             const float worldOffsetZ = WORLD_OFFSET_Z;
-            const float characterRadius = 0.05f;
+            const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
             // movement and viewpoint
             const float speed = 0.01f;
             const float angleIncrement = 0.05f;
             const float distance = 0.5f; 
             const float lookAhead = 0.3f;
             // set character initial translation position
-            const float translateX = -1.3;
-            const float translateZ = -0.8;
+            const Point2D<float> characterTranslate = Point2D<float>(-1.3, -0.8);
             const float angle = -1.6;
             const float characterFacingAngle = 91.67;
         DialogueController dialogueCtrl;

@@ -101,7 +101,7 @@ void IwatodaiDormView::Init() {
     bgUpdate();
 
     // get controllers
-    playerCtrl = new CharacterController(MAP_WIDTH, MAP_HEIGHT, &collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterRadius, speed, angleIncrement, distance, lookAhead, angle, translateX, translateZ, characterFacingAngle);
+    playerCtrl = new CharacterController(MAP_WIDTH, MAP_HEIGHT, &collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
 
     // point to music
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
