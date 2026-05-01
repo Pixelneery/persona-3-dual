@@ -75,6 +75,8 @@ void IwatodaiDormView::Init() {
     bgUpdate();
 
     // get controllers
+    // NOTE: the collision map is currently being used here, but is just dummy data. This is an old implementation that will
+    // be deprecated, but is currently still in the workflow until the new collision system is fully implemented and tested.
     playerCtrl = new CharacterController(MAP_WIDTH, MAP_HEIGHT, &collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
 
     // point to music
