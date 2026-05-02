@@ -14,10 +14,14 @@
 #include "maps/iwatodaiDorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
+// pause menu
+#include "components/PauseMenuComponent.h"
 
-// texture IDs
+// TODO: move to header
 int characterTextureId;
 iwatodai_dorm_Environment iwatodaiDormEnv;
+PauseMenuComponent pauseMenu;
+bool isPauseMenuActive = false;
 
 void IwatodaiDormView::Init() {
     videoSetMode(MODE_0_3D);
@@ -74,12 +78,12 @@ void IwatodaiDormView::Init() {
 
     bgUpdate();
 
-    // get controllers
+    // setup player controller
     // NOTE: the collision map is currently being used here, but is just dummy data. This is an old implementation that will
     // be deprecated, but is currently still in the workflow until the new collision system is fully implemented and tested.
     playerCtrl = new CharacterController(MAP_WIDTH, MAP_HEIGHT, &collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
 
-    // point to music
+    // setup music
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
 
     // setup character model
@@ -92,6 +96,9 @@ void IwatodaiDormView::Init() {
         textureBitmap
     };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
+
+    // setup pause menu
+    pauseMenu.init();
 }
 
 ViewState IwatodaiDormView::Update() {
@@ -102,9 +109,12 @@ ViewState IwatodaiDormView::Update() {
     scanKeys();
     u32 keys = keysHeld();
     u32 pressed = keysDown();
-    if(keys & KEY_START) {
+
+    if (pressed & KEY_START) {
         musicCtrl.pause();
         return ViewState::MAIN_MENU;
+    } else if (pressed & KEY_SELECT) {
+        isPauseMenuActive = !isPauseMenuActive;
     }
 
     // only process world input when dialogue is not active
@@ -126,37 +136,41 @@ ViewState IwatodaiDormView::Update() {
         }
     }
 
-    // update camera position
-    gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
-        camPos.targetX, camPos.targetY, camPos.targetZ,
-        camPos.upX, camPos.upY, camPos.upZ);
+    if (isPauseMenuActive) {
+        pauseMenu.update(pressed);
+    } else {    // only render world when pause menu is not active
+        // update camera position
+        gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
+            camPos.targetX, camPos.targetY, camPos.targetZ,
+            camPos.upX, camPos.upY, camPos.upZ);
 
-    // draw environment
-    glPushMatrix();
-        iwatodaiDormEnv.draw();
-    glPopMatrix(1);
+        // draw environment
+        glPushMatrix();
+            iwatodaiDormEnv.draw();
+        glPopMatrix(1);
 
-    // draw character
-    glPushMatrix();
-        // move character
-        characterPosition charPos = playerCtrl->isCharacterAt();
-        glTranslatef(charPos.x, 0.1, charPos.z);
-        glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         // draw character
-        glBindTexture(GL_TEXTURE_2D, characterTextureId);
-        characterAnimationCtrl.render();
-    glPopMatrix(1);
+        glPushMatrix();
+            // move character
+            characterPosition charPos = playerCtrl->isCharacterAt();
+            glTranslatef(charPos.x, 0.1, charPos.z);
+            glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
+            // draw character
+            glBindTexture(GL_TEXTURE_2D, characterTextureId);
+            characterAnimationCtrl.render();
+        glPopMatrix(1);
 
-    glFlush(0);
+        glFlush(0);
 
-    // print coordinates (64x64 area from 0,0 to 64,64)
-    iprintf("\x1b[21;0Htile(x,z): %d, %d",
-        (int)((charPos.x + worldOffsetX) / tileSize),
-        (int)((charPos.z + worldOffsetZ) / tileSize));
-    iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
-        (int)(charPos.x * 100),
-        (int)(charPos.z * 100));
-    iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+        // print coordinates (64x64 area from 0,0 to 64,64)
+        iprintf("\x1b[21;0Htile(x,z): %d, %d",
+            (int)((charPos.x + worldOffsetX) / tileSize),
+            (int)((charPos.z + worldOffsetZ) / tileSize));
+        iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
+            (int)(charPos.x * 100),
+            (int)(charPos.z * 100));
+        iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+    }
 
     // update controllers
     dialogueCtrl.update(keys);
@@ -170,6 +184,9 @@ void IwatodaiDormView::Cleanup() {
     // clear screen
     setBrightness(3, 0);
     consoleClear();
+
+    // stop pause menu sfx
+    pauseMenu.cancelSFX();
 
     // reset textures
     iwatodaiDormEnv.cleanup();
