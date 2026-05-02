@@ -15,7 +15,8 @@ typedef struct
 {
     const char* name;
     bool selected;
-} Option;
+    int bgIndex = -1;
+} PauseOption;
 
 // Menu options
 enum {
@@ -79,11 +80,11 @@ class PauseMenuComponent {
         mm_sfxhand sfxSelectHandle;
         mm_sfxhand sfxCancelHandle;
 
-        Option *options;
+        PauseOption *options;
         int optionCount;
         int selectedOption = 0;
 
-        Option menuOptions[MENU_OPTIONS] = 
+        PauseOption menuOptions[MENU_OPTIONS] = 
         {
             {"Skill", false},
             {"Item", false},
@@ -95,12 +96,12 @@ class PauseMenuComponent {
         };
 
         // TODO: go into submenus
-        Option skillOptions[SKILL_OPTIONS] = 
+        PauseOption skillOptions[SKILL_OPTIONS] = 
         {
-            {"Makoto", false},
-            {"Yukari", false},
-            {"Junpei", false},
-            {"Akihiko", false},
+            {"Makoto", false, 0},
+            {"Yukari", false, 1},
+            {"Junpei", false, 3},
+            {"Akihiko", false, 2},
             {"Mitsuru", false},
             {"Aigis", false},
             {"Ken", false},
@@ -108,7 +109,7 @@ class PauseMenuComponent {
             {"Shinjiro", false},
         };
 
-        Option itemOptions[ITEM_OPTIONS] = 
+        PauseOption itemOptions[ITEM_OPTIONS] = 
         {
             {"Life Stone", false},
             {"Medicine", false},
@@ -116,7 +117,7 @@ class PauseMenuComponent {
         };
 
         // TODO: go into submenus
-        Option equipOptions[EQUIP_OPTIONS] = 
+        PauseOption equipOptions[EQUIP_OPTIONS] = 
         {
             {"Makoto", false},
             {"Yukari", false},
@@ -129,7 +130,7 @@ class PauseMenuComponent {
             {"Shinjiro", false},
         };
 
-        Option personaOptions[PERSONA_OPTIONS] = 
+        PauseOption personaOptions[PERSONA_OPTIONS] = 
         {
             {"Jack Frot", false},
             {"Black Frost", false},
@@ -137,7 +138,7 @@ class PauseMenuComponent {
         };
 
         // TODO: go into submenus
-        Option statsOptions[STATS_OPTIONS] = 
+        PauseOption statsOptions[STATS_OPTIONS] = 
         {
             {"Makoto", false},
             {"Yukari", false},
@@ -151,7 +152,7 @@ class PauseMenuComponent {
         };
 
         // TODO: go into submenus
-        Option sLinkOptions[S_LINK_OPTIONS] =
+        PauseOption sLinkOptions[S_LINK_OPTIONS] =
         {
             {"Fool", false},
             {"Magician", false},
@@ -159,7 +160,7 @@ class PauseMenuComponent {
         };
 
         // TODO: go into submenus
-        Option systemOptions[SYSTEM_OPTIONS] = 
+        PauseOption systemOptions[SYSTEM_OPTIONS] = 
         {
             {"Tutorial", false},
             {"Config", false},
@@ -169,7 +170,7 @@ class PauseMenuComponent {
             {"Return to Title", false},
         };
     public:
-        void init();
+        void init(int iBgSlot);
         void update(int keys);
         void cancelSFX();
 };

@@ -98,7 +98,7 @@ void IwatodaiDormView::Init() {
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
 
     // setup pause menu
-    pauseMenu.init();
+    pauseMenu.init(demo_dialogue_bg_slot);
 }
 
 ViewState IwatodaiDormView::Update() {
@@ -117,28 +117,27 @@ ViewState IwatodaiDormView::Update() {
         isPauseMenuActive = !isPauseMenuActive;
     }
 
-    // only process world input when dialogue is not active
-    if (!dialogueCtrl.isActive()) {
-        // move character
-        camPos = playerCtrl->update(keys);
-
-        // trigger dialogue from interaction
-        demo_unload();
-        if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko) {
-            iprintf("\x1b[0;0HPress A to talk");
-            if (pressed & KEY_A) {
-                demo_yuki_guard_argument_load();
-                dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
-                dialogueCtrl.start(demo_yuki_guard_argument_first());
-            }
-        } else {
-            consoleClear();
-        }
-    }
-
     if (isPauseMenuActive) {
         pauseMenu.update(pressed);
     } else {    // only render world when pause menu is not active
+        if (!dialogueCtrl.isActive()) { // only process world input when dialogue is not active
+            // move character
+            camPos = playerCtrl->update(keys);
+
+            // trigger dialogue from interaction
+            demo_unload();
+            if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko) {
+                iprintf("\x1b[0;0HPress A to talk");
+                if (pressed & KEY_A) {
+                    demo_yuki_guard_argument_load();
+                    dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
+                    dialogueCtrl.start(demo_yuki_guard_argument_first());
+                }
+            } else {
+                consoleClear();
+            }
+        }
+
         // update camera position
         gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
             camPos.targetX, camPos.targetY, camPos.targetZ,

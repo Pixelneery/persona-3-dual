@@ -5,13 +5,67 @@
 // sfx
 #include "soundbank.h"
 
+// bg imports
+#include "bgYukiClose.h"
+#include "bgGuard.h"
+#include "bgAkihiko.h"
+#include "bgYuki.h"
+
+int bgSlot = 0;
+void (*bgLoaders[4])() = {
+    nullptr,
+    nullptr,
+    nullptr,
+    nullptr,
+};
+
+void setBgLoaders() {
+    bgLoaders[0] = [](){
+        dmaCopy(bgGuardTiles, bgGetGfxPtr(bgSlot), bgGuardTilesLen);
+        dmaCopy(bgGuardMap, bgGetMapPtr(bgSlot), bgGuardMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgGuardPal, &VRAM_H_EXT_PALETTE[0][0], bgGuardPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(bgSlot);
+    };
+    bgLoaders[1] = [](){
+        dmaCopy(bgYukiTiles, bgGetGfxPtr(bgSlot), bgYukiTilesLen);
+        dmaCopy(bgYukiMap, bgGetMapPtr(bgSlot), bgYukiMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgYukiPal, &VRAM_H_EXT_PALETTE[0][0], bgYukiPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(bgSlot);
+    };
+    bgLoaders[2] = [](){
+        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(bgSlot), bgAkihikoTilesLen);
+        dmaCopy(bgAkihikoMap, bgGetMapPtr(bgSlot), bgAkihikoMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(bgSlot);
+    };
+    bgLoaders[3] = [](){
+        dmaCopy(bgYukiCloseTiles, bgGetGfxPtr(bgSlot), bgYukiCloseTilesLen);
+        dmaCopy(bgYukiCloseMap, bgGetMapPtr(bgSlot), bgYukiCloseMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgYukiClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukiClosePalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(bgSlot);
+    };
+}
+
+void loadBg(int bgIndex) {
+    if (bgIndex >= 0 && bgIndex < 4 && bgLoaders[bgIndex])
+        bgLoaders[bgIndex]();
+}
+
 void PauseMenuComponent::cancelSFX() {
     musicCtrl.stopSFX(sfxMenuHandle);
     musicCtrl.stopSFX(sfxSelectHandle);
     musicCtrl.stopSFX(sfxCancelHandle);
 }
 
-void PauseMenuComponent::init() {
+void PauseMenuComponent::init(int iBgSlot) {
     // point to music
     musicCtrl.loadSFX(SFX_MENU);
     musicCtrl.loadSFX(SFX_SELECT);
@@ -20,6 +74,10 @@ void PauseMenuComponent::init() {
     // set default options
     options = menuOptions;
     optionCount = MENU_OPTIONS;
+
+    // set bg loaders
+    bgSlot = iBgSlot;
+    setBgLoaders();
 }
 
 void PauseMenuComponent::update(int keys)
@@ -302,6 +360,15 @@ void PauseMenuComponent::update(int keys)
     for (int option = 0; option < optionCount; option++)
     {
         iprintf("%c %s\n", option == selectedOption ? '>' : ' ', options[option].name);
+    }
+
+    // load selectedOption's background
+    int bgIndex = options[selectedOption].bgIndex;
+    if (bgIndex != -1) {
+        loadBg(bgIndex);
+        bgShow(bgSlot);
+    } else {
+        bgHide(bgSlot);
     }
 
     return;
