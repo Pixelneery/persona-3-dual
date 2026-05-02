@@ -4,6 +4,7 @@
 #include "math.h"
 #include "CharacterController.h"
 #include "geometry.h"
+#include "geometry.h"
 
 // check collision
 TileType CharacterController::isTileAt(int tileX, int tileZ)
@@ -42,7 +43,9 @@ bool CharacterController::isTileWalkable(float worldX, float worldZ)
 // get tile at character position
 TileType CharacterController::isTileAt()
 {
-    return isTileAt(characterTranslate.x, characterSize.z);
+    int tileX = (int)((characterTranslate.x + worldOffsetX) / tileSize);
+    int tileZ = (int)((characterTranslate.z + worldOffsetZ) / tileSize);
+    return isTileAt(tileX, tileZ);
 }
 
 // get character position
@@ -50,6 +53,8 @@ characterPosition CharacterController::isCharacterAt()
 {
     characterPosition charPos;
 
+    charPos.x = characterTranslate.x;
+    charPos.z = characterTranslate.z;
     charPos.x = characterTranslate.x;
     charPos.z = characterTranslate.z;
     charPos.angle = angle;
@@ -90,22 +95,27 @@ cameraPosition CharacterController::update(u32 keys)
         deltaX += forwardX;
         deltaZ += forwardZ;
     }
+
     if (keys & KEY_DOWN)
     {
         deltaX -= forwardX;
         deltaZ -= forwardZ;
     }
+
     if (keys & KEY_RIGHT)
     {
         deltaX -= rightX;
         deltaZ -= rightZ;
     }
+
     if (keys & KEY_LEFT)
     {
         deltaX += rightX;
         deltaZ += rightZ;
     }
 
+    nextX = characterTranslate.x + deltaX;
+    nextZ = characterTranslate.z + deltaZ;
     nextX = characterTranslate.x + deltaX;
     nextZ = characterTranslate.z + deltaZ;
 
@@ -130,6 +140,7 @@ cameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f || deltaZ != 0.0f)
     {
         // return angle in radians and convert to degrees
+        angleRad = atan2(deltaX, deltaZ);
         angleRad = atan2(deltaX, deltaZ);
         characterFacingAngle = angleRad * (180.0f / 3.14159265f);
     }

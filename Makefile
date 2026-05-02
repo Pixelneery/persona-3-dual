@@ -18,7 +18,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(shell basename $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source source/views source/controllers source/core source/dialogue
+SOURCES		:=	source source/views source/controllers source/core source/dialogue source/battleActions source/battleActions/Enemies source/battleActions/Party source/battleActions/Skills 
 DATA		:=	assets/models/bin
 INCLUDES	:=	include source
 GRAPHICS	:=	assets/graphics

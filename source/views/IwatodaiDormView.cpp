@@ -120,6 +120,11 @@ ViewState IwatodaiDormView::Update() {
         return ViewState::MAIN_MENU;
     }
 
+    if(pressed & KEY_SELECT)
+    {
+        battleController.execute();
+    }
+
     // only process world input when dialogue is not active
     if (!dialogueCtrl.isActive()) {
         // move character

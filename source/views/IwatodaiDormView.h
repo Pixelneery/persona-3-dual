@@ -4,6 +4,9 @@
 #include "controllers/CharacterController.h"
 #include "maps/iwatodaiDorm_256x256_offsets.h"
 #include <nds/arm9/console.h>
+//TODO:  move somewhere
+#include "./controllers/BattleController.h"
+
 
 // implementing from View
 class IwatodaiDormView : public View {
@@ -19,6 +22,7 @@ class IwatodaiDormView : public View {
         PrintConsole console;
 
         // controllers
+        BattleController battleController;
         CharacterController* playerCtrl;
             // camera pos
             cameraPosition camPos;
