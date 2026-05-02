@@ -1,6 +1,7 @@
 import sys
 import struct
 import argparse
+from typing import Optional, Tuple, List
 
 FIFO_COLOR    = 0x20
 FIFO_TEXCOORD = 0x22
@@ -14,27 +15,29 @@ GL_QUADS     = 1
 # Valid DS texture dimensions from GL_TEXTURE_SIZE_ENUM
 VALID_SIZES = {8, 16, 32, 64, 128, 256, 512, 1024}
 
-def floattov16(f):
+def floattov16(f: float) -> int:
+    """Convert float to v16 fixed point (12-bit fractional)."""
     v = int(f * (1 << 12))
     return max(-32768, min(32767, v)) & 0xFFFF
 
-def floattot16(f):
-    """t16 is 12.4 fixed point in TEXELS, not normalized coords.
-       Input here should already be pre-multiplied by texture dimension.
-    """
+def floattot16(f: float) -> int:
+    """Convert float to t16 fixed point (12.4 in texels)."""
     v = int(f * (1 << 4))
     return max(-32768, min(32767, v)) & 0xFFFF
 
-def rgb_to_rgb15(r, g, b):
+def rgb_to_rgb15(r: int, g: int, b: int) -> int:
+    """Convert RGB 0-255 to DS RGB15 format."""
     return ((r >> 3) & 0x1F) | (((g >> 3) & 0x1F) << 5) | (((b >> 3) & 0x1F) << 10)
 
-def pack_cmds(c1, c2=FIFO_NOP, c3=FIFO_NOP, c4=FIFO_NOP):
+def pack_cmds(c1: int, c2: int = FIFO_NOP, c3: int = FIFO_NOP, c4: int = FIFO_NOP) -> bytes:
+    """Pack FIFO commands into a 32-bit word."""
     return struct.pack('<I', (c4 << 24) | (c3 << 16) | (c2 << 8) | c1)
 
-def convert_obj(input_file, output_file, tex_width=None, tex_height=None, vertex_color=None):
-    vertices = []
-    texcoords = []
-    faces = []
+def convert_obj(input_file: str, output_file: str, tex_width: Optional[int] = None, tex_height: Optional[int] = None, vertex_color: Optional[Tuple[int, int, int]] = None) -> None:
+    """Convert OBJ file to NDS display list binary."""
+    vertices: List[Tuple[float, float, float]] = []
+    texcoords: List[Tuple[float, float]] = []
+    faces: List[List[Tuple[int, Optional[int]]]] = []
 
     with open(input_file, 'r') as f:
         for line in f:
@@ -117,7 +120,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     tw, th = (args.texsize[0], args.texsize[1]) if args.texsize else (None, None)
-    color  = tuple(args.color) if args.color else None
+    color: Optional[Tuple[int, int, int]] = tuple(args.color) if args.color else None
 
     convert_obj(args.input, args.output, tex_width=tw, tex_height=th, vertex_color=color)
     print(f"Converted {args.input} -> {args.output}")

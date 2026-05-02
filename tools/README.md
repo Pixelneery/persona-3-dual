@@ -8,10 +8,9 @@
 ## Quick Start
 
 ```bash
-# First time only — set up venv
+# First time only — set up venv (No external dependencies like Pillow required!)
 python3 -m venv ~/.venv
 source ~/.venv/bin/activate
-pip install Pillow
 
 # Full build (assets + ROM)
 make
@@ -23,9 +22,9 @@ make assets
 make dialogue
 make music
 make video
+make environments
 make models
 make maps
-make offsets
 
 # See all targets and flags
 make help
@@ -35,19 +34,21 @@ make help
 
 ## Directory Layout
 
-```
+```text
 assets/
   dialogue/       .dlg scripts          → source/dialogue/
   music/          .mp3 music            → nitrofiles/music/
   sfx/            .wav SFX              → soundbank.bin (via mmutil)
   video/          .mp4 cutscenes        → nitrofiles/video/
-  models/         .obj 3D models        → assets/models/bin/
+  environments/   .obj static rooms     → source/environments/
+  models/         .json animated models → source/models/
   maps/           .png collision maps   → source/maps/
 
 source/
   dialogue/       *_dialogue.h + .cpp   (auto-generated)
+  environments/   *_env.h + .s + tex    (auto-generated)
+  models/         *.h hierarchy headers (auto-generated)
   maps/           *.h collision arrays  (auto-generated)
-  maps/           *_offsets.h           (auto-generated TILE_SIZE defines)
 
 nitrofiles/
   music/          *.pcm                 (auto-generated)
@@ -55,8 +56,9 @@ nitrofiles/
 
 tools/
   dlg2dialogue.py
-  obj2dl.py
-  obj2offsets.py
+  nds_build_environment.py
+  obj2environment.py
+  obj2model.py
   texture2collision.py
   video2vid.py
 ```
@@ -64,6 +66,91 @@ tools/
 ---
 
 ## Tools Reference
+
+---
+
+### `nds_build_environment.py` — 3D Static Environment Pipeline
+
+Converts an `.obj` + `.mtl` + `.png` collection into a zero-boilerplate C++ header, raw `.s` assembly display lists, and GRIT-compiled textures. 
+
+*(See `ENVIRONMENT_README.md` for full details and Blender plugin instructions).*
+
+| | |
+|---|---|
+| **Input** | `assets/environments/<name>/<name>.obj` (plus textures) |
+| **Output** | `source/environments/<name>/<name>_env.h`, `.s`, and texture headers |
+
+**Make flags**
+
+```bash
+make environments ENV_FLAGS="--no-center" # Override default Blender Z-up fix
+```
+
+---
+
+### `obj2model.py` — 3D Animated Model Converter
+
+Compiles a hierarchical `.json` skeleton and its associated `.obj` body parts into a C++ header containing pre-compiled display lists and keyframes for the `AnimationController`.
+
+*(See `MODEL_README.md` for full details on Blockbench/Blender plugin usage).*
+
+| | |
+|---|---|
+| **Input** | `assets/models/<name>/<name>[_WxH].json` (plus `.obj` parts) |
+| **Output** | `source/models/<name>.h` |
+
+**Filename encoding — texture size**
+
+Encode the texture dimensions directly in the JSON filename using `_WxH`. If omitted, it falls back to `MODEL_TEXSIZE`.
+
+```text
+player_64x64.json   →  --texsize 64 64
+enemy.json          →  uses MODEL_TEXSIZE default (32x32)
+```
+
+**Make flag — global fallback**
+
+```bash
+make models MODEL_TEXSIZE='128 128'
+```
+
+---
+
+### `texture2collision.py` — Collision map converter
+
+Converts a 2D PNG into a `uint8_t collision_map[H][W]` C header. This is fully decoupled from 3D model bounds, allowing absolute physical scaling.
+
+| | |
+|---|---|
+| **Input** | `assets/maps/<name>[_X_Y_W_H].png` |
+| **Output** | `source/maps/<name>.h` |
+
+**Filename encoding — crop region**
+
+Encode the crop rectangle `(x, y, width, height)` as four underscore-separated integers **at the end** of the filename. Tile size physics are derived from the *full* image size.
+
+```text
+lobby.png              →  full image, no crop
+lobby_0_0_64_64.png    →  crop x=0, y=0, w=64, h=64
+tartarus_32_0_64_64.png→  crop x=32, y=0, w=64, h=64
+```
+
+**Make flag**
+
+```bash
+make maps MAP_FLAGS='...'   # any extra flags passed to texture2collision.py
+```
+
+**Tile values** (edit JSON palette or source code to map colors):
+
+| Value | Meaning |
+|---|---|
+| `0` | Walkable / Default |
+| `1` | Collision wall |
+| `2` | Save point |
+| `3` | Prev scene |
+| `4` | Next scene |
+| `100` | Character spawn |
 
 ---
 
@@ -78,18 +165,9 @@ Compiles a `.dlg` scene script into a C++ header + source pair for `DialogueCont
 
 **Make flag**
 
-```makefile
-DLG_FLAGS='--stdout'   # dump to stdout instead of writing files (debug)
+```bash
+make dialogue DLG_FLAGS='--stdout'   # dump to stdout instead of writing files (debug)
 ```
-
-**Naming** — no special encoding needed. Just use the scene name:
-
-```
-assets/dialogue/dormitory.dlg   →   source/dialogue/dormitory_dialogue.h
-assets/dialogue/tartarus.dlg    →   source/dialogue/tartarus_dialogue.h
-```
-
-python3 dlg2dialogue.py input.dlg
 
 ---
 
@@ -101,10 +179,6 @@ Converts MP3s to raw 16-bit stereo PCM at 32 kHz for `maxmod`.
 |---|---|
 | **Input** | `assets/music/<name>.mp3` |
 | **Output** | `nitrofiles/music/<name>.pcm` |
-
-No special naming needed. Filenames carry over 1:1.
-
-ffmpeg -i input.mp3 -f s16le -ar 32000 -ac 2 output.pcm
 
 ---
 
@@ -129,151 +203,6 @@ Encodes MP4 video to an interleaved `.vid` file.
 make video VIDEO_FPS=24 VIDEO_BITS=16 VIDEO_SIZE=256x192
 ```
 
-python3 video2vid.py input.mp4 output --bits 8 --fps 15
-
----
-
-### `obj2bin.py` — 3D model converter
-
-Converts a Wavefront `.obj` into a binary NDS display-list `.bin`.
-
-| | |
-|---|---|
-| **Input** | `assets/models/<name>[_WxH].obj` |
-| **Output** | `assets/models/<name>.bin` |
-
-**Filename encoding — texture size**
-
-Encode the texture dimensions directly in the filename using `_WxH`:
-
-```
-dorm.obj            →  --texsize 256 256  (uses MODEL_TEXSIZE default)
-dorm_128x128.obj    →  --texsize 128 128
-pillar_64x64.obj    →  --texsize 64 64
-skybox_512x256.obj  →  --texsize 512 256
-```
-
-**Make flag — global fallback**
-
-```bash
-make models MODEL_TEXSIZE='128 128'   # default when no _WxH in filename
-```
-
-**Optional vertex color**
-
-Not in the Makefile rule (uncommon). Call manually if you need it:
-
-```bash
-python3 tools/obj2dl.py assets/models/floor.obj assets/models/floor.bin \
-  --texsize 256 256 --color 255 128 0
-```
-
-obj2bin.py *input* *output* --texsize *w* *h*
-
----
-
-### `texture2collision.py` — Collision map converter
-
-Converts a PNG into a `uint8_t collision_map[H][W]` C header.
-
-| | |
-|---|---|
-| **Input** | `assets/maps/<name>[_X_Y_W_H].png` |
-| **Output** | `source/maps/<name>.h` |
-
-**Filename encoding — crop region**
-
-Encode the crop rectangle `(x, y, width, height)` as four underscore-separated integers **at the end** of the filename:
-
-```
-lobby.png              →  full image, no crop
-lobby_0_0_64_64.png    →  crop x=0, y=0, w=64, h=64
-tartarus_32_0_64_64.png→  crop x=32, y=0, w=64, h=64
-```
-
-**Make flag**
-
-```bash
-MAP_FLAGS='...'   # any extra flags passed to texture2collision.py
-```
-
-**Tile values** (edit `TILE_COLORS` in `texture2collision.py`):
-
-| Value | Meaning | Default color |
-|---|---|---|
-| `0` | Walkable | *(anything unrecognised)* |
-| `1` | Collision wall | RGB(197, 0, 0) |
-| `2` | Save point | RGB(197, 194, 0) |
-| `3` | Prev scene | RGB(0, 92, 197) |
-| `4` | Next scene | RGB(56, 197, 0) |
-| `100` | Character spawn | RGB(0, 197, 173) |
-
-texture2collision.py *input* *output* [x y width height]
-
----
-
-### `obj2offsets.py` — World offset calculator
-
-Reads vertex bounds from a `.obj` and pixel dimensions from its paired collision map PNG, then emits the three C defines you need.
-
-| | |
-|---|---|
-| **Input** | `assets/models/<name>.obj`  +  `assets/maps/<name>.png` (auto-detected) |
-| **Output** | `source/maps/<name>_offsets.h` |
-
-**Auto-detection** — the tool looks for a PNG in `assets/maps/` whose base name matches the `.obj`. You don't need to specify it unless the names differ.
-
-**The generated header looks like:**
-
-```c
-// Auto-generated by obj2offsets.py — do not edit by hand
-// OBJ:  dorm.obj
-// MAP:  dorm.png
-//
-// Vertex bounds:  X [-2.000000 → 2.000000]  Z [-2.000000 → 2.000000]
-// World size:     4.000000 × 4.000000
-// Tile grid:      64 × 64
-
-#ifndef DORM_OFFSETS_H
-#define DORM_OFFSETS_H
-
-#define TILE_SIZE      0.062500f  // world_width / tile_cols
-#define WORLD_OFFSET_X 2.000000f  // -minX
-#define WORLD_OFFSET_Z 2.000000f  // -minZ
-
-#endif
-```
-
-**Include it in your scene's `.cpp`:**
-
-```cpp
-#include "maps/dorm_offsets.h"
-
-// Then use directly:
-int tileX = (int)((charPos.x + WORLD_OFFSET_X) / TILE_SIZE);
-int tileZ = (int)((charPos.z + WORLD_OFFSET_Z) / TILE_SIZE);
-```
-
-**`make offsets`** runs this automatically for every `.obj` in `assets/models/`.
-
-**Manual usage** (when names differ or you want to specify the map explicitly):
-
-```bash
-# Auto-detect map
-python3 tools/obj2offsets.py assets/models/dorm.obj -o source/maps/dorm_offsets.h
-
-# Explicit map
-python3 tools/obj2offsets.py assets/models/dorm.obj \
-  --map assets/maps/dorm_0_0_64_64.png \
-  -o source/maps/dorm_offsets.h
-
-# Manual tile count (no map PNG)
-python3 tools/obj2offsets.py assets/models/dorm.obj --tiles 64 64
-
-# Print to stdout (no file written)
-python3 tools/obj2offsets.py assets/models/dorm.obj
-```
-
 ---
 
 ## Naming Convention Summary
@@ -284,16 +213,15 @@ python3 tools/obj2offsets.py assets/models/dorm.obj
 | Music | `<name>.mp3` | — |
 | SFX | `<name>.mp3` | — |
 | Video | `<name>.mp4` | — |
-| Model | `<name>_<W>x<H>.obj` | tex size (optional, default = `MODEL_TEXSIZE`) |
-| Collision map | `<name>_<x>_<y>_<w>_<h>.png` | crop rect (optional, default = full image) |
+| Environment | `<name>.obj` (in `<name>/` folder) | Auto-processed alongside local `.mtl` / `.png` |
+| Model | `<name>_[W]x[H].json` | Tex size (optional, default = `MODEL_TEXSIZE`) |
+| Collision map | `<name>_[x]_[y]_[w]_[h].png` | Crop rect (optional, default = full image) |
 
 ---
 
 ## Incremental Builds
 
-Make tracks input → output dependencies. Re-running `make assets` only
-reconverts files whose source is **newer** than the output. To force a
-full reconvert:
+Make tracks input → output dependencies. Re-running `make assets` only reconverts files whose source is **newer** than the output. To force a full reconvert:
 
 ```bash
 make clean && make assets
@@ -302,27 +230,6 @@ make clean && make assets
 To force a single category:
 
 ```bash
-touch assets/video/intro.mp4 && make video
+touch assets/environments/dorm/dorm.obj && make environments
 ```
-
----
-
-## Verifying Collision In-Game
-
-After `make offsets`, include the generated header and add this debug block:
-
-```c
-#include "maps/dorm_offsets.h"
-
-// In your game loop:
-iprintf("\x1b[21;0Htile(x,z): %d, %d",
-    (int)((charPos.x + WORLD_OFFSET_X) / TILE_SIZE),
-    (int)((charPos.z + WORLD_OFFSET_Z) / TILE_SIZE));
-iprintf("\x1b[22;0Hpos(x,z):  %d, %d",
-    (int)(charPos.x * 100),
-    (int)(charPos.z * 100));
 ```
-
-Walking from one edge of the world to the other should show tile indices
-going from `0` to `(tile count − 1)`. If they're inverted, edit the
-`ROTATE_180` in `texture2collision.py`.

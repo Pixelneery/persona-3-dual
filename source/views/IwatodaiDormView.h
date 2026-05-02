@@ -2,7 +2,7 @@
 #include "core/View.h"
 #include "controllers/DialogueController.h"
 #include "controllers/CharacterController.h"
-#include "maps/iwatodaiDorm_256x256_offsets.h"
+#include "environments/iwatodai_dorm.h"
 #include <nds/arm9/console.h>
 //TODO:  move somewhere
 #include "./controllers/BattleController.h"
@@ -27,12 +27,9 @@ class IwatodaiDormView : public View {
             // camera pos
             cameraPosition camPos;
             // world
-            // const float tileSize = 0.0625f;
-            // const float worldOffsetX = 1.8125f;
-            // const float worldOffsetZ = 1.6875f;
-            const float tileSize = TILE_SIZE;
-            const float worldOffsetX = WORLD_OFFSET_X;
-            const float worldOffsetZ = WORLD_OFFSET_Z;
+            const float tileSize = 0.062500f;
+            const float worldOffsetX = IWATODAI_DORM_WORLD_OFFSET_X;
+            const float worldOffsetZ = IWATODAI_DORM_WORLD_OFFSET_Z;
             const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
             // movement and viewpoint
             const float speed = 0.01f;

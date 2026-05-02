@@ -185,9 +185,8 @@ def format_header(scene: str, offset_x, offset_z, tile_size, obj_path, map_path,
     return "\n".join(lines) + "\n"
 
 
-# CLI 
-
-def main():
+def main() -> None:
+    """Main entry point for the obj2offsets script."""
     ap = argparse.ArgumentParser(
         description="Auto-calculate DS collision constants (TILE_SIZE, WORLD_OFFSET_X/Z) "
                     "from a .obj file and its collision map PNG."
@@ -200,6 +199,8 @@ def main():
                     help="Tile grid size (cols rows) — use instead of --map")
     ap.add_argument("--output", "-o", default=None,
                     help="Output .h file (default: print to stdout)")
+    ap.add_argument("--non-interactive", action="store_true",
+                    help="Fail instead of prompting for tile count")
     args = ap.parse_args()
 
     if not os.path.isfile(args.obj):
@@ -230,6 +231,9 @@ def main():
             print(f"  Map size: {tile_cols}×{tile_rows} tiles")
         else:
             print("  No map PNG found and --map / --tiles not specified.")
+            if args.non_interactive:
+                print("ERROR: Tile count required in non-interactive mode.", file=sys.stderr)
+                sys.exit(1)
             try:
                 tile_cols = int(input("  Enter tile column count (map width in pixels): ").strip())
                 tile_rows = int(input("  Enter tile row count   (map height in pixels): ").strip())

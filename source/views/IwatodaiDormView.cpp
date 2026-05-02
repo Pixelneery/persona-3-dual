@@ -2,36 +2,22 @@
 #include <stdio.h>
 #include "core/globals.h"
 #include "math.h"
-#include "IwatodaiDormView.h"
+#include "IwatodaiDormView.h" 
 
-// assets
-// 3D models
-#include "iwatodaiDorm_256x256_bin.h"
-#include "character_16x16_bin.h"
-
-// textures
+// model
+#include "models/character.h"
 #include "character.h"
-#include "environment.h"
-// collision
-#include "IwatodaiDormCollision.h"
+// environment
+#include "environments/iwatodai_dorm.h"
+#include "texture.h"
+// collision (deprecated)
+#include "maps/iwatodaiDorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
-// texture ID
-static int environmentTextureId;
-static int characterTextureId;
-
-void DrawEnvironmentModel() {
-    // bind texture before drawing
-    glBindTexture(GL_TEXTURE_2D, environmentTextureId);
-    glCallList((u32*)iwatodaiDorm_256x256_bin);
-}
-
-void DrawPlayerModel() {
-    // bind texture before drawing
-    glBindTexture(GL_TEXTURE_2D, characterTextureId);
-    glCallList((u32*)character_16x16_bin);
-}
+// texture IDs
+int characterTextureId;
+iwatodai_dorm_Environment iwatodaiDormEnv;
 
 void IwatodaiDormView::Init() {
     videoSetMode(MODE_0_3D);
@@ -59,25 +45,13 @@ void IwatodaiDormView::Init() {
     // zNear is how close the camera can see, zFar is the maximum draw distance
     gluPerspective(55, 256.0 / 192.0, 0.1, 40);    
 
-    // environment
-    glGenTextures(1, &environmentTextureId);
-    glBindTexture(GL_TEXTURE_2D, environmentTextureId);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0,
-        GL_RGBA,
-        TEXTURE_SIZE_256, TEXTURE_SIZE_256,
-        0,
-        TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
-        environmentBitmap  // from environment.h
-    );
-
     // character
     glGenTextures(1, &characterTextureId);
     glBindTexture(GL_TEXTURE_2D, characterTextureId);
     glTexImage2D(
         GL_TEXTURE_2D, 0,
         GL_RGBA,
-        TEXTURE_SIZE_16, TEXTURE_SIZE_16,
+        TEXTURE_SIZE_32, TEXTURE_SIZE_32,
         0,
         TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
         characterBitmap  // from character.h
@@ -101,10 +75,23 @@ void IwatodaiDormView::Init() {
     bgUpdate();
 
     // get controllers
+    // NOTE: the collision map is currently being used here, but is just dummy data. This is an old implementation that will
+    // be deprecated, but is currently still in the workflow until the new collision system is fully implemented and tested.
     playerCtrl = new CharacterController(MAP_WIDTH, MAP_HEIGHT, &collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
 
     // point to music
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
+
+    // setup character model
+    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
+    characterAnimationCtrl.set(MODEL_CHARACTER_WALK, true);
+    characterAnimationCtrl.play();
+
+    // setup environment model
+    const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = {
+        textureBitmap
+    };
+    iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
 }
 
 ViewState IwatodaiDormView::Update() {
@@ -151,16 +138,18 @@ ViewState IwatodaiDormView::Update() {
 
     // draw environment
     glPushMatrix();
-        DrawEnvironmentModel();
+        iwatodaiDormEnv.draw();
     glPopMatrix(1);
 
     // draw character
     glPushMatrix();
         // move character
         characterPosition charPos = playerCtrl->isCharacterAt();
-        glTranslatef(charPos.x, 0, charPos.z);
+        glTranslatef(charPos.x, 0.1, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
-        DrawPlayerModel();
+        // draw character
+        glBindTexture(GL_TEXTURE_2D, characterTextureId);
+        characterAnimationCtrl.render();
     glPopMatrix(1);
 
     glFlush(0);
@@ -177,6 +166,7 @@ ViewState IwatodaiDormView::Update() {
     // update controllers
     dialogueCtrl.update(keys);
     musicCtrl.update();
+    characterAnimationCtrl.update();
 
     return ViewState::KEEP_CURRENT;
 }
@@ -187,7 +177,7 @@ void IwatodaiDormView::Cleanup() {
     consoleClear();
 
     // reset textures
-    glDeleteTextures(1, &environmentTextureId);
+    iwatodaiDormEnv.cleanup();
     glDeleteTextures(1, &characterTextureId);
 
     // reset vram

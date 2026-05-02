@@ -14,6 +14,7 @@
 // controllers
 #include "controllers/MusicController.h"
 #include "controllers/VideoController.h"
+#include "controllers/AnimationController.h"
 
 // sfx
 #include "soundbank_bin.h"
@@ -21,6 +22,7 @@
 volatile int frame = 0;
 MusicController musicCtrl;
 VideoController videoCtrl;
+AnimationController characterAnimationCtrl;
 View* currentView = nullptr;
 
 void SwitchView(View* newView) {
@@ -67,7 +69,7 @@ int main(int argc, char *argv[]) {
     // SwitchView(new DisclaimerView());
 
     // DEBUG
-    SwitchView(new DisclaimerView());
+    SwitchView(new IwatodaiDormView());
 
 	while(pmMainLoop()) {
 		swiWaitForVBlank();

@@ -2,29 +2,68 @@
 
 A Nintendo DS demake of **Persona 3**, developed in C++ using devkitpro. This project is a personal deep-dive into embedded systems and low-level graphics programming, building a game engine from scratch without external game libraries.
 
+The name is a nod to the online joke about a DS version of Persona 3 called "Persona 3 Dual".
+
 ### Want to help? Join the [Discord!](https://discord.gg/TPBXX8tmSG) Any help, big or small, would be greatly appreciated!
-
-This project began as a way to explore more embedded programming in a fun way. I always wanted to make a game, so I thought why not use embedded to make a game? I decided on developing a game for the Nintendo DS as it was my first ever game console, and I grew up with it. It is a portable, sleek, and popular game console with a large homebrew and hacking community and supports basic 3D, which is what I wanted. Plus, it has some unique hardware like dual screens, a touch screen, and microphone to use if I ever want to (which I plan to!).
-
-I chose to make a demake of one of my favourite games, Persona 3, for a few reasons. I really enjoyed the game and there wasn't an official DS version (or any custom version for the DS that I found). Also, Persona has a lot of 2D graphics which would make game development easier in my opinion. And I'm not awefully creative, so basing my game on a pre-existing game would allow me to really focus on coding while also giving me a good story, basic gameplay mechanics, and assets to use and base my own custom assets off of.
-
-Later on (around April 2026), I found out that there was an online joke about having a DS version of Persona 3 called "Persona 3 Dual". I ended up renaming my project from "Persona 3 DS" to "Persona 3 Dual" as a fun nod to this joke (and to make it into reality!)
-
-> **Status:** Active development: basic intro sequence and main menu complete, 3D environment (Iwatodai Dorm) in progress.
 
 <img width="444" height="519" alt="20260417_231005" src="https://github.com/user-attachments/assets/8dd225c8-f3eb-4b80-8ec4-feb381e4b71d" />
 
 ---
 
 ## Screenshots
-Home
-<img width="395" height="588" alt="Screenshot 2026-04-17 at 11 17 18 PM" src="https://github.com/user-attachments/assets/735128dd-a5aa-403f-8d94-748d6294e27c" />
 
-Menu
-<img width="394" height="584" alt="Screenshot 2026-04-17 at 11 17 35 PM" src="https://github.com/user-attachments/assets/72eb8264-9e56-4666-84a9-07bfe96a0a78" />
+| Home | Menu | Iwatodai Dorm |
+|------|------|----------------------|
+| ![Home](https://github.com/user-attachments/assets/735128dd-a5aa-403f-8d94-748d6294e27c) | ![Menu](https://github.com/user-attachments/assets/72eb8264-9e56-4666-84a9-07bfe96a0a78) | ![Dorm](https://github.com/user-attachments/assets/dad1562b-67ae-4566-9d04-f2a9966ba916) |
 
-Iwatodai Dorm (WIP)
-<img width="395" height="583" alt="Screenshot 2026-04-17 at 11 17 58 PM" src="https://github.com/user-attachments/assets/dad1562b-67ae-4566-9d04-f2a9966ba916" />
+---
+
+## Technical Details
+
+| | |
+|---|---|
+| **Platform** | Nintendo DS |
+| **CPU** | ARM9 (main) / ARM7 (sound/system) |
+| **Toolchain** | devkitPro (devkitARM + libnds) |
+| **Language** | C++, Python |
+| **Emulator** | melonDS |
+
+---
+
+## Quick Setup
+
+> Detailed setup instructions coming soon.
+
+1. Install [devkitPro](https://devkitpro.org/wiki/Getting_Started) with the DS toolchain
+2. Clone the repo
+3. `make` to build
+4. Load the `.nds` output in [melonDS](https://melonds.kuribo64.net/)
+
+---
+
+## Contributing
+
+Check the [Project Board](https://github.com/users/TheBossT910/projects/2) for open tasks, then jump into [Discord](https://discord.gg/TPBXX8tmSG) to coordinate with the team.
+
+### Pull Requests
+
+- **Keep PRs focused** — try to keep one feature or fix per PR. Mixed concerns make review hard.
+- **Keep PRs small** — smaller diffs get reviewed faster and merged sooner. If something is growing large, consider splitting it.
+- **Write a clear description** — briefly explain what changed and why. Link to any related issue or task.
+- **Test on emulator before opening** — make sure it builds and runs in melonDS.
+
+Also, please try to have clear commit messages 🙂
+
+### AI Usage Policy
+
+AI tools are permitted under these conditions:
+
+- **You designed the core idea.** AI can help you implement or refine it, not invent it for you.
+- **You understand it.** If you can't explain what the code does, it doesn't belong in a PR.
+- **No slop.** Generated code must be clean, logical, and intentional.
+- **Exception — `/tools`, READMEs, Makefile.** The Python scripts in `/tools`, READMEs, and the Makefile are largely AI-generated to keep the build workflow fast and consistent. This is intentional and acceptable.
+
+AI should help you build something, not build it for you.
 
 ---
 
@@ -39,10 +78,7 @@ Iwatodai Dorm (WIP)
 - **Decoupled Controller Architecture** — Character movement, camera, dialogue, music, and video are each in separate controller files, making the codebase modular and easy to extend.
 - **Audio** — PCM audio streaming via NitroFS with loop point support for seamless section looping. Also supports SFX via Maxmod.
 - **Video** — Optimised video playback at 8-bit colour, 15fps, with audio and video frames interleaved in a single file and streamed via a ring buffer. Uses NitroFS.
-- **Custom Tooling** — Python utilities built alongside the engine: `obj2bin.py` converts Wavefront OBJ files (with UV data) to DS display list binaries; a Blockbench texture → header file converter; a Markdown → dialogue header generator with automatic line-breaking; and a world offset calculator. Asset conversion is integrated into the build system via `make`.
-- **Hand-modelled Assets** — 10+ low-poly environment models built in Blockbench: receptionist desk, dining table, chairs (2 variants), wardrobe, side table, lamps, TV, and doors.
-
----
+- **Custom Tooling** — Python utilities + Blender/Blockbench plugins built alongside the engine. Asset conversion is integrated into the build system via `make`.
 
 Key changes made (v0.2):
 - **State Machine** — added Disclaimers as the first scene
@@ -53,21 +89,9 @@ Key changes made (v0.2):
 
 ---
 
-## Technical Details
-
-| | |
-|---|---|
-| **Platform** | Nintendo DS |
-| **CPU** | ARM9 (main) / ARM7 (sound/system) |
-| **Toolchain** | devkitPro (devkitARM + libnds) |
-| **Language** | C++, Python |
-| **3D API** | DS fixed-function engine (OpenGL-like) |
-| **Emulator** | melonDS |
-| **3D Modelling** | Blockbench |
-
----
-
 ## Roadmap
+
+See the [Project Board](https://github.com/users/TheBossT910/projects/2) for current progress and open issues.
 
 - [x] Intro sequence with animated backgrounds and sprites
 - [x] Disclaimers screen
@@ -82,7 +106,7 @@ Key changes made (v0.2):
 - [x] Video playback (8-bit, 15fps, interleaved audio+video, ring buffer)
 - [x] Custom intro video (Persona 3 Dual logo added)
 - [x] Automated asset conversion pipeline (integrated into `make`)
-- [ ] Character walk animation + AnimationController
+- [x] Character walk animation + AnimationController
 - [ ] Proper character 3D model
 - [ ] Combat system (UI layout, selection wheel, battle logic)
 - [ ] Iwatodai Dorm — fully detailed environment with proper textures
@@ -93,4 +117,6 @@ Key changes made (v0.2):
 
 ## Inspiration
 
-Based on **Persona 3 FES** (PS2) and **Persona 3 Reload** (Steam) games, and inspired by the **Persona 3 Dual** online joke. This is a fan project for educational purposes and is not affiliated with or endorsed by Atlus or Sega.
+Based on the **Persona 3** series of games (OG, FES, Portable, Reload), and inspired by the **Persona 3 Dual** online joke. 
+
+*This is a fan project and is not affiliated with or endorsed by Atlus or Sega.*
