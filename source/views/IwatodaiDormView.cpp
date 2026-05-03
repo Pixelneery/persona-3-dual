@@ -112,14 +112,15 @@ ViewState IwatodaiDormView::Update() {
     u32 pressed = keysDown();
 
     if (pressed & KEY_START) {
-        musicCtrl.pause();
-        return ViewState::MAIN_MENU;
-    } else if (pressed & KEY_SELECT) {
         isPauseMenuActive = !isPauseMenuActive;
     }
-
+    
     if (isPauseMenuActive) {
-        pauseMenu.update(pressed);
+        ViewState menuResult = pauseMenu.update(pressed);
+        if (menuResult != ViewState::KEEP_CURRENT) {
+            musicCtrl.pause();
+            return menuResult;
+        }
     } else {    // only render world when pause menu is not active
         if (!dialogueCtrl.isActive()) { // only process world input when dialogue is not active
             // move character
@@ -187,6 +188,7 @@ void IwatodaiDormView::Cleanup() {
 
     // stop pause menu sfx
     pauseMenu.cancelSFX();
+    isPauseMenuActive = false;
 
     // reset textures
     iwatodaiDormEnv.cleanup();

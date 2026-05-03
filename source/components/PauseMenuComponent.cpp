@@ -78,13 +78,17 @@ void PauseMenuComponent::init(int iBgSlot)
     // set default options
     options = menuOptions;
     optionCount = MENU_OPTIONS;
+    selectedOption = 0;
 
     // set bg loaders
     bgSlot = iBgSlot;
     setBgLoaders();
+    
+    // initialize view state
+    nextViewState = ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::update(int keys)
+ViewState PauseMenuComponent::update(int keys)
 {
     // navigate options
     if (keys & KEY_DOWN)
@@ -106,7 +110,10 @@ void PauseMenuComponent::update(int keys)
 
         if (options[selectedOption].onSelect != nullptr)
         {
-            (this->*(options[selectedOption].onSelect))();
+            ViewState result = (this->*(options[selectedOption].onSelect))();
+            if (result != ViewState::KEEP_CURRENT) {
+                nextViewState = result;
+            }
             // if we changed options, push current state to stack
             if (options != currentState.options)
             {
@@ -164,95 +171,146 @@ void PauseMenuComponent::update(int keys)
         bgHide(bgSlot);
     }
 
-    return;
+    ViewState viewState = nextViewState;
+    nextViewState = ViewState::KEEP_CURRENT;
+    return viewState;
 }
 
 // OPTION HANDLERS
 // menuOption handlers
-void PauseMenuComponent::openSkillMenu()
+ViewState PauseMenuComponent::openDebugMenu()
+{
+    selectedOption = 0;
+    options = debugOptions;
+    optionCount = DEBUG_OPTIONS;
+    return ViewState::KEEP_CURRENT;
+}
+
+ViewState PauseMenuComponent::openSkillMenu()
 {
     selectedOption = 0;
     options = skillOptions;
     optionCount = SKILL_OPTIONS;
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::openItemMenu()
+ViewState PauseMenuComponent::openItemMenu()
 {
     selectedOption = 0;
     options = itemOptions;
     optionCount = ITEM_OPTIONS;
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::openPersonaMenu()
+ViewState PauseMenuComponent::openPersonaMenu()
 {
     selectedOption = 0;
     options = personaOptions;
     optionCount = PERSONA_OPTIONS;
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::openEquipMenu()
+ViewState PauseMenuComponent::openEquipMenu()
 {
     selectedOption = 0;
     options = equipOptions;
     optionCount = EQUIP_OPTIONS;
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::openStatusMenu()
+ViewState PauseMenuComponent::openStatusMenu()
 {
     selectedOption = 0;
     options = statsOptions;
     optionCount = STATS_OPTIONS;
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::openSLinkMenu()
+ViewState PauseMenuComponent::openSLinkMenu()
 {
     selectedOption = 0;
     options = sLinkOptions;
     optionCount = S_LINK_OPTIONS;
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::openSystemMenu()
+ViewState PauseMenuComponent::openSystemMenu()
 {
     selectedOption = 0;
     options = systemOptions;
     optionCount = SYSTEM_OPTIONS;
+    return ViewState::KEEP_CURRENT;
 }
 
 // generic handlers
 // this is where we would implement functionality for going into a sub-menu, or selecting a skill, item, etc.
-void PauseMenuComponent::skillOptionSelected()
+ViewState PauseMenuComponent::debugOptionSelected()
+{
+    // set the next view state based on the selected debug option
+    ViewState selectedView;
+    switch (selectedOption)
+    {
+        case DISCLAIMER_VIEW:
+            selectedView = ViewState::DISCLAIMER;
+            break;
+        case INTRO_VIDEO_VIEW:
+            selectedView = ViewState::INTRO_VIDEO;
+            break;
+        case INTRO_VIEW:
+            selectedView = ViewState::INTRO;
+            break;
+        case MAIN_MENU_VIEW:
+            selectedView = ViewState::MAIN_MENU;
+            break;
+        case IWATODAI_DORM_VIEW:
+            selectedView = ViewState::IWATODAI_DORM;
+            break;
+        default:
+            selectedView = ViewState::KEEP_CURRENT;
+    }
+    return selectedView;
+}
+
+ViewState PauseMenuComponent::skillOptionSelected()
 {
     selectedOption = 0;
     options = skills;
     optionCount = SKILLS;
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::itemOptionSelected()
+ViewState PauseMenuComponent::itemOptionSelected()
 {
     // ...
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::equipOptionSelected()
+ViewState PauseMenuComponent::equipOptionSelected()
 {
     // ...
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::personaOptionSelected()
+ViewState PauseMenuComponent::personaOptionSelected()
 {
     // ...
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::statsOptionSelected()
+ViewState PauseMenuComponent::statsOptionSelected()
 {
     // ...
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::sLinkOptionSelected()
+ViewState PauseMenuComponent::sLinkOptionSelected()
 {
     // ...
+    return ViewState::KEEP_CURRENT;
 }
 
-void PauseMenuComponent::systemOptionSelected()
+ViewState PauseMenuComponent::systemOptionSelected()
 {
     // ...
+    return ViewState::KEEP_CURRENT;
 }

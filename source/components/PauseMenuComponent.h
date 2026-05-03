@@ -2,7 +2,7 @@
 #include <calico/types.h>
 #include <stack>
 
-#define MENU_OPTIONS 7
+#define MENU_OPTIONS 8
 #define SKILL_OPTIONS 9
 #define ITEM_OPTIONS 3
 #define EQUIP_OPTIONS 9
@@ -12,6 +12,7 @@
 #define SYSTEM_OPTIONS 6
 
 // dummy option for testing
+#define DEBUG_OPTIONS 5
 # define SKILLS 2
 
 class PauseMenuComponent;
@@ -19,7 +20,7 @@ typedef struct
 {
     const char* name;
     int bgIndex;
-    void (PauseMenuComponent::*onSelect)();
+    ViewState (PauseMenuComponent::*onSelect)();
 } PauseOption;
 
 typedef struct
@@ -85,6 +86,15 @@ enum {
     RETURN_TO_TITLE = 5
 };
 
+// Debug options
+enum {
+    DISCLAIMER_VIEW = 0,
+    INTRO_VIDEO_VIEW = 1,
+    INTRO_VIEW = 2,
+    MAIN_MENU_VIEW = 3,
+    IWATODAI_DORM_VIEW = 4
+};
+
 class PauseMenuComponent {
     private:
         // sfx
@@ -106,9 +116,11 @@ class PauseMenuComponent {
         stack<PauseState> prevOptions;
         int optionCount = 0;
         int selectedOption = 0;
+        ViewState nextViewState = ViewState::KEEP_CURRENT;
 
         PauseOption menuOptions[MENU_OPTIONS] = 
         {
+            {"Debug", -1, &PauseMenuComponent::openDebugMenu},
             {"Skill", -1, &PauseMenuComponent::openSkillMenu},
             {"Item", -1, &PauseMenuComponent::openItemMenu},
             {"Persona", -1, &PauseMenuComponent::openPersonaMenu},
@@ -116,6 +128,15 @@ class PauseMenuComponent {
             {"Status", -1, &PauseMenuComponent::openStatusMenu},
             {"S.Link", -1, &PauseMenuComponent::openSLinkMenu},
             {"System", -1, &PauseMenuComponent::openSystemMenu},
+        };
+
+        PauseOption debugOptions[DEBUG_OPTIONS] = 
+        {
+            {"DisclaimerView", -1, &PauseMenuComponent::debugOptionSelected},
+            {"IntroVideoView", -1, &PauseMenuComponent::debugOptionSelected},
+            {"IntroView", -1, &PauseMenuComponent::debugOptionSelected},
+            {"MainMenuView", -1, &PauseMenuComponent::debugOptionSelected},
+            {"IwatodaiDormView", -1, &PauseMenuComponent::debugOptionSelected},
         };
 
         // TODO: go into submenus
@@ -205,24 +226,26 @@ class PauseMenuComponent {
 
         // OPTION HANDLERS
         // menuOption handlers
-        void openSkillMenu();
-        void openItemMenu();
-        void openPersonaMenu();
-        void openEquipMenu();
-        void openStatusMenu();
-        void openSLinkMenu();
-        void openSystemMenu();
+        ViewState openDebugMenu();
+        ViewState openSkillMenu();
+        ViewState openItemMenu();
+        ViewState openPersonaMenu();
+        ViewState openEquipMenu();
+        ViewState openStatusMenu();
+        ViewState openSLinkMenu();
+        ViewState openSystemMenu();
         // generic handlers
-        void skillOptionSelected();
-        void itemOptionSelected();
-        void equipOptionSelected();
-        void personaOptionSelected();
-        void statsOptionSelected();
-        void sLinkOptionSelected();
-        void systemOptionSelected();
+        ViewState debugOptionSelected();
+        ViewState skillOptionSelected();
+        ViewState itemOptionSelected();
+        ViewState equipOptionSelected();
+        ViewState personaOptionSelected();
+        ViewState statsOptionSelected();
+        ViewState sLinkOptionSelected();
+        ViewState systemOptionSelected();
 
     public:
         void init(int iBgSlot);
-        void update(int keys);
+        ViewState update(int keys);
         void cancelSFX();
 };
