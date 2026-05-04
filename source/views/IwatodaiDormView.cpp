@@ -151,7 +151,7 @@ ViewState IwatodaiDormView::Update() {
         glPushMatrix();
             iwatodaiDormEnv.draw();
             iwatodaiDormEnv.drawBillboards(
-                true,  // billboards face camera
+                enableBillboards,  // billboards face camera
                 camPos.cameraX, camPos.cameraY, camPos.cameraZ
             );
         glPopMatrix(1);

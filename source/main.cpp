@@ -20,6 +20,7 @@
 #include "soundbank_bin.h"
 
 volatile int frame = 0;
+volatile bool enableBillboards = true;
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
@@ -66,10 +67,10 @@ int main(int argc, char *argv[]) {
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
     // start with DisclaimerView
-    SwitchView(new DisclaimerView());
+    // SwitchView(new DisclaimerView());
 
     // DEBUG
-    // SwitchView(new IwatodaiDormView());
+    SwitchView(new IwatodaiDormView());
 
 	while(pmMainLoop()) {
 		swiWaitForVBlank();

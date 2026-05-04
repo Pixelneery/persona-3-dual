@@ -4,6 +4,7 @@
 #include "controllers/AnimationController.h"
 
 extern volatile int frame;
+extern volatile bool enableBillboards;
 extern MusicController musicCtrl;
 extern VideoController videoCtrl;
 extern AnimationController characterAnimationCtrl;

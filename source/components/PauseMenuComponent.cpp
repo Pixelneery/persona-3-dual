@@ -283,6 +283,10 @@ ViewState PauseMenuComponent::debugOptionSelected()
             dialogueCtrl.start(demo_yuki_guard_argument_first());
             selectedView = ViewState::KEEP_CURRENT;
             break;
+        case TOGGLE_BILLBOARDS:
+            enableBillboards = !enableBillboards;
+            selectedView = ViewState::KEEP_CURRENT;
+            break;
         default:
             selectedView = ViewState::KEEP_CURRENT;
     }
