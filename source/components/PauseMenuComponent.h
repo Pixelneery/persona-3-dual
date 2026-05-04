@@ -99,6 +99,8 @@ enum {
 
 class PauseMenuComponent {
     private:
+        bool* isActivePtr;
+        
         // sfx
         mm_sfxhand sfxMenuHandle;
         mm_sfxhand sfxSelectHandle;
@@ -249,7 +251,7 @@ class PauseMenuComponent {
         ViewState systemOptionSelected();
 
     public:
-        void init(int iBgSlot);
+        void init(int iBgSlot, bool* isActive);
         ViewState update(int keys);
         void cancelSFX();
 };

@@ -100,7 +100,7 @@ void IwatodaiDormView::Init() {
 
     // setup pause menu
     // use the same shared background slot as the demo dialogue
-    pauseMenu.init(bgSharedSlot);
+    pauseMenu.init(bgSharedSlot, &isPauseMenuActive);
 }
 
 ViewState IwatodaiDormView::Update() {
