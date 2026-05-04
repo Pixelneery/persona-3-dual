@@ -278,7 +278,7 @@ class CodeGenerator:
         for ia in self.interactions:  
             for i, bg in enumerate(ia.bg_order):
                 bgSet.add(f'#include "{ia.bg_order[i] if ia.bg_order else "myBg"}.h"')
-        out.extend(list(bgSet))
+        out.extend(sorted(bgSet))
         out.append("")
         
         out += [
