@@ -13,6 +13,9 @@ class IwatodaiDormView : public View {
         ViewState Update() override;
         void Cleanup() override;
 
+        // Toggle whether billboards automatically face the camera
+        bool billboardsFaceCamera = true;
+
     private:
         // sub screen
         // int bgAkihiko;

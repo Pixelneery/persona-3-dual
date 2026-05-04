@@ -10,6 +10,7 @@
 // environment
 #include "environments/iwatodai_dorm.h"
 #include "texture.h"
+#include "tree.h"
 // collision (deprecated)
 #include "maps/iwatodaiDorm.h"
 // dialogue
@@ -18,6 +19,11 @@
 // texture IDs
 int characterTextureId;
 iwatodai_dorm_Environment iwatodaiDormEnv;
+
+// Quick helper to safely inject floating values into fixed-point v16 parameters
+inline v16 floatToV16(float f) {
+    return (v16)(f * (1 << 12));
+}
 
 void IwatodaiDormView::Init() {
     videoSetMode(MODE_0_3D);
@@ -75,8 +81,6 @@ void IwatodaiDormView::Init() {
     bgUpdate();
 
     // get controllers
-    // NOTE: the collision map is currently being used here, but is just dummy data. This is an old implementation that will
-    // be deprecated, but is currently still in the workflow until the new collision system is fully implemented and tested.
     playerCtrl = new CharacterController(MAP_WIDTH, MAP_HEIGHT, &collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
 
     // point to music
@@ -89,7 +93,8 @@ void IwatodaiDormView::Init() {
 
     // setup environment model
     const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = {
-        textureBitmap
+        textureBitmap,
+        treeBitmap
     };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
 }
@@ -131,17 +136,32 @@ ViewState IwatodaiDormView::Update() {
         camPos.targetX, camPos.targetY, camPos.targetZ,
         camPos.upX, camPos.upY, camPos.upZ);
 
+
     // draw environment
     glPushMatrix();
         iwatodaiDormEnv.draw();
+        
+        // Temporarily disable backface culling to ensure billboard visibility
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_NONE);
+        
+        // Batch render all BB_ quads natively using fast v16 math!
+        // We pass the exact camera coordinates for Viewpoint Tracking
+        iwatodaiDormEnv.drawBillboards(
+            billboardsFaceCamera, 
+            camPos.cameraX, camPos.cameraY, camPos.cameraZ
+        );
     glPopMatrix(1);
 
     // draw character
     glPushMatrix();
+        // Restore standard culling before rendering the character model
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
+        
         // move character
         characterPosition charPos = playerCtrl->isCharacterAt();
         glTranslatef(charPos.x, 0.1, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
+        
         // draw character
         glBindTexture(GL_TEXTURE_2D, characterTextureId);
         characterAnimationCtrl.render();
