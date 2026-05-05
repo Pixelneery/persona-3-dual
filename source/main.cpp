@@ -10,6 +10,7 @@
 #include "views/IntroView.h"
 #include "views/MainMenuView.h"
 #include "views/IwatodaiDormView.h"
+#include "views/IwatodaiStreetsView.h"
 
 // controllers
 #include "controllers/MusicController.h"
@@ -20,6 +21,7 @@
 #include "soundbank_bin.h"
 
 volatile int frame = 0;
+volatile bool enableBillboards = true;
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
@@ -66,10 +68,10 @@ int main(int argc, char *argv[]) {
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
     // start with DisclaimerView
-    // SwitchView(new DisclaimerView());
+    SwitchView(new DisclaimerView());
 
     // DEBUG
-    SwitchView(new IwatodaiDormView());
+    // SwitchView(new IwatodaiStreetsView());
 
 	while(pmMainLoop()) {
 		swiWaitForVBlank();
@@ -83,6 +85,8 @@ int main(int argc, char *argv[]) {
                 SwitchView(new MainMenuView());
             } else if (nextState == ViewState::IWATODAI_DORM) {
                 SwitchView(new IwatodaiDormView());
+            } else if (nextState == ViewState::IWATODAI_STREETS) {
+                SwitchView(new IwatodaiStreetsView());
             } else if (nextState == ViewState::DISCLAIMER) {
                 SwitchView(new DisclaimerView());
             } else if (nextState == ViewState::INTRO_VIDEO) {

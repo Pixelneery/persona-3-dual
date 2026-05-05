@@ -1,10 +1,11 @@
 {
     "asset_type": "nds_build_environment",
-    "target_size": 3.5,
-    "source_blender": true,
+    "target_size": 10.0,
     "center": true,
+    "source_blender": false,
     "skip_grit": false,
     "grit_flags": "-gTT -gB16 -gb -ftb",
     "rgba": true,
-    "color": [255, 255, 255]
+    "color": [255, 255, 255],
+    "max_tex_size": 64
 }

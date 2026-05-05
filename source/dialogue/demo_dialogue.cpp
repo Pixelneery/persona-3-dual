@@ -3,17 +3,17 @@
 
 int demo_dialogue_bg_slot = 0;
 
-// ── BG imports ──────────────────────────────────────────────────────
-#include "bgYukiClose.h"
-#include "bgYuki.h"
+// background import
 #include "bgAkihiko.h"
 #include "bgGuard.h"
+#include "bgYuki.h"
+#include "bgYukiClose.h"
 
 void demo_unload() {
     bgHide(demo_dialogue_bg_slot);
 }
 
-const char* demo_yuki_guard_argument_bg_names[4] = { "bgGuard", "bgYuki", "bgAkihiko", "bgYukiClose" };
+const char* demo_yuki_guard_argument_bg_names[4] = { "bgAkihiko", "bgGuard", "bgYuki", "bgYukiClose" };
 void (*demo_yuki_guard_argument_bg_loaders[4])() = {
     nullptr,
     nullptr,
@@ -28,6 +28,14 @@ void demo_yuki_guard_argument_load_bg(int bgIndex) {
 
 void demo_yuki_guard_argument_load() {
     demo_yuki_guard_argument_bg_loaders[0] = [](){
+        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(demo_dialogue_bg_slot), bgAkihikoTilesLen);
+        dmaCopy(bgAkihikoMap, bgGetMapPtr(demo_dialogue_bg_slot), bgAkihikoMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(demo_dialogue_bg_slot);
+    };
+    demo_yuki_guard_argument_bg_loaders[1] = [](){
         dmaCopy(bgGuardTiles, bgGetGfxPtr(demo_dialogue_bg_slot), bgGuardTilesLen);
         dmaCopy(bgGuardMap, bgGetMapPtr(demo_dialogue_bg_slot), bgGuardMapLen);
         vramSetBankH(VRAM_H_LCD);
@@ -35,19 +43,11 @@ void demo_yuki_guard_argument_load() {
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
         bgShow(demo_dialogue_bg_slot);
     };
-    demo_yuki_guard_argument_bg_loaders[1] = [](){
+    demo_yuki_guard_argument_bg_loaders[2] = [](){
         dmaCopy(bgYukiTiles, bgGetGfxPtr(demo_dialogue_bg_slot), bgYukiTilesLen);
         dmaCopy(bgYukiMap, bgGetMapPtr(demo_dialogue_bg_slot), bgYukiMapLen);
         vramSetBankH(VRAM_H_LCD);
         dmaCopy(bgYukiPal, &VRAM_H_EXT_PALETTE[0][0], bgYukiPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(demo_dialogue_bg_slot);
-    };
-    demo_yuki_guard_argument_bg_loaders[2] = [](){
-        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(demo_dialogue_bg_slot), bgAkihikoTilesLen);
-        dmaCopy(bgAkihikoMap, bgGetMapPtr(demo_dialogue_bg_slot), bgAkihikoMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
         bgShow(demo_dialogue_bg_slot);
     };

@@ -21,39 +21,35 @@ public:
     void Cleanup() override;
     IwatodaiDormView();
 
-private:
-    // sub screen
-    // int bgAkihiko;
-    PrintConsole console;
+    private:
+        // sub screen
+        PrintConsole console;
+        
+        // Battle participants
+        curPlayer player;
+        Cowardly_Maya cowardly_Maya;
+        Merciless_Maya merciless_Maya;
+        std::vector<Enemy*>* enemies;
 
-    // Battle participants
-    curPlayer player;
-    Cowardly_Maya cowardly_Maya;
-    Merciless_Maya merciless_Maya;
-    std::vector<Enemy*>* enemies;
-
-    // controllers
-    BattleController battleController;
-    CharacterController *playerCtrl;
-    // camera pos
-    cameraPosition camPos;
-    // world
-    // const float tileSize = 0.0625f;
-    // const float worldOffsetX = 1.8125f;
-    // const float worldOffsetZ = 1.6875f;
-    const float tileSize = TILE_SIZE;
-    const float worldOffsetX = WORLD_OFFSET_X;
-    const float worldOffsetZ = WORLD_OFFSET_Z;
-    const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
-    // movement and viewpoint
-    const float speed = 0.01f;
-    const float angleIncrement = 0.05f;
-    const float distance = 0.5f;
-    const float lookAhead = 0.3f;
-    // set character initial translation position
-    const Point2D<float> characterTranslate = Point2D<float>(-1.3, -0.8);
-    const float angle = -1.6;
-    const float characterFacingAngle = 91.67;
-    DialogueController dialogueCtrl;
-    dialogue lines[5];
+        // controllers
+        BattleController battleController;
+        CharacterController* playerCtrl;
+            // camera pos
+            cameraPosition camPos;
+            // world
+            const float tileSize = 0.062500f;
+            const float worldOffsetX = IWATODAI_DORM_WORLD_OFFSET_X;
+            const float worldOffsetZ = IWATODAI_DORM_WORLD_OFFSET_Z;
+            const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
+            // movement and viewpoint
+            const float speed = 0.01f;
+            const float angleIncrement = 0.05f;
+            const float distance = 0.5f; 
+            const float lookAhead = 0.3f;
+            // set character initial translation position
+            const Point2D<float> characterTranslate = Point2D<float>(0, 0);
+            const float angle = -1.6;
+            const float characterFacingAngle = 91.67;
+        DialogueController dialogueCtrl;
+            int bgSharedSlot;
 };

@@ -188,10 +188,24 @@ ViewState MainMenuView::Update() {
         return ViewState::IWATODAI_DORM;
     } else if (sceneOptions[1].selected) {
         cancelSFX();
+        musicCtrl.playSFX(SFX_SELECT, 255, 128);
+        musicCtrl.pause();
+
+        // selected "Iwatodai Streets"
+        for(int i = 0; i > -16; i--) {
+            setBrightness(3, i);
+            for (int duration = 0; duration <= 2; duration++) {
+                musicCtrl.update();
+                swiWaitForVBlank();
+            }
+        }
+        return ViewState::IWATODAI_STREETS;
+    } else if (sceneOptions[2].selected) {
+        cancelSFX();
         musicCtrl.playSFX(SFX_CANCEL, 255, 128);
 
         // select menuOptions
-        sceneOptions[1].selected = false;
+        sceneOptions[2].selected = false;
         selectedOption = 0;
         options = menuOptions;
         optionCount = menuOptionCount;

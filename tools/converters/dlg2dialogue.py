@@ -198,6 +198,10 @@ class DialogueParser:
                 self.interactions.append(ia)
                 continue
             raise ParseError(n, f"Expected [interaction: name] or @bg directive, got: '{s}'")
+        # sort interactions, and each interaction's bg_order for consistent code output
+        self.interactions.sort()
+        for ia in self.interactions:
+            ia.bg_order.sort()
         return self.interactions
 
 class CodeGenerator:
@@ -268,13 +272,13 @@ class CodeGenerator:
             "",
             f"int {s}_dialogue_bg_slot = 0;",
             "",
-            "// ── BG imports ──────────────────────────────────────────────────────"
+            "// background import"
         ]
         bgSet = set()
         for ia in self.interactions:  
             for i, bg in enumerate(ia.bg_order):
                 bgSet.add(f'#include "{ia.bg_order[i] if ia.bg_order else "myBg"}.h"')
-        out.extend(list(bgSet))
+        out.extend(sorted(bgSet))
         out.append("")
         
         out += [
