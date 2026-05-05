@@ -39,9 +39,9 @@ struct curPlayer : Player
         lu = 2;
         baseAttackAction = &slash_Attack;
         attackSkill = myAttcking;
-        u32 attackCount = 2;
-        // add resitances and arcana in the future
-        
+        // u32 attackCount = 2;
+        // add resistances and arcana in the future
+        // ...
     }
     
 };

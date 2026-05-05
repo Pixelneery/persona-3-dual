@@ -35,7 +35,7 @@ bool AttackAction::update()
         iprintf("\n");
 
         char str[50];
-        std::sprintf(str, "remaing Enemy hp: %d \n", enemies->at(targetIndex)->hp);
+        std::sprintf(str, "remaing Enemy hp: %lu \n", enemies->at(targetIndex)->hp);
         iprintf(str);
         iprintf("\n");
 

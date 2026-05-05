@@ -1,30 +1,30 @@
-#pragma once
 #include "core/View.h"
+#include <nds/arm9/console.h>
+// controllers
 #include "controllers/DialogueController.h"
 #include "controllers/CharacterController.h"
-#include "maps/iwatodaiDorm_256x256_offsets.h"
-#include <nds/arm9/console.h>
+// environments
+#include "environments/iwatodai_dorm.h"
+// battle-related
 #include "./battleActions/party/curPlayer.h"
 #include "./battleActions/Enemies/Enemy.h"
 #include "./battleActions/Enemies/Cowardly_Maya.h"
 #include "./battleActions/Enemies/Merciless_Maya.h"
-// TODO:  move somewhere
-#include "./controllers/BattleController.h"
+#include "./controllers/BattleController.h" // TODO: move somewhere
 
 // implementing from View
-class IwatodaiDormView : public View
-{
-public:
-    // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
-    void Init() override;
-    ViewState Update() override;
-    void Cleanup() override;
-    IwatodaiDormView();
+class IwatodaiDormView : public View {
+    public:
+        // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
+        void Init() override;
+        ViewState Update() override;
+        void Cleanup() override;
+        IwatodaiDormView();
 
     private:
         // sub screen
         PrintConsole console;
-        
+
         // Battle participants
         curPlayer player;
         Cowardly_Maya cowardly_Maya;

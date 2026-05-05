@@ -32,7 +32,7 @@ void BattleController::update(u32 keys)
     }
 
     u32 actionCount = actions.size();
-    for (int i = 0; i < actionCount; i++)
+    for (u32 i = 0; i < actionCount; i++)
     {
         if (actions[i]->inProgress)
         {
@@ -89,7 +89,7 @@ void BattleController::enemyTurn()
     iprintf("\n");
 
     char str[50];
-    std::sprintf(str, "remaing player hp: %d \n", player->hp);
+    std::sprintf(str, "remaing player hp: %lu \n", player->hp);
     iprintf(str);
 
     if (player->hp <= 0)

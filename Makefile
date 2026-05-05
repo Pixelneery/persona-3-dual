@@ -25,8 +25,6 @@ INCLUDES    :=  include source
 
 # Add environment subdirectories directly to the GRAPHICS build pipeline
 GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*)
-
-GRAPHICS	:=	assets/graphics
 SFX       	:=  assets/sfx
 NITRODATA   :=  nitrofiles
 
@@ -83,14 +81,14 @@ ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments
 #---------------------------------------------------------------------------------
 ARCH    :=  -march=armv5te -mtune=arm946e-s -mthumb
 
-CFLAGS  :=  -g -Wall -O3 -flto -ffunction-sections -fdata-sections\
+CFLAGS  :=  -g -Wall -O3 -flto=auto -ffunction-sections -fdata-sections\
         $(ARCH)
 
 CFLAGS  +=  $(INCLUDE) -DARM9
 CXXFLAGS    := $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS :=  -g $(ARCH)
-LDFLAGS =   -specs=ds_arm9.specs -g $(ARCH) -flto -Wl,--gc-sections -Wl,-Map,$(notdir $*.map)
+LDFLAGS =   -specs=ds_arm9.specs -g $(ARCH) -flto=auto -Wl,--gc-sections -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project

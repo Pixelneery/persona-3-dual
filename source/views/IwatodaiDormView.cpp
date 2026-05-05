@@ -4,19 +4,17 @@
 #include "math.h"
 #include "IwatodaiDormView.h"
 
-// assets
-// 3D models
-#include "iwatodaiDorm_256x256_bin.h"
-#include "character_16x16_bin.h"
-
-// textures
+// model
+#include "models/character.h"
 #include "character.h"
-#include "environment.h"
-// collision
-#include "IwatodaiDormCollision.h"
+// environment
+#include "environments/iwatodai_dorm.h"
+#include "texture.h"
+// collision (deprecated)
+#include "maps/iwatodaiDorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
-// pause menu
+
 #include "components/PauseMenuComponent.h"
 
 // TODO: move to header
@@ -25,12 +23,9 @@ iwatodai_dorm_Environment iwatodaiDormEnv;
 PauseMenuComponent pauseMenu;
 bool isPauseMenuActive = false;
 
-void DrawPlayerModel()
-{
-    // bind texture before drawing
-    glBindTexture(GL_TEXTURE_2D, characterTextureId);
-    glCallList((u32 *)character_16x16_bin);
-}
+// TODO: dont forget to clear in future
+IwatodaiDormView::IwatodaiDormView() : enemies(new std::vector<Enemy *>({&merciless_Maya, &cowardly_Maya})),
+                                       battleController(&player, enemies) {}
 
 void IwatodaiDormView::Init()
 {
@@ -59,25 +54,13 @@ void IwatodaiDormView::Init()
     // zNear is how close the camera can see, zFar is the maximum draw distance
     gluPerspective(55, 256.0 / 192.0, 0.1, 40);
 
-    // environment
-    glGenTextures(1, &environmentTextureId);
-    glBindTexture(GL_TEXTURE_2D, environmentTextureId);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0,
-        GL_RGBA,
-        TEXTURE_SIZE_256, TEXTURE_SIZE_256,
-        0,
-        TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
-        environmentBitmap // from environment.h
-    );
-
     // character
     glGenTextures(1, &characterTextureId);
     glBindTexture(GL_TEXTURE_2D, characterTextureId);
     glTexImage2D(
         GL_TEXTURE_2D, 0,
         GL_RGBA,
-        TEXTURE_SIZE_16, TEXTURE_SIZE_16,
+        TEXTURE_SIZE_32, TEXTURE_SIZE_32,
         0,
         TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
         characterBitmap // from character.h
@@ -146,7 +129,8 @@ ViewState IwatodaiDormView::Update()
             return menuResult;
         }
     } else {    // only render world when pause menu is not active
-        if (!dialogueCtrl.isActive() && !battleController.isActive()) { // only process world input when dialogue and battle are not active
+        // only process world input when dialogue and battle are not active
+        if (!dialogueCtrl.isActive() && !battleController.isActive()) {
             // move character
             camPos = playerCtrl->update(keys);
           
@@ -233,7 +217,6 @@ void IwatodaiDormView::Cleanup()
     isPauseMenuActive = false;
 
     // reset textures
-    glDeleteTextures(1, &environmentTextureId);
     glDeleteTextures(1, &characterTextureId);
 
     // reset vram
@@ -246,8 +229,3 @@ void IwatodaiDormView::Cleanup()
     delete playerCtrl;
     playerCtrl = NULL;
 }
-
-// TODO: dont forget to clear in future
-
-IwatodaiDormView::IwatodaiDormView() : enemies(new std::vector<Enemy *>({&merciless_Maya, &cowardly_Maya})),
-                                       battleController(&player, enemies) {}
