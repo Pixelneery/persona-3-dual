@@ -14,3 +14,4 @@ persona-3-dual.elf
 # /nitrofiles/models
 /tools/converters/__pycache__
 *.pyc
+persona-3-dual.lst

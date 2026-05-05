@@ -52,6 +52,7 @@ void IwatodaiStreetsView::Init() {
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankB(VRAM_B_TEXTURE);
     vramSetBankC(VRAM_C_SUB_BG);
+    vramSetBankD(VRAM_D_TEXTURE); 
     bgExtPaletteEnableSub();
 
     glInit();
@@ -107,7 +108,7 @@ void IwatodaiStreetsView::Init() {
     characterAnimationCtrl.set(MODEL_CHARACTER_WALK, true);
     characterAnimationCtrl.play();
 
-    // environment — pass all 25 textures in slot order
+    // environment - pass all 25 textures in slot order
     const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {
         f007_009_07Bitmap,
         f007_009_16Bitmap,
@@ -216,6 +217,7 @@ void IwatodaiStreetsView::Cleanup() {
     vramSetBankA(VRAM_A_LCD);
     vramSetBankB(VRAM_B_LCD);
     vramSetBankC(VRAM_C_LCD);
+    vramSetBankD(VRAM_D_LCD);
     vramSetBankH(VRAM_H_LCD);
 
     delete playerCtrl;

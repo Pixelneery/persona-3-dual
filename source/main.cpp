@@ -68,10 +68,10 @@ int main(int argc, char *argv[]) {
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
     // start with DisclaimerView
-    SwitchView(new DisclaimerView());
+    // SwitchView(new DisclaimerView());
 
     // DEBUG
-    // SwitchView(new IwatodaiDormView());
+    SwitchView(new IwatodaiStreetsView());
 
 	while(pmMainLoop()) {
 		swiWaitForVBlank();
