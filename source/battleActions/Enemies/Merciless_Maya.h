@@ -1,18 +1,18 @@
 #pragma once
 #include "Enemy.h"
-#include "../Skills/Attacking.h"
-#include "../Skills/Slash_Attack.h"
-#include "../Skills/Agi.h"
+#include "../skills/AttackSkill.h"
+#include "../skills/Slash_Attack.h"
+#include "../skills/Agi.h"
 
 struct Merciless_Maya : Enemy
 {
     Slash_Attack slash_Attack;
     Agi agi;
-    Attacking *myAttacking[2];
+    AttackSkill *myAttackSkill[2];
     
     Merciless_Maya() {
-        myAttacking[0] = &slash_Attack;
-        myAttacking[1] = &agi;
+        myAttackSkill[0] = &slash_Attack;
+        myAttackSkill[1] = &agi;
 
         name = "Merciless Maya";
         hp = 50;
@@ -23,7 +23,7 @@ struct Merciless_Maya : Enemy
         en = 3;
         ag = 3;
         lu = 2;
-        attacking = myAttacking;
+        attackSkill = myAttackSkill;
         attackCount = 2;
     }
 };

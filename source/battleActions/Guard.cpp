@@ -6,3 +6,5 @@ void Guard::execute()
     //TODO: GUARD
     iprintf("Guarding");
 }
+
+bool Guard::update(){return true;}

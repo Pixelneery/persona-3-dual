@@ -19,8 +19,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	$(shell basename $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source source/views source/controllers source/core source/dialogue source/models source/environments source/battleActions source/battleActions/Enemies source/battleActions/Party source/battleActions/Skills 
-DATA		:=	assets/models/bin
+SOURCES		:=	source source/views source/controllers source/core source/dialogue source/models source/environments source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills 
 DATA		:=	assets/models/bin
 INCLUDES	:=	include source
 # Add environment subdirectories directly to the GRAPHICS build pipeline

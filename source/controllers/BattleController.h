@@ -4,40 +4,40 @@
 #include <nds.h>
 #include <stdio.h>
 #include <vector>
+#include <array>
 
 #include "./battleActions/ActionBase.h"
-#include "./battleActions/Attack.h"
+#include "./battleActions/AttackAction.h"
 #include "./battleActions/Guard.h"
 #include "./battleActions/Persona.h"
-#include "./battleActions/Party/curPlayer.h"
+#include "./battleActions/party/Player.h"
 #include "./battleActions/Enemies/Enemy.h"
-#include "./battleActions/Enemies/Cowardly_Maya.h"
-#include "./battleActions/Enemies/Merciless_Maya.h"
+#include "./battleActions/UpdateIndex.h"
 
 class BattleController
 {
-private:
+private:     
+    u32 index = 0;               
+    u32 counter = 0;
+    bool active = false;     
+    bool isEnemeyTurn = false;
+    UpdateIndex updateIndex;              
 
-    bool exited = false;
-    u32 index = 0;
-   
-    //Battle participants
-    curPlayer player;
-    Cowardly_Maya cowardly_Maya;
-    Merciless_Maya merciless_Maya;
-    //TODO: dont forget to clear in future
-    std::vector<Enemy*>* enemies = new std::vector<Enemy*>({&merciless_Maya, &cowardly_Maya});
+    Player* player;
+    std::vector<Enemy*> *enemies;
 
-    //actions, DO NOT MOVE ABOVE BATTLE PARTICIPANTS DECLERATIONS
-    Attack attack;
+    AttackAction attack;
     Guard guard;
     Persona persona;
 
+    std::array<ActionBase *, 3> actions = {nullptr};
+
     void enemyTurn();
-
 public:
-    BattleController();
-    ~BattleController();
-
+    bool isActive() {return active;};
     void execute();
+    void update(u32 keys);
+    void exit();
+    BattleController(Player *iPlayer, std::vector<Enemy*> *iEnemies);
+    ~BattleController() {}
 };

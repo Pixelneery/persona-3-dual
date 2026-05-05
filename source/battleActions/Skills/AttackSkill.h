@@ -2,7 +2,8 @@
 #include <nds.h>
 #include <cmath>
 #include <stdlib.h>
-#include <string.h>
+#include <stdio.h>
+#include <string>
 /*
 Alleged p3f damage formula:
 The square root of ( ( Player Strength or Magic / Enemy Endurance ) * ( Player Level / Enemy Level ) * Move Damage Value ) * 7.4
@@ -11,7 +12,7 @@ The square root of ( ( Player Strength or Magic / Enemy Endurance ) * ( Player L
 The above formula disregards a random 10% swing in either direction, for example a "100 damage" calculation can be anywhere between 90 and 110 due to RNG.
 */
 
-struct Attacking
+struct AttackSkill
 {
     float moveDamage;
     enum Race
@@ -38,5 +39,5 @@ struct Attacking
                        7.4f;
         return result;
     }
-    virtual ~Attacking() = default;
+    virtual ~AttackSkill() = default;
 };

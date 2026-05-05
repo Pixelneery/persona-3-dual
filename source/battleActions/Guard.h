@@ -1,6 +1,6 @@
 #pragma once
 #include "ActionBase.h"
-#include "Party/player.h"
+#include "party/player.h"
 
 struct Guard : ActionBase 
 {
@@ -11,4 +11,5 @@ struct Guard : ActionBase
     }
 
     void execute() override;
+    bool update() override;
 };

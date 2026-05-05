@@ -1,7 +1,7 @@
 #pragma once 
 #include <nds.h>
 #include <string>
-#include "../Skills/Attacking.h"
+#include "../skills/AttackSkill.h"
 
 /*
 St	Represents strength and physical damage.
@@ -13,7 +13,7 @@ Lu	Represents luck, which is taken into account when using certain skills involv
 struct Player
 {
     std::string name;
-    u32 hp;
+    s32 hp;
     u32 sp;
     u32 lv;
     u32 st;
@@ -21,8 +21,8 @@ struct Player
     u32 en;
     u32 ag;
     u32 lu;
-    Attacking *baseAttack;
-    Attacking **attacking;
+    AttackSkill *baseAttackAction;
+    AttackSkill **attackSkill;
     u32 attackCount;
 
     bool guarding = false;

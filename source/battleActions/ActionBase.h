@@ -7,9 +7,10 @@
 struct ActionBase
 {
     bool inProgress = false;
-    s32 targetIndex = 0; 
+    u32 targetIndex = 0; 
     std::string name = "";
 
     virtual void execute() = 0;
+    virtual bool update() = 0;
     virtual ~ActionBase() = default;
 };

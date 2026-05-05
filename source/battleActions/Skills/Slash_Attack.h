@@ -1,7 +1,7 @@
 #pragma once
-#include "Attacking.h"
+#include "AttackSkill.h"
 
-struct Slash_Attack : Attacking 
+struct Slash_Attack : AttackSkill 
 {
     Slash_Attack() {
         //TODO: made up damage, cant find actual value

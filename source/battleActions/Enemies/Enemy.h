@@ -1,7 +1,7 @@
 #pragma once 
 #include <nds.h>
 #include <string>
-#include "../Skills/Attacking.h"
+#include "../skills/AttackSkill.h"
 
 /*
 St	Represents strength and physical damage.
@@ -21,7 +21,7 @@ struct Enemy
     u32 en;
     u32 ag;
     u32 lu;
-    Attacking **attacking;
+    AttackSkill **attackSkill;
     u32 attackCount;
     //add resitances and arcana in the future
 

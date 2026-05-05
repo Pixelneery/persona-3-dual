@@ -1,7 +1,7 @@
 #pragma once
-#include "Attacking.h"
+#include "AttackSkill.h"
 
-struct Agi : Attacking 
+struct Agi : AttackSkill 
 {
     Agi() {
         moveDamage = 50;

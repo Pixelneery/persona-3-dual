@@ -1,14 +1,14 @@
 #pragma once
 #include "Enemy.h"
-#include "../Skills/Attacking.h"
-#include "../Skills/Slash_Attack.h"
+#include "../skills/AttackSkill.h"
+#include "../skills/Slash_Attack.h"
 
 struct Cowardly_Maya : Enemy
 {
     Slash_Attack slash_Attack;
-    Attacking *myAttacking[1];
+    AttackSkill *myAttackSkill[1];
     Cowardly_Maya() {
-        myAttacking[0] = &slash_Attack;
+        myAttackSkill[0] = &slash_Attack;
 
         name = "Cowardly Maya";
         hp = 67;
@@ -19,7 +19,7 @@ struct Cowardly_Maya : Enemy
         en = 3;
         ag = 2;
         lu = 2;
-        attacking = myAttacking;
+        attackSkill = myAttackSkill;
         attackCount = 1;
     }
 };

@@ -1,9 +1,10 @@
 #pragma once
 #include <nds.h>
 #include <string>
-#include "../Skills/Attacking.h"
-#include "../Skills/Agi.h"
-#include "../Skills/Slash_Attack.h"
+#include "../skills/AttackSkill.h"
+#include "../skills/Agi.h"
+#include "../skills/Bufu.h"
+#include "../skills/Slash_Attack.h"
 #include "Player.h"
 
 /*
@@ -19,11 +20,13 @@ struct curPlayer : Player
 {
     Slash_Attack slash_Attack;
     Agi agi;
-    Attacking *myAttcking[1];
+    Bufu bufu;
+    AttackSkill *myAttcking[2];
 
     curPlayer()
     {
         myAttcking[0] = &agi;
+        myAttcking[1] = &bufu;
 
         name = "Makoto";
         hp = 720;
@@ -34,12 +37,11 @@ struct curPlayer : Player
         en = 2;
         ag = 3;
         lu = 2;
-        baseAttack = &slash_Attack;
-        attacking = myAttcking;
-        u32 attackCount = 1;
+        baseAttackAction = &slash_Attack;
+        attackSkill = myAttcking;
+        u32 attackCount = 2;
         // add resitances and arcana in the future
         
     }
-
     
 };

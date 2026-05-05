@@ -54,8 +54,7 @@ void DialogueController::update(u32 keys) {
     }
 
     if (keys & KEY_START) {
-        consoleClear();
-        active = false;
+        exit();
         return;
     }
 
@@ -74,7 +73,7 @@ void DialogueController::update(u32 keys) {
             animIndex      = 0;
             animDone       = false;
             consoleClear();
-            if (current == NULL) { active = false; return; }
+            if (current == NULL) { exit(); return; }
         }
     } else {
         // linear dialogue
@@ -84,16 +83,22 @@ void DialogueController::update(u32 keys) {
             animIndex   = 0;
             animDone    = false;
             consoleClear();
-            if (current == NULL) { active = false; return; }
+            if (current == NULL) { exit(); return; }
         } else if (pressed & KEY_B) {
             current     = current->prev;
             isDisplayed = false;
             animIndex   = 0;
             animDone    = false;
             consoleClear();
-            if (current == NULL) { active = false; return; }
+            if (current == NULL) { exit(); return; }
         }
     }
+}
+
+void DialogueController::exit()
+{
+    consoleClear();
+    active = false;
 }
 
 void DialogueController::renderOptions() {
