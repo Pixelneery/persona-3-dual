@@ -129,7 +129,10 @@ ViewState IwatodaiDormView::Update() {
 
             // trigger dialogue from interaction
             demo_unload();
-            if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko) {
+            if (playerCtrl->isTileAt() == TileType::NEXT_SCENE) {
+                musicCtrl.pause();
+                return ViewState::IWATODAI_STREETS;
+            } else if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko) {
                 iprintf("\x1b[0;0HPress A to talk");
                 if (pressed & KEY_A) {
                     demo_yuki_guard_argument_load();

@@ -42,7 +42,9 @@ bool CharacterController::isTileWalkable(float worldX, float worldZ)
 // get tile at character position
 TileType CharacterController::isTileAt()
 {
-    return isTileAt(characterTranslate.x, characterSize.z);
+    int tileX = (int)((characterTranslate.x + worldOffsetX) / tileSize);
+    int tileZ = (int)((characterTranslate.z + worldOffsetZ) / tileSize);
+    return isTileAt(tileX, tileZ);
 }
 
 // get character position

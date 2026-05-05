@@ -8,6 +8,7 @@ enum class ViewState {
     INTRO,
     MAIN_MENU,
     IWATODAI_DORM,
+    IWATODAI_STREETS,
 };
 
 class View {
