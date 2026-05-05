@@ -131,7 +131,7 @@ ViewState IwatodaiDormView::Update() {
             demo_unload();
             if (playerCtrl->isTileAt() == TileType::NEXT_SCENE) {
                 musicCtrl.pause();
-                return ViewState::IWATODAI_STREETS;
+                return ViewState::IWATODAI_STREET;
             } else if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko) {
                 iprintf("\x1b[0;0HPress A to talk");
                 if (pressed & KEY_A) {

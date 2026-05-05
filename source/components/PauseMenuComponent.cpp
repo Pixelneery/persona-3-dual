@@ -282,6 +282,9 @@ ViewState PauseMenuComponent::debugOptionSelected()
         case IWATODAI_DORM_VIEW:
             selectedView = ViewState::IWATODAI_DORM;
             break;
+        case IWATODAI_STREET_VIEW:
+            selectedView = ViewState::IWATODAI_STREET;
+            break;
         case DEBUG_DIALOGUE:
             consoleClear();
             demo_yuki_guard_argument_load();

@@ -199,7 +199,7 @@ ViewState MainMenuView::Update() {
                 swiWaitForVBlank();
             }
         }
-        return ViewState::IWATODAI_STREETS;
+        return ViewState::IWATODAI_STREET;
     } else if (sceneOptions[2].selected) {
         cancelSFX();
         musicCtrl.playSFX(SFX_CANCEL, 255, 128);
