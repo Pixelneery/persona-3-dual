@@ -6,10 +6,7 @@ def convert(input_file, output_dir, config):
 
     print(f"\n{'─'*60}\n  OBJ → NDS display list binary\n{'─'*60}")
 
-    # obj2environment reads PNG sizes, optionally resizes them in-place (via Pillow),
-    # then generates the .bin and .h with the correct clamped sizes.
-    # The tex_list it emits will reference the (possibly resized) PNGs that grit
-    # will then process — so bitmap data and header sizes always stay in sync.
+    # obj2environment reads PNG sizes, optionally resizes them in-place (via Pillow)
     obj2environment.convert(input_file, output_dir, config)
 
     tex_list = os.path.join(output_dir, f'{base_name}_textures.txt')
@@ -59,7 +56,7 @@ if __name__ == '__main__':
         "scale":          args.scale,
         "target_size":    args.target_size,
         "no_center":      args.no_center,
-        "source_blender": args.source_blender,   # was missing before — UV flip for Blender exports
+        "source_blender": args.source_blender,
         "mapping":        args.mapping,
         "skip_grit":      args.skip_grit,
         "grit_flags":     args.grit_flags,

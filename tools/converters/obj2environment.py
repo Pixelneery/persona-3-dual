@@ -223,7 +223,7 @@ def convert(obj_path, output_dir, config):
     center = config.get("center", True)
     if config.get("no_center"): center = False
     blender_source = config.get("source_blender", False)
-    max_tex_size   = config.get("max_tex_size", None)   # NEW: e.g. 64 or 128
+    max_tex_size   = config.get("max_tex_size", None)
 
     rgba_all = config.get("rgba", False)
     raw_rgba_list = config.get("rgba_list", [])
@@ -336,7 +336,7 @@ def convert(obj_path, output_dir, config):
         tex_to_slot[tex_key] = len(dl_groups)
         dl_groups.append((tex_key, words, tw, th))
 
-    # ── VRAM budget check ──────────────────────────────────────────────────
+    # VRAM budget check
     bpp = 2  # GL_RGBA = 16bpp
     print(f"\n{'─'*60}")
     print(f"  VRAM budget check  (budget = {NDS_VRAM_BUDGET//1024} KB  =  banks A+B+D)")
@@ -413,7 +413,7 @@ def convert(obj_path, output_dir, config):
         h.write(f"            displayLists[i] = NULL; dlSizes[i] = 0; textureIDs[i] = 0;\n")
         h.write(f"        }}\n    }}\n\n")
 
-        # ── load() ────────────────────────────────────────────────────────
+        # load()
         h.write(f"    bool load(const char* filepath, const unsigned int* bitmaps[{safe_n}]) {{\n")
         if n > 0:
             h.write(f"        FILE* file = fopen(filepath, \"rb\");\n")
@@ -452,7 +452,7 @@ def convert(obj_path, output_dir, config):
             h.write("        return true;\n")
         h.write("    }\n\n")
 
-        # ── draw() — GFX_BUSY sync between every texture change ──────────
+        #  draw()
         # The NDS geometry FIFO is drained asynchronously after glCallList.
         # glBindTexture writes directly to the TEXIMAGE_PARAM register, so
         # without a sync it can overwrite the register while the GPU is still
@@ -468,7 +468,7 @@ def convert(obj_path, output_dir, config):
         h.write(f"        while (GFX_BUSY);\n")
         h.write("    }\n\n")
 
-        # ── drawBillboards() ──────────────────────────────────────────────
+        # drawBillboards()
         h.write(f"    void drawBillboards(bool faceCamera, float camX, float camY, float camZ) {{\n")
         h.write(f"        if (BILLBOARD_COUNT == 0) return;\n")
         h.write(f"        int  currentSlot = -1;\n")
@@ -503,7 +503,7 @@ def convert(obj_path, output_dir, config):
         h.write(f"        if (inQuads) glEnd();\n")
         h.write(f"    }}\n\n")
 
-        # ── cleanup() ─────────────────────────────────────────────────────
+        # cleanup()
         h.write(f"    void cleanup() {{\n")
         if n > 0:
             h.write(f"        for (u32 i = 0; i < {n}; i++) {{\n")
