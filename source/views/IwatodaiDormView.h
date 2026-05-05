@@ -15,7 +15,6 @@ class IwatodaiDormView : public View {
 
     private:
         // sub screen
-        // int bgAkihiko;
         PrintConsole console;
 
         // controllers
@@ -33,7 +32,7 @@ class IwatodaiDormView : public View {
             const float distance = 0.5f; 
             const float lookAhead = 0.3f;
             // set character initial translation position
-            const Point2D<float> characterTranslate = Point2D<float>(-1.3, -0.8);
+            const Point2D<float> characterTranslate = Point2D<float>(0, 0);
             const float angle = -1.6;
             const float characterFacingAngle = 91.67;
         DialogueController dialogueCtrl;

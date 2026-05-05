@@ -20,6 +20,7 @@
 #include "soundbank_bin.h"
 
 volatile int frame = 0;
+volatile bool enableBillboards = true;
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;

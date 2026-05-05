@@ -71,7 +71,7 @@ void PauseMenuComponent::cancelSFX()
     musicCtrl.stopSFX(sfxCancelHandle);
 }
 
-void PauseMenuComponent::init(int iBgSlot)
+void PauseMenuComponent::init(int iBgSlot, bool* isActive)
 {
     // point to music
     musicCtrl.loadSFX(SFX_MENU);
@@ -86,6 +86,8 @@ void PauseMenuComponent::init(int iBgSlot)
     // set bg loaders
     bgSlot = iBgSlot;
     setBgLoaders();
+
+    isActivePtr = isActive;
     
     // initialize view state
     nextViewState = ViewState::KEEP_CURRENT;
@@ -122,6 +124,7 @@ ViewState PauseMenuComponent::update(int keys)
             ViewState result = (this->*(options[selectedOption].onSelect))();
             if (result != ViewState::KEEP_CURRENT) {
                 nextViewState = result;
+                *isActivePtr = false;
             } else if (dialogueCtrl.isActive()) {   // added for debug testing of dialogue
                  return ViewState::KEEP_CURRENT;
             }
@@ -148,6 +151,9 @@ ViewState PauseMenuComponent::update(int keys)
             options = prevState.options;
             optionCount = prevState.optionCount;
             selectedOption = prevState.selectedOption;
+        } else {
+            // otherwise, close the menu
+            *isActivePtr = false;
         }
     }
 
@@ -281,6 +287,11 @@ ViewState PauseMenuComponent::debugOptionSelected()
             demo_yuki_guard_argument_load();
             dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
             dialogueCtrl.start(demo_yuki_guard_argument_first());
+            selectedView = ViewState::KEEP_CURRENT;
+            break;
+        case TOGGLE_BILLBOARDS:
+            enableBillboards = !enableBillboards;
+            *isActivePtr = false;
             selectedView = ViewState::KEEP_CURRENT;
             break;
         default:

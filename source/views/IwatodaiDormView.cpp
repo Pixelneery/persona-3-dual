@@ -92,9 +92,7 @@ void IwatodaiDormView::Init() {
     characterAnimationCtrl.play();
 
     // setup environment model
-    const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = {
-        textureBitmap
-    };
+    const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = { textureBitmap };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
 
     // setup dialogue
@@ -102,7 +100,7 @@ void IwatodaiDormView::Init() {
 
     // setup pause menu
     // use the same shared background slot as the demo dialogue
-    pauseMenu.init(bgSharedSlot);
+    pauseMenu.init(bgSharedSlot, &isPauseMenuActive);
 }
 
 ViewState IwatodaiDormView::Update() {
@@ -148,17 +146,23 @@ ViewState IwatodaiDormView::Update() {
             camPos.targetX, camPos.targetY, camPos.targetZ,
             camPos.upX, camPos.upY, camPos.upZ);
 
+
         // draw environment
         glPushMatrix();
             iwatodaiDormEnv.draw();
+            iwatodaiDormEnv.drawBillboards(
+                enableBillboards,  // billboards face camera
+                camPos.cameraX, camPos.cameraY, camPos.cameraZ
+            );
         glPopMatrix(1);
 
         // draw character
-        glPushMatrix();
+        glPushMatrix();        
             // move character
             characterPosition charPos = playerCtrl->isCharacterAt();
             glTranslatef(charPos.x, 0.1, charPos.z);
             glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
+            
             // draw character
             glBindTexture(GL_TEXTURE_2D, characterTextureId);
             characterAnimationCtrl.render();

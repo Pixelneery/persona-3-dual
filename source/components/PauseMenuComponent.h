@@ -12,7 +12,7 @@
 #define SYSTEM_OPTIONS 6
 
 // dummy option for testing
-#define DEBUG_OPTIONS 6
+#define DEBUG_OPTIONS 7
 # define SKILLS 2
 
 class PauseMenuComponent;
@@ -93,11 +93,14 @@ enum {
     INTRO_VIEW = 2,
     MAIN_MENU_VIEW = 3,
     IWATODAI_DORM_VIEW = 4,
-    DEBUG_DIALOGUE = 5
+    DEBUG_DIALOGUE = 5,
+    TOGGLE_BILLBOARDS = 6
 };
 
 class PauseMenuComponent {
     private:
+        bool* isActivePtr;
+        
         // sfx
         mm_sfxhand sfxMenuHandle;
         mm_sfxhand sfxSelectHandle;
@@ -139,6 +142,7 @@ class PauseMenuComponent {
             {"MainMenuView", -1, &PauseMenuComponent::debugOptionSelected},
             {"IwatodaiDormView", -1, &PauseMenuComponent::debugOptionSelected},
             {"Debug Dialogue", -1, &PauseMenuComponent::debugOptionSelected},
+            {"Toggle Billboards", -1, &PauseMenuComponent::debugOptionSelected},
         };
 
         // TODO: go into submenus
@@ -247,7 +251,7 @@ class PauseMenuComponent {
         ViewState systemOptionSelected();
 
     public:
-        void init(int iBgSlot);
+        void init(int iBgSlot, bool* isActive);
         ViewState update(int keys);
         void cancelSFX();
 };
