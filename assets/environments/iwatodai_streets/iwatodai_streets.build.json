@@ -1,6 +1,6 @@
 {
     "asset_type": "nds_build_environment",
-    "target_size": 4.0,
+    "target_size": 10.0,
     "center": true,
     "source_blender": false,
     "skip_grit": false,
