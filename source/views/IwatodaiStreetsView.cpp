@@ -138,7 +138,7 @@ void IwatodaiStreetsView::Init() {
     iwatodaiStreetsEnv.load("nitro:/environments/iwatodai_streets.bin", bitmaps);
 
     // pause menu
-    streetsPauseMenu.init(bgSharedSlot);
+    streetsPauseMenu.init(bgSharedSlot, &isStreetsPauseMenuActive);
 }
 
 ViewState IwatodaiStreetsView::Update() {
