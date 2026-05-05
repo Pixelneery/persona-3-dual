@@ -92,16 +92,19 @@ cameraPosition CharacterController::update(u32 keys)
         deltaX += forwardX;
         deltaZ += forwardZ;
     }
+
     if (keys & KEY_DOWN)
     {
         deltaX -= forwardX;
         deltaZ -= forwardZ;
     }
+
     if (keys & KEY_RIGHT)
     {
         deltaX -= rightX;
         deltaZ -= rightZ;
     }
+
     if (keys & KEY_LEFT)
     {
         deltaX += rightX;

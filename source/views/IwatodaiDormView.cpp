@@ -2,16 +2,18 @@
 #include <stdio.h>
 #include "core/globals.h"
 #include "math.h"
-#include "IwatodaiDormView.h" 
+#include "IwatodaiDormView.h"
 
-// model
-#include "models/character.h"
+// assets
+// 3D models
+#include "iwatodaiDorm_256x256_bin.h"
+#include "character_16x16_bin.h"
+
+// textures
 #include "character.h"
-// environment
-#include "environments/iwatodai_dorm.h"
-#include "texture.h"
-// collision (deprecated)
-#include "maps/iwatodaiDorm.h"
+#include "environment.h"
+// collision
+#include "IwatodaiDormCollision.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 // pause menu
@@ -23,7 +25,15 @@ iwatodai_dorm_Environment iwatodaiDormEnv;
 PauseMenuComponent pauseMenu;
 bool isPauseMenuActive = false;
 
-void IwatodaiDormView::Init() {
+void DrawPlayerModel()
+{
+    // bind texture before drawing
+    glBindTexture(GL_TEXTURE_2D, characterTextureId);
+    glCallList((u32 *)character_16x16_bin);
+}
+
+void IwatodaiDormView::Init()
+{
     videoSetMode(MODE_0_3D);
     videoSetModeSub(MODE_0_2D);
 
@@ -35,19 +45,31 @@ void IwatodaiDormView::Init() {
     // main screen, 3D
     glInit();
     glEnable(GL_ANTIALIAS);
-    glEnable(GL_TEXTURE_2D);    // enable texturing
+    glEnable(GL_TEXTURE_2D); // enable texturing
 
-    glClearColor(0,0,0,31);
+    glClearColor(0, 0, 0, 31);
     glClearPolyID(63);
     glClearDepth(0x7FFF);
 
     // set size of main screen
-    glViewport(0,0,255,191);
+    glViewport(0, 0, 255, 191);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     // zNear is how close the camera can see, zFar is the maximum draw distance
-    gluPerspective(55, 256.0 / 192.0, 0.1, 40);    
+    gluPerspective(55, 256.0 / 192.0, 0.1, 40);
+
+    // environment
+    glGenTextures(1, &environmentTextureId);
+    glBindTexture(GL_TEXTURE_2D, environmentTextureId);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0,
+        GL_RGBA,
+        TEXTURE_SIZE_256, TEXTURE_SIZE_256,
+        0,
+        TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
+        environmentBitmap // from environment.h
+    );
 
     // character
     glGenTextures(1, &characterTextureId);
@@ -55,14 +77,14 @@ void IwatodaiDormView::Init() {
     glTexImage2D(
         GL_TEXTURE_2D, 0,
         GL_RGBA,
-        TEXTURE_SIZE_32, TEXTURE_SIZE_32,
+        TEXTURE_SIZE_16, TEXTURE_SIZE_16,
         0,
         TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
-        characterBitmap  // from character.h
+        characterBitmap // from character.h
     );
 
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
-    glColor3b(255, 255, 255);   // keep white so texture colors aren't tinted
+    glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
 
     // setup shared bg slot on sub screen
     bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
@@ -103,7 +125,8 @@ void IwatodaiDormView::Init() {
     pauseMenu.init(bgSharedSlot, &isPauseMenuActive);
 }
 
-ViewState IwatodaiDormView::Update() {
+ViewState IwatodaiDormView::Update()
+{
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     bgUpdate();
@@ -123,9 +146,15 @@ ViewState IwatodaiDormView::Update() {
             return menuResult;
         }
     } else {    // only render world when pause menu is not active
-        if (!dialogueCtrl.isActive()) { // only process world input when dialogue is not active
+        if (!dialogueCtrl.isActive() && !battleController.isActive()) { // only process world input when dialogue and battle are not active
             // move character
             camPos = playerCtrl->update(keys);
+          
+            // start battle
+            if (keys & KEY_Y)
+            {
+                battleController.execute();
+            }
 
             // trigger dialogue from interaction
             demo_unload();
@@ -174,24 +203,27 @@ ViewState IwatodaiDormView::Update() {
         glFlush(0);
 
         // print coordinates (64x64 area from 0,0 to 64,64)
-        iprintf("\x1b[21;0Htile(x,z): %d, %d",
-            (int)((charPos.x + worldOffsetX) / tileSize),
-            (int)((charPos.z + worldOffsetZ) / tileSize));
-        iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
-            (int)(charPos.x * 100),
-            (int)(charPos.z * 100));
-        iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+      if (!dialogueCtrl.isActive() && !battleController.isActive()) {
+          iprintf("\x1b[21;0Htile(x,z): %d, %d",
+              (int)((charPos.x + worldOffsetX) / tileSize),
+              (int)((charPos.z + worldOffsetZ) / tileSize));
+          iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
+              (int)(charPos.x * 100),
+              (int)(charPos.z * 100));
+          iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+      }
     }
 
     // update controllers
+    battleController.update(pressed);
     dialogueCtrl.update(keys);
     musicCtrl.update();
-    characterAnimationCtrl.update();
 
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiDormView::Cleanup() {
+void IwatodaiDormView::Cleanup()
+{
     // clear screen
     setBrightness(3, 0);
     consoleClear();
@@ -201,7 +233,7 @@ void IwatodaiDormView::Cleanup() {
     isPauseMenuActive = false;
 
     // reset textures
-    iwatodaiDormEnv.cleanup();
+    glDeleteTextures(1, &environmentTextureId);
     glDeleteTextures(1, &characterTextureId);
 
     // reset vram
@@ -214,3 +246,8 @@ void IwatodaiDormView::Cleanup() {
     delete playerCtrl;
     playerCtrl = NULL;
 }
+
+// TODO: dont forget to clear in future
+
+IwatodaiDormView::IwatodaiDormView() : enemies(new std::vector<Enemy *>({&merciless_Maya, &cowardly_Maya})),
+                                       battleController(&player, enemies) {}

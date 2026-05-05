@@ -2,22 +2,37 @@
 #include "core/View.h"
 #include "controllers/DialogueController.h"
 #include "controllers/CharacterController.h"
-#include "environments/iwatodai_dorm.h"
+#include "maps/iwatodaiDorm_256x256_offsets.h"
 #include <nds/arm9/console.h>
+#include "./battleActions/party/curPlayer.h"
+#include "./battleActions/Enemies/Enemy.h"
+#include "./battleActions/Enemies/Cowardly_Maya.h"
+#include "./battleActions/Enemies/Merciless_Maya.h"
+// TODO:  move somewhere
+#include "./controllers/BattleController.h"
 
 // implementing from View
-class IwatodaiDormView : public View {
-    public:
-        // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
-        void Init() override;
-        ViewState Update() override;
-        void Cleanup() override;
+class IwatodaiDormView : public View
+{
+public:
+    // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
+    void Init() override;
+    ViewState Update() override;
+    void Cleanup() override;
+    IwatodaiDormView();
 
     private:
         // sub screen
         PrintConsole console;
+        
+        // Battle participants
+        curPlayer player;
+        Cowardly_Maya cowardly_Maya;
+        Merciless_Maya merciless_Maya;
+        std::vector<Enemy*>* enemies;
 
         // controllers
+        BattleController battleController;
         CharacterController* playerCtrl;
             // camera pos
             cameraPosition camPos;

@@ -24,6 +24,7 @@ class DialogueController {
         DialogueController();
         void start(dialogue* firstLine);
         void update(u32 keys);
+        void exit();
         bool isActive() const { return active; }
 
         // Set the bg-swap callback for the current interaction.

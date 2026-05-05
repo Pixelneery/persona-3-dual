@@ -19,14 +19,15 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET      :=  $(shell basename $(CURDIR))
 BUILD       :=  build
-SOURCES     :=  source source/views source/controllers source/core source/dialogue source/models source/environments source/components
+SOURCES     :=  source source/views source/controllers source/core source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills 
 DATA        :=  
 INCLUDES    :=  include source
 
 # Add environment subdirectories directly to the GRAPHICS build pipeline
 GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*)
 
-SFX         :=  assets/sfx
+GRAPHICS	:=	assets/graphics
+SFX       	:=  assets/sfx
 NITRODATA   :=  nitrofiles
 
 GAME_TITLE     := Persona 3 Dual
