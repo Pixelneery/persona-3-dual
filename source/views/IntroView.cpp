@@ -344,6 +344,7 @@ void IntroView::Cleanup() {
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);  // silhouette
     dmaFillHalfWords(0, bgGetMapPtr(bg[3]), 8192);  // overlay
     // 256x256 backgrounds use 2048 bytes of map memory
+    // calculated using (256 / 8) * (256 / 8) * 2
     dmaFillHalfWords(0, bgGetMapPtr(bg[1]), 2048);  // room
     dmaFillHalfWords(0, bgGetMapPtr(bg[2]), 2048);  // sky
 
