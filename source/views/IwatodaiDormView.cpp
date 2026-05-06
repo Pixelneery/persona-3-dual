@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <stdio.h>
+#include <malloc.h>
 #include "core/globals.h"
 #include "math.h"
 #include "IwatodaiDormView.h"
@@ -99,6 +100,7 @@ void IwatodaiDormView::Init()
     // setup environment model
     const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = { textureBitmap };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
+    totalPolyCount = iwatodaiDormEnv.getPolyCount();
 
     // setup dialogue
     demo_dialogue_bg_slot = bgSharedSlot;
@@ -186,6 +188,7 @@ ViewState IwatodaiDormView::Update()
 
         glFlush(0);
 
+<<<<<<< Updated upstream
         // print coordinates (64x64 area from 0,0 to 64,64)
       if (!dialogueCtrl.isActive() && !battleController.isActive()) {
           iprintf("\x1b[21;0Htile(x,z): %d, %d",
@@ -196,6 +199,32 @@ ViewState IwatodaiDormView::Update()
               (int)(charPos.z * 100));
           iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
       }
+=======
+        // FPS counter
+        if (frame != fpsTimer) {
+            fps = frame - fpsTimer;
+            fpsTimer = frame;
+        }
+
+        // RAM usage via mallinfo
+        struct mallinfo mi = mallinfo();
+        int usedKB  = mi.uordblks / 1024;
+        int totalKB = (mi.uordblks + mi.fordblks) / 1024;
+        int ramPct  = totalKB > 0 ? (usedKB * 100) / totalKB : 0;
+
+        // Polygons rendered this frame (hardware register, updated after glFlush)
+        int polysRendered = GFX_POLYGON_RAM_USAGE;
+
+        iprintf("\x1b[20;0HFPS:%d RAM:%dKB(%d%%)      ", fps, usedKB, ramPct);
+        iprintf("\x1b[21;0HPoly all:%d rnd:%d      ", totalPolyCount, polysRendered);
+        iprintf("\x1b[22;0Htile(x,z): %d, %d      ",
+            (int)((charPos.x + worldOffsetX) / tileSize),
+            (int)((charPos.z + worldOffsetZ) / tileSize));
+        iprintf("\x1b[23;0Htranslate(x,z): %d, %d      ",
+            (int)(charPos.x * 100),
+            (int)(charPos.z * 100));
+        iprintf("\x1b[24;0Hangle(w,c): %d, %d      ", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+>>>>>>> Stashed changes
     }
 
     // update controllers

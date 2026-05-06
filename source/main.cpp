@@ -22,6 +22,8 @@
 
 volatile int frame = 0;
 volatile bool enableBillboards = true;
+int fps = 0;
+int fpsTimer = 0;
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;

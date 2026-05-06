@@ -27,4 +27,5 @@ class IwatodaiStreetsView : public View {
             const Point2D<float> characterTranslate = Point2D<float>(0.0f, 0.0f);
             const float angle = 1.5708f;   // 90 degrees in radians — faces along X
             const float characterFacingAngle = 90.0f;
+        int totalPolyCount = 0;
 };

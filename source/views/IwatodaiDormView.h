@@ -52,4 +52,5 @@ class IwatodaiDormView : public View {
             const float characterFacingAngle = 91.67;
         DialogueController dialogueCtrl;
             int bgSharedSlot;
+        int totalPolyCount = 0;
 };
