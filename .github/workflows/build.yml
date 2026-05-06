@@ -70,8 +70,18 @@ jobs:
           echo "Release name: ${RELEASE_NAME}"
 
       # ── devkitARM ─────────────────────────────────────────────────────────────
-      # Cache the full devkitPro install to avoid a ~2-3 min reinstall every run.
-      # To force a clean reinstall (e.g. toolchain upgrade), bump the key: v1 → v2.
+      # FIX: /opt/ is owned by root, so actions/cache cannot restore into it
+      # without this pre-creation step. Without it, the restore silently fails
+      # every run, cache-hit always returns null, and devkitARM reinstalls every
+      # time regardless of a warm cache. Creating the directory first and handing
+      # ownership to the runner user allows the cache restore to write freely.
+      #
+      # To force a full reinstall after a toolchain upgrade, bump the key: v1 → v2.
+      - name: Prepare devkitPro directory
+        run: |
+          sudo mkdir -p /opt/devkitpro
+          sudo chown -R "$(whoami)" /opt/devkitpro
+
       - name: Cache devkitPro
         id: cache-devkitpro
         uses: actions/cache@v4
@@ -79,7 +89,7 @@ jobs:
           path: /opt/devkitpro
           key: devkitpro-nds-dev-${{ runner.os }}-v1
 
-      # The devkitPro apt server checks the User-Agent and returns HTTP error 8
+      # The devkitPro apt server checks the User-Agent and returns HTTP error
       # for any request that does not identify as "dkp-apt". The -U flag is
       # required — this is documented on devkitpro.org/wiki/devkitPro_pacman.
       - name: Install devkitARM
@@ -97,8 +107,17 @@ jobs:
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
       # ── System tools ──────────────────────────────────────────────────────────
-      - name: Install ffmpeg
-        run: sudo apt-get install -y ffmpeg
+      # FIX: ffmpeg is pre-installed on ubuntu-latest runners so there is no need
+      # to install it every run. This step checks for it and only installs if it
+      # is genuinely missing, making it a no-op on standard GitHub-hosted runners.
+      - name: Ensure ffmpeg is available
+        run: |
+          if command -v ffmpeg &>/dev/null; then
+            echo "ffmpeg already available: $(ffmpeg -version 2>&1 | head -1)"
+          else
+            echo "ffmpeg not found — installing..."
+            sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
 
       # ── Python venv ───────────────────────────────────────────────────────────
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
@@ -131,42 +150,49 @@ jobs:
         run: make
 
       # ── Verify output ─────────────────────────────────────────────────────────
-      # Catches the case where make exits 0 but silently failed to produce the ROM.
+      # FIX: The previous step gave a binary pass/fail with no diagnostic info,
+      # making it impossible to tell why it failed. This version always lists every
+      # .nds file found in the workspace first, so if the filename or output path
+      # from your Makefile differs from Persona-3-Dual.nds you can see it clearly
+      # in the log rather than just getting "file not found".
       - name: Verify ROM was produced
         run: |
+          echo "NDS files found in workspace:"
+          find . -name "*.nds" -not -path "./.git/*" 2>/dev/null \
+            | sort \
+            | xargs -I{} sh -c 'echo "  {} ($(du -sh {} | cut -f1))"' \
+            || echo "  (none)"
+          echo ""
+
           if [ ! -f Persona-3-Dual.nds ]; then
-            echo "::error::ROM file not found after build — check make output above"
+            echo "::error::Persona-3-Dual.nds not found."
+            echo "::error::If your Makefile outputs a different filename or path, update the"
+            echo "::error::ROM filename everywhere it appears in this workflow to match."
             exit 1
           fi
-          echo "ROM produced successfully ($(du -sh Persona-3-Dual.nds | cut -f1))"
+
+          echo "ROM verified: Persona-3-Dual.nds ($(du -sh Persona-3-Dual.nds | cut -f1))"
 
       # ── NDS header validation ─────────────────────────────────────────────────
       # Uses od (standard POSIX tool, always available) to read raw bytes from
       # the 512-byte NDS header — no Python, no ndstool version concerns.
       #
-      # Checks:
-      #   Nintendo logo CRC at offset 0x15C must be 0xCF56. This value is
-      #   hard-coded into NDS hardware and required by every emulator. If it is
-      #   wrong, the ROM will not boot regardless of everything else being correct.
-      #
-      # Also prints the game title (bytes 0x00-0x0B) as a quick sanity check
-      # that the right binary was produced.
+      # The Nintendo logo CRC at offset 0x15C must be 0xCF56. This value is
+      # hard-coded into NDS hardware and required by every emulator. If it is
+      # wrong, the ROM will not boot regardless of everything else being correct.
       - name: Validate ROM header
         run: |
           ROM="Persona-3-Dual.nds"
 
-          # Minimum file size: NDS header alone is 512 bytes
           ACTUAL_SIZE=$(stat -c%s "$ROM")
           if [ "$ACTUAL_SIZE" -lt 512 ]; then
             echo "::error::ROM is only ${ACTUAL_SIZE} bytes — header is truncated"
             exit 1
           fi
 
-          # Read the 2-byte Nintendo logo CRC stored at offset 0x15C (little-endian).
           # od -tx2 reads a native 16-bit word; on the LE x86 runner this matches
-          # the LE value in the file exactly.
+          # the LE value stored in the file exactly.
           LOGO_CRC=$(od -An -tx2 -j 0x15C -N 2 "$ROM" | tr -d ' \n')
-
           echo "Logo CRC  : 0x${LOGO_CRC^^}  (expected 0xCF56)"
 
           if [ "${LOGO_CRC,,}" != "cf56" ]; then
@@ -174,7 +200,6 @@ jobs:
             exit 1
           fi
 
-          # Print game title from the first 12 bytes as a sanity check
           GAME_TITLE=$(dd if="$ROM" bs=1 skip=0 count=12 2>/dev/null | tr -d '\000')
           echo "Game title: ${GAME_TITLE}"
           echo "ROM header validation passed ✓"
@@ -275,7 +300,7 @@ jobs:
           TAG="${{ steps.version.outputs.tag }}"
 
           {
-            echo "## Build Summary"
+            echo "## 🎮 Build Summary"
             if [ "$IS_PR" = "true" ]; then
               echo "> ℹ️ **PR build** — artifact uploaded for testing, no release created."
             fi
