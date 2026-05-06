@@ -1,0 +1,368 @@
+name: Build ROM
+
+# ──────────────────────────────────────────────────────────────────────────────
+#  Triggers
+#  • push to main/master  →  full build + tag + release
+#  • pull_request         →  build + artifact only (no tag, no release)
+#  • workflow_dispatch    →  manual trigger, behaves like a push
+# ──────────────────────────────────────────────────────────────────────────────
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+# Cancel any in-progress run on the same branch/PR when a new one starts.
+# Prevents duplicate releases and wasted runner minutes on stale pushes.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Required to create releases and push tags.
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # ── Checkout ─────────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # Full history required so git tag --list sees all tags
+
+      # ── Version tag (push / workflow_dispatch only) ───────────────────────────
+      # Format: YYwWWn  →  e.g. "26w18a"
+      #   YY = 2-digit year   WW = ISO week number   n = per-week build letter
+      # Skipped entirely on pull_request events so no tag is reserved or leaked.
+      #
+      # The suffix letter is incremented by tools/next_suffix.py rather than
+      # inline Python, because embedding multi-line Python inside a YAML block
+      # scalar causes a syntax error — unindented Python lines are interpreted
+      # by the YAML parser as ending the block.
+      - name: Generate version tag
+        id: version
+        if: github.event_name != 'pull_request'
+        run: |
+          YEAR=$(date -u +%y)
+          WEEK=$(date -u +%V)
+          PREFIX="${YEAR}w${WEEK}"
+
+          EXISTING=$(git tag --list "${PREFIX}*" | sort | tail -n1)
+
+          if [ -z "$EXISTING" ]; then
+            SUFFIX="a"
+          else
+            LAST_SUFFIX="${EXISTING#${PREFIX}}"
+            SUFFIX=$(python3 tools/next_suffix.py "$LAST_SUFFIX")
+          fi
+
+          TAG="${PREFIX}${SUFFIX}"
+          RELEASE_NAME="Autobuild: ${TAG}"
+
+          echo "tag=${TAG}"                   >> $GITHUB_OUTPUT
+          echo "release_name=${RELEASE_NAME}" >> $GITHUB_OUTPUT
+          echo "Version tag : ${TAG}"
+          echo "Release name: ${RELEASE_NAME}"
+
+      # ── devkitARM ─────────────────────────────────────────────────────────────
+      - name: Prepare devkitPro directory
+        run: |
+          sudo mkdir -p /opt/devkitpro
+          sudo chown -R "$(whoami)" /opt/devkitpro
+
+      - name: Cache devkitPro
+        id: cache-devkitpro
+        uses: actions/cache@v4
+        with:
+          path: /opt/devkitpro
+          key: devkitpro-nds-dev-${{ runner.os }}-v1
+
+      - name: Install devkitARM
+        if: steps.cache-devkitpro.outputs.cache-hit != 'true'
+        run: |
+          wget -U "dkp-apt" https://apt.devkitpro.org/install-devkitpro-pacman
+          chmod +x ./install-devkitpro-pacman
+          sudo ./install-devkitpro-pacman
+          sudo dkp-pacman -Sy --noconfirm nds-dev
+          sudo chown -R "$(whoami)" /opt/devkitpro
+
+      - name: Export devkitARM environment
+        run: |
+          echo "DEVKITPRO=/opt/devkitpro"           >> $GITHUB_ENV
+          echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
+          echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
+
+      # ── System tools ──────────────────────────────────────────────────────────
+      - name: Ensure ffmpeg is available
+        run: |
+          if command -v ffmpeg &>/dev/null; then
+            echo "ffmpeg already available: $(ffmpeg -version 2>&1 | head -1)"
+          else
+            echo "ffmpeg not found — installing..."
+            sudo apt-get install -y --no-install-recommends ffmpeg
+          fi
+
+      # ── Python venv ───────────────────────────────────────────────────────────
+      # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
+      - name: Cache Python venv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: python-venv-${{ runner.os }}-${{ hashFiles('tools/requirements.txt') }}
+          restore-keys: |
+            python-venv-${{ runner.os }}-
+
+      - name: Set up Python venv
+        run: |
+          python3 -m venv .venv
+          echo "${{ github.workspace }}/.venv/bin" >> $GITHUB_PATH
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          if [ -f tools/requirements.txt ]; then
+            pip install -r tools/requirements.txt
+          fi
+
+      # ── Asset pipeline ────────────────────────────────────────────────────────
+      - name: Build assets (dialogue, music, video, environments, models, maps)
+        run: make assets
+
+      # ── ROM compile ───────────────────────────────────────────────────────────
+      - name: Compile ROM
+        run: make
+
+      # ── Verify output ─────────────────────────────────────────────────────────
+      - name: Verify ROM was produced
+        run: |
+          echo "NDS files found in workspace:"
+          find . -name "*.nds" -not -path "./.git/*" 2>/dev/null \
+            | sort \
+            | xargs -I{} sh -c 'echo "  {} ($(du -sh {} | cut -f1))"' \
+            || echo "  (none)"
+          echo ""
+
+          if [ ! -f persona-3-dual.nds ]; then
+            echo "::error::persona-3-dual.nds not found."
+            echo "::error::If your Makefile outputs a different filename or path, update the"
+            echo "::error::ROM filename everywhere it appears in this workflow to match."
+            exit 1
+          fi
+
+          echo "ROM verified: persona-3-dual.nds ($(du -sh persona-3-dual.nds | cut -f1))"
+
+      # ── NDS header validation ─────────────────────────────────────────────────
+      # Uses od (standard POSIX tool, always available) to read raw bytes from
+      # the 512-byte NDS header — no Python, no ndstool version concerns.
+      #
+      # The Nintendo logo CRC at offset 0x15C must be 0xCF56. This value is
+      # hard-coded into NDS hardware and required by every emulator. If it is
+      # wrong, the ROM will not boot regardless of everything else being correct.
+      - name: Validate ROM header
+        run: |
+          ROM="persona-3-dual.nds"
+
+          ACTUAL_SIZE=$(stat -c%s "$ROM")
+          if [ "$ACTUAL_SIZE" -lt 512 ]; then
+            echo "::error::ROM is only ${ACTUAL_SIZE} bytes — header is truncated"
+            exit 1
+          fi
+
+          # od -tx2 reads a native 16-bit word; on the LE x86 runner this matches
+          # the LE value stored in the file exactly.
+          LOGO_CRC=$(od -An -tx2 -j 0x15C -N 2 "$ROM" | tr -d ' \n')
+          echo "Logo CRC  : 0x${LOGO_CRC^^}  (expected 0xCF56)"
+
+          if [ "${LOGO_CRC,,}" != "cf56" ]; then
+            echo "::error::Nintendo logo CRC mismatch — ROM is likely corrupt or malformed"
+            exit 1
+          fi
+
+          GAME_TITLE=$(dd if="$ROM" bs=1 skip=0 count=12 2>/dev/null | tr -d '\000')
+          echo "Game title: ${GAME_TITLE}"
+          echo "ROM header validation passed ✓"
+
+      # ── Checksums ─────────────────────────────────────────────────────────────
+      - name: Generate checksums
+        id: checksums
+        run: |
+          SHA256=$(sha256sum persona-3-dual.nds | cut -d' ' -f1)
+          MD5=$(md5sum    persona-3-dual.nds | cut -d' ' -f1)
+          echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
+          echo "md5=${MD5}"       >> $GITHUB_OUTPUT
+          echo "SHA-256 : ${SHA256}"
+          echo "MD5     : ${MD5}"
+
+      # ── Release notes ─────────────────────────────────────────────────────────
+      # Written to a file rather than GITHUB_OUTPUT to safely handle multi-line
+      # strings. Commit messages can contain characters that break YAML strings.
+      # The new tag has not been pushed yet, so the most recent existing tag is
+      # the correct baseline for "what changed since last release".
+      - name: Write release notes
+        if: github.event_name != 'pull_request'
+        run: |
+          PREV_TAG=$(git tag --sort=-creatordate | head -n1)
+
+          if [ -z "$PREV_TAG" ]; then
+            CHANGES=$(git log --pretty="- %s (%h)" | head -30)
+            SINCE_MSG=""
+          else
+            CHANGES=$(git log "${PREV_TAG}..HEAD" --pretty="- %s (%h)")
+            SINCE_MSG=" since \`${PREV_TAG}\`"
+          fi
+
+          [ -z "$CHANGES" ] && CHANGES="- No new commits since last build"
+
+          {
+            echo "Automated build from commit \`${{ github.sha }}\` on \`${{ github.ref_name }}\`"
+            echo ""
+            echo "## What's Changed${SINCE_MSG}"
+            echo "${CHANGES}"
+            echo ""
+            echo "## Checksums"
+            echo "| Algorithm | Hash |"
+            echo "|-----------|------|"
+            echo "| SHA-256   | \`${{ steps.checksums.outputs.sha256 }}\` |"
+            echo "| MD5       | \`${{ steps.checksums.outputs.md5 }}\` |"
+          } > release-notes.md
+
+          echo "--- Release notes preview ---"
+          cat release-notes.md
+
+      # ── Upload artifact ───────────────────────────────────────────────────────
+      # Release builds: 30-day retention, clean name.
+      # PR builds:      7-day retention, named with PR number for traceability.
+      - name: Upload ROM artifact (release build)
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: persona-3-dual-ROM
+          path: persona-3-dual.nds
+          retention-days: 30
+
+      - name: Upload ROM artifact (PR build)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: persona-3-dual-ROM-PR${{ github.event.number }}
+          path: persona-3-dual.nds
+          retention-days: 7
+
+      # ── Create release ────────────────────────────────────────────────────────
+      # Skipped on PRs. Uses body_path so multi-line markdown in the changelog
+      # is passed safely without any YAML quoting concerns.
+      - name: Create release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name:   ${{ steps.version.outputs.tag }}
+          name:       ${{ steps.version.outputs.release_name }}
+          prerelease: false
+          files:      persona-3-dual.nds
+          body_path:  release-notes.md
+
+      # ── Job summary ───────────────────────────────────────────────────────────
+      # Visible in the Actions UI under the "Summary" tab of each run.
+      # Runs with always() so a partial summary appears even on failure.
+      #
+      # Each conditional echo uses || true so that a false condition (e.g. empty
+      # SHA256 when an earlier step failed) returns 0 instead of 1. Without this,
+      # the { } group command exits 1 on its last statement and the step fails.
+      - name: Write job summary
+        if: always()
+        run: |
+          IS_PR="${{ github.event_name == 'pull_request' }}"
+          ROM_SIZE=$(du -sh persona-3-dual.nds 2>/dev/null | cut -f1 || echo "N/A")
+          SHA256="${{ steps.checksums.outputs.sha256 }}"
+          MD5="${{ steps.checksums.outputs.md5 }}"
+          TAG="${{ steps.version.outputs.tag }}"
+
+          {
+            echo "## Build Summary"
+            if [ "$IS_PR" = "true" ]; then
+              echo "> **PR build** - artifact uploaded for testing, no release created."
+            fi
+            echo ""
+            echo "| Field     | Value |"
+            echo "|-----------|-------|"
+            [ "$IS_PR" != "true" ] && echo "| Version   | \`${TAG:-N/A}\` |" || true
+            echo "| Commit    | \`${{ github.sha }}\` |"
+            echo "| Branch    | \`${{ github.ref_name }}\` |"
+            echo "| Triggered | \`${{ github.actor }}\` |"
+            echo "| ROM Size  | ${ROM_SIZE} |"
+            [ -n "$SHA256" ] && echo "| SHA-256   | \`${SHA256}\` |" || true
+            [ -n "$MD5"    ] && echo "| MD5       | \`${MD5}\` |"    || true
+          } >> $GITHUB_STEP_SUMMARY
+
+      # ── Discord notification ──────────────────────────────────────────────────
+      # Fires on success, failure, AND cancellation.
+      # If DISCORD_WEBHOOK secret is absent, exits cleanly, never fails the build.
+      # jq builds the JSON payload so branch names / commit SHAs with special
+      # characters cannot produce malformed JSON (injection-safe).
+      - name: Notify Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          JOB_STATUS:      ${{ job.status }}
+          IS_PR:           ${{ github.event_name == 'pull_request' }}
+          PR_NUMBER:       ${{ github.event.number }}
+          VERSION_TAG:     ${{ steps.version.outputs.tag }}
+          BRANCH:          ${{ github.ref_name }}
+          COMMIT_SHA:      ${{ github.sha }}
+          ACTOR:           ${{ github.actor }}
+          REPO:            ${{ github.repository }}
+          SERVER_URL:      ${{ github.server_url }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK" ]; then
+            echo "DISCORD_WEBHOOK secret not configured — skipping Discord notification"
+            exit 0
+          fi
+
+          case "$JOB_STATUS" in
+            success)   COLOR=3066993;  EMOJI="✅" ;;
+            cancelled) COLOR=9807270;  EMOJI="⏹️" ;;
+            *)         COLOR=15158332; EMOJI="❌" ;;
+          esac
+
+          SHORT_SHA="${COMMIT_SHA:0:7}"
+          VERSION_TAG="${VERSION_TAG:-unknown}"
+
+          if [ "$IS_PR" = "true" ]; then
+            TITLE="${EMOJI} PR #${PR_NUMBER} — Build ${JOB_STATUS}"
+            URL="${SERVER_URL}/${REPO}/pull/${PR_NUMBER}"
+            BUILD_TYPE="Pull Request #${PR_NUMBER}"
+          else
+            TITLE="${EMOJI} Build ${JOB_STATUS}: ${VERSION_TAG}"
+            URL="${SERVER_URL}/${REPO}/releases/tag/${VERSION_TAG}"
+            BUILD_TYPE="Release ${VERSION_TAG}"
+          fi
+
+          jq -n \
+            --arg  title      "$TITLE"      \
+            --arg  url        "$URL"        \
+            --argjson color   "$COLOR"      \
+            --arg  build_type "$BUILD_TYPE" \
+            --arg  branch     "$BRANCH"     \
+            --arg  sha        "$SHORT_SHA"  \
+            --arg  actor      "$ACTOR"      \
+            '{
+              embeds: [{
+                title:  $title,
+                color:  $color,
+                url:    $url,
+                fields: [
+                  { name: "Build",     value: $build_type, inline: false },
+                  { name: "Branch",    value: $branch,     inline: true  },
+                  { name: "Commit",    value: $sha,        inline: true  },
+                  { name: "Triggered", value: $actor,      inline: true  }
+                ]
+              }]
+            }' \
+          | curl -sf -X POST "$DISCORD_WEBHOOK" \
+              -H "Content-Type: application/json" \
+              -d @-
