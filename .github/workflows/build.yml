@@ -1,11 +1,9 @@
 name: Build ROM
 
-# ──────────────────────────────────────────────────────────────────────────────
 #  Triggers
 #  • push to main/master  →  full build + tag + release
 #  • pull_request         →  build + artifact only (no tag, no release)
 #  • workflow_dispatch    →  manual trigger, behaves like a push
-# ──────────────────────────────────────────────────────────────────────────────
 on:
   push:
     branches: [main, master]
@@ -29,20 +27,20 @@ jobs:
 
     steps:
 
-      # ── Checkout ─────────────────────────────────────────────────────────────
+      # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0   # Full history required so git tag --list sees all tags
 
-      # ── Version tag (push / workflow_dispatch only) ───────────────────────────
+      # Version tag (push / workflow_dispatch only)
       # Format: YYwWWn  →  e.g. "26w18a"
       #   YY = 2-digit year   WW = ISO week number   n = per-week build letter
       # Skipped entirely on pull_request events so no tag is reserved or leaked.
       #
       # The suffix letter is incremented by tools/next_suffix.py rather than
       # inline Python, because embedding multi-line Python inside a YAML block
-      # scalar causes a syntax error — unindented Python lines are interpreted
+      # scalar causes a syntax error. Unindented Python lines are interpreted
       # by the YAML parser as ending the block.
       - name: Generate version tag
         id: version
@@ -69,7 +67,7 @@ jobs:
           echo "Version tag : ${TAG}"
           echo "Release name: ${RELEASE_NAME}"
 
-      # ── devkitARM ─────────────────────────────────────────────────────────────
+      # devkitARM
       - name: Prepare devkitPro directory
         run: |
           sudo mkdir -p /opt/devkitpro
@@ -77,7 +75,7 @@ jobs:
 
       - name: Cache devkitPro
         id: cache-devkitpro
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /opt/devkitpro
           key: devkitpro-nds-dev-${{ runner.os }}-v1
@@ -97,20 +95,20 @@ jobs:
           echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
-      # ── System tools ──────────────────────────────────────────────────────────
-      - name: Ensure ffmpeg is available
-        run: |
-          if command -v ffmpeg &>/dev/null; then
-            echo "ffmpeg already available: $(ffmpeg -version 2>&1 | head -1)"
-          else
-            echo "ffmpeg not found — installing..."
-            sudo apt-get install -y --no-install-recommends ffmpeg
-          fi
+      # System tools (ffmpeg)
+      # awalsh128/cache-apt-pkgs-action handles install + caching automatically.
+      # First run installs and saves; subsequent runs restore in ~2s.
+      # Bump version: 1.0 → 2.0 to force a clean reinstall if needed.
+      - name: Cache and install ffmpeg
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: ffmpeg
+          version: 1.0
 
-      # ── Python venv ───────────────────────────────────────────────────────────
+      # Python venv
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
       - name: Cache Python venv
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .venv
           key: python-venv-${{ runner.os }}-${{ hashFiles('tools/requirements.txt') }}
@@ -129,15 +127,11 @@ jobs:
             pip install -r tools/requirements.txt
           fi
 
-      # ── Asset pipeline ────────────────────────────────────────────────────────
-      - name: Build assets (dialogue, music, video, environments, models, maps)
-        run: make assets
-
-      # ── ROM compile ───────────────────────────────────────────────────────────
+      # ROM compile
       - name: Compile ROM
         run: make
 
-      # ── Verify output ─────────────────────────────────────────────────────────
+      # Verify output
       - name: Verify ROM was produced
         run: |
           echo "NDS files found in workspace:"
@@ -156,9 +150,9 @@ jobs:
 
           echo "ROM verified: persona-3-dual.nds ($(du -sh persona-3-dual.nds | cut -f1))"
 
-      # ── NDS header validation ─────────────────────────────────────────────────
+      # NDS header validation
       # Uses od (standard POSIX tool, always available) to read raw bytes from
-      # the 512-byte NDS header — no Python, no ndstool version concerns.
+      # the 512-byte NDS header
       #
       # The Nintendo logo CRC at offset 0x15C must be 0xCF56. This value is
       # hard-coded into NDS hardware and required by every emulator. If it is
@@ -187,7 +181,7 @@ jobs:
           echo "Game title: ${GAME_TITLE}"
           echo "ROM header validation passed ✓"
 
-      # ── Checksums ─────────────────────────────────────────────────────────────
+      # Checksums
       - name: Generate checksums
         id: checksums
         run: |
@@ -198,7 +192,7 @@ jobs:
           echo "SHA-256 : ${SHA256}"
           echo "MD5     : ${MD5}"
 
-      # ── Release notes ─────────────────────────────────────────────────────────
+      # Release notes
       # Written to a file rather than GITHUB_OUTPUT to safely handle multi-line
       # strings. Commit messages can contain characters that break YAML strings.
       # The new tag has not been pushed yet, so the most recent existing tag is
@@ -234,12 +228,12 @@ jobs:
           echo "--- Release notes preview ---"
           cat release-notes.md
 
-      # ── Upload artifact ───────────────────────────────────────────────────────
+      # Upload artifact
       # Release builds: 30-day retention, clean name.
       # PR builds:      7-day retention, named with PR number for traceability.
       - name: Upload ROM artifact (release build)
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: persona-3-dual-ROM
           path: persona-3-dual.nds
@@ -247,13 +241,13 @@ jobs:
 
       - name: Upload ROM artifact (PR build)
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: persona-3-dual-ROM-PR${{ github.event.number }}
           path: persona-3-dual.nds
           retention-days: 7
 
-      # ── Create release ────────────────────────────────────────────────────────
+      # Create release
       # Skipped on PRs. Uses body_path so multi-line markdown in the changelog
       # is passed safely without any YAML quoting concerns.
       - name: Create release
@@ -266,7 +260,7 @@ jobs:
           files:      persona-3-dual.nds
           body_path:  release-notes.md
 
-      # ── Job summary ───────────────────────────────────────────────────────────
+      # Job summary
       # Visible in the Actions UI under the "Summary" tab of each run.
       # Runs with always() so a partial summary appears even on failure.
       #
@@ -299,8 +293,8 @@ jobs:
             [ -n "$MD5"    ] && echo "| MD5       | \`${MD5}\` |"    || true
           } >> $GITHUB_STEP_SUMMARY
 
-      # ── Discord notification ──────────────────────────────────────────────────
-      # Fires on success, failure, AND cancellation.
+      # Discord notification
+      # Fires on success, failure, and cancellation.
       # If DISCORD_WEBHOOK secret is absent, exits cleanly, never fails the build.
       # jq builds the JSON payload so branch names / commit SHAs with special
       # characters cannot produce malformed JSON (injection-safe).
