@@ -37,7 +37,11 @@ export GAME_ICON := $(CURDIR)/../icon.bmp
 # Python tool configuration
 #---------------------------------------------------------------------------------
 TOOLS_DIR       := $(CURDIR)/tools
-VENV_PYTHON     := $(HOME)/.venv/bin/python3
+ifeq ($(OS),Windows_NT)
+    VENV_PYTHON := $(CURDIR)/.venv/Scripts/python.exe
+else
+    VENV_PYTHON := $(CURDIR)/.venv/bin/python3
+endif
 
 ASSETS_DIALOGUE := $(CURDIR)/assets/dialogue
 ASSETS_MUSIC    := $(CURDIR)/assets/music
@@ -49,6 +53,17 @@ ASSETS_MAPS     := $(CURDIR)/assets/maps
 NITRO_MUSIC     := $(CURDIR)/nitrofiles/music
 NITRO_VIDEO     := $(CURDIR)/nitrofiles/video
 
+#---------------------------------------------------------------------------------
+# MMUTIL OS select
+#---------------------------------------------------------------------------------
+
+ifeq ($(OS),Windows_NT)
+    MMUTIL := $(DEVKITPRO)/tools/bin/mmutil.exe
+else
+    MMUTIL := $(DEVKITPRO)/tools/bin/mmutil
+endif
+
+export MMUTIL
 #---------------------------------------------------------------------------------
 # Collect source files
 #---------------------------------------------------------------------------------
