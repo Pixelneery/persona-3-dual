@@ -3,8 +3,8 @@
 #include <vector>
 
 #include "ActionBase.h"
-#include "Enemies/Enemy.h"
-#include "party/player.h"
+#include "enemies/Enemy.h"
+#include "party/Player.h"
 // #include "TargetAndAttackEnemy.h"
 #include "UpdateIndex.h"
 

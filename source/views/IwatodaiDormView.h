@@ -7,9 +7,9 @@
 #include "environments/iwatodai_dorm.h"
 // battle-related
 #include "./battleActions/party/curPlayer.h"
-#include "./battleActions/Enemies/Enemy.h"
-#include "./battleActions/Enemies/Cowardly_Maya.h"
-#include "./battleActions/Enemies/Merciless_Maya.h"
+#include "./battleActions/enemies/Enemy.h"
+#include "./battleActions/enemies/Cowardly_Maya.h"
+#include "./battleActions/enemies/Merciless_Maya.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
 // implementing from View

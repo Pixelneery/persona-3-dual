@@ -11,7 +11,7 @@
 #include "./battleActions/Guard.h"
 #include "./battleActions/Persona.h"
 #include "./battleActions/party/Player.h"
-#include "./battleActions/Enemies/Enemy.h"
+#include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/UpdateIndex.h"
 
 class BattleController
