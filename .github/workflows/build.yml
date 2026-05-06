@@ -39,6 +39,11 @@ jobs:
       # Format: YYwWWn  →  e.g. "26w18a"
       #   YY = 2-digit year   WW = ISO week number   n = per-week build letter
       # Skipped entirely on pull_request events so no tag is reserved or leaked.
+      #
+      # The suffix letter is incremented by tools/next_suffix.py rather than
+      # inline Python, because embedding multi-line Python inside a YAML block
+      # scalar causes a syntax error — unindented Python lines are interpreted
+      # by the YAML parser as ending the block.
       - name: Generate version tag
         id: version
         if: github.event_name != 'pull_request'
@@ -47,32 +52,13 @@ jobs:
           WEEK=$(date -u +%V)
           PREFIX="${YEAR}w${WEEK}"
 
-          # Find the last existing tag for this week, if any
           EXISTING=$(git tag --list "${PREFIX}*" | sort | tail -n1)
 
           if [ -z "$EXISTING" ]; then
             SUFFIX="a"
           else
-            # Strip the prefix to isolate the letter suffix, then advance it.
-            # Variable is passed as a CLI argument — NOT interpolated into a
-            # quoted heredoc — so Python always receives the real value.
             LAST_SUFFIX="${EXISTING#${PREFIX}}"
-            SUFFIX=$(python3 -c "
-import sys
-s = sys.argv[1]
-chars = list(s)
-i = len(chars) - 1
-while i >= 0:
-    if chars[i] != 'z':
-        chars[i] = chr(ord(chars[i]) + 1)
-        break
-    else:
-        chars[i] = 'a'
-        i -= 1
-else:
-    chars.insert(0, 'a')
-print(''.join(chars))
-" "$LAST_SUFFIX")
+            SUFFIX=$(python3 tools/next_suffix.py "$LAST_SUFFIX")
           fi
 
           TAG="${PREFIX}${SUFFIX}"
@@ -152,59 +138,43 @@ print(''.join(chars))
           echo "ROM produced successfully ($(du -sh Persona-3-Dual.nds | cut -f1))"
 
       # ── NDS header validation ─────────────────────────────────────────────────
-      # Parses critical fields from the 512-byte NDS header directly in Python,
-      # avoiding any dependency on a specific ndstool flag or version. Checks:
-      #   • Header is at least 512 bytes (not truncated)
-      #   • Nintendo logo CRC is 0xCF56 — required by all NDS hardware & emulators
-      #   • ARM9 entry point falls within the normal main RAM address range
+      # Uses od (standard POSIX tool, always available) to read raw bytes from
+      # the 512-byte NDS header — no Python, no ndstool version concerns.
+      #
+      # Checks:
+      #   Nintendo logo CRC at offset 0x15C must be 0xCF56. This value is
+      #   hard-coded into NDS hardware and required by every emulator. If it is
+      #   wrong, the ROM will not boot regardless of everything else being correct.
+      #
+      # Also prints the game title (bytes 0x00-0x0B) as a quick sanity check
+      # that the right binary was produced.
       - name: Validate ROM header
         run: |
-          python3 - << 'EOF'
-          import sys, struct
+          ROM="Persona-3-Dual.nds"
 
-          LOGO_CRC_EXPECTED = 0xCF56
-          ARM9_LO, ARM9_HI  = 0x02000000, 0x02400000
+          # Minimum file size: NDS header alone is 512 bytes
+          ACTUAL_SIZE=$(stat -c%s "$ROM")
+          if [ "$ACTUAL_SIZE" -lt 512 ]; then
+            echo "::error::ROM is only ${ACTUAL_SIZE} bytes — header is truncated"
+            exit 1
+          fi
 
-          with open("Persona-3-Dual.nds", "rb") as f:
-              hdr = f.read(0x200)
+          # Read the 2-byte Nintendo logo CRC stored at offset 0x15C (little-endian).
+          # od -tx2 reads a native 16-bit word; on the LE x86 runner this matches
+          # the LE value in the file exactly.
+          LOGO_CRC=$(od -An -tx2 -j 0x15C -N 2 "$ROM" | tr -d ' \n')
 
-          # ── Minimum size ──────────────────────────────────────────────────────
-          if len(hdr) < 0x200:
-              print(f"::error::ROM header truncated ({len(hdr)} bytes; need 512)")
-              sys.exit(1)
+          echo "Logo CRC  : 0x${LOGO_CRC^^}  (expected 0xCF56)"
 
-          # ── Parse header fields ───────────────────────────────────────────────
-          title      = hdr[0x00:0x0C].decode("ascii", errors="replace").rstrip("\x00")
-          game_code  = hdr[0x0C:0x10].decode("ascii", errors="replace")
-          maker_code = hdr[0x10:0x12].decode("ascii", errors="replace")
-          unit_code  = hdr[0x12]
-          capacity   = 128 << hdr[0x14]                          # ROM capacity in KB
-          arm9_entry = struct.unpack_from("<I", hdr, 0x24)[0]
-          logo_crc   = struct.unpack_from("<H", hdr, 0x15C)[0]
-          header_crc = struct.unpack_from("<H", hdr, 0x15E)[0]
+          if [ "${LOGO_CRC,,}" != "cf56" ]; then
+            echo "::error::Nintendo logo CRC mismatch — ROM is likely corrupt or malformed"
+            exit 1
+          fi
 
-          print(f"Game title   : {title!r}")
-          print(f"Game code    : {game_code}")
-          print(f"Maker code   : {maker_code}")
-          print(f"Unit code    : 0x{unit_code:02X}")
-          print(f"ROM capacity : {capacity} KB")
-          print(f"ARM9 entry   : 0x{arm9_entry:08X}")
-          print(f"Logo CRC     : 0x{logo_crc:04X}   (expected 0x{LOGO_CRC_EXPECTED:04X})")
-          print(f"Header CRC   : 0x{header_crc:04X}")
-
-          # ── Logo CRC (hard requirement) ───────────────────────────────────────
-          if logo_crc != LOGO_CRC_EXPECTED:
-              print(f"::error::Nintendo logo CRC is 0x{logo_crc:04X}, "
-                    f"expected 0x{LOGO_CRC_EXPECTED:04X} — ROM is likely corrupt or malformed")
-              sys.exit(1)
-
-          # ── ARM9 entry point sanity check ─────────────────────────────────────
-          if not (ARM9_LO <= arm9_entry <= ARM9_HI):
-              print(f"::warning::ARM9 entry 0x{arm9_entry:08X} is outside "
-                    f"normal main RAM range [0x{ARM9_LO:08X}–0x{ARM9_HI:08X}]")
-
-          print("ROM header validation passed ✓")
-          EOF
+          # Print game title from the first 12 bytes as a sanity check
+          GAME_TITLE=$(dd if="$ROM" bs=1 skip=0 count=12 2>/dev/null | tr -d '\000')
+          echo "Game title: ${GAME_TITLE}"
+          echo "ROM header validation passed ✓"
 
       # ── Checksums ─────────────────────────────────────────────────────────────
       - name: Generate checksums
@@ -218,10 +188,10 @@ print(''.join(chars))
           echo "MD5     : ${MD5}"
 
       # ── Release notes ─────────────────────────────────────────────────────────
-      # Written to a file (not GITHUB_OUTPUT) to safely handle multi-line strings
-      # that may contain special characters from commit messages.
-      # The new version tag has not been pushed yet, so the most recent existing
-      # tag is the correct baseline for "what changed since last release".
+      # Written to a file rather than GITHUB_OUTPUT to safely handle multi-line
+      # strings — commit messages can contain characters that break YAML strings.
+      # The new tag has not been pushed yet, so the most recent existing tag is
+      # the correct baseline for "what changed since last release".
       - name: Write release notes
         if: github.event_name != 'pull_request'
         run: |
@@ -255,7 +225,7 @@ print(''.join(chars))
 
       # ── Upload artifact ───────────────────────────────────────────────────────
       # Release builds: 30-day retention, clean name.
-      # PR builds:      7-day retention, name includes the PR number.
+      # PR builds:      7-day retention, named with PR number for traceability.
       - name: Upload ROM artifact (release build)
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
@@ -286,7 +256,7 @@ print(''.join(chars))
           body_path:  release-notes.md
 
       # ── Job summary ───────────────────────────────────────────────────────────
-      # Visible in the Actions UI under the "Summary" tab.
+      # Visible in the Actions UI under the "Summary" tab of each run.
       # Runs with always() so a partial summary appears even on failure.
       - name: Write job summary
         if: always()
@@ -315,16 +285,10 @@ print(''.join(chars))
           } >> $GITHUB_STEP_SUMMARY
 
       # ── Discord notification ──────────────────────────────────────────────────
-      # Fires on success, failure, AND cancellation so you are never left
-      # wondering why a build went quiet.
-      #
-      # Requires a DISCORD_WEBHOOK secret to be set in the repository settings.
-      # If the secret is absent, the step exits cleanly — it will never fail
-      # the build or produce an error annotation.
-      #
-      # jq is used to build the JSON payload so that all user-controlled values
-      # (branch name, actor, commit SHA) are safely escaped before reaching the
-      # wire — no risk of JSON injection from a crafted branch or commit message.
+      # Fires on success, failure, AND cancellation.
+      # If DISCORD_WEBHOOK secret is absent, exits cleanly — never fails the build.
+      # jq builds the JSON payload so branch names / commit SHAs with special
+      # characters cannot produce malformed JSON (injection-safe).
       - name: Notify Discord
         if: always()
         env:
@@ -344,7 +308,6 @@ print(''.join(chars))
             exit 0
           fi
 
-          # Map job status → Discord embed colour (decimal) and status emoji
           case "$JOB_STATUS" in
             success)   COLOR=3066993;  EMOJI="✅" ;;
             cancelled) COLOR=9807270;  EMOJI="⏹️" ;;
