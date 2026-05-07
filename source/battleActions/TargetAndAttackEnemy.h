@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "skills/AttackSkill.h"
-#include "Enemies/Enemy.h"
+#include "enemies/Enemy.h"
 #include "party/Player.h"
 
 struct TargetAndAttackActionEnemy
