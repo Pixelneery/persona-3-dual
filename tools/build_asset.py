@@ -32,7 +32,7 @@ def guess_asset_type(input_file: str) -> Optional[str]:
     if ext == '.dlg': return 'dlg2dialogue'
     if ext == '.mp4': return 'video2vid'
     if ext == '.jmap': return 'jmap2map'
-    if ext == '.obj': return 'nds_build_environment'
+    if ext == '.obj': return 'build_environment'
     if ext == '.json': return 'obj2model'
     return None
 

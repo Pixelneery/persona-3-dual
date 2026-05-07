@@ -56,7 +56,7 @@ nitrofiles/
 
 tools/
   dlg2dialogue.py
-  nds_build_environment.py
+  build_environment.py
   obj2environment.py
   obj2model.py
   video2vid.py
@@ -68,7 +68,7 @@ tools/
 
 ---
 
-### `nds_build_environment.py` — 3D Static Environment Pipeline
+### `build_environment.py` — 3D Static Environment Pipeline
 
 Converts an `.obj` + `.mtl` + `.png` collection into a zero-boilerplate C++ header, raw `.s` assembly display lists, and GRIT-compiled textures. 
 
