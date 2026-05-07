@@ -232,13 +232,18 @@ void IwatodaiDormView::Cleanup()
     pauseMenu.cancelSFX();
     isPauseMenuActive = false;
 
+    // cleanup environment
+    iwatodaiDormEnv.cleanup();
     // reset textures
     glDeleteTextures(1, &characterTextureId);
+    // reset shared bg slot
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
 
     // reset vram
     vramSetBankA(VRAM_A_LCD);
     vramSetBankB(VRAM_B_LCD);
     vramSetBankC(VRAM_C_LCD);
+    vramSetBankD(VRAM_D_LCD);
     vramSetBankH(VRAM_H_LCD);
 
     // cleanup controllers

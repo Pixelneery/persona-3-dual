@@ -86,7 +86,7 @@ void IwatodaiStreetsView::Init() {
     glColor3b(255, 255, 255);
 
     // sub screen console
-    int bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+    bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
     consoleSelect(&console);
@@ -232,6 +232,7 @@ void IwatodaiStreetsView::Cleanup() {
 
     iwatodaiStreetsEnv.cleanup();
     glDeleteTextures(1, &streetsCharacterTextureId);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
 
     vramSetBankA(VRAM_A_LCD);
     vramSetBankB(VRAM_B_LCD);

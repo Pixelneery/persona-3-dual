@@ -12,6 +12,7 @@ class IwatodaiStreetsView : public View {
 
     private:
         PrintConsole console;
+        int bgSharedSlot;
 
         CharacterController* playerCtrl;
             cameraPosition camPos;
