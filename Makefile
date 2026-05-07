@@ -38,9 +38,9 @@ export GAME_ICON := $(CURDIR)/../icon.bmp
 #---------------------------------------------------------------------------------
 TOOLS_DIR       := $(CURDIR)/tools
 ifeq ($(OS),Windows_NT)
-    VENV_PYTHON := $(CURDIR)/.venv/Scripts/python.exe
+    VENV_PYTHON := $(HOME)/.venv/Scripts/python.exe
 else
-    VENV_PYTHON := $(CURDIR)/.venv/bin/python3
+    VENV_PYTHON := $(HOME)/.venv/bin/python3
 endif
 
 ASSETS_DIALOGUE := $(CURDIR)/assets/dialogue
