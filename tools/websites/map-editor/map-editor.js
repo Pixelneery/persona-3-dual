@@ -719,24 +719,17 @@ document.getElementById('obj-input').addEventListener('change', e => {
 function applyModelTransforms() {
     modelGroup.clear();
 
-    // Mirror obj2environment.py convert_blender_zup: (x, y, z) to (x, z, y).
-    // Blender exports in Z-up space; NDS (and this editor) use Y-up space.
-    // We apply this as a matrix to CLONED geometries so rawModelGroup stays
-    // untouched and toggling the flag always produces a clean result.
-    //
-    // The matrix that performs (x,y,z)→(x,z,y):
-    //   new_x = old_x  ->  row 0: [1, 0, 0]
-    //   new_y = old_z  ->  row 1: [0, 0, 1]
-    //   new_z = old_y  ->  row 2: [0, 1, 0]
-    //
-    // det = -1 (reflection), which also flips winding — this matches the
-    // flip_winding=blender_source behaviour in build_display_list().
+    // Convert Blender Z-up to NDS Y-up via a proper rotation:
+    //   new_x =  old_x
+    //   new_y =  old_z  (Blender's up becomes NDS up)
+    //   new_z = -old_y  (negation preserves right-handedness)
+    // det = +1 - this is a rotation, not a reflection, so winding is preserved.
     const blender  = params.source_blender;
     const swapMat  = blender
         ? new THREE.Matrix4().set(
             1, 0, 0, 0,
             0, 0, 1, 0,
-            0, 1, 0, 0,
+            0, -1, 0, 0,
             0, 0, 0, 1
           )
         : null;

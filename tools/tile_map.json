@@ -6,6 +6,7 @@
       "p": 3,
       "e": 4,
       "a": 0,
+      "c_a": 100,
       "x": 8
     },
     "TILE_MAP_META": {
@@ -15,6 +16,7 @@
       "p": "PREV_SCENE",
       "e": "NEXT_SCENE",
       "a": "RESERVED",
+      "c_a": "CHARACTER_AKIHIKO",
       "x": "DEBUG"
     }
   }

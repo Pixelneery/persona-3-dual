@@ -13,7 +13,8 @@
                 "${DEVKITPRO}/calico/include",
                 "${workspaceFolder}/build",
                 "${workspaceFolder}/source",
-                "${workspaceFolder}/source"
+                "${workspaceFolder}/source",
+                "${workspaceFolder}/source/core"
             ],
             "defines": [
                 "_DEBUG",

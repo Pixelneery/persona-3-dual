@@ -1,31 +1,41 @@
 #!/usr/bin/env python3
 """
-jmap_to_h.py — Convert a .jmap collision map to a C header file.
+jmap2map.py - Convert a .jmap collision map to a C header file.
 
-Usage:
-    python3 jmap_to_h.py <input.jmap> <output.h>
+As a module (via build_asset.py):
+    Dispatched automatically for .jmap files.
+
+Standalone usage:
+    python3 jmap2map.py <input.jmap> <output.h>
 
 See tile_map.json for mapping values.
 """
 
 import json
-import sys
 import re
+import argparse
 from pathlib import Path
 
-# Load the tile map from the JSON file
-script_dir = Path(__file__).resolve().parent
-json_path = script_dir / "tile_map.json"
 
-try:
-    with json_path.open('r') as f:
-        data = json.load(f)
-    TILE_MAP = data['TILE_MAP']
-except FileNotFoundError:
-    print(f"Error: Could not find {json_path}", file=sys.stderr)
-    sys.exit(1)
+def _load_tile_map():
+    """Load TILE_MAP from tile_map.json, searching relative to this script."""
+    script_dir = Path(__file__).resolve().parent
+    # Check next to this script, then one level up (for converters/ subdir layout)
+    candidates = [
+        script_dir / "tile_map.json",
+        script_dir / "../tile_map.json",
+    ]
+    for json_path in candidates:
+        if json_path.exists():
+            with json_path.open('r') as f:
+                data = json.load(f)
+            return data['TILE_MAP']
+    raise FileNotFoundError(
+        f"Could not find tile_map.json. Searched: {[str(p) for p in candidates]}"
+    )
 
-def parse_jmap(path_obj):
+
+def parse_jmap(path_obj, tile_map):
     rows = []
     audio = None
     with path_obj.open('r') as f:
@@ -43,11 +53,12 @@ def parse_jmap(path_obj):
                 continue
             row = []
             for tok in tokens:
-                if tok not in TILE_MAP:
+                if tok not in tile_map:
                     raise ValueError(f"Unknown tile token '{tok}' in {path_obj.name}")
-                row.append(TILE_MAP[tok])
+                row.append(tile_map[tok])
             rows.append(row)
     return rows, audio
+
 
 def validate(rows, path_obj):
     if not rows:
@@ -59,6 +70,7 @@ def validate(rows, path_obj):
                 f"Row {i} has {len(row)} tiles, expected {width} (in {path_obj.name})"
             )
     return len(rows), width
+
 
 def to_header(rows, height, width, stem, audio):
     guard = re.sub(r'[^A-Z0-9]', '_', stem.upper()) + '_H'
@@ -78,7 +90,7 @@ def to_header(rows, height, width, stem, audio):
     lines.append(f'#define {define_prefix}_MAP_HEIGHT {height}')
     lines.append('')
     lines.append(
-        f'static const uint8_t {stem}_collision_map'
+        f'static const uint8_t {stem}_map'
         f'[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{'
     )
     for r, row in enumerate(rows):
@@ -90,31 +102,44 @@ def to_header(rows, height, width, stem, audio):
     lines.append(f'#endif')
     return '\n'.join(lines) + '\n'
 
-def main():
-    if len(sys.argv) != 3:
-        # Show just the script name in help
-        script_name = Path(sys.argv[0]).name
-        print(f'Usage: {script_name} <input.jmap> <output.h>', file=sys.stderr)
-        sys.exit(1)
 
-    # Convert strings from sys.argv into Path objects immediately
-    jmap_path = Path(sys.argv[1])
-    out_path  = Path(sys.argv[2])
+# Entry point for build_asset.py dispatch
 
-    # get filename
+def convert(input_file: str, output_file: str, config: dict) -> None:
+    """build_asset.py-compatible entry point."""
+    tile_map = _load_tile_map()
+
+    jmap_path = Path(input_file)
+    out_path  = Path(output_file)
+
+    # If the caller passed a directory, derive the .h filename automatically
+    if out_path.is_dir() or (not out_path.suffix):
+        out_path = out_path / (jmap_path.stem + '.h')
+
     stem = jmap_path.stem
 
-    rows, audio = parse_jmap(jmap_path)
+    rows, audio = parse_jmap(jmap_path, tile_map)
     height, width = validate(rows, jmap_path)
     header = to_header(rows, height, width, stem, audio)
 
-    # Create the parent directory if it doesn't exist
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    # Write the file directly using the Path object
     out_path.write_text(header)
 
-    print(f'  JMAP  {jmap_path.name} -> {out_path.name} ({width}x{height})')
+    print(f'Written: {out_path.name} / ({width}x{height})')
+
+
+# Standalone CLI
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='Convert a .jmap collision map to a C header file.'
+    )
+    parser.add_argument('input',  help='Input .jmap file')
+    parser.add_argument('output', help='Output .h file (or directory)')
+    args = parser.parse_args()
+
+    convert(args.input, args.output, {})
+
 
 if __name__ == '__main__':
     main()

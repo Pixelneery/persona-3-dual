@@ -85,10 +85,10 @@ void IwatodaiDormView::Init()
     bgUpdate();
 
     // setup player controller
-    playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
+    playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
 
     // setup music
-    musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
+    musicCtrl.init(IWATODAI_DORM_MUSIC, 0.0f, -1.0f);
 
     // setup character model
     characterAnimationCtrl.loadModel("nitro:/models/character.bin");

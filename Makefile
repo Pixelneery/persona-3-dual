@@ -56,7 +56,6 @@ DLG_FILES       := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
 MP3_FILES       := $(wildcard $(ASSETS_MUSIC)/*.mp3)
 MP4_FILES       := $(wildcard $(ASSETS_VIDEO)/*.mp4)
 ENV_OBJ_FILES   := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.obj)
-MAP_FILES       := $(wildcard $(ASSETS_MAPS)/*.png)
 JMAP_FILES      := $(wildcard $(ASSETS_MAPS)/*.jmap)
 
 MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
@@ -67,7 +66,6 @@ MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 DIALOGUE_OUT := $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=$(CURDIR)/source/dialogue/%_dialogue.cpp)
 MUSIC_OUT    := $(MP3_FILES:$(ASSETS_MUSIC)/%.mp3=$(NITRO_MUSIC)/%.pcm)
 VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(NITRO_VIDEO)/%.vid)
-MAP_OUT      := $(MAP_FILES:$(ASSETS_MAPS)/%.png=$(CURDIR)/source/maps/%.h)
 JMAP_OUT     := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
 
 MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
@@ -146,7 +144,7 @@ export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean assets dialogue music video environments maps models help
+.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models help
 
 #---------------------------------------------------------------------------------
 $(BUILD):
@@ -158,7 +156,7 @@ help:
 	@echo "  make              Build everything"
 	@echo "  make assets       Run all asset converters"
 
-assets: dirs dialogue music video environments maps jmaps models
+assets: dirs dialogue music video environments jmaps models
 
 dirs:
 	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/nitrofiles/models $(CURDIR)/nitrofiles/environments
@@ -212,20 +210,10 @@ $(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
 models: $(MODEL_OUT)
 
 #---------------------------------------------------------------------------------
-# PNG collision maps — fed into texture2collision via build_asset.py (TODO)
-$(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.png $(wildcard $(ASSETS_MAPS)/%.build.json)
-	@echo "  MAP   $(notdir $<)"
-	@mkdir -p $(dir $@)
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@
-
-maps: $(MAP_OUT)
-
-#---------------------------------------------------------------------------------
-# JMAP collision maps — hand-authored tile files, converted by jmap_to_h.py
 $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.jmap
 	@echo "  JMAP  $(notdir $<)"
 	@mkdir -p $(dir $@)
-	@$(VENV_PYTHON) $(TOOLS_DIR)/jmap_to_h.py $< $@
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@
 
 jmaps: $(JMAP_OUT)
 
@@ -233,7 +221,7 @@ jmaps: $(JMAP_OUT)
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
-	@rm -f $(DIALOGUE_OUT) $(MUSIC_OUT) $(VIDEO_OUT) $(MAP_OUT) $(MODEL_OUT) $(CURDIR)/source/dialogue/*_dialogue.cpp $(CURDIR)/source/dialogue/*_dialogue.h
+	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
 	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/nitrofiles/models/* $(CURDIR)/nitrofiles/environments/*
 
 #---------------------------------------------------------------------------------
