@@ -80,6 +80,22 @@ public:
         return true;
     }
 
+    int getPolyCount() const {
+        int total = 0;
+        for (int i = 0; i < 1; i++) {
+            if (dlSizes[i] > 0) {
+                const u32* dl = &displayLists[i][1];
+                for (u32 j = 0; j < dlSizes[i]; j++) {
+                    u32 w = dl[j];
+                    for (int b = 0; b < 4; b++) {
+                        if (((w >> (b * 8)) & 0xFF) == 0x40) total++;
+                    }
+                }
+            }
+        }
+        return total;
+    }
+
     void draw() {
         glBindTexture(GL_TEXTURE_2D, textureIDs[0]);
         if (displayLists[0]) glCallList(displayLists[0]);

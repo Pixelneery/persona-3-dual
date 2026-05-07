@@ -5,6 +5,8 @@
 
 extern volatile int frame;
 extern volatile bool enableBillboards;
+extern int fps;
+extern int fpsTimer;
 extern MusicController musicCtrl;
 extern VideoController videoCtrl;
 extern AnimationController characterAnimationCtrl;

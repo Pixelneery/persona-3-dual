@@ -452,6 +452,23 @@ def convert(obj_path, output_dir, config):
             h.write("        return true;\n")
         h.write("    }\n\n")
 
+        # getPolyCount()
+        h.write(f"    int getPolyCount() const {{\n")
+        h.write(f"        int total = 0;\n")
+        h.write(f"        for (int i = 0; i < {safe_n}; i++) {{\n")
+        h.write(f"            if (dlSizes[i] > 0) {{\n")
+        h.write(f"                const u32* dl = &displayLists[i][1];\n")
+        h.write(f"                for (u32 j = 0; j < dlSizes[i]; j++) {{\n")
+        h.write(f"                    u32 w = dl[j];\n")
+        h.write(f"                    for (int b = 0; b < 4; b++) {{\n")
+        h.write(f"                        if (((w >> (b * 8)) & 0xFF) == 0x40) total++;\n")
+        h.write(f"                    }}\n")
+        h.write(f"                }}\n")
+        h.write(f"            }}\n")
+        h.write(f"        }}\n")
+        h.write(f"        return total;\n")
+        h.write(f"    }}\n\n")
+
         #  draw()
         # The NDS geometry FIFO is drained asynchronously after glCallList.
         # glBindTexture writes directly to the TEXIMAGE_PARAM register, so

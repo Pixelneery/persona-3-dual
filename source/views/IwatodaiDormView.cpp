@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <stdio.h>
+#include <malloc.h>
 #include "core/globals.h"
 #include "math.h"
 #include "IwatodaiDormView.h"
@@ -10,8 +11,8 @@
 // environment
 #include "environments/iwatodai_dorm.h"
 #include "texture.h"
-// collision (deprecated)
-#include "maps/iwatodaiDorm.h"
+// maps
+#include "maps/iwatodai_dorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
@@ -84,9 +85,7 @@ void IwatodaiDormView::Init()
     bgUpdate();
 
     // setup player controller
-    // NOTE: the collision map is currently being used here, but is just dummy data. This is an old implementation that will
-    // be deprecated, but is currently still in the workflow until the new collision system is fully implemented and tested.
-    playerCtrl = new CharacterController(MAP_WIDTH, MAP_HEIGHT, &collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
+    playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_collision_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
 
     // setup music
     musicCtrl.init("nitro:/music/changing_seasons.pcm", 0.0f, -1.0f);
@@ -99,6 +98,7 @@ void IwatodaiDormView::Init()
     // setup environment model
     const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = { textureBitmap };
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
+    totalPolyCount = iwatodaiDormEnv.getPolyCount();
 
     // setup dialogue
     demo_dialogue_bg_slot = bgSharedSlot;
@@ -185,17 +185,6 @@ ViewState IwatodaiDormView::Update()
         glPopMatrix(1);
 
         glFlush(0);
-
-        // print coordinates (64x64 area from 0,0 to 64,64)
-      if (!dialogueCtrl.isActive() && !battleController.isActive()) {
-          iprintf("\x1b[21;0Htile(x,z): %d, %d",
-              (int)((charPos.x + worldOffsetX) / tileSize),
-              (int)((charPos.z + worldOffsetZ) / tileSize));
-          iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
-              (int)(charPos.x * 100),
-              (int)(charPos.z * 100));
-          iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
-      }
     }
 
     // update controllers
@@ -216,13 +205,18 @@ void IwatodaiDormView::Cleanup()
     pauseMenu.cancelSFX();
     isPauseMenuActive = false;
 
+    // cleanup environment
+    iwatodaiDormEnv.cleanup();
     // reset textures
     glDeleteTextures(1, &characterTextureId);
+    // reset shared bg slot
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
 
     // reset vram
     vramSetBankA(VRAM_A_LCD);
     vramSetBankB(VRAM_B_LCD);
     vramSetBankC(VRAM_C_LCD);
+    vramSetBankD(VRAM_D_LCD);
     vramSetBankH(VRAM_H_LCD);
 
     // cleanup controllers
