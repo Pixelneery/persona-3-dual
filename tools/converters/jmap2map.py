@@ -90,7 +90,7 @@ def to_header(rows, height, width, stem, audio):
     lines.append(f'#define {define_prefix}_MAP_HEIGHT {height}')
     lines.append('')
     lines.append(
-        f'static const uint8_t {stem}_collision_map'
+        f'static const uint8_t {stem}_map'
         f'[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{'
     )
     for r, row in enumerate(rows):
