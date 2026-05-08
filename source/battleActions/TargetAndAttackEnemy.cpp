@@ -1,6 +1,6 @@
 #include "TargetAndAttackEnemy.h"
 
-bool TargetAndAttackActionEnemy::update(u32 *keys)
+bool TargetAndAttackActionEnemy::update(u32 *keys,  AttackSkill* attack)
 {
     if (*keys & KEY_LEFT)
     {
@@ -17,7 +17,7 @@ bool TargetAndAttackActionEnemy::update(u32 *keys)
 
     if (*keys & KEY_A)
     {
-        iprintf("AttackSkill: ");
+        iprintf("Attacking: ");
         iprintf(enemies->at(*targetIndex)->name.c_str());
         enemies->at(*targetIndex)->hp -= attack->calculateDamage(&player->ma, &player->st, &enemies->at(*targetIndex)->en, &player->lv, &enemies->at(*targetIndex)->lv);
         iprintf("\n");
