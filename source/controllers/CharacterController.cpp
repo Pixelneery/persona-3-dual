@@ -110,6 +110,14 @@ cameraPosition CharacterController::update(u32 keys)
         deltaZ += rightZ;
     }
 
+    if (deltaX != 0.0f && deltaZ != 0.0f)
+    {
+        // normalize diagonal movement to prevent faster speed
+        const float invSqrt2 = 0.707106781187;  // 1/sqrt(2)
+        deltaX *= invSqrt2;
+        deltaZ *= invSqrt2;
+    }
+
     nextX = characterTranslate.x + deltaX;
     nextZ = characterTranslate.z + deltaZ;
 
