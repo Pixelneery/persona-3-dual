@@ -3,8 +3,13 @@
 
 void Guard::execute()
 {
-    //TODO: GUARD
-    iprintf("Guarding");
+    inProgress = true;
+    iprintf("Guarding\n");
 }
 
-bool Guard::update(){return true;}
+bool Guard::update()
+{
+    player->guarding = true;
+    inProgress = false;
+    return true;
+}

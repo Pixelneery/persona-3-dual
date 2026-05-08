@@ -82,7 +82,14 @@ void BattleController::enemyTurn()
     srand(time(0));
 
     int randomNum = rand() % enemies->at(counter)->attackCount;
-    player->hp -= enemies->at(counter)->attackSkill[randomNum]->calculateDamage(&enemies->at(counter)->ma, &enemies->at(counter)->st, &player->en, &enemies->at(counter)->lv, &player->lv);
+    u32 damage = enemies->at(counter)->attackSkill[randomNum]->calculateDamage(&enemies->at(counter)->ma, &enemies->at(counter)->st, &player->en, &enemies->at(counter)->lv, &player->lv);
+    if (player->guarding)
+    {
+        iprintf("player guarded\n");
+        damage *= 0.4;
+    }
+
+    player->hp -= damage;
 
     iprintf("Attack with: ");
     iprintf(enemies->at(counter)->attackSkill[randomNum]->name.c_str());
@@ -106,6 +113,7 @@ void BattleController::enemyTurn()
 
     if (counter >= enemies->size())
     {
+        player->guarding = false;
         isEnemeyTurn = false;
         counter = 0;
     }
