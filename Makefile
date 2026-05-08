@@ -11,6 +11,15 @@ endif
 
 include $(DEVKITARM)/ds_rules
 
+# Default flags for release optimization
+OPT := -O3
+LTO_FLAG := -flto=auto
+
+ifeq ($(DEBUG), 1)
+    OPT := -O0 -g
+    LTO_FLAG :=
+endif
+
 #---------------------------------------------------------------------------------
 # TARGET is the name of the output
 # BUILD is the directory where object files & intermediate files will be placed
@@ -19,8 +28,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 TARGET      :=  $(shell basename $(CURDIR))
 BUILD       :=  build
-SOURCES     :=  source source/views source/controllers source/core source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills 
-DATA        :=  
+SOURCES     :=  source source/views source/controllers source/core source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills
+DATA        :=
 INCLUDES    :=  include source
 
 # Add environment subdirectories directly to the GRAPHICS build pipeline
@@ -94,14 +103,12 @@ ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments
 #---------------------------------------------------------------------------------
 ARCH    :=  -march=armv5te -mtune=arm946e-s -mthumb
 
-CFLAGS  :=  -g -Wall -O3 -flto=auto -ffunction-sections -fdata-sections\
-        $(ARCH)
-
-CFLAGS  +=  $(INCLUDE) -DARM9
+CFLAGS  := $(OPT) $(ARCH) $(INCLUDE) -DARM9 -Wall $(LTO_FLAG) -ffunction-sections -fdata-sections
 CXXFLAGS    := $(CFLAGS) -fno-rtti -fno-exceptions
 
 ASFLAGS :=  -g $(ARCH)
-LDFLAGS =   -specs=ds_arm9.specs -g $(ARCH) -flto=auto -Wl,--gc-sections -Wl,-Map,$(notdir $*.map)
+
+LDFLAGS =   -specs=ds_arm9.specs $(ARCH) $(LTO_FLAG) -Wl,--gc-sections -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
