@@ -5,6 +5,7 @@
 void AttackAction::execute()
 {
     inProgress = true;
+    targetIndex = 0;
 }
 
 bool AttackAction::update()
@@ -14,7 +15,7 @@ bool AttackAction::update()
 
     updateIndex.update(keys, targetIndex, enemyCount);
 
-    bool madeAction = targetAndAttackActionEnemy->update(&keys);
+    bool madeAction = targetAndAttackActionEnemy->update(&keys, player->baseAttackAction);
     if (madeAction)
     {
         targetIndex = 0;

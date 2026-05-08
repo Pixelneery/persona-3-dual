@@ -18,7 +18,7 @@ struct AttackAction : ActionBase
     {
         name = "AttackAction";
         // TODO: dont forget to clear in the future
-        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(player->baseAttackAction, enemies, player, &targetIndex);
+        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, player, &targetIndex);
     }
 
     void execute() override;
