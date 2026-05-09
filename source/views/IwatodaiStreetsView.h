@@ -20,7 +20,7 @@ class IwatodaiStreetsView : public View {
             const float worldOffsetX = IWATODAI_STREETS_WORLD_OFFSET_X;
             const float worldOffsetZ = IWATODAI_STREETS_WORLD_OFFSET_Z;
             const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
-            const float speed = 0.01f;
+            const float speed = 0.02f;
             const float angleIncrement = 0.05f;
             const float distance = 1.0f;
             const float lookAhead = 0.7f;

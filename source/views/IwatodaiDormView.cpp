@@ -75,7 +75,7 @@ void IwatodaiDormView::Init()
 
     // setup character model
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
-    characterAnimationCtrl.set(MODEL_CHARACTER_ARMATUREACTION, true);
+    characterAnimationCtrl.set(MODEL_CHARACTER_4, true);
     characterAnimationCtrl.play();
 
     // setup environment model
