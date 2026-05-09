@@ -15,7 +15,7 @@
 DialogueController dialogueCtrl;
 
 // add background setup here, and assign the bgLoader index to the appropriate PauseOption in PauseMenuComponent.h
-// NOTE: we can easily pass in custom bgLoaders. The reason I'm not implementing this behaviour is because I don't 
+// NOTE: we can easily pass in custom bgLoaders. The reason I'm not implementing this behaviour is because I don't
 // think they need to be different across interactions. The PauseMenuComponent should remain the same between
 // different views
 void PauseMenuComponent::setBgLoaders()
@@ -88,7 +88,7 @@ void PauseMenuComponent::init(int iBgSlot, bool* isActive)
     setBgLoaders();
 
     isActivePtr = isActive;
-    
+
     // initialize view state
     nextViewState = ViewState::KEEP_CURRENT;
 }
@@ -297,6 +297,10 @@ ViewState PauseMenuComponent::debugOptionSelected()
             *isActivePtr = false;
             selectedView = ViewState::KEEP_CURRENT;
             break;
+        case TOGGLE_DEBUG_PRINT:
+            enableDebugPrint = true;
+            *isActivePtr = false;
+            selectedView = ViewState::KEEP_CURRENT;
         default:
             selectedView = ViewState::KEEP_CURRENT;
     }

@@ -12,7 +12,7 @@
 #define SYSTEM_OPTIONS 6
 
 // dummy option for testing
-#define DEBUG_OPTIONS 8
+#define DEBUG_OPTIONS 9
 # define SKILLS 2
 
 class PauseMenuComponent;
@@ -95,13 +95,14 @@ enum {
     IWATODAI_DORM_VIEW = 4,
     IWATODAI_STREETS_VIEW = 5,
     DEBUG_DIALOGUE = 6,
-    TOGGLE_BILLBOARDS = 7
+    TOGGLE_BILLBOARDS = 7,
+    TOGGLE_DEBUG_PRINT = 8
 };
 
 class PauseMenuComponent {
     private:
         bool* isActivePtr;
-        
+
         // sfx
         mm_sfxhand sfxMenuHandle;
         mm_sfxhand sfxSelectHandle;
@@ -123,7 +124,7 @@ class PauseMenuComponent {
         int selectedOption = 0;
         ViewState nextViewState = ViewState::KEEP_CURRENT;
 
-        PauseOption menuOptions[MENU_OPTIONS] = 
+        PauseOption menuOptions[MENU_OPTIONS] =
         {
             {"Debug", -1, &PauseMenuComponent::openDebugMenu},
             {"Skill", -1, &PauseMenuComponent::openSkillMenu},
@@ -135,7 +136,7 @@ class PauseMenuComponent {
             {"System", -1, &PauseMenuComponent::openSystemMenu},
         };
 
-        PauseOption debugOptions[DEBUG_OPTIONS] = 
+        PauseOption debugOptions[DEBUG_OPTIONS] =
         {
             {"DisclaimerView", -1, &PauseMenuComponent::debugOptionSelected},
             {"IntroVideoView", -1, &PauseMenuComponent::debugOptionSelected},
@@ -145,10 +146,11 @@ class PauseMenuComponent {
             {"IwatodaiStreetView", -1, &PauseMenuComponent::debugOptionSelected},
             {"Debug Dialogue", -1, &PauseMenuComponent::debugOptionSelected},
             {"Toggle Billboards", -1, &PauseMenuComponent::debugOptionSelected},
+            {"Toggle Debug Print", -1, &PauseMenuComponent::debugOptionSelected},
         };
 
         // TODO: go into submenus
-        PauseOption skillOptions[SKILL_OPTIONS] = 
+        PauseOption skillOptions[SKILL_OPTIONS] =
         {
             {"Makoto", 0, &PauseMenuComponent::skillOptionSelected},
             {"Yukari", 1, &PauseMenuComponent::skillOptionSelected},
@@ -161,7 +163,7 @@ class PauseMenuComponent {
             {"Shinjiro", -1, &PauseMenuComponent::skillOptionSelected},
         };
 
-        PauseOption itemOptions[ITEM_OPTIONS] = 
+        PauseOption itemOptions[ITEM_OPTIONS] =
         {
             {"Life Stone", -1, &PauseMenuComponent::itemOptionSelected},
             {"Medicine", -1, &PauseMenuComponent::itemOptionSelected},
@@ -169,7 +171,7 @@ class PauseMenuComponent {
         };
 
         // TODO: go into submenus
-        PauseOption equipOptions[EQUIP_OPTIONS] = 
+        PauseOption equipOptions[EQUIP_OPTIONS] =
         {
             {"Makoto", -1, &PauseMenuComponent::equipOptionSelected},
             {"Yukari", -1, &PauseMenuComponent::equipOptionSelected},
@@ -182,7 +184,7 @@ class PauseMenuComponent {
             {"Shinjiro", -1, &PauseMenuComponent::equipOptionSelected},
         };
 
-        PauseOption personaOptions[PERSONA_OPTIONS] = 
+        PauseOption personaOptions[PERSONA_OPTIONS] =
         {
             {"Jack Frost", -1, &PauseMenuComponent::personaOptionSelected},
             {"Black Frost", -1, &PauseMenuComponent::personaOptionSelected},
@@ -190,7 +192,7 @@ class PauseMenuComponent {
         };
 
         // TODO: go into submenus
-        PauseOption statsOptions[STATS_OPTIONS] = 
+        PauseOption statsOptions[STATS_OPTIONS] =
         {
             {"Makoto", -1, &PauseMenuComponent::statsOptionSelected},
             {"Yukari", -1, &PauseMenuComponent::statsOptionSelected},
@@ -212,7 +214,7 @@ class PauseMenuComponent {
         };
 
         // TODO: go into submenus
-        PauseOption systemOptions[SYSTEM_OPTIONS] = 
+        PauseOption systemOptions[SYSTEM_OPTIONS] =
         {
             {"Tutorial", -1, &PauseMenuComponent::systemOptionSelected},
             {"Config", -1, &PauseMenuComponent::systemOptionSelected},
@@ -223,7 +225,7 @@ class PauseMenuComponent {
         };
 
         // dummy options for testing
-        PauseOption skills[SKILLS] = 
+        PauseOption skills[SKILLS] =
         {
             {"Skill 1", -1, nullptr},
             {"Skill 2", -1, nullptr},

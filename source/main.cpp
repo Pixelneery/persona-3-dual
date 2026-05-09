@@ -42,7 +42,8 @@ AnimationController characterAnimationCtrl;
 const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 // components
 PauseMenuComponent pauseMenuCmpt;
-volatile bool enableBillboards = true;
+bool enableBillboards = true;
+bool enableDebugPrint = false;
 bool isPauseMenuActive = false;
 
 View* currentView = nullptr;

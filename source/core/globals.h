@@ -18,5 +18,6 @@ extern const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 
 // components
 extern PauseMenuComponent pauseMenuCmpt;
-extern volatile bool enableBillboards;
+extern bool enableBillboards;
+extern bool enableDebugPrint;
 extern bool isPauseMenuActive;
