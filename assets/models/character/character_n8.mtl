@@ -1,0 +1,16 @@
+# NDS MTL export
+
+newmtl _000_p3pplayer_t01_tm2
+map_Kd diss_00.png
+
+newmtl _001_p3pplayer_t04_tm2
+map_Kd diss_01.png
+
+newmtl _002_p3pplayer_t02_tm2
+map_Kd diss_02.png
+
+newmtl _004_p3pplayer_t01_tm2
+map_Kd diss_00.png
+
+newmtl _005_p3pplayer_t01_tm2
+map_Kd diss_00.png
