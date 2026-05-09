@@ -9,11 +9,11 @@
 
 struct TargetAndAttackActionEnemy
 {
-    Player *player;
-    std::vector<Enemy *> *enemies;
-    u32 *targetIndex;
+    TargetAndAttackActionEnemy(std::vector<Enemy *> *iEnemies, Player *iPlayer, u32 *iTargetIndex) : enemies(iEnemies), player(iPlayer), targetIndex(iTargetIndex) {}
 
-    TargetAndAttackActionEnemy(std::vector<Enemy *> *iEnemies, Player *iPlayer, u32 *iTargetIndex) : enemies(iEnemies), targetIndex(iTargetIndex), player(iPlayer) {}
+    std::vector<Enemy *> *enemies;
+    Player *player;
+    u32 *targetIndex;
 
     bool update(u32 *keys, AttackSkill *attack);
 };

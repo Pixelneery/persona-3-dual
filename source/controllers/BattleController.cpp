@@ -25,7 +25,7 @@ void BattleController::update(u32 keys)
         return;
     }
 
-    if (counter < enemies->size() && isEnemeyTurn)
+    if (counter < enemies->size() && isEnemyTurn)
     {
         enemyTurn();
         return;
@@ -46,7 +46,7 @@ void BattleController::update(u32 keys)
                 else if (madeAction)
                 {
                     // properly erase dead enemies
-                    for (int i = 0; i < enemies->size(); i++)
+                    for (u32 i = 0; i < enemies->size(); i++)
                         if (enemies->at(i)->hp <= 0)
                         {
                             enemies->erase(enemies->begin() + i);
@@ -58,7 +58,7 @@ void BattleController::update(u32 keys)
                         exit();
                     else
                     {
-                        isEnemeyTurn = true;
+                        isEnemyTurn = true;
                     }
                 }
             }
@@ -151,7 +151,7 @@ void BattleController::enemyTurn()
     if (counter >= enemies->size())
     {
         player->guarding = false;
-        isEnemeyTurn = false;
+        isEnemyTurn = false;
         counter = 0;
     }
 }

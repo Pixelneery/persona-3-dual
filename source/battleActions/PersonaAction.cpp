@@ -17,13 +17,7 @@ bool PersonaAction::update(u32 *keys)
 
         AttackSkill *curSkill = player->curPersona->attackSkill[targetIndex];
 
-        if (*keys & KEY_LEFT)
-        {
-            iprintf("Cur: ");
-            iprintf(curSkill->name.c_str());
-            iprintf("\n");
-        }
-        else if (*keys & KEY_RIGHT)
+        if (*keys & KEY_LEFT || *keys & KEY_RIGHT)
         {
             iprintf("Cur: ");
             iprintf(curSkill->name.c_str());
