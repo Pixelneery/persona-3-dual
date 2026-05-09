@@ -2,9 +2,10 @@
 #include <nds.h>
 #include <string>
 #include "../skills/AttackSkill.h"
-#include "../skills/Agi.h"
-#include "../skills/Bufu.h"
 #include "../skills/Slash_Attack.h"
+#include "../personas/PersonaBase.h"
+#include "../personas/Orpheus.h"
+#include "../personas/Forneus.h"
 #include "Player.h"
 
 /*
@@ -15,32 +16,25 @@ Ag	Represents agility, which determines your place in the turn order.
 Lu	Represents luck, which is taken into account when using certain skills involving status afflictions or insta-death abilities.*/
 
 // TODO: since these will be scalled with level etc this abosultey needs to be in some gloabl state
-// Stats are p3f level 2 makoto + orpehus
 struct curPlayer : Player
 {
     Slash_Attack slash_Attack;
-    Agi agi;
-    Bufu bufu;
-    AttackSkill *myAttcking[2];
+
+    Orpheus orpheus;
+    Forneus forneus;
+    PersonaBase *myPersonas[2];
 
     curPlayer()
     {
-        myAttcking[0] = &agi;
-        myAttcking[1] = &bufu;
-        attackCount = 2;
-
         name = "Makoto";
         hp = 720;
         sp = 4;
         lv = 2;
-        st = 3;
-        ma = 3;
-        en = 2;
-        ag = 3;
-        lu = 2;
+
         baseAttackAction = &slash_Attack;
-        attackSkill = myAttcking;
-        // add resistances and arcana in the future
-        // ...
+        myPersonas[0] = &orpheus;
+        myPersonas[1] = &forneus;
+        personaCount = 2;
+        personas = myPersonas;
     }
 };

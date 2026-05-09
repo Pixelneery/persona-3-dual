@@ -1,14 +1,14 @@
-#include "Persona.h"
+#include "PersonaAction.h"
 #include <stdio.h>
 
-void Persona::execute()
+void PersonaAction::execute()
 {
     inProgress = true;
     targetIndex = 0;
     menuState = SelectSkill;
 }
 
-bool Persona::update(u32 *keys)
+bool PersonaAction::update(u32 *keys)
 {
     if (menuState == SelectSkill)
     {

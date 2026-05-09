@@ -8,7 +8,7 @@
 #include "TargetAndAttackEnemy.h"
 #include "UpdateIndex.h"
 
-struct Persona : ActionBase
+struct PersonaAction : ActionBase
 {
     UpdateIndex updateIndex;
     std::vector<Enemy *> *enemies = new std::vector<Enemy *>;
@@ -16,7 +16,7 @@ struct Persona : ActionBase
     AttackSkill *selectedSkill;
     TargetAndAttackActionEnemy *targetAndAttackActionEnemy;
 
-    Persona(std::vector<Enemy *> *iEnemies, Player *iPlayer) : enemies(iEnemies), player(iPlayer)
+    PersonaAction(std::vector<Enemy *> *iEnemies, Player *iPlayer) : enemies(iEnemies), player(iPlayer)
     {
         name = "Persona";
         // TODO: dont forget to clear in the future

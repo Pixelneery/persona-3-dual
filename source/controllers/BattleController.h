@@ -9,7 +9,7 @@
 #include "./battleActions/ActionBase.h"
 #include "./battleActions/AttackAction.h"
 #include "./battleActions/Guard.h"
-#include "./battleActions/Persona.h"
+#include "./battleActions/PersonaAction.h"
 #include "./battleActions/party/Player.h"
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/UpdateIndex.h"
@@ -29,7 +29,7 @@ private:
 
     AttackAction attack;
     Guard guard;
-    Persona persona;
+    PersonaAction persona;
 
     std::array<ActionBase *, 3> actions = {nullptr};
 
