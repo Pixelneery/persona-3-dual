@@ -14,14 +14,10 @@
 #include "maps/iwatodai_dorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
-// components
-#include "components/PauseMenuComponent.h"
 
 // TODO: move to header
 int characterTextureId;
 iwatodai_dorm_Environment iwatodaiDormEnv;
-PauseMenuComponent pauseMenu;
-bool isPauseMenuActive = false;
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView() : enemies(new std::vector<Enemy *>({&merciless_Maya, &cowardly_Maya})),
@@ -92,7 +88,7 @@ void IwatodaiDormView::Init()
 
     // setup pause menu
     // use the same shared background slot as the demo dialogue
-    pauseMenu.init(bgSharedSlot, &isPauseMenuActive);
+    pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 }
 
 ViewState IwatodaiDormView::Update()
@@ -110,7 +106,7 @@ ViewState IwatodaiDormView::Update()
     }
 
     if (isPauseMenuActive) {
-        ViewState menuResult = pauseMenu.update(pressed);
+        ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT) {
             musicCtrl.pause();
             return menuResult;
@@ -189,7 +185,7 @@ void IwatodaiDormView::Cleanup()
     consoleClear();
 
     // stop pause menu sfx
-    pauseMenu.cancelSFX();
+    pauseMenuCmpt.cancelSFX();
     isPauseMenuActive = false;
 
     // cleanup environment

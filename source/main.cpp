@@ -17,6 +17,9 @@
 #include "controllers/VideoController.h"
 #include "controllers/AnimationController.h"
 
+// components
+#include "components/PauseMenuComponent.h"
+
 // sfx
 #include "soundbank_bin.h"
 
@@ -28,16 +31,21 @@
 #include "diss_03.h"
 #include "diss_04.h"
 
+// variables
 volatile int frame = 0;
-volatile bool enableBillboards = true;
 int fps = 0;
 int fpsTimer = 0;
+// controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
-View* currentView = nullptr;
-
 const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+// components
+PauseMenuComponent pauseMenuCmpt;
+volatile bool enableBillboards = true;
+bool isPauseMenuActive = false;
+
+View* currentView = nullptr;
 
 void SwitchView(View* newView) {
     // cleanup any existing view

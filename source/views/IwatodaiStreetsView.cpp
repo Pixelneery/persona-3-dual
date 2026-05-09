@@ -5,7 +5,7 @@
 #include "math.h"
 #include "IwatodaiStreetsView.h"
 
-// collision map
+// map
 #include "maps/iwatodai_streets.h"
 // environment
 #include "environments/iwatodai_streets.h"
@@ -38,13 +38,9 @@
 // model
 #include "models/character.h"
 #include "character.h"
-// components
-#include "components/PauseMenuComponent.h"
 
 int streetsCharacterTextureId;
 iwatodai_streets_Environment iwatodaiStreetsEnv;
-PauseMenuComponent streetsPauseMenu;
-bool isStreetsPauseMenuActive = false;
 
 void IwatodaiStreetsView::Init() {
     videoSetMode(MODE_0_3D);
@@ -129,7 +125,7 @@ void IwatodaiStreetsView::Init() {
     totalPolyCount = iwatodaiStreetsEnv.getPolyCount();
 
     // pause menu
-    streetsPauseMenu.init(bgSharedSlot, &isStreetsPauseMenuActive);
+    pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 }
 
 ViewState IwatodaiStreetsView::Update() {
@@ -142,11 +138,11 @@ ViewState IwatodaiStreetsView::Update() {
     u32 pressed = keysDown();
 
     if (pressed & KEY_START) {
-        isStreetsPauseMenuActive = !isStreetsPauseMenuActive;
+        isPauseMenuActive = !isPauseMenuActive;
     }
 
-    if (isStreetsPauseMenuActive) {
-        ViewState menuResult = streetsPauseMenu.update(pressed);
+    if (isPauseMenuActive) {
+        ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT) {
             musicCtrl.pause();
             return menuResult;
@@ -189,8 +185,8 @@ void IwatodaiStreetsView::Cleanup() {
     setBrightness(3, 0);
     consoleClear();
 
-    streetsPauseMenu.cancelSFX();
-    isStreetsPauseMenuActive = false;
+    pauseMenuCmpt.cancelSFX();
+    isPauseMenuActive = false;
 
     iwatodaiStreetsEnv.cleanup();
     glDeleteTextures(1, &streetsCharacterTextureId);
