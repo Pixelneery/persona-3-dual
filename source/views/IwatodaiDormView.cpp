@@ -7,7 +7,6 @@
 
 // model
 #include "models/character.h"
-#include "character.h"
 // environment
 #include "environments/iwatodai_dorm.h"
 #include "texture.h"
@@ -15,7 +14,7 @@
 #include "maps/iwatodai_dorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
-
+// components
 #include "components/PauseMenuComponent.h"
 
 // TODO: move to header
@@ -55,18 +54,6 @@ void IwatodaiDormView::Init()
     // zNear is how close the camera can see, zFar is the maximum draw distance
     gluPerspective(55, 256.0 / 192.0, 0.1, 40);
 
-    // character
-    glGenTextures(1, &characterTextureId);
-    glBindTexture(GL_TEXTURE_2D, characterTextureId);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0,
-        GL_RGBA,
-        TEXTURE_SIZE_32, TEXTURE_SIZE_32,
-        0,
-        TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
-        characterBitmap // from character.h
-    );
-
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
     glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
 
@@ -91,13 +78,13 @@ void IwatodaiDormView::Init()
     musicCtrl.init(IWATODAI_DORM_MUSIC, 0.0f, -1.0f);
 
     // setup character model
-    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
+    character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
     characterAnimationCtrl.set(MODEL_CHARACTER_ARMATUREACTION, true);
     characterAnimationCtrl.play();
 
     // setup environment model
-    const unsigned int* bitmaps[IWATODAI_DORM_TEX_COUNT] = { textureBitmap };
-    iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmaps);
+    const unsigned int* bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = { textureBitmap };
+    iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmapsEnv);
     totalPolyCount = iwatodaiDormEnv.getPolyCount();
 
     // setup dialogue
@@ -180,7 +167,6 @@ ViewState IwatodaiDormView::Update()
             glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 
             // draw character
-            glBindTexture(GL_TEXTURE_2D, characterTextureId);
             characterAnimationCtrl.render();
         glPopMatrix(1);
 
@@ -190,6 +176,7 @@ ViewState IwatodaiDormView::Update()
     // update controllers
     battleController.update(pressed);
     dialogueCtrl.update(keys);
+    characterAnimationCtrl.update();
     musicCtrl.update();
 
     return ViewState::KEEP_CURRENT;

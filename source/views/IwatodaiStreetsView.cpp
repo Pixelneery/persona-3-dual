@@ -70,18 +70,6 @@ void IwatodaiStreetsView::Init() {
     glLoadIdentity();
     gluPerspective(55, 256.0 / 192.0, 0.1, 40);
 
-    // character texture
-    glGenTextures(1, &streetsCharacterTextureId);
-    glBindTexture(GL_TEXTURE_2D, streetsCharacterTextureId);
-    glTexImage2D(
-        GL_TEXTURE_2D, 0,
-        GL_RGBA,
-        TEXTURE_SIZE_32, TEXTURE_SIZE_32,
-        0,
-        TEXGEN_TEXCOORD | GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T,
-        characterBitmap
-    );
-
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
     glColor3b(255, 255, 255);
 
@@ -101,15 +89,15 @@ void IwatodaiStreetsView::Init() {
         angle, characterTranslate, characterFacingAngle
     );
 
-    // music
+    // setup music
     musicCtrl.init(IWATODAI_STREETS_MUSIC, 0.0f, -1.0f);
 
-    // character model
-    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
+    // setup character model
+    character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
     characterAnimationCtrl.set(MODEL_CHARACTER_ARMATUREACTION, true);
     characterAnimationCtrl.play();
 
-    // environment model
+    // setup environment model
     const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {
         f007_009_07Bitmap,
         f007_009_16Bitmap,
@@ -185,7 +173,6 @@ ViewState IwatodaiStreetsView::Update() {
             characterPosition charPos = playerCtrl->isCharacterAt();
             glTranslatef(charPos.x, 0.1, charPos.z);
             glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
-            glBindTexture(GL_TEXTURE_2D, streetsCharacterTextureId);
             characterAnimationCtrl.render();
         glPopMatrix(1);
 
