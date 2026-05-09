@@ -36,5 +36,6 @@ struct curPlayer : Player
         myPersonas[1] = &forneus;
         personaCount = 2;
         personas = myPersonas;
+        curPersona = myPersonas[0];
     }
 };

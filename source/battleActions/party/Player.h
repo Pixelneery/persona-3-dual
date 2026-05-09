@@ -19,6 +19,7 @@ struct Player
     u32 lv;
     AttackSkill *baseAttackAction;
     PersonaBase **personas;
+    PersonaBase *curPersona;
     u32 personaCount;
 
     bool guarding = false;

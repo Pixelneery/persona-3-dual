@@ -13,7 +13,7 @@ void BattleController::execute()
     }
 
     active = true;
-    actions = {&attack, &guard, &persona};
+    actions = {&attack, &guard, &persona, &switchPersona};
 
     counter = 0;
 }
@@ -163,4 +163,4 @@ void BattleController::exit()
     active = false;
 }
 
-BattleController::BattleController(Player *iPlayer, std::vector<Enemy *> *iEnemies) : player(iPlayer), enemies(iEnemies), attack(enemies, player), guard(player), persona(enemies, player) {}
+BattleController::BattleController(Player *iPlayer, std::vector<Enemy *> *iEnemies) : player(iPlayer), enemies(iEnemies), attack(enemies, player), guard(player), persona(enemies, player), switchPersona(player) {}

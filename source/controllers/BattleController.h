@@ -10,6 +10,7 @@
 #include "./battleActions/AttackAction.h"
 #include "./battleActions/Guard.h"
 #include "./battleActions/PersonaAction.h"
+#include "./battleActions/SwitchPersona.h"
 #include "./battleActions/party/Player.h"
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/UpdateIndex.h"
@@ -30,8 +31,9 @@ private:
     AttackAction attack;
     Guard guard;
     PersonaAction persona;
+    SwitchPersona switchPersona;
 
-    std::array<ActionBase *, 3> actions = {nullptr};
+    std::array<ActionBase *, 4> actions = {nullptr};
 
     void enemyTurn();
 
