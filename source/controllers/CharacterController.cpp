@@ -112,11 +112,22 @@ cameraPosition CharacterController::update(u32 keys)
 
     if (deltaX != 0.0f && deltaZ != 0.0f)
     {
+        // set walking animation
+        if (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_4) {
+            characterAnimationCtrl.set(MODEL_CHARACTER_4, true);
+        }
+
         // normalize diagonal movement to prevent faster speed
         const float invSqrt2 = 0.707106781187;  // 1/sqrt(2)
         deltaX *= invSqrt2;
         deltaZ *= invSqrt2;
+    } else {
+        // set idle animation
+        if (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_1) {
+            characterAnimationCtrl.set(MODEL_CHARACTER_1, true);
+        }
     }
+    characterAnimationCtrl.play();
 
     nextX = characterTranslate.x + deltaX;
     nextZ = characterTranslate.z + deltaZ;
