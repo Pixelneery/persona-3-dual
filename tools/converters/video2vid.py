@@ -7,9 +7,15 @@ def check_ffmpeg():
         print("Error: ffmpeg not found. Install it and make sure it's on your PATH.")
         sys.exit(1)
 
+def _ffmpeg_run(cmd):
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print("ffmpeg stderr:\n" + result.stderr, file=sys.stderr)
+        raise subprocess.CalledProcessError(result.returncode, cmd, stderr=result.stderr)
+
 def run_ffmpeg_16bit(input_path: str, out_raw: str, fps: int, size: str):
     cmd = ["ffmpeg", "-y", "-i", input_path, "-an", "-vcodec", "rawvideo", "-f", "rawvideo", "-pix_fmt", "bgr555le", "-s", size, "-r", str(fps), out_raw]
-    subprocess.run(cmd, stderr=subprocess.PIPE, text=True, check=True)
+    _ffmpeg_run(cmd)
 
 def patch_alpha_bits(src: str, dst: str):
     with open(src, "rb") as f: data = bytearray(f.read())
@@ -22,8 +28,8 @@ def encode_8bit_raw(input_path: str, fps: int, size: str, output_raw: str, outpu
         palette_png = os.path.join(tmp_dir, "palette.png")
         frames_tmp = os.path.join(tmp_dir, "frames.tmp")
 
-        subprocess.run(["ffmpeg", "-y", "-i", input_path, "-vf", f"scale={w}:{h},palettegen=max_colors=256:stats_mode=full", "-frames:v", "1", palette_png], stderr=subprocess.PIPE, text=True, check=True)
-        subprocess.run(["ffmpeg", "-y", "-i", input_path, "-i", palette_png, "-lavfi", f"scale={w}:{h} [x]; [x][1:v] paletteuse=dither=bayer", "-an", "-vcodec", "rawvideo", "-f", "rawvideo", "-pix_fmt", "pal8", "-r", str(fps), frames_tmp], stderr=subprocess.PIPE, text=True, check=True)
+        _ffmpeg_run(["ffmpeg", "-y", "-i", input_path, "-vf", f"scale={w}:{h},palettegen=max_colors=256:stats_mode=full", "-frames:v", "1", palette_png])
+        _ffmpeg_run(["ffmpeg", "-y", "-i", input_path, "-i", palette_png, "-lavfi", f"scale={w}:{h} [x]; [x][1:v] paletteuse=dither=bayer", "-an", "-vcodec", "rawvideo", "-f", "rawvideo", "-pix_fmt", "pal8", "-r", str(fps), frames_tmp])
 
         from PIL import Image
         pal_img = Image.open(palette_png).convert("RGB")
@@ -44,7 +50,7 @@ def encode_8bit_raw(input_path: str, fps: int, size: str, output_raw: str, outpu
 
 def extract_pcm(input_path: str, out_pcm: str):
     cmd = ["ffmpeg", "-y", "-i", input_path, "-f", "s16le", "-ar", "32000", "-ac", "2", out_pcm]
-    subprocess.run(cmd, stderr=subprocess.PIPE, text=True, check=True)
+    _ffmpeg_run(cmd)
 
 def interweave(raw_video: str, pcm_audio: str, out_vid: str, fps: int, w: int, h: int, bpp: int, pal_file: str = None):
     frame_size = w * h * bpp

@@ -1,7 +1,7 @@
 // Auto-generated from iwatodai_dorm.jmap - do not edit by hand
 #include <stdint.h>
 
-#define IWATODAI_DORM_MUSIC "nitro:/music/changing_seasons.pcm"
+#define IWATODAI_DORM_MUSIC "nitro:/music/iwatodai_dorm.pcm"
 
 #ifndef IWATODAI_DORM_H
 #define IWATODAI_DORM_H
