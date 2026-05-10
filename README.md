@@ -1,10 +1,25 @@
 # Persona 3 Dual
 
-A Nintendo DS demake of **Persona 3**, developed in C++ using devkitpro. This project is a personal deep-dive into embedded systems and low-level graphics programming, building a game engine from scratch without external game libraries.
+A Nintendo DS demake of **Persona 3**, developed in C++ using devkitPro. This project is a personal deep-dive into embedded systems and low-level graphics programming, building a game engine from scratch without external game libraries.
 
 The name is a nod to the online joke about a DS version of Persona 3 called "Persona 3 Dual".
 
-### Want to help? Join the [Discord!](https://discord.gg/TPBXX8tmSG) Any help, big or small, would be greatly appreciated!
+![Stars](https://img.shields.io/github/stars/TheBossT910/persona-3-dual?style=flat-square&color=gold)
+![Forks](https://img.shields.io/github/forks/TheBossT910/persona-3-dual?style=flat-square&color=blue)
+![Last Commit](https://img.shields.io/github/last-commit/TheBossT910/persona-3-dual?style=flat-square&color=green)
+![License](https://img.shields.io/github/license/TheBossT910/persona-3-dual?style=flat-square)
+
+[![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
+![Platform](https://img.shields.io/badge/platform-Nintendo%20DS-red?style=flat-square)
+![Toolchain](https://img.shields.io/badge/toolchain-devkitPro-orange?style=flat-square)
+![Emulator](https://img.shields.io/badge/emulator-melonDS-purple?style=flat-square)
+[![Blender](https://img.shields.io/badge/Blender-%23F5792A.svg?logo=blender&logoColor=white)](#)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](#)
+
+[![Discord](https://img.shields.io/discord/1498850477545357482?label=Discord&logo=discord&style=flat-square&color=5865F2)](https://discord.gg/Xtmu76PveV)
+
+### Want to help? Join the [Discord!](https://discord.gg/Xtmu76PveV) Any help, big or small, would be greatly appreciated!
+
 
 <img width="444" height="519" alt="20260417_231005" src="https://github.com/user-attachments/assets/8dd225c8-f3eb-4b80-8ec4-feb381e4b71d" />
 
