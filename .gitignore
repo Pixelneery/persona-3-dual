@@ -9,9 +9,9 @@ persona-3-dual.elf
 # /source/maps
 # /source/models
 
-# /nitrofiles/music
-# /nitrofiles/video
-# /nitrofiles/models
+/nitrofiles/music
+/nitrofiles/video
+/nitrofiles/models
 /tools/converters/__pycache__
 *.pyc
 persona-3-dual.lst

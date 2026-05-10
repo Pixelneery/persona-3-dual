@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <filesystem.h>
 #include <maxmod9.h>
 
@@ -97,6 +98,9 @@ int main(int argc, char *argv[]) {
     bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_04] = diss_04Bitmap;
 
     // start with DisclaimerView
+    // seed with DS hardware timer for reliable randomness (time() can return 0 on DS)
+    TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
+    srand(TIMER0_DATA ^ (IPC->time.rtc.seconds + IPC->time.rtc.minutes * 60));
     SwitchView(new DisclaimerView());
 
     // DEBUG
@@ -119,7 +123,9 @@ int main(int argc, char *argv[]) {
             } else if (nextState == ViewState::DISCLAIMER) {
                 SwitchView(new DisclaimerView());
             } else if (nextState == ViewState::INTRO_VIDEO) {
-                SwitchView(new IntroVideoView());
+                const char* intros[] = {"fes.vid", "base.vid", "portable.vid"};
+                const char* introFile = intros[rand() % 3];
+                SwitchView(new IntroVideoView(introFile));
             }
         }
 
