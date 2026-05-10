@@ -140,7 +140,11 @@ void IntroView::Init() {
 
     // point to music
     musicCtrl.loadSFX(SFX_SELECT);
-    musicCtrl.init("nitro:/music/tightrope.pcm", 17.962f, 66.082f);
+    const char* tightropes[] = {"nitro:/music/tightrope.pcm", "nitro:/music/tightrope_floor_mix.pcm"};
+    const float loopStarts[] = {17.962f, 0.0f};
+    const float loopEnds[] = {66.082f, 295.706f};
+    int pick = rand() % 2;
+    musicCtrl.init(tightropes[pick], loopStarts[pick], loopEnds[pick]);
 
     // hide sub screen text and attribution text layer
     REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG2 | BLEND_SRC_BG0 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
