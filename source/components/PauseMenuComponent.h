@@ -257,21 +257,22 @@ class PauseMenuComponent {
         PauseOption characterAnimOptions[CHARACTER_ANIM_OPTIONS] =
         {
             {"Toggle Auto Animations", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"1: Idle", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"2: Low Health", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"3: Action", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"4: Walk/Run", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"5: Attack", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"6: Jump Atk + Land", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"7: Spin + Fall", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"8: Fall + Idle + Get Up", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"9: Shoot", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"10: Stand + Dodge", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"11: Fall + Get Up", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"12: Fall & Die", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"13: Embrace", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"14: Stand", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"15: Push Back & Fall", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // TODO: update to use new animation enums
+            // {"1: Idle", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"2: Low Health", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"3: Action", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"4: Walk/Run", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"5: Attack", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"6: Jump Atk + Land", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"7: Spin + Fall", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"8: Fall + Idle + Get Up", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"9: Shoot", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"10: Stand + Dodge", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"11: Fall + Get Up", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"12: Fall & Die", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"13: Embrace", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"14: Stand", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            // {"15: Push Back & Fall", -1, &PauseMenuComponent::characterAnimOptionSelected},
         };
 
         void setBgLoaders();

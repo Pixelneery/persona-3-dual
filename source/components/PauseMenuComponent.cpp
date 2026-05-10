@@ -374,66 +374,67 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
         case TOGGLE_AUTO_ANIM:
             enableCharacterAnim = !enableCharacterAnim;
             break;
-        case ANIM_1:
-            characterAnimationCtrl.set(MODEL_CHARACTER_1, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_2:
-            characterAnimationCtrl.set(MODEL_CHARACTER_2, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_3:
-            characterAnimationCtrl.set(MODEL_CHARACTER_3, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_4:
-            characterAnimationCtrl.set(MODEL_CHARACTER_4, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_5:
-            characterAnimationCtrl.set(MODEL_CHARACTER_5, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_6:
-            characterAnimationCtrl.set(MODEL_CHARACTER_6, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_7:
-            characterAnimationCtrl.set(MODEL_CHARACTER_7, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_8:
-            characterAnimationCtrl.set(MODEL_CHARACTER_8, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_9:
-            characterAnimationCtrl.set(MODEL_CHARACTER_9, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_10:
-            characterAnimationCtrl.set(MODEL_CHARACTER_10, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_11:
-            characterAnimationCtrl.set(MODEL_CHARACTER_11, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_12:
-            characterAnimationCtrl.set(MODEL_CHARACTER_12, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_13:
-            characterAnimationCtrl.set(MODEL_CHARACTER_13, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_14:
-            characterAnimationCtrl.set(MODEL_CHARACTER_14, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_15:
-            characterAnimationCtrl.set(MODEL_CHARACTER_15, true);
-            enableCharacterAnim = false;
-            break;
+        // TODO: update to new animation enums
+        // case ANIM_1:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_1, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_2:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_2, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_3:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_3, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_4:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_4, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_5:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_5, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_6:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_6, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_7:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_7, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_8:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_8, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_9:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_9, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_10:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_10, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_11:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_11, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_12:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_12, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_13:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_13, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_14:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_14, true);
+        //     enableCharacterAnim = false;
+        //     break;
+        // case ANIM_15:
+        //     characterAnimationCtrl.set(MODEL_CHARACTER_15, true);
+        //     enableCharacterAnim = false;
+        //     break;
         default:
             selectedView = ViewState::KEEP_CURRENT;
     }
