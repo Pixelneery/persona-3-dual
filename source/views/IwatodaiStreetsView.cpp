@@ -90,8 +90,6 @@ void IwatodaiStreetsView::Init() {
 
     // setup character model
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
-    characterAnimationCtrl.set(MODEL_CHARACTER_ARMATUREACTION, true);
-    characterAnimationCtrl.play();
 
     // setup environment model
     const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {

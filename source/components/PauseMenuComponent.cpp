@@ -195,14 +195,6 @@ ViewState PauseMenuComponent::update(int keys)
 
 // OPTION HANDLERS
 // menuOption handlers
-ViewState PauseMenuComponent::openDebugMenu()
-{
-    selectedOption = 0;
-    options = debugOptions;
-    optionCount = DEBUG_OPTIONS;
-    return ViewState::KEEP_CURRENT;
-}
-
 ViewState PauseMenuComponent::openSkillMenu()
 {
     selectedOption = 0;
@@ -259,8 +251,71 @@ ViewState PauseMenuComponent::openSystemMenu()
     return ViewState::KEEP_CURRENT;
 }
 
+// Debug options
+ViewState PauseMenuComponent::openDebugMenu()
+{
+    selectedOption = 0;
+    options = debugOptions;
+    optionCount = DEBUG_OPTIONS;
+    return ViewState::KEEP_CURRENT;
+}
+
+ViewState PauseMenuComponent::openCharacterAnimMenu()
+{
+    selectedOption = 0;
+    options = characterAnimOptions;
+    optionCount = CHARACTER_ANIM_OPTIONS;
+    return ViewState::KEEP_CURRENT;
+}
+
+
 // generic handlers
 // this is where we would implement functionality for going into a sub-menu, or selecting a skill, item, etc.
+ViewState PauseMenuComponent::skillOptionSelected()
+{
+    selectedOption = 0;
+    options = skills;
+    optionCount = SKILLS;
+    return ViewState::KEEP_CURRENT;
+}
+
+ViewState PauseMenuComponent::itemOptionSelected()
+{
+    // ...
+    return ViewState::KEEP_CURRENT;
+}
+
+ViewState PauseMenuComponent::equipOptionSelected()
+{
+    // ...
+    return ViewState::KEEP_CURRENT;
+}
+
+ViewState PauseMenuComponent::personaOptionSelected()
+{
+    // ...
+    return ViewState::KEEP_CURRENT;
+}
+
+ViewState PauseMenuComponent::statsOptionSelected()
+{
+    // ...
+    return ViewState::KEEP_CURRENT;
+}
+
+ViewState PauseMenuComponent::sLinkOptionSelected()
+{
+    // ...
+    return ViewState::KEEP_CURRENT;
+}
+
+ViewState PauseMenuComponent::systemOptionSelected()
+{
+    // ...
+    return ViewState::KEEP_CURRENT;
+}
+
+// Debug options
 ViewState PauseMenuComponent::debugOptionSelected()
 {
     // set the next view state based on the selected debug option
@@ -307,46 +362,84 @@ ViewState PauseMenuComponent::debugOptionSelected()
     return selectedView;
 }
 
-ViewState PauseMenuComponent::skillOptionSelected()
+ViewState PauseMenuComponent::characterAnimOptionSelected()
 {
-    selectedOption = 0;
-    options = skills;
-    optionCount = SKILLS;
-    return ViewState::KEEP_CURRENT;
+    // stop currently playing animation
+    characterAnimationCtrl.stop();
+
+    // set the next view state based on the selected debug option
+    ViewState selectedView;
+    switch (selectedOption)
+    {
+        case TOGGLE_AUTO_ANIM:
+            enableCharacterAnim = !enableCharacterAnim;
+            break;
+        case ANIM_1:
+            characterAnimationCtrl.set(MODEL_CHARACTER_1, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_2:
+            characterAnimationCtrl.set(MODEL_CHARACTER_2, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_3:
+            characterAnimationCtrl.set(MODEL_CHARACTER_3, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_4:
+            characterAnimationCtrl.set(MODEL_CHARACTER_4, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_5:
+            characterAnimationCtrl.set(MODEL_CHARACTER_5, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_6:
+            characterAnimationCtrl.set(MODEL_CHARACTER_6, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_7:
+            characterAnimationCtrl.set(MODEL_CHARACTER_7, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_8:
+            characterAnimationCtrl.set(MODEL_CHARACTER_8, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_9:
+            characterAnimationCtrl.set(MODEL_CHARACTER_9, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_10:
+            characterAnimationCtrl.set(MODEL_CHARACTER_10, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_11:
+            characterAnimationCtrl.set(MODEL_CHARACTER_11, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_12:
+            characterAnimationCtrl.set(MODEL_CHARACTER_12, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_13:
+            characterAnimationCtrl.set(MODEL_CHARACTER_13, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_14:
+            characterAnimationCtrl.set(MODEL_CHARACTER_14, true);
+            enableCharacterAnim = false;
+            break;
+        case ANIM_15:
+            characterAnimationCtrl.set(MODEL_CHARACTER_15, true);
+            enableCharacterAnim = false;
+            break;
+        default:
+            selectedView = ViewState::KEEP_CURRENT;
+    }
+
+    *isActivePtr = false;
+    characterAnimationCtrl.play();
+    return selectedView;
 }
 
-ViewState PauseMenuComponent::itemOptionSelected()
-{
-    // ...
-    return ViewState::KEEP_CURRENT;
-}
-
-ViewState PauseMenuComponent::equipOptionSelected()
-{
-    // ...
-    return ViewState::KEEP_CURRENT;
-}
-
-ViewState PauseMenuComponent::personaOptionSelected()
-{
-    // ...
-    return ViewState::KEEP_CURRENT;
-}
-
-ViewState PauseMenuComponent::statsOptionSelected()
-{
-    // ...
-    return ViewState::KEEP_CURRENT;
-}
-
-ViewState PauseMenuComponent::sLinkOptionSelected()
-{
-    // ...
-    return ViewState::KEEP_CURRENT;
-}
-
-ViewState PauseMenuComponent::systemOptionSelected()
-{
-    // ...
-    return ViewState::KEEP_CURRENT;
-}

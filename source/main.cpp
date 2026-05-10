@@ -43,6 +43,7 @@ const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 // components
 PauseMenuComponent pauseMenuCmpt;
 bool enableBillboards = true;
+bool enableCharacterAnim = true;
 bool enableDebugPrint = false;
 bool isPauseMenuActive = false;
 

@@ -12,8 +12,9 @@
 #define SYSTEM_OPTIONS 6
 
 // dummy option for testing
-#define DEBUG_OPTIONS 9
-# define SKILLS 2
+#define DEBUG_OPTIONS 10
+#define CHARACTER_ANIM_OPTIONS 16
+#define SKILLS 2
 
 class PauseMenuComponent;
 typedef struct
@@ -96,7 +97,28 @@ enum {
     IWATODAI_STREETS_VIEW = 5,
     DEBUG_DIALOGUE = 6,
     TOGGLE_BILLBOARDS = 7,
-    TOGGLE_DEBUG_PRINT = 8
+    TOGGLE_DEBUG_PRINT = 8,
+    PLAY_CHARACTER_ANIM = 9
+};
+
+// Character animation opitons
+enum {
+    TOGGLE_AUTO_ANIM = 0,
+    ANIM_1 = 1,
+    ANIM_2 = 2,
+    ANIM_3 = 3,
+    ANIM_4 = 4,
+    ANIM_5 = 5,
+    ANIM_6 = 6,
+    ANIM_7 = 7,
+    ANIM_8 = 8,
+    ANIM_9 = 9,
+    ANIM_10 = 10,
+    ANIM_11 = 11,
+    ANIM_12 = 12,
+    ANIM_13 = 13,
+    ANIM_14 = 14,
+    ANIM_15 = 15
 };
 
 class PauseMenuComponent {
@@ -147,6 +169,7 @@ class PauseMenuComponent {
             {"Debug Dialogue", -1, &PauseMenuComponent::debugOptionSelected},
             {"Toggle Billboards", -1, &PauseMenuComponent::debugOptionSelected},
             {"Toggle Debug Print", -1, &PauseMenuComponent::debugOptionSelected},
+            {"Play Character Animations", -1, &PauseMenuComponent::openCharacterAnimMenu},
         };
 
         // TODO: go into submenus
@@ -224,11 +247,31 @@ class PauseMenuComponent {
             {"Return to Title", -1, &PauseMenuComponent::systemOptionSelected},
         };
 
-        // dummy options for testing
+        // submenu dummy options for testing
         PauseOption skills[SKILLS] =
         {
             {"Skill 1", -1, nullptr},
             {"Skill 2", -1, nullptr},
+        };
+
+        PauseOption characterAnimOptions[CHARACTER_ANIM_OPTIONS] =
+        {
+            {"Toggle Auto Animations", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"1: Idle", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"2: Low Health", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"3: Action", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"4: Walk/Run", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"5: Attack", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"6: Jump Atk + Land", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"7: Spin + Fall", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"8: Fall + Idle + Get Up", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"9: Shoot", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"10: Stand + Dodge", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"11: Fall + Get Up", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"12: Fall & Die", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"13: Embrace", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"14: Stand", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"15: Push Back & Fall", -1, &PauseMenuComponent::characterAnimOptionSelected},
         };
 
         void setBgLoaders();
@@ -253,6 +296,9 @@ class PauseMenuComponent {
         ViewState statsOptionSelected();
         ViewState sLinkOptionSelected();
         ViewState systemOptionSelected();
+        ViewState characterAnimOptionSelected();
+        // debug
+        ViewState openCharacterAnimMenu();
 
     public:
         void init(int iBgSlot, bool* isActive);
