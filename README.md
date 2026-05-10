@@ -128,6 +128,18 @@ See the [Project Board](https://github.com/users/TheBossT910/projects/2) for cur
 
 ---
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=TheBossT910%2Fpersona-3-dual&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&legend=top-left" />
+ </picture>
+</a>
+
+---
+
 ## Inspiration
 
 Based on the **Persona 3** series of games (OG, FES, Portable, Reload), and inspired by the **Persona 3 Dual** online joke.
