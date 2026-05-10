@@ -350,6 +350,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
     {
     case DISCLAIMER_VIEW:
         selectedView = ViewState::DISCLAIMER;
+        musicCtrl.pause();
         break;
     case INTRO_VIDEO_VIEW:
         selectedView = ViewState::INTRO_VIDEO;
