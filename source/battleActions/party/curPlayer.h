@@ -6,6 +6,8 @@
 #include "../personas/PersonaBase.h"
 #include "../personas/Orpheus.h"
 #include "../personas/Forneus.h"
+#include "../armours/PlainShirt.h"
+// #include "../armours/RashGuard.h"
 #include "Player.h"
 
 /*
@@ -24,12 +26,17 @@ struct curPlayer : Player
     Forneus forneus;
     PersonaBase *myPersonas[2];
 
+    PlainShirt plainShirt;
+
     curPlayer()
     {
         name = "Makoto";
         hp = 720;
         sp = 50;
         lv = 2;
+
+        gender = Gender::Male;
+        armour = plainShirt;
 
         baseAttackAction = &slash_Attack;
         myPersonas[0] = &orpheus;
