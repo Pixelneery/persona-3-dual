@@ -29,6 +29,7 @@ typedef struct
     PauseOption *options;
     int optionCount;
     int selectedOption;
+    int startIndex;
 } PauseState;
 
 // Menu options
@@ -161,6 +162,8 @@ private:
     stack<PauseState> prevOptions;
     int optionCount = 0;
     int selectedOption = 0;
+    int startIndex = 0;
+    int visibleOptions = 23;
     ViewState nextViewState = ViewState::KEEP_CURRENT;
 
     PauseOption menuOptions[MENU_OPTIONS] =
