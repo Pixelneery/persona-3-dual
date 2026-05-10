@@ -140,7 +140,7 @@ def export_bone_obj(arm_obj, mesh_objects, bone, depsgraph, obj_name: str, corre
 
         local_verts = {}
         for vi in sorted(bone_verts):
-            # APPLY THE CORRECTION MATRIX TO THE VERTICES HERE
+            # Apply the correction matrix to the verticies
             world_co = correction @ mesh_obj.matrix_world @ eval_mesh.vertices[vi].co
             vert_lines.append(f"v {world_co.x:.6f} {world_co.y:.6f} {world_co.z:.6f}")
             local_verts[vi] = global_v_offset
@@ -192,7 +192,7 @@ def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene, correction: m
     if pose_bone is None or bone is None:
         return (0, 0, 0), (0, 0, 0)
 
-    # APPLY THE CORRECTION MATRIX TO THE ARMATURE WORLD MATRIX
+    # Apply the correction matrix to the armature world matrix
     mw = correction @ arm_obj.matrix_world
 
     world_pose_n = mw @ pose_bone.matrix
@@ -281,7 +281,7 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
     filename_ext = ".zip"
     filter_glob: StringProperty(default="*.zip", options={"HIDDEN"})
 
-    # NEW: A toggle in the UI so you can turn the axis fix on or off
+    # UI toggle to turn on/off axis fix on or off
     fix_nds_axis: BoolProperty(
         name="Fix NDS Axis (Rotate 180 Z)",
         description="Automatically fixes left/right & forwards/backwards issues for the NDS engine.",
@@ -344,7 +344,7 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
                         tex_name = get_export_filename(img, model_name, texture_name_map)
                         all_tex_images[tex_name] = img
 
-                # APPLY THE CORRECTION MATRIX TO THE BONE ORIGIN
+                # Apply the correction matrix to the bone origin
                 world_head = correction @ arm_obj.matrix_world @ bone.head_local
                 nodes.append(
                     {
