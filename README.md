@@ -16,6 +16,13 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 |------|------|----------------------|
 | ![Home](https://github.com/user-attachments/assets/735128dd-a5aa-403f-8d94-748d6294e27c) | ![Menu](https://github.com/user-attachments/assets/72eb8264-9e56-4666-84a9-07bfe96a0a78) | ![Dorm](https://github.com/user-attachments/assets/dad1562b-67ae-4566-9d04-f2a9966ba916) |
 
+
+| BASE | FES | PORTABLE |
+|------|-----|----------|
+| <video src="https://files.catbox.moe/iebu7f.mp4" width="256"></video> | <video src="https://files.catbox.moe/x5y099.mp4" width="256"></video> | <video src="https://files.catbox.moe/700r6c.mp4" width="256"></video> |
+
+
+
 ---
 
 ## Technical Details
