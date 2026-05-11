@@ -97,19 +97,30 @@ jobs:
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
       # System tools (ffmpeg)
-      # awalsh128/cache-apt-pkgs-action handles install + caching automatically.
-      # First run installs and saves; subsequent runs restore in ~2s.
-      # Bump version: 1.0 → 2.0 to force a clean reinstall if needed.
+      # awalsh128/cache-apt-pkgs-action caches the installed package contents so
+      # subsequent runs restore in ~2s instead of re-downloading.
+      # libblas3 and liblapack3 are listed explicitly because they are indirect
+      # ffmpeg dependencies whose post-install hooks create the .so symlinks
+      # needed at runtime.
+      #
+      # IMPORTANT: cache-restore skips apt post-install hooks, so those symlinks
+      # are not recreated on a cache hit. The "Refresh linker cache" step below
+      # runs `sudo ldconfig` to rebuild /etc/ld.so.cache from the restored
+      # library files. Without this, ffmpeg fails with:
+      #   libblas.so.3: cannot open shared object file: No such file or directory
       - name: Cache and install ffmpeg
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: ffmpeg
+          packages: ffmpeg libblas3 liblapack3
           version: 1.0
+
+      - name: Refresh linker cache
+        run: sudo ldconfig
 
       # Python venv
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
       # Key is versioned (v2) because the venv path moved from .venv (workspace)
-      # to ~/.venv (home) - bumping forces a clean write at the new location and
+      # to ~/.venv (home) — bumping forces a clean write at the new location and
       # avoids perpetual cache misses against stale v1 entries.
       - name: Cache Python venv
         uses: actions/cache@v5
