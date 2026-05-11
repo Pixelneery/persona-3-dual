@@ -96,26 +96,28 @@ jobs:
           echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
-      # System tools (ffmpeg)
-      # awalsh128/cache-apt-pkgs-action caches the installed package contents so
-      # subsequent runs restore in ~2s instead of re-downloading.
-      # libblas3 and liblapack3 are listed explicitly because they are indirect
-      # ffmpeg dependencies whose post-install hooks create the .so symlinks
-      # needed at runtime.
+      # System tools (ffmpeg + BLAS)
+      # ffmpeg is cached via awalsh128 — subsequent runs restore in ~2s.
       #
-      # IMPORTANT: cache-restore skips apt post-install hooks, so those symlinks
-      # are not recreated on a cache hit. The "Refresh linker cache" step below
-      # runs `sudo ldconfig` to rebuild /etc/ld.so.cache from the restored
-      # library files. Without this, ffmpeg fails with:
+      # libblas3 / liblapack3 are intentionally NOT included in the awalsh128
+      # package list. Their .so.3 symlinks are managed by update-alternatives,
+      # a post-install hook that awalsh128 skips entirely on cache restore.
+      # Without the hook, ffmpeg fails at runtime with:
       #   libblas.so.3: cannot open shared object file: No such file or directory
+      # sudo ldconfig alone does not fix this because the symlink itself is never
+      # created — ldconfig only updates the linker cache, not the alternatives.
+      #
+      # The fix is to install those two packages directly with apt every run.
+      # They are small (~200 KB combined) and the install completes in ~1s,
+      # ensuring update-alternatives always fires and the symlink is always live.
       - name: Cache and install ffmpeg
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: ffmpeg libblas3 liblapack3
+          packages: ffmpeg
           version: 1.0
 
-      - name: Refresh linker cache
-        run: sudo ldconfig
+      - name: Install BLAS dependencies
+        run: sudo apt-get install -y --no-install-recommends libblas3 liblapack3
 
       # Python venv
       # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
