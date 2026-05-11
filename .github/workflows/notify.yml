@@ -19,12 +19,25 @@ on:
 
 permissions:
   contents: read
+  actions: read   # Required to download artifacts from the triggering workflow run
 
 jobs:
   notify:
     runs-on: ubuntu-latest
 
     steps:
+      # Download the version tag written by build.yml's "Generate version tag"
+      # step. Only present on non-PR runs (PRs don't generate a tag).
+      # continue-on-error ensures PR builds still send a notification even
+      # though they produce no build-version artifact.
+      - name: Download version artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-version
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
       - name: Notify Discord
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
@@ -54,20 +67,21 @@ jobs:
           IS_PR="false"
           [ "$EVENT" = "pull_request" ] && IS_PR="true"
 
+          # Read the version tag from the artifact if present.
+          # build-version.txt is only uploaded on non-PR runs.
+          VERSION_TAG=""
+          [ -f build-version.txt ] && VERSION_TAG=$(cat build-version.txt | tr -d '[:space:]')
+
           # Fork detection: head_repository differs from base repository when
           # the workflow was triggered by a fork PR.
           # FORK_FIELD is always initialised to [] first so jq always receives
           # a valid JSON array — even if the if-block is skipped entirely.
-          # (This was the source of the "fork_field/0 is not defined" jq error
-          # in the previous inline version where the else branch could be missed.)
           FORK_FIELD='[]'
           if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
-            IS_FORK="true"
             FORK_LABEL=" [fork: ${HEAD_REPO}]"
             FORK_FIELD=$(jq -n --arg repo "$HEAD_REPO" \
               '[{ name: "Fork", value: $repo, inline: false }]')
           else
-            IS_FORK="false"
             FORK_LABEL=""
           fi
 
@@ -75,10 +89,13 @@ jobs:
             TITLE="${EMOJI} PR #${PR_NUMBER} — Build ${JOB_STATUS}${FORK_LABEL}"
             URL="${SERVER_URL}/${BASE_REPO}/pull/${PR_NUMBER}"
             BUILD_TYPE="Pull Request #${PR_NUMBER}"
+          elif [ -n "$VERSION_TAG" ]; then
+            TITLE="${EMOJI} Build ${JOB_STATUS}: ${VERSION_TAG}${FORK_LABEL}"
+            URL="${SERVER_URL}/${BASE_REPO}/actions/runs/${RUN_ID}"
+            BUILD_TYPE="Release ${VERSION_TAG}"
           else
+            # Fallback for runs where the tag step never completed.
             TITLE="${EMOJI} Build ${JOB_STATUS}: ${BRANCH}@${SHORT_SHA}${FORK_LABEL}"
-            # Non-PR runs link to the Actions run page since there is no release
-            # tag available in this workflow's context.
             URL="${SERVER_URL}/${BASE_REPO}/actions/runs/${RUN_ID}"
             BUILD_TYPE="Push to ${BRANCH}"
           fi

@@ -43,6 +43,11 @@ jobs:
       # inline Python, because embedding multi-line Python inside a YAML block
       # scalar causes a syntax error. Unindented Python lines are interpreted
       # by the YAML parser as ending the block.
+      #
+      # The tag is also written to build-version.txt and uploaded as an artifact
+      # so that notify.yml (which runs in a separate workflow_run context with no
+      # access to this job's step outputs) can read it and include it in the
+      # Discord notification.
       - name: Generate version tag
         id: version
         if: github.event_name != 'pull_request'
@@ -63,10 +68,24 @@ jobs:
           TAG="${PREFIX}${SUFFIX}"
           RELEASE_NAME="Autobuild: ${TAG}"
 
+          echo "${TAG}" > build-version.txt
+
           echo "tag=${TAG}"                   >> $GITHUB_OUTPUT
           echo "release_name=${RELEASE_NAME}" >> $GITHUB_OUTPUT
           echo "Version tag : ${TAG}"
           echo "Release name: ${RELEASE_NAME}"
+
+      # Upload the version tag so notify.yml can read it.
+      # Skipped on PRs since they don't generate a tag.
+      # Retention of 1 day is enough — notify.yml fires within seconds of this
+      # job completing. Using a short retention avoids cluttering artifact storage.
+      - name: Upload version artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-version
+          path: build-version.txt
+          retention-days: 1
 
       # devkitARM
       - name: Prepare devkitPro directory
