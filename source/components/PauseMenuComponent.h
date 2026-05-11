@@ -13,13 +13,13 @@
 
 // dummy option for testing
 #define DEBUG_OPTIONS 10
-#define CHARACTER_ANIM_OPTIONS 16
+#define CHARACTER_ANIM_OPTIONS 25
 #define SKILLS 2
 
 class PauseMenuComponent;
 typedef struct
 {
-    const char* name;
+    const char *name;
     int bgIndex;
     ViewState (PauseMenuComponent::*onSelect)();
 } PauseOption;
@@ -29,11 +29,12 @@ typedef struct
     PauseOption *options;
     int optionCount;
     int selectedOption;
+    int startIndex;
 } PauseState;
 
-
 // Menu options
-enum {
+enum
+{
     SKILL = 0,
     ITEM = 1,
     PERSONA = 2,
@@ -44,7 +45,8 @@ enum {
 };
 
 // Skill/equip/stats options
-enum {
+enum
+{
     MAKOTO = 0,
     YUKARI = 1,
     JUNPEI = 2,
@@ -57,28 +59,32 @@ enum {
 };
 
 // Item options
-enum {
+enum
+{
     LIFE_STONE = 0,
     MEDICINE = 1,
     BEAD = 2
 };
 
 // Persona options
-enum {
+enum
+{
     JACK_FROST = 0,
     BLACK_FROST = 1,
     KING_FROST = 2
 };
 
 // S.Link options
-enum {
+enum
+{
     FOOL = 0,
     MAGICIAN = 1,
     EMPEROR = 2
 };
 
 // System options
-enum {
+enum
+{
     TUTORIAL = 0,
     CONFIG = 1,
     DICTIONARY = 2,
@@ -88,7 +94,8 @@ enum {
 };
 
 // Debug options
-enum {
+enum
+{
     DISCLAIMER_VIEW = 0,
     INTRO_VIDEO_VIEW = 1,
     INTRO_VIEW = 2,
@@ -102,7 +109,8 @@ enum {
 };
 
 // Character animation opitons
-enum {
+enum
+{
     TOGGLE_AUTO_ANIM = 0,
     ANIM_1 = 1,
     ANIM_2 = 2,
@@ -118,35 +126,47 @@ enum {
     ANIM_12 = 12,
     ANIM_13 = 13,
     ANIM_14 = 14,
-    ANIM_15 = 15
+    ANIM_15 = 15,
+    ANIM_16 = 16,
+    ANIM_17 = 17,
+    ANIM_18 = 18,
+    ANIM_19 = 19,
+    ANIM_20 = 20,
+    ANIM_21 = 21,
+    ANIM_22 = 22,
+    ANIM_23 = 23,
+    ANIM_24 = 24
 };
 
-class PauseMenuComponent {
-    private:
-        bool* isActivePtr;
+class PauseMenuComponent
+{
+private:
+    bool *isActivePtr;
 
-        // sfx
-        mm_sfxhand sfxMenuHandle;
-        mm_sfxhand sfxSelectHandle;
-        mm_sfxhand sfxCancelHandle;
+    // sfx
+    mm_sfxhand sfxMenuHandle;
+    mm_sfxhand sfxSelectHandle;
+    mm_sfxhand sfxCancelHandle;
 
-        // backgrounds
-        int bgSlot = 0;
-        void (*bgLoaders[4])(int) = {
-            nullptr,
-            nullptr,
-            nullptr,
-            nullptr,
-        };
+    // backgrounds
+    int bgSlot = 0;
+    void (*bgLoaders[4])(int) = {
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+    };
 
-        // options
-        PauseOption *options;
-        stack<PauseState> prevOptions;
-        int optionCount = 0;
-        int selectedOption = 0;
-        ViewState nextViewState = ViewState::KEEP_CURRENT;
+    // options
+    PauseOption *options;
+    stack<PauseState> prevOptions;
+    int optionCount = 0;
+    int selectedOption = 0;
+    int startIndex = 0;
+    int visibleOptions = 23;
+    ViewState nextViewState = ViewState::KEEP_CURRENT;
 
-        PauseOption menuOptions[MENU_OPTIONS] =
+    PauseOption menuOptions[MENU_OPTIONS] =
         {
             {"Debug", -1, &PauseMenuComponent::openDebugMenu},
             {"Skill", -1, &PauseMenuComponent::openSkillMenu},
@@ -156,9 +176,9 @@ class PauseMenuComponent {
             {"Status", -1, &PauseMenuComponent::openStatusMenu},
             {"S.Link", -1, &PauseMenuComponent::openSLinkMenu},
             {"System", -1, &PauseMenuComponent::openSystemMenu},
-        };
+    };
 
-        PauseOption debugOptions[DEBUG_OPTIONS] =
+    PauseOption debugOptions[DEBUG_OPTIONS] =
         {
             {"DisclaimerView", -1, &PauseMenuComponent::debugOptionSelected},
             {"IntroVideoView", -1, &PauseMenuComponent::debugOptionSelected},
@@ -170,10 +190,10 @@ class PauseMenuComponent {
             {"Toggle Billboards", -1, &PauseMenuComponent::debugOptionSelected},
             {"Toggle Debug Print", -1, &PauseMenuComponent::debugOptionSelected},
             {"Play Character Animations", -1, &PauseMenuComponent::openCharacterAnimMenu},
-        };
+    };
 
-        // TODO: go into submenus
-        PauseOption skillOptions[SKILL_OPTIONS] =
+    // TODO: go into submenus
+    PauseOption skillOptions[SKILL_OPTIONS] =
         {
             {"Makoto", 0, &PauseMenuComponent::skillOptionSelected},
             {"Yukari", 1, &PauseMenuComponent::skillOptionSelected},
@@ -184,17 +204,17 @@ class PauseMenuComponent {
             {"Ken", -1, &PauseMenuComponent::skillOptionSelected},
             {"Koromaru", -1, &PauseMenuComponent::skillOptionSelected},
             {"Shinjiro", -1, &PauseMenuComponent::skillOptionSelected},
-        };
+    };
 
-        PauseOption itemOptions[ITEM_OPTIONS] =
+    PauseOption itemOptions[ITEM_OPTIONS] =
         {
             {"Life Stone", -1, &PauseMenuComponent::itemOptionSelected},
             {"Medicine", -1, &PauseMenuComponent::itemOptionSelected},
             {"Bead", -1, &PauseMenuComponent::itemOptionSelected},
-        };
+    };
 
-        // TODO: go into submenus
-        PauseOption equipOptions[EQUIP_OPTIONS] =
+    // TODO: go into submenus
+    PauseOption equipOptions[EQUIP_OPTIONS] =
         {
             {"Makoto", -1, &PauseMenuComponent::equipOptionSelected},
             {"Yukari", -1, &PauseMenuComponent::equipOptionSelected},
@@ -205,17 +225,17 @@ class PauseMenuComponent {
             {"Ken", -1, &PauseMenuComponent::equipOptionSelected},
             {"Koromaru", -1, &PauseMenuComponent::equipOptionSelected},
             {"Shinjiro", -1, &PauseMenuComponent::equipOptionSelected},
-        };
+    };
 
-        PauseOption personaOptions[PERSONA_OPTIONS] =
+    PauseOption personaOptions[PERSONA_OPTIONS] =
         {
             {"Jack Frost", -1, &PauseMenuComponent::personaOptionSelected},
             {"Black Frost", -1, &PauseMenuComponent::personaOptionSelected},
             {"King Frost", -1, &PauseMenuComponent::personaOptionSelected},
-        };
+    };
 
-        // TODO: go into submenus
-        PauseOption statsOptions[STATS_OPTIONS] =
+    // TODO: go into submenus
+    PauseOption statsOptions[STATS_OPTIONS] =
         {
             {"Makoto", -1, &PauseMenuComponent::statsOptionSelected},
             {"Yukari", -1, &PauseMenuComponent::statsOptionSelected},
@@ -226,18 +246,18 @@ class PauseMenuComponent {
             {"Ken", -1, &PauseMenuComponent::statsOptionSelected},
             {"Koromaru", -1, &PauseMenuComponent::statsOptionSelected},
             {"Shinjiro", -1, &PauseMenuComponent::statsOptionSelected},
-        };
+    };
 
-        // TODO: go into submenus
-        PauseOption sLinkOptions[S_LINK_OPTIONS] =
+    // TODO: go into submenus
+    PauseOption sLinkOptions[S_LINK_OPTIONS] =
         {
             {"Fool", -1, &PauseMenuComponent::sLinkOptionSelected},
             {"Magician", -1, &PauseMenuComponent::sLinkOptionSelected},
             {"Emperor", -1, &PauseMenuComponent::sLinkOptionSelected},
-        };
+    };
 
-        // TODO: go into submenus
-        PauseOption systemOptions[SYSTEM_OPTIONS] =
+    // TODO: go into submenus
+    PauseOption systemOptions[SYSTEM_OPTIONS] =
         {
             {"Tutorial", -1, &PauseMenuComponent::systemOptionSelected},
             {"Config", -1, &PauseMenuComponent::systemOptionSelected},
@@ -245,63 +265,72 @@ class PauseMenuComponent {
             {"Load Data", -1, &PauseMenuComponent::systemOptionSelected},
             {"Save Data", -1, &PauseMenuComponent::systemOptionSelected},
             {"Return to Title", -1, &PauseMenuComponent::systemOptionSelected},
-        };
+    };
 
-        // submenu dummy options for testing
-        PauseOption skills[SKILLS] =
+    // submenu dummy options for testing
+    PauseOption skills[SKILLS] =
         {
             {"Skill 1", -1, nullptr},
             {"Skill 2", -1, nullptr},
-        };
+    };
 
-        PauseOption characterAnimOptions[CHARACTER_ANIM_OPTIONS] =
+    PauseOption characterAnimOptions[CHARACTER_ANIM_OPTIONS] =
         {
             {"Toggle Auto Animations", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"1: Idle", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"2: Low Health", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"3: Action", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"4: Walk/Run", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"5: Attack", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"6: Jump Atk + Land", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"7: Spin + Fall", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"8: Fall + Idle + Get Up", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"9: Shoot", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"10: Stand + Dodge", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"11: Fall + Get Up", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"12: Fall & Die", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"13: Embrace", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"14: Stand", -1, &PauseMenuComponent::characterAnimOptionSelected},
-            {"15: Push Back & Fall", -1, &PauseMenuComponent::characterAnimOptionSelected},
-        };
+            {"0000", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0001", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0002", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0003", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0004", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0005", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0006", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0007", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0008", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0009", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0010", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0011", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0012", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0013", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0014", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0015", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0016", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0017", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0018", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0019", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0020", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0021", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"0022", -1, &PauseMenuComponent::characterAnimOptionSelected},
+            {"root", -1, &PauseMenuComponent::characterAnimOptionSelected},
+    };
 
-        void setBgLoaders();
-        void loadBg(int bgIndex);
+    void setBgLoaders();
+    void loadBg(int bgIndex);
 
-        // OPTION HANDLERS
-        // menuOption handlers
-        ViewState openDebugMenu();
-        ViewState openSkillMenu();
-        ViewState openItemMenu();
-        ViewState openPersonaMenu();
-        ViewState openEquipMenu();
-        ViewState openStatusMenu();
-        ViewState openSLinkMenu();
-        ViewState openSystemMenu();
-        // generic handlers
-        ViewState debugOptionSelected();
-        ViewState skillOptionSelected();
-        ViewState itemOptionSelected();
-        ViewState equipOptionSelected();
-        ViewState personaOptionSelected();
-        ViewState statsOptionSelected();
-        ViewState sLinkOptionSelected();
-        ViewState systemOptionSelected();
-        ViewState characterAnimOptionSelected();
-        // debug
-        ViewState openCharacterAnimMenu();
+    // OPTION HANDLERS
+    // menuOption handlers
+    ViewState openDebugMenu();
+    ViewState openSkillMenu();
+    ViewState openItemMenu();
+    ViewState openPersonaMenu();
+    ViewState openEquipMenu();
+    ViewState openStatusMenu();
+    ViewState openSLinkMenu();
+    ViewState openSystemMenu();
+    // generic handlers
+    ViewState debugOptionSelected();
+    ViewState skillOptionSelected();
+    ViewState itemOptionSelected();
+    ViewState equipOptionSelected();
+    ViewState personaOptionSelected();
+    ViewState statsOptionSelected();
+    ViewState sLinkOptionSelected();
+    ViewState systemOptionSelected();
+    ViewState characterAnimOptionSelected();
+    // debug
+    ViewState openCharacterAnimMenu();
 
-    public:
-        void init(int iBgSlot, bool* isActive);
-        ViewState update(int keys);
-        void cancelSFX();
+public:
+    void init(int iBgSlot, bool *isActive);
+    ViewState update(int keys);
+    void cancelSFX();
 };

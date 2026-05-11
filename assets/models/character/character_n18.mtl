@@ -1,10 +1,7 @@
 # NDS MTL export
 
-newmtl _001_p3pplayer_t04_tm2
-map_Kd diss_01.png
+newmtl 0007_p3pplayer_t01_tm2
+map_Kd character_texture_3.png
 
-newmtl _002_p3pplayer_t02_tm2
-map_Kd diss_02.png
-
-newmtl _004_p3pplayer_t01_tm2
-map_Kd diss_00.png
+newmtl 0004_p3pplayer_t01_tm2
+map_Kd character_texture_3.png

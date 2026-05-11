@@ -113,8 +113,8 @@ cameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f && deltaZ != 0.0f)
     {
         // set walking animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_4)) {
-            characterAnimationCtrl.set(MODEL_CHARACTER_4, true);
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER)) {
+            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER, true);
         }
 
         // normalize diagonal movement to prevent faster speed
@@ -123,8 +123,8 @@ cameraPosition CharacterController::update(u32 keys)
         deltaZ *= invSqrt2;
     } else {
         // set idle animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_1)) {
-            characterAnimationCtrl.set(MODEL_CHARACTER_1, true);
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER)) {
+            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER, true);
         }
     }
     characterAnimationCtrl.play();

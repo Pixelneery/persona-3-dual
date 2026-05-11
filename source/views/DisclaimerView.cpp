@@ -54,7 +54,7 @@ void DisclaimerView::Init() {
     vramSetBankH(VRAM_H_LCD); // for subv engine
 
 	// copy palettes to extended palette area
-	dmaCopy(cautionBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], cautionBackgroundPalLen);  // bg 2, slot 0 
+	dmaCopy(cautionBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], cautionBackgroundPalLen);  // bg 2, slot 0
     dmaCopy(cautionBackgroundSubPal,  &VRAM_H_EXT_PALETTE[1][0], cautionBackgroundSubPalLen);
 
 	// map vram to extended palette
@@ -66,31 +66,35 @@ void DisclaimerView::Init() {
 	// fade caution screens in
 	for(int i = 0; i <= 16; i++) {
         setBrightness(3, -16 + i);
-	
+
 		// wait for duration amount of frames
 		for (int frame = 0; frame <= 6; frame++) {
 			swiWaitForVBlank();
+            musicCtrl.update();
 		}
 	}
 
     // wait for duration amount of frames
     for (int frame = 0; frame <= 90; frame++) {
         swiWaitForVBlank();
+        musicCtrl.update();
     }
 
     // fade caution screens out
 	for(int i = 0; i <= 16; i++) {
         setBrightness(3, -i);
-	
+
 		// wait for duration amount of frames
 		for (int frame = 0; frame <= 6; frame++) {
 			swiWaitForVBlank();
+            musicCtrl.update();
 		}
 	}
 }
 
 ViewState DisclaimerView::Update() {
     // transition to IntroVideoView
+    musicCtrl.update();
     return ViewState::INTRO_VIDEO;
 }
 

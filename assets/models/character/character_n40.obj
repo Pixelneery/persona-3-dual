@@ -1,1 +1,12 @@
-# Empty Node
+# NDS OBJ export
+# bone: b l headphone01_Bone
+
+mtllib character_n40.mtl
+v -0.073196 -0.043140 1.318229
+v -0.088942 0.053947 1.208590
+v -0.077490 -0.043728 1.315622
+vt 0.006387 0.281922
+vt 0.006387 0.020001
+vt 0.059605 0.277004
+usemtl 0000_p3pplayer_t01_tm2
+f 1/1 2/2 3/3

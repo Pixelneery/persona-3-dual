@@ -1,14 +1,14 @@
 """
 NDS Model Exporter for Blender
 Author: Taha Rashid
-Version: 2.1.1 (Bake World Space Geometry)
+Version: 2.1.3 (Bake World Space Geometry + Texture Name Sync + Axis Fix)
 Blender: 3.x / 4.x
 """
 
 bl_info = {
     "name": "NDS Model Exporter",
     "author": "Taha Rashid",
-    "version": (2, 1, 1),
+    "version": (2, 1, 3),
     "blender": (3, 0, 0),
     "location": "File > Export > NDS Model (.zip)",
     "description": "Exports armature + mesh baked into Blender World Space",
@@ -17,7 +17,7 @@ bl_info = {
 
 import bpy, bmesh, io, json, os, re, tempfile, zipfile, math, mathutils
 from collections import defaultdict
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 from bpy_extras.io_utils import ExportHelper
 
 
@@ -41,14 +41,34 @@ def parent_index(bone, bone_list: list) -> int:
 def get_material_image(mat):
     if mat is None or not mat.use_nodes:
         return None
+
+    # 1. Try to trace the Principled BSDF Base Color (Most accurate)
+    for node in mat.node_tree.nodes:
+        if node.type == 'BSDF_PRINCIPLED':
+            color_socket = node.inputs.get('Base Color')
+            if color_socket and color_socket.is_linked:
+                src_node = color_socket.links[0].from_node
+                if src_node.type == 'TEX_IMAGE' and src_node.image:
+                    return src_node.image
+
+    # 2. Fallback: Find ANY Image Texture that is linked to a shader
+    for node in mat.node_tree.nodes:
+        if node.type == 'TEX_IMAGE' and node.image:
+            if getattr(node.outputs[0], 'is_linked', False):
+                return node.image
+
+    # 3. Final Resort: Just grab the first image node that exists
     for node in mat.node_tree.nodes:
         if node.type == "TEX_IMAGE" and node.image:
             return node.image
+
     return None
 
 
-def tex_filename_for_image(image) -> str:
-    return sanitize(os.path.splitext(image.name)[0]) + ".png"
+def get_export_filename(image, model_name: str, name_map: dict) -> str:
+    if image.name not in name_map:
+        name_map[image.name] = f"{model_name}_texture_{len(name_map)}.png"
+    return name_map[image.name]
 
 
 def image_to_png_bytes(image) -> bytes:
@@ -65,16 +85,17 @@ def image_to_png_bytes(image) -> bytes:
             os.unlink(tmp_path)
 
 
-def build_mtl(mat_to_image: dict) -> str:
+def build_mtl(mat_to_image: dict, model_name: str, name_map: dict) -> str:
     lines = ["# NDS MTL export"]
     for mat_name, image in mat_to_image.items():
         lines.append(f"\nnewmtl {mat_name}")
         if image:
-            lines.append(f"map_Kd {tex_filename_for_image(image)}")
+            new_name = get_export_filename(image, model_name, name_map)
+            lines.append(f"map_Kd {new_name}")
     return "\n".join(lines) + "\n"
 
 
-def export_bone_obj(arm_obj, mesh_objects, bone, depsgraph, obj_name: str):
+def export_bone_obj(arm_obj, mesh_objects, bone, depsgraph, obj_name: str, correction: mathutils.Matrix):
     mtllib_name = obj_name + ".mtl"
     lines = ["# NDS OBJ export", f"# bone: {bone.name}", "", f"mtllib {mtllib_name}"]
     vert_lines, uv_lines, face_groups = [], [], []
@@ -119,10 +140,8 @@ def export_bone_obj(arm_obj, mesh_objects, bone, depsgraph, obj_name: str):
 
         local_verts = {}
         for vi in sorted(bone_verts):
-            # We export strictly to Blender World Space.
-            # This bakes any global Armature object rotation/scale into the geometry
-            # so the model looks upright based on Blender's global axes.
-            world_co = mesh_obj.matrix_world @ eval_mesh.vertices[vi].co
+            # Apply the correction matrix to the verticies
+            world_co = correction @ mesh_obj.matrix_world @ eval_mesh.vertices[vi].co
             vert_lines.append(f"v {world_co.x:.6f} {world_co.y:.6f} {world_co.z:.6f}")
             local_verts[vi] = global_v_offset
             global_v_offset += 1
@@ -165,7 +184,7 @@ def export_bone_obj(arm_obj, mesh_objects, bone, depsgraph, obj_name: str):
     return "\n".join(lines) + "\n", mat_to_image
 
 
-def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene):
+def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene, correction: mathutils.Matrix):
     scene.frame_set(frame)
     pose_bone = arm_obj.pose.bones.get(bone_name)
     bone = arm_obj.data.bones.get(bone_name)
@@ -173,12 +192,9 @@ def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene):
     if pose_bone is None or bone is None:
         return (0, 0, 0), (0, 0, 0)
 
-    # World Space Animation Math.
-    # To support global Armature rotation, we must calculate the delta relative
-    # to the TRUE World, not armature-local space.
-    mw = arm_obj.matrix_world
+    # Apply the correction matrix to the armature world matrix
+    mw = correction @ arm_obj.matrix_world
 
-    # Absolute deformation (Rest -> Pose) map in true World space
     world_pose_n = mw @ pose_bone.matrix
     world_rest_n = mw @ bone.matrix_local
     delta_n = world_pose_n @ world_rest_n.inverted()
@@ -192,17 +208,12 @@ def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene):
     else:
         delta_p = mathutils.Matrix.Identity(4)
 
-    # Relative world delta (Animation transform in world-aligned space)
     rel = delta_p.inverted() @ delta_n
 
-    # The NDS engine rotates around the node's origin. We find the local matrix
-    # that applied at the origin produces the calculated 'rel' deformation.
-    # Origin must also be true World space.
     origin_n_w = mw @ bone.head_local
     T_orig = mathutils.Matrix.Translation(origin_n_w)
     T_orig_inv = mathutils.Matrix.Translation(-origin_n_w)
 
-    # M = T_inv @ Rel @ T
     M = T_orig_inv @ rel @ T_orig
 
     loc, rot_q, _scale = M.decompose()
@@ -215,7 +226,7 @@ def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene):
     )
 
 
-def collect_animations(arm_obj, bone_list, scene):
+def collect_animations(arm_obj, bone_list, scene, correction: mathutils.Matrix):
     animations, original_frame = {}, scene.frame_current
 
     def export_action(action, anim_name):
@@ -239,27 +250,22 @@ def collect_animations(arm_obj, bone_list, scene):
             bid = bone_index(None, bone.name, bone_list)
             track = []
             for f in sorted(bone_frames[bone.name]):
-                rot, pos = get_bone_transforms_at_frame(arm_obj, bone.name, f, scene)
+                rot, pos = get_bone_transforms_at_frame(arm_obj, bone.name, f, scene, correction)
                 track.append({"time": f - f_start, "rot": list(rot), "pos": list(pos)})
             if track:
                 anim_data["tracks"][str(bid)] = track
 
         animations[sanitize(anim_name)] = anim_data
 
-    # Ensure animation data exists
     if not arm_obj.animation_data:
         arm_obj.animation_data_create()
 
-    # Remember the originally active action so we can put it back later
     orig_action = arm_obj.animation_data.action
 
-    # Loop through ALL actions saved in the Blender file
     for action in bpy.data.actions:
-        # Temporarily apply the action to the armature so scene.frame_set reads the correct poses
         arm_obj.animation_data.action = action
         export_action(action, action.name)
 
-    # Restore the original action
     arm_obj.animation_data.action = orig_action
 
     scene.frame_set(original_frame)
@@ -275,8 +281,22 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
     filename_ext = ".zip"
     filter_glob: StringProperty(default="*.zip", options={"HIDDEN"})
 
+    # UI toggle to turn on/off axis fix on or off
+    fix_nds_axis: BoolProperty(
+        name="Fix NDS Axis (Rotate 180 Z)",
+        description="Automatically fixes left/right & forwards/backwards issues for the NDS engine.",
+        default=True,
+    )
+
     def execute(self, context):
         scene = context.scene
+
+        # Determine if we need to apply the 180 degree rotation mathematically
+        if self.fix_nds_axis:
+            correction = mathutils.Matrix.Rotation(math.radians(180.0), 4, 'Z')
+        else:
+            correction = mathutils.Matrix.Identity(4)
+
         arm_obj = next(
             (o for o in scene.objects if o.type == "ARMATURE" and o.select_get()), None
         )
@@ -307,22 +327,25 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
             nodes, all_tex_images = [], {}
+            texture_name_map = {}
 
             for i, bone in enumerate(bone_list):
                 obj_name = f"{model_name}_n{i}"
+
+                # Pass the correction matrix to the geometry builder
                 obj_content, mat_to_image = export_bone_obj(
-                    arm_obj, mesh_objects, bone, depsgraph, obj_name
+                    arm_obj, mesh_objects, bone, depsgraph, obj_name, correction
                 )
                 zf.writestr(f"{obj_name}.obj", obj_content)
-                zf.writestr(f"{obj_name}.mtl", build_mtl(mat_to_image))
+                zf.writestr(f"{obj_name}.mtl", build_mtl(mat_to_image, model_name, texture_name_map))
 
                 for img in mat_to_image.values():
                     if img:
-                        all_tex_images[tex_filename_for_image(img)] = img
+                        tex_name = get_export_filename(img, model_name, texture_name_map)
+                        all_tex_images[tex_name] = img
 
-                # Export True Blender World Space Origin
-                # This ensures pivot points are correctly placed if Armature is globals rotated.
-                world_head = arm_obj.matrix_world @ bone.head_local
+                # Apply the correction matrix to the bone origin
+                world_head = correction @ arm_obj.matrix_world @ bone.head_local
                 nodes.append(
                     {
                         "id": i,
@@ -340,7 +363,8 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
                     self.report({"WARNING"}, f"Texture error: {e}")
 
             arm_obj.data.pose_position = "POSE"
-            anims = collect_animations(arm_obj, bone_list, scene)
+            # Pass the correction matrix to the animation compiler
+            anims = collect_animations(arm_obj, bone_list, scene, correction)
             arm_obj.data.pose_position = "REST"
 
             zf.writestr(

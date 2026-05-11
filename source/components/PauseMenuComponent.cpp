@@ -1,6 +1,7 @@
 #include <nds.h>
 #include "core/globals.h"
 #include "PauseMenuComponent.h"
+#include "models/character.h"
 
 // sfx
 #include "soundbank.h"
@@ -71,7 +72,7 @@ void PauseMenuComponent::cancelSFX()
     musicCtrl.stopSFX(sfxCancelHandle);
 }
 
-void PauseMenuComponent::init(int iBgSlot, bool* isActive)
+void PauseMenuComponent::init(int iBgSlot, bool *isActive)
 {
     // point to music
     musicCtrl.loadSFX(SFX_MENU);
@@ -82,6 +83,7 @@ void PauseMenuComponent::init(int iBgSlot, bool* isActive)
     options = menuOptions;
     optionCount = MENU_OPTIONS;
     selectedOption = 0;
+    startIndex = 0;
 
     // set bg loaders
     bgSlot = iBgSlot;
@@ -96,7 +98,8 @@ void PauseMenuComponent::init(int iBgSlot, bool* isActive)
 ViewState PauseMenuComponent::update(int keys)
 {
     // added for debug testing of dialogue
-    if (dialogueCtrl.isActive()) {
+    if (dialogueCtrl.isActive())
+    {
         dialogueCtrl.update(keys);
         return ViewState::KEEP_CURRENT;
     }
@@ -112,21 +115,31 @@ ViewState PauseMenuComponent::update(int keys)
         sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
         selectedOption = (selectedOption + optionCount - 1) % optionCount;
     }
+
+    // Adjust scroll position
+    if (selectedOption < startIndex)
+        startIndex = selectedOption;
+    if (selectedOption >= startIndex + visibleOptions)
+        startIndex = selectedOption - visibleOptions + 1;
+
     else if (keys & KEY_A)
     {
         cancelSFX();
         sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
 
-        PauseState currentState = {options, optionCount, selectedOption};
+        PauseState currentState = {options, optionCount, selectedOption, startIndex};
 
         if (options[selectedOption].onSelect != nullptr)
         {
             ViewState result = (this->*(options[selectedOption].onSelect))();
-            if (result != ViewState::KEEP_CURRENT) {
+            if (result != ViewState::KEEP_CURRENT)
+            {
                 nextViewState = result;
                 *isActivePtr = false;
-            } else if (dialogueCtrl.isActive()) {   // added for debug testing of dialogue
-                 return ViewState::KEEP_CURRENT;
+            }
+            else if (dialogueCtrl.isActive())
+            { // added for debug testing of dialogue
+                return ViewState::KEEP_CURRENT;
             }
             // if we changed options, push current state to stack
             if (options != currentState.options)
@@ -141,6 +154,7 @@ ViewState PauseMenuComponent::update(int keys)
         cancelSFX();
         musicCtrl.playSFX(SFX_CANCEL, 255, 128);
         selectedOption = 0;
+        startIndex = 0;
 
         // if we're in a submenu, return to main menu
         if (!prevOptions.empty())
@@ -151,7 +165,10 @@ ViewState PauseMenuComponent::update(int keys)
             options = prevState.options;
             optionCount = prevState.optionCount;
             selectedOption = prevState.selectedOption;
-        } else {
+            startIndex = prevState.startIndex;
+        }
+        else
+        {
             // otherwise, close the menu
             *isActivePtr = false;
         }
@@ -171,8 +188,9 @@ ViewState PauseMenuComponent::update(int keys)
     }
 
     // display options
-    for (int option = 0; option < optionCount; option++)
+    for (int i = 0; i < visibleOptions && startIndex + i < optionCount; i++)
     {
+        int option = startIndex + i;
         iprintf("%c %s\n", option == selectedOption ? '>' : ' ', options[option].name);
     }
 
@@ -198,6 +216,7 @@ ViewState PauseMenuComponent::update(int keys)
 ViewState PauseMenuComponent::openSkillMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = skillOptions;
     optionCount = SKILL_OPTIONS;
     return ViewState::KEEP_CURRENT;
@@ -206,6 +225,7 @@ ViewState PauseMenuComponent::openSkillMenu()
 ViewState PauseMenuComponent::openItemMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = itemOptions;
     optionCount = ITEM_OPTIONS;
     return ViewState::KEEP_CURRENT;
@@ -214,6 +234,7 @@ ViewState PauseMenuComponent::openItemMenu()
 ViewState PauseMenuComponent::openPersonaMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = personaOptions;
     optionCount = PERSONA_OPTIONS;
     return ViewState::KEEP_CURRENT;
@@ -222,6 +243,7 @@ ViewState PauseMenuComponent::openPersonaMenu()
 ViewState PauseMenuComponent::openEquipMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = equipOptions;
     optionCount = EQUIP_OPTIONS;
     return ViewState::KEEP_CURRENT;
@@ -230,6 +252,7 @@ ViewState PauseMenuComponent::openEquipMenu()
 ViewState PauseMenuComponent::openStatusMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = statsOptions;
     optionCount = STATS_OPTIONS;
     return ViewState::KEEP_CURRENT;
@@ -238,6 +261,7 @@ ViewState PauseMenuComponent::openStatusMenu()
 ViewState PauseMenuComponent::openSLinkMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = sLinkOptions;
     optionCount = S_LINK_OPTIONS;
     return ViewState::KEEP_CURRENT;
@@ -246,6 +270,7 @@ ViewState PauseMenuComponent::openSLinkMenu()
 ViewState PauseMenuComponent::openSystemMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = systemOptions;
     optionCount = SYSTEM_OPTIONS;
     return ViewState::KEEP_CURRENT;
@@ -255,6 +280,7 @@ ViewState PauseMenuComponent::openSystemMenu()
 ViewState PauseMenuComponent::openDebugMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = debugOptions;
     optionCount = DEBUG_OPTIONS;
     return ViewState::KEEP_CURRENT;
@@ -263,11 +289,11 @@ ViewState PauseMenuComponent::openDebugMenu()
 ViewState PauseMenuComponent::openCharacterAnimMenu()
 {
     selectedOption = 0;
+    startIndex = 0;
     options = characterAnimOptions;
     optionCount = CHARACTER_ANIM_OPTIONS;
     return ViewState::KEEP_CURRENT;
 }
-
 
 // generic handlers
 // this is where we would implement functionality for going into a sub-menu, or selecting a skill, item, etc.
@@ -322,42 +348,43 @@ ViewState PauseMenuComponent::debugOptionSelected()
     ViewState selectedView;
     switch (selectedOption)
     {
-        case DISCLAIMER_VIEW:
-            selectedView = ViewState::DISCLAIMER;
-            break;
-        case INTRO_VIDEO_VIEW:
-            selectedView = ViewState::INTRO_VIDEO;
-            break;
-        case INTRO_VIEW:
-            selectedView = ViewState::INTRO;
-            break;
-        case MAIN_MENU_VIEW:
-            selectedView = ViewState::MAIN_MENU;
-            break;
-        case IWATODAI_DORM_VIEW:
-            selectedView = ViewState::IWATODAI_DORM;
-            break;
-        case IWATODAI_STREETS_VIEW:
-            selectedView = ViewState::IWATODAI_STREETS;
-            break;
-        case DEBUG_DIALOGUE:
-            consoleClear();
-            demo_yuki_guard_argument_load();
-            dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
-            dialogueCtrl.start(demo_yuki_guard_argument_first());
-            selectedView = ViewState::KEEP_CURRENT;
-            break;
-        case TOGGLE_BILLBOARDS:
-            enableBillboards = !enableBillboards;
-            *isActivePtr = false;
-            selectedView = ViewState::KEEP_CURRENT;
-            break;
-        case TOGGLE_DEBUG_PRINT:
-            enableDebugPrint = true;
-            *isActivePtr = false;
-            selectedView = ViewState::KEEP_CURRENT;
-        default:
-            selectedView = ViewState::KEEP_CURRENT;
+    case DISCLAIMER_VIEW:
+        selectedView = ViewState::DISCLAIMER;
+        musicCtrl.pause();
+        break;
+    case INTRO_VIDEO_VIEW:
+        selectedView = ViewState::INTRO_VIDEO;
+        break;
+    case INTRO_VIEW:
+        selectedView = ViewState::INTRO;
+        break;
+    case MAIN_MENU_VIEW:
+        selectedView = ViewState::MAIN_MENU;
+        break;
+    case IWATODAI_DORM_VIEW:
+        selectedView = ViewState::IWATODAI_DORM;
+        break;
+    case IWATODAI_STREETS_VIEW:
+        selectedView = ViewState::IWATODAI_STREETS;
+        break;
+    case DEBUG_DIALOGUE:
+        consoleClear();
+        demo_yuki_guard_argument_load();
+        dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
+        dialogueCtrl.start(demo_yuki_guard_argument_first());
+        selectedView = ViewState::KEEP_CURRENT;
+        break;
+    case TOGGLE_BILLBOARDS:
+        enableBillboards = !enableBillboards;
+        *isActivePtr = false;
+        selectedView = ViewState::KEEP_CURRENT;
+        break;
+    case TOGGLE_DEBUG_PRINT:
+        enableDebugPrint = true;
+        *isActivePtr = false;
+        selectedView = ViewState::KEEP_CURRENT;
+    default:
+        selectedView = ViewState::KEEP_CURRENT;
     }
     return selectedView;
 }
@@ -371,75 +398,110 @@ ViewState PauseMenuComponent::characterAnimOptionSelected()
     ViewState selectedView;
     switch (selectedOption)
     {
-        case TOGGLE_AUTO_ANIM:
-            enableCharacterAnim = !enableCharacterAnim;
-            break;
-        case ANIM_1:
-            characterAnimationCtrl.set(MODEL_CHARACTER_1, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_2:
-            characterAnimationCtrl.set(MODEL_CHARACTER_2, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_3:
-            characterAnimationCtrl.set(MODEL_CHARACTER_3, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_4:
-            characterAnimationCtrl.set(MODEL_CHARACTER_4, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_5:
-            characterAnimationCtrl.set(MODEL_CHARACTER_5, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_6:
-            characterAnimationCtrl.set(MODEL_CHARACTER_6, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_7:
-            characterAnimationCtrl.set(MODEL_CHARACTER_7, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_8:
-            characterAnimationCtrl.set(MODEL_CHARACTER_8, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_9:
-            characterAnimationCtrl.set(MODEL_CHARACTER_9, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_10:
-            characterAnimationCtrl.set(MODEL_CHARACTER_10, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_11:
-            characterAnimationCtrl.set(MODEL_CHARACTER_11, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_12:
-            characterAnimationCtrl.set(MODEL_CHARACTER_12, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_13:
-            characterAnimationCtrl.set(MODEL_CHARACTER_13, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_14:
-            characterAnimationCtrl.set(MODEL_CHARACTER_14, true);
-            enableCharacterAnim = false;
-            break;
-        case ANIM_15:
-            characterAnimationCtrl.set(MODEL_CHARACTER_15, true);
-            enableCharacterAnim = false;
-            break;
-        default:
-            selectedView = ViewState::KEEP_CURRENT;
+    case TOGGLE_AUTO_ANIM:
+        enableCharacterAnim = !enableCharacterAnim;
+        break;
+    case ANIM_1:
+        characterAnimationCtrl.set((Model_character)0, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_2:
+        characterAnimationCtrl.set((Model_character)1, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_3:
+        characterAnimationCtrl.set((Model_character)2, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_4:
+        characterAnimationCtrl.set((Model_character)3, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_5:
+        characterAnimationCtrl.set((Model_character)4, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_6:
+        characterAnimationCtrl.set((Model_character)5, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_7:
+        characterAnimationCtrl.set((Model_character)6, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_8:
+        characterAnimationCtrl.set((Model_character)7, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_9:
+        characterAnimationCtrl.set((Model_character)8, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_10:
+        characterAnimationCtrl.set((Model_character)9, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_11:
+        characterAnimationCtrl.set((Model_character)10, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_12:
+        characterAnimationCtrl.set((Model_character)11, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_13:
+        characterAnimationCtrl.set((Model_character)12, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_14:
+        characterAnimationCtrl.set((Model_character)13, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_15:
+        characterAnimationCtrl.set((Model_character)14, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_16:
+        characterAnimationCtrl.set((Model_character)15, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_17:
+        characterAnimationCtrl.set((Model_character)16, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_18:
+        characterAnimationCtrl.set((Model_character)17, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_19:
+        characterAnimationCtrl.set((Model_character)18, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_20:
+        characterAnimationCtrl.set((Model_character)19, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_21:
+        characterAnimationCtrl.set((Model_character)20, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_22:
+        characterAnimationCtrl.set((Model_character)21, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_23:
+        characterAnimationCtrl.set((Model_character)22, true);
+        enableCharacterAnim = false;
+        break;
+    case ANIM_24:
+        characterAnimationCtrl.set((Model_character)23, true);
+        enableCharacterAnim = false;
+        break;
+    default:
+        selectedView = ViewState::KEEP_CURRENT;
     }
 
     *isActivePtr = false;
     characterAnimationCtrl.play();
     return selectedView;
 }
-

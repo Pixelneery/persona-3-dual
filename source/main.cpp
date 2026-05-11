@@ -26,11 +26,11 @@
 
 // character model
 #include "models/character.h"
-#include "diss_00.h"
-#include "diss_01.h"
-#include "diss_02.h"
-#include "diss_03.h"
-#include "diss_04.h"
+#include "character_texture_0.h"
+#include "character_texture_1.h"
+#include "character_texture_2.h"
+#include "character_texture_3.h"
+#include "character_texture_4.h"
 
 // variables
 volatile int frame = 0;
@@ -91,11 +91,11 @@ int main(int argc, char *argv[]) {
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
     // setup character model
-    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_00] = diss_00Bitmap;
-    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_01] = diss_01Bitmap;
-    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_02] = diss_02Bitmap;
-    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_03] = diss_03Bitmap;
-    bitmapsCharacter[MODEL_CHARACTER_TEX_DISS_04] = diss_04Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] = character_texture_0Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] = character_texture_1Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] = character_texture_2Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = character_texture_3Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = character_texture_4Bitmap;
 
     // start with DisclaimerView
     // seed with DS hardware timer for reliable randomness (time() can return 0 on DS)
