@@ -123,8 +123,8 @@ cameraPosition CharacterController::update(u32 keys)
         deltaZ *= invSqrt2;
     } else {
         // set idle animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0000_ROOT_MODEL_MOTION_0000_LAYER)) {
-            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0000_ROOT_MODEL_MOTION_0000_LAYER, true);
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER)) {
+            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER, true);
         }
     }
     characterAnimationCtrl.play();
