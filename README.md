@@ -34,8 +34,7 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 
 | BASE | FES | PORTABLE |
 |------|-----|----------|
-| <video src="https://files.catbox.moe/iebu7f.mp4" width="256"></video> | <video src="https://files.catbox.moe/x5y099.mp4" width="256"></video> | <video src="https://files.catbox.moe/700r6c.mp4" width="256"></video> |
-
+| <video src="https://github.com/user-attachments/assets/cfaeb394-f1cc-44f6-816e-4dc9f419216c" width="256"></video> | <video src="https://github.com/user-attachments/assets/561caee7-b622-45d1-82e9-d471d7e32427" width="256"></video> | <video src="https://github.com/user-attachments/assets/3cfd68d3-bde8-4238-8c83-58c0620a0dcd" width="256"></video> |
 
 
 ---
