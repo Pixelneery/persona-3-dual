@@ -31,11 +31,11 @@ struct curPlayer : Player
     curPlayer()
     {
         name = "Makoto";
-        hp = 720;
+        hp = 72;
         sp = 50;
         lv = 2;
 
-        gender = Gender::Male;
+        armourType = ArmourType::Male;
         armour = plainShirt;
 
         baseAttackAction = &slash_Attack;

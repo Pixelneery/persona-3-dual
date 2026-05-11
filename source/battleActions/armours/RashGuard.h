@@ -1,11 +1,11 @@
 #pragma once
 #include "Armour.h"
 
-struct PlainShirt : Armour
+struct RashGuard : Armour
 {
-    PlainShirt()
+    RashGuard()
     {
         defense = 46;
-        gender = Gender::Unisex;
+        armourType = ArmourType::Unisex;
     }
 };

@@ -6,6 +6,6 @@ struct PlainShirt : Armour
     PlainShirt()
     {
         defense = 24;
-        gender = Gender::Male;
+        armourType = ArmourType::Male;
     }
 };

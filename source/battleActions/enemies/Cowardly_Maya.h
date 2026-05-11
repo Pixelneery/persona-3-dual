@@ -12,11 +12,11 @@ struct Cowardly_Maya : Enemy
         myAttackSkill[0] = &slash_Attack;
 
         name = "Cowardly Maya";
-        hp = 67;
-        sp = 15;
+        hp = 83;
+        sp = 20;
         lv = 2;
         st = 2;
-        ma = 4;
+        ma = 3;
         en = 3;
         ag = 2;
         lu = 2;

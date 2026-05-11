@@ -21,7 +21,7 @@ bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack)
         iprintf(enemies->at(*targetIndex)->name.c_str());
         iprintf("\n");
 
-        u32 damage = attack->calculateDamage(player->curPersona->getBattleStats(), enemies->at(*targetIndex)->getBattleStats(), &player->lv, &enemies->at(*targetIndex)->lv);
+        u32 damage = attack->calculateDamagePlayer(player->curPersona->getBattleStats(), enemies->at(*targetIndex)->getBattleStats(), &player->lv, &enemies->at(*targetIndex)->lv);
 
         u32 affinity = enemies->at(*targetIndex)->affinities[attack->element];
         if (affinity == BattleStats::Affinity::Weak && !enemies->at(*targetIndex)->knockedDown)

@@ -28,18 +28,25 @@ struct AttackSkill
         return (u32)floor(sqrt((float)(moveDamage * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
     }
 
-    u32 calculateDamageEnemySkill(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
+    u32 calculateDamageEnemySkill(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour = nullptr)
     {
+        // This value is used if an enemy attacks another enemy
+        u32 armourValue = (armour != nullptr) ? armour->defense : 10;
+
         damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
         // todo: level diffrence never goes under 0 for either party during boss fights
-        return (u32)floor((sqrt((float)(moveDamage * 6 * Atk) / (8 * defenderStats->en + Armor)) * 9 * levelDifference - 10) * affinityMtp);
+        return (u32)floor((sqrt((float)(moveDamage * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) * affinityMtp);
     }
 
-    u32 calculateDamageEnemyRegular(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
+    // unused atm since the they dont have a regulat attack yet
+    u32 calculateDamageEnemyRegular(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour = nullptr)
     {
+        // This value is used if an enemy attacks another enemy
+        u32 armourValue = (armour != nullptr) ? armour->defense : 10;
+
         damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
         // todo: level diffrence never goes under 0 for either party during boss fights
-        return (u32)floor((sqrt((float)(moveDamage * 6 * Atk) / (8 * defenderStats->en + Armor)) * 9 * levelDifference - 10) * affinityMtp);
+        return (u32)floor((sqrt((float)(moveDamage * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) * affinityMtp);
     }
 
     virtual ~AttackSkill() = default;

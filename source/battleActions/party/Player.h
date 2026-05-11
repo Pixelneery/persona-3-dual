@@ -3,7 +3,7 @@
 #include <string>
 #include "../skills/AttackSkill.h"
 #include "../personas/PersonaBase.h"
-#include "../gender.h"
+#include "../armourType.h"
 #include "../armours/Armour.h"
 
 /*
@@ -19,7 +19,7 @@ struct Player
     s32 hp;
     s32 sp;
     u32 lv;
-    Gender gender;
+    ArmourType armourType;
     Armour armour;
     AttackSkill *baseAttackAction;
     PersonaBase **personas;

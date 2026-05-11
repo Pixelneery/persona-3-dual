@@ -16,8 +16,8 @@ struct Forneus : PersonaBase
         name = "Forneus";
         lv = 7;
         st = 5;
-        ma = 5;
-        en = 8;
+        ma = 6;
+        en = 7;
         ag = 6;
         lu = 4;
 
