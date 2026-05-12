@@ -1,4 +1,8 @@
 {
-    "buildCommand": "cp ../tile_map.json ./tile_map.json",
-    "outputDirectory": "."
-  }
+  "buildCommand": "cp ../tile_map.json ./tile_map.json && cp ../../icon.bmp ./icon.bmp && mkdir -p ./docs/md && cp ../../docs/*.md ./docs/md/",
+  "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/map-editor", "destination": "/map-editor/map-editor.html" },
+      { "source": "/docs", "destination": "/docs/docs.html" }
+  ]
+}
