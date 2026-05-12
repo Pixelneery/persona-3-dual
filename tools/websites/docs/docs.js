@@ -98,7 +98,7 @@ async function loadDoc(file) {
     let text;
     try {
         // Relative fetch — resolves to /docs/<file> since the page lives at /docs/
-        const res = await fetch(file);
+        const res = await fetch(`/docs/${file}`);
         if (!res.ok) throw new Error(`HTTP ${res.status} — is the file in the docs folder?`);
         text = await res.text();
     } catch (err) {
