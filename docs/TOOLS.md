@@ -1,6 +1,6 @@
-# Persona 3 Dual — Asset Pipeline
+# Persona 3 Dual — Asset Pipeline (OUTDATED?)
 
-> Everything in `assets/` is source. Everything in `source/` or `nitrofiles/` is generated.  
+> Everything in `assets/` is source. Everything in `source/` or `nitrofiles/` is generated.
 > **Never hand-edit generated files** — run `make assets` instead.
 
 ---
@@ -70,7 +70,7 @@ tools/
 
 ### `build_environment.py` — 3D Static Environment Pipeline
 
-Converts an `.obj` + `.mtl` + `.png` collection into a zero-boilerplate C++ header, raw `.s` assembly display lists, and GRIT-compiled textures. 
+Converts an `.obj` + `.mtl` + `.png` collection into a zero-boilerplate C++ header, raw `.s` assembly display lists, and GRIT-compiled textures.
 
 *(See `ENVIRONMENT_README.md` for full details and Blender plugin instructions).*
 
