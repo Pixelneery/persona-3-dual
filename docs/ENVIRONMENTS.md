@@ -3,6 +3,6 @@ To create billboards, create a plane mesh with the **prefix "BB_"**. Ensure that
 
 ## Blender Export Settings
 See the export settings below:
-![Export settings](imgs/environments/Blender_Export.png)
+![Export settings](/docs/imgs/environments/Blender_Export.png)
 
 After you export the file, open the .mtl file and ensure that the file path for the texture is just ```<texture>.png```, NOT ```/path/to/somewhere/<texture>.png```

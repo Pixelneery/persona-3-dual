@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cp ../tile_map.json ./tile_map.json && cp ../../icon.bmp ./icon.bmp && mkdir -p ./docs/md && cp ../../docs/*.md ./docs/md/",
+  "buildCommand": "cp ../tile_map.json ./tile_map.json && cp ../../icon.bmp ./icon.bmp && mkdir -p ./docs/md && cp ../../docs/*.md ./docs/md/ && mkdir -p ./docs/imgs && cp -r ../../docs/imgs/* ./docs/imgs/",
   "outputDirectory": ".",
   "rewrites": [
     {
