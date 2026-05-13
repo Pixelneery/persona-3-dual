@@ -1,4 +1,3 @@
-
 /* Loading state */
 .doc-loading {
     padding: 56px 24px;
@@ -24,8 +23,13 @@
 }
 
 @keyframes loading-slide {
-    0%   { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
 }
 
 /* Error state */
@@ -116,10 +120,25 @@
     margin-top: 0;
 }
 
-.doc-content h1 { font-size: 1.6rem; letter-spacing: -0.02em; }
-.doc-content h2 { font-size: 1.2rem; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
-.doc-content h3 { font-size: 1rem; }
-.doc-content h4 { font-size: 0.9rem; color: var(--text-muted); }
+.doc-content h1 {
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+}
+
+.doc-content h2 {
+    font-size: 1.2rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.doc-content h3 {
+    font-size: 1rem;
+}
+
+.doc-content h4 {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
 
 /* H2 accent mark */
 .doc-content h2::before {
@@ -183,7 +202,7 @@
     border-radius: 50%;
     background: var(--accent);
     box-shadow: 10px 0 0 color-mix(in srgb, var(--accent2) 60%, transparent),
-                20px 0 0 var(--border);
+        20px 0 0 var(--border);
 }
 
 .doc-content pre code {
@@ -226,8 +245,8 @@
     color: var(--accent);
 }
 
-.doc-content ul > li > ul,
-.doc-content ol > li > ol {
+.doc-content ul>li>ul,
+.doc-content ol>li>ol {
     margin-top: 0.35em;
     margin-bottom: 0;
 }
@@ -293,8 +312,13 @@
 
 /* Responsive */
 @media (max-width: 480px) {
-    .doc-content h1 { font-size: 1.3rem; }
-    .doc-content h2 { font-size: 1.05rem; }
+    .doc-content h1 {
+        font-size: 1.3rem;
+    }
+
+    .doc-content h2 {
+        font-size: 1.05rem;
+    }
 
     .doc-content pre {
         padding: 14px 14px;

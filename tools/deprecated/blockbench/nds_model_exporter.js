@@ -1,4 +1,4 @@
-(function() {
+(function () {
     var exportAction;
 
     Plugin.register('nds_model_exporter', {
@@ -6,14 +6,14 @@
         author: 'Taha Rashid',
         description: 'Automates exporting Hierarchical JSON and isolated OBJs to a ZIP file. Auto-detects texture size. Built for the Persona 3 Dual project.',
         version: '1.0.8',
-        variant: 'both', 
-        
+        variant: 'both',
+
         onload() {
             exportAction = new Action('export_nds_model', {
                 name: 'Export NDS Model (ZIP)',
                 description: 'Exports model parts and animation data to a ZIP file.',
                 icon: 'archive',
-                click: function() { runExportPipeline(); }
+                click: function () { runExportPipeline(); }
             });
             MenuBar.addAction(exportAction, 'file.export');
         },
@@ -24,7 +24,7 @@
         // grab the base name of the project
         let modelName = (Project.name || 'model').replace(/[^a-zA-Z0-9]/g, '_');
 
-        let zip = new window.JSZip(); 
+        let zip = new window.JSZip();
         let dsJson = { nodes: [], animations: {} };
 
         let groupMap = new Map();
@@ -70,7 +70,7 @@
 
         Project.animations.forEach(anim => {
             let animName = anim.name.replace(/[^a-zA-Z0-9]/g, '_');
-            let durationFrames = Math.round(anim.length * 60); 
+            let durationFrames = Math.round(anim.length * 60);
             let animData = { duration: durationFrames, tracks: {} };
 
             Object.keys(anim.animators).forEach(uuid => {
@@ -96,8 +96,8 @@
                         } else {
                             track.push({
                                 time: frameTime,
-                                rot: kf.channel === 'rotation' ? [rx, ry, rz] : [0,0,0],
-                                pos: kf.channel === 'position' ? [px, py, pz] : [0,0,0]
+                                rot: kf.channel === 'rotation' ? [rx, ry, rz] : [0, 0, 0],
+                                pos: kf.channel === 'position' ? [px, py, pz] : [0, 0, 0]
                             });
                         }
                     });
@@ -111,7 +111,7 @@
         let jsonString = JSON.stringify(dsJson, null, 2);
         zip.file(`${modelName}.json`, jsonString);
 
-        zip.generateAsync({type: "blob"}).then(content => {
+        zip.generateAsync({ type: "blob" }).then(content => {
             Blockbench.export({
                 type: 'Zip Archive',
                 extensions: ['zip'],

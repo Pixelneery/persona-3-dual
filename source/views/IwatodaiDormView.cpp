@@ -72,9 +72,12 @@ void IwatodaiDormView::Init()
 
     // setup music
     // 1/3 chance of a surprise
-    if (rand() % 3 == 0) {
+    if (rand() % 3 == 0)
+    {
         musicCtrl.init("nitro:/music/toms_diner_suzanne_vega.pcm", 0.0f, 234.568f);
-    } else {
+    }
+    else
+    {
         musicCtrl.init(IWATODAI_DORM_MUSIC, 0.0f, 920.973f);
     }
 
@@ -83,7 +86,7 @@ void IwatodaiDormView::Init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int* bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = { textureBitmap };
+    const unsigned int *bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = {textureBitmap};
     iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmapsEnv);
     totalPolyCount = iwatodaiDormEnv.getPolyCount();
 
@@ -105,19 +108,25 @@ ViewState IwatodaiDormView::Update()
     u32 keys = keysHeld();
     u32 pressed = keysDown();
 
-    if (pressed & KEY_START) {
+    if (pressed & KEY_START)
+    {
         isPauseMenuActive = !isPauseMenuActive;
     }
 
-    if (isPauseMenuActive) {
+    if (isPauseMenuActive)
+    {
         ViewState menuResult = pauseMenuCmpt.update(pressed);
-        if (menuResult != ViewState::KEEP_CURRENT) {
+        if (menuResult != ViewState::KEEP_CURRENT)
+        {
             musicCtrl.pause();
             return menuResult;
         }
-    } else {    // only render world when pause menu is not active
+    }
+    else
+    { // only render world when pause menu is not active
         // only process world input when dialogue and battle are not active
-        if (!dialogueCtrl.isActive() && !battleController.isActive()) {
+        if (!dialogueCtrl.isActive() && !battleController.isActive())
+        {
             // move character
             camPos = playerCtrl->update(keys);
 
@@ -129,57 +138,62 @@ ViewState IwatodaiDormView::Update()
 
             // trigger dialogue from interaction
             demo_unload();
-            if (playerCtrl->isTileAt() == TileType::NEXT_SCENE) {
+            if (playerCtrl->isTileAt() == TileType::NEXT_SCENE)
+            {
                 musicCtrl.pause();
                 return ViewState::IWATODAI_STREETS;
-            } else if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko) {
+            }
+            else if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko)
+            {
                 iprintf("\x1b[0;0HPress A to talk");
-                if (pressed & KEY_A) {
+                if (pressed & KEY_A)
+                {
                     demo_yuki_guard_argument_load();
                     dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
                     dialogueCtrl.start(demo_yuki_guard_argument_first());
                 }
-            } else {
+            }
+            else
+            {
                 consoleClear();
             }
         }
 
         // update camera position
         gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
-            camPos.targetX, camPos.targetY, camPos.targetZ,
-            camPos.upX, camPos.upY, camPos.upZ);
-
+                  camPos.targetX, camPos.targetY, camPos.targetZ,
+                  camPos.upX, camPos.upY, camPos.upZ);
 
         // draw environment
         glPushMatrix();
-            iwatodaiDormEnv.draw();
-            iwatodaiDormEnv.drawBillboards(
-                enableBillboards,  // billboards face camera
-                camPos.cameraX, camPos.cameraY, camPos.cameraZ
-            );
+        iwatodaiDormEnv.draw();
+        iwatodaiDormEnv.drawBillboards(
+            enableBillboards, // billboards face camera
+            camPos.cameraX, camPos.cameraY, camPos.cameraZ);
         glPopMatrix(1);
 
         // draw character
         glPushMatrix();
-            // move character
-            characterPosition charPos = playerCtrl->isCharacterAt();
-            glTranslatef(charPos.x, 0.1, charPos.z);
-            glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
+        // move character
+        characterPosition charPos = playerCtrl->isCharacterAt();
+        glTranslatef(charPos.x, 0.1, charPos.z);
+        glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 
-            // draw character
-            characterAnimationCtrl.render();
+        // draw character
+        characterAnimationCtrl.render();
         glPopMatrix(1);
 
         glFlush(0);
 
         // print coordinates (64x64 area from 0,0 to 64,64)
-        if (enableDebugPrint) {
+        if (enableDebugPrint)
+        {
             iprintf("\x1b[21;0Htile(x,z): %d, %d",
-                (int)((charPos.x + worldOffsetX) / tileSize),
-                (int)((charPos.z + worldOffsetZ) / tileSize));
+                    (int)((charPos.x + worldOffsetX) / tileSize),
+                    (int)((charPos.z + worldOffsetZ) / tileSize));
             iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
-                (int)(charPos.x * 100),
-                (int)(charPos.z * 100));
+                    (int)(charPos.x * 100),
+                    (int)(charPos.z * 100));
             iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
     }

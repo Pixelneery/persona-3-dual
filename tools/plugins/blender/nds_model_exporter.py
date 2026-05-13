@@ -44,17 +44,17 @@ def get_material_image(mat):
 
     # 1. Try to trace the Principled BSDF Base Color (Most accurate)
     for node in mat.node_tree.nodes:
-        if node.type == 'BSDF_PRINCIPLED':
-            color_socket = node.inputs.get('Base Color')
+        if node.type == "BSDF_PRINCIPLED":
+            color_socket = node.inputs.get("Base Color")
             if color_socket and color_socket.is_linked:
                 src_node = color_socket.links[0].from_node
-                if src_node.type == 'TEX_IMAGE' and src_node.image:
+                if src_node.type == "TEX_IMAGE" and src_node.image:
                     return src_node.image
 
     # 2. Fallback: Find ANY Image Texture that is linked to a shader
     for node in mat.node_tree.nodes:
-        if node.type == 'TEX_IMAGE' and node.image:
-            if getattr(node.outputs[0], 'is_linked', False):
+        if node.type == "TEX_IMAGE" and node.image:
+            if getattr(node.outputs[0], "is_linked", False):
                 return node.image
 
     # 3. Final Resort: Just grab the first image node that exists
@@ -95,7 +95,9 @@ def build_mtl(mat_to_image: dict, model_name: str, name_map: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def export_bone_obj(arm_obj, mesh_objects, bone, depsgraph, obj_name: str, correction: mathutils.Matrix):
+def export_bone_obj(
+    arm_obj, mesh_objects, bone, depsgraph, obj_name: str, correction: mathutils.Matrix
+):
     mtllib_name = obj_name + ".mtl"
     lines = ["# NDS OBJ export", f"# bone: {bone.name}", "", f"mtllib {mtllib_name}"]
     vert_lines, uv_lines, face_groups = [], [], []
@@ -184,7 +186,9 @@ def export_bone_obj(arm_obj, mesh_objects, bone, depsgraph, obj_name: str, corre
     return "\n".join(lines) + "\n", mat_to_image
 
 
-def get_bone_transforms_at_frame(arm_obj, bone_name, frame, scene, correction: mathutils.Matrix):
+def get_bone_transforms_at_frame(
+    arm_obj, bone_name, frame, scene, correction: mathutils.Matrix
+):
     scene.frame_set(frame)
     pose_bone = arm_obj.pose.bones.get(bone_name)
     bone = arm_obj.data.bones.get(bone_name)
@@ -250,7 +254,9 @@ def collect_animations(arm_obj, bone_list, scene, correction: mathutils.Matrix):
             bid = bone_index(None, bone.name, bone_list)
             track = []
             for f in sorted(bone_frames[bone.name]):
-                rot, pos = get_bone_transforms_at_frame(arm_obj, bone.name, f, scene, correction)
+                rot, pos = get_bone_transforms_at_frame(
+                    arm_obj, bone.name, f, scene, correction
+                )
                 track.append({"time": f - f_start, "rot": list(rot), "pos": list(pos)})
             if track:
                 anim_data["tracks"][str(bid)] = track
@@ -293,7 +299,7 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
 
         # Determine if we need to apply the 180 degree rotation mathematically
         if self.fix_nds_axis:
-            correction = mathutils.Matrix.Rotation(math.radians(180.0), 4, 'Z')
+            correction = mathutils.Matrix.Rotation(math.radians(180.0), 4, "Z")
         else:
             correction = mathutils.Matrix.Identity(4)
 
@@ -337,11 +343,16 @@ class NDS_OT_ExportModel(bpy.types.Operator, ExportHelper):
                     arm_obj, mesh_objects, bone, depsgraph, obj_name, correction
                 )
                 zf.writestr(f"{obj_name}.obj", obj_content)
-                zf.writestr(f"{obj_name}.mtl", build_mtl(mat_to_image, model_name, texture_name_map))
+                zf.writestr(
+                    f"{obj_name}.mtl",
+                    build_mtl(mat_to_image, model_name, texture_name_map),
+                )
 
                 for img in mat_to_image.values():
                     if img:
-                        tex_name = get_export_filename(img, model_name, texture_name_map)
+                        tex_name = get_export_filename(
+                            img, model_name, texture_name_map
+                        )
                         all_tex_images[tex_name] = img
 
                 # Apply the correction matrix to the bone origin

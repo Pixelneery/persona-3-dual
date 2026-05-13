@@ -65,24 +65,24 @@ let paintErase = false;
 let currentView = 'top';
 
 // Undo / Redo
-let undoStack   = [];
-let redoStack   = [];
+let undoStack = [];
+let redoStack = [];
 let strokeBefore = null;   // snapshot captured by beginStroke()
 
 // Minimap
 let minimapCanvas = null;
-let minimapCtx    = null;
+let minimapCtx = null;
 
 // Free-look
 // The camera orbits `freeTarget` using spherical coordinates.
-let isFreeLook    = false;
-let freeTheta     = -Math.PI / 5;   // azimuth (around Y)
-let freePhi       = Math.PI  / 3.5; // polar   (from top)
+let isFreeLook = false;
+let freeTheta = -Math.PI / 5;   // azimuth (around Y)
+let freePhi = Math.PI / 3.5; // polar   (from top)
 const FREE_RADIUS = 15;
-let freeTarget    = null;            // THREE.Vector3, set in initThree
+let freeTarget = null;            // THREE.Vector3, set in initThree
 let freeDragStartX = 0;
 let freeDragStartY = 0;
-let freeDragMoved  = false;
+let freeDragMoved = false;
 let freeDragButton = 0;             // which button started the current free-look drag
 
 // Three.js
@@ -118,7 +118,7 @@ function initThree() {
 
     // freeTarget needs THREE. Initialise here to world centre
     freeTarget = new THREE.Vector3(
-        params.width  * params.tileSize / 2 - params.offsetX,
+        params.width * params.tileSize / 2 - params.offsetX,
         0,
         params.height * params.tileSize / 2 - params.offsetZ
     );
@@ -131,10 +131,10 @@ function initThree() {
     scene.add(sun);
 
     modelGroup = new THREE.Group(); scene.add(modelGroup);
-    gridGroup  = new THREE.Group(); scene.add(gridGroup);
-    tileGroup  = new THREE.Group(); scene.add(tileGroup);
+    gridGroup = new THREE.Group(); scene.add(gridGroup);
+    tileGroup = new THREE.Group(); scene.add(tileGroup);
 
-    wireMaterial  = new THREE.MeshBasicMaterial({ color: 0x6688aa, wireframe: true, transparent: true, opacity: 0.55 });
+    wireMaterial = new THREE.MeshBasicMaterial({ color: 0x6688aa, wireframe: true, transparent: true, opacity: 0.55 });
     solidMaterial = new THREE.MeshLambertMaterial({ color: 0x7799bb, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
 
     groundMesh = new THREE.Mesh(
@@ -172,15 +172,15 @@ function updateCameraFrustum() {
     const asp = vp.clientWidth / vp.clientHeight;
 
     if (isFreeLook) {
-        camera.left   = -viewSize * asp;
-        camera.right  =  viewSize * asp;
-        camera.top    =  viewSize;
+        camera.left = -viewSize * asp;
+        camera.right = viewSize * asp;
+        camera.top = viewSize;
         camera.bottom = -viewSize;
     } else {
-        camera.left   = -viewSize * asp + panX;
-        camera.right  =  viewSize * asp + panX;
-        camera.top    =  viewSize       - panZ;
-        camera.bottom = -viewSize       - panZ;
+        camera.left = -viewSize * asp + panX;
+        camera.right = viewSize * asp + panX;
+        camera.top = viewSize - panZ;
+        camera.bottom = -viewSize - panZ;
     }
     camera.updateProjectionMatrix();
     redrawMinimap(); // keep minimap frustum rect in sync
@@ -213,11 +213,11 @@ function setView(view) {
     document.getElementById('btn-view-' + view).classList.add('active-btn');
     document.getElementById('paint-warning').style.display = (view === 'top') ? 'none' : 'block';
 
-    if      (view === 'top')   { camera.position.set( 0,  50,  0); camera.up.set(0,  0, -1); }
-    else if (view === 'front') { camera.position.set( 0,   0, 50); camera.up.set(0,  1,  0); }
-    else if (view === 'back')  { camera.position.set( 0,   0,-50); camera.up.set(0,  1,  0); }
-    else if (view === 'left')  { camera.position.set(-50,  0,  0); camera.up.set(0,  1,  0); }
-    else if (view === 'right') { camera.position.set( 50,  0,  0); camera.up.set(0,  1,  0); }
+    if (view === 'top') { camera.position.set(0, 50, 0); camera.up.set(0, 0, -1); }
+    else if (view === 'front') { camera.position.set(0, 0, 50); camera.up.set(0, 1, 0); }
+    else if (view === 'back') { camera.position.set(0, 0, -50); camera.up.set(0, 1, 0); }
+    else if (view === 'left') { camera.position.set(-50, 0, 0); camera.up.set(0, 1, 0); }
+    else if (view === 'right') { camera.position.set(50, 0, 0); camera.up.set(0, 1, 0); }
     camera.lookAt(0, 0, 0);
     updateCameraFrustum();
 }
@@ -226,8 +226,8 @@ function setView(view) {
  * Free-look: orbit the camera around freeTarget using spherical coordinates
  */
 function updateFreeLookCamera() {
-    const sinPhi   = Math.sin(freePhi);
-    const cosPhi   = Math.cos(freePhi);
+    const sinPhi = Math.sin(freePhi);
+    const cosPhi = Math.cos(freePhi);
     const sinTheta = Math.sin(freeTheta);
     const cosTheta = Math.cos(freeTheta);
 
@@ -256,7 +256,7 @@ function toggleFreeLook() {
         const { tileSize, offsetX, offsetZ, width, height } = params;
         freeTarget.set(width * tileSize / 2 - offsetX, 0, height * tileSize / 2 - offsetZ);
         freeTheta = -Math.PI / 5;
-        freePhi   =  Math.PI / 3.5;
+        freePhi = Math.PI / 3.5;
         updateFreeLookCamera();
     } else {
         setView('top');
@@ -285,10 +285,10 @@ function rebuildGrid() {
     gridGroup.add(new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0x2a2a3a })));
 
     const bv = [
-        x0, Y + 0.01, z0,  x1, Y + 0.01, z0,
-        x1, Y + 0.01, z0,  x1, Y + 0.01, z1,
-        x1, Y + 0.01, z1,  x0, Y + 0.01, z1,
-        x0, Y + 0.01, z1,  x0, Y + 0.01, z0,
+        x0, Y + 0.01, z0, x1, Y + 0.01, z0,
+        x1, Y + 0.01, z0, x1, Y + 0.01, z1,
+        x1, Y + 0.01, z1, x0, Y + 0.01, z1,
+        x0, Y + 0.01, z1, x0, Y + 0.01, z0,
     ];
     const bgeo = new THREE.BufferGeometry();
     bgeo.setAttribute('position', new THREE.Float32BufferAttribute(bv, 3));
@@ -303,7 +303,7 @@ function rebuildTileLayer() {
     const { tileSize: ts, offsetX: ox, offsetZ: oz, width: W, height: H } = params;
 
     tileCanvasEl = document.createElement('canvas');
-    tileCanvasEl.width  = W;
+    tileCanvasEl.width = W;
     tileCanvasEl.height = H;
     tileCanvasCtx = tileCanvasEl.getContext('2d');
 
@@ -367,9 +367,9 @@ function setupEvents(canvas) {
             // a short click (→ paint) from a drag (→ orbit).
             freeDragStartX = e.clientX;
             freeDragStartY = e.clientY;
-            freeDragMoved  = false;
+            freeDragMoved = false;
             freeDragButton = e.button;
-            paintErase     = (e.button === 2);
+            paintErase = (e.button === 2);
             return; // defer painting/orbiting to mousemove & mouseup
         }
 
@@ -412,17 +412,17 @@ function setupEvents(canvas) {
                         -Math.sin(freePhi) * Math.cos(freeTheta)
                     );
                     const worldUp = new THREE.Vector3(0, 1, 0);
-                    const right   = new THREE.Vector3().crossVectors(lookDir, worldUp).normalize();
-                    const up      = new THREE.Vector3().crossVectors(right, lookDir).normalize();
+                    const right = new THREE.Vector3().crossVectors(lookDir, worldUp).normalize();
+                    const up = new THREE.Vector3().crossVectors(right, lookDir).normalize();
                     freeTarget.addScaledVector(right, -dx * panScale);
-                    freeTarget.addScaledVector(up,     dy * panScale);
+                    freeTarget.addScaledVector(up, dy * panScale);
                     updateFreeLookCamera();
 
                 } else if (e.buttons === 1) {
                     // Left-drag → orbit
                     freeTheta -= dx * 0.007;
-                    freePhi   -= dy * 0.007;
-                    freePhi    = Math.max(0.05, Math.min(Math.PI * 0.95, freePhi));
+                    freePhi -= dy * 0.007;
+                    freePhi = Math.max(0.05, Math.min(Math.PI * 0.95, freePhi));
                     updateFreeLookCamera();
                 }
             }
@@ -435,9 +435,9 @@ function setupEvents(canvas) {
             const dx = e.clientX - lastMX;
             const dy = e.clientY - lastMY;
             lastMX = e.clientX; lastMY = e.clientY;
-            const vp  = document.getElementById('viewport');
+            const vp = document.getElementById('viewport');
             const asp = vp.clientWidth / vp.clientHeight;
-            panX -= dx / vp.clientWidth  * viewSize * asp * 2;
+            panX -= dx / vp.clientWidth * viewSize * asp * 2;
             panZ += dy / vp.clientHeight * viewSize * 2;
             updateCameraFrustum();
         } else if (isPainting && currentView === 'top') {
@@ -468,7 +468,7 @@ function setupEvents(canvas) {
 
         endStroke(); // commit stroke to undo history if anything changed
         isPainting = false;
-        isPanning  = false;
+        isPanning = false;
         canvas.style.cursor = isSpaceDown ? 'grab' : 'crosshair';
     });
 
@@ -501,8 +501,8 @@ function setupEvents(canvas) {
 function getWorldPos(e) {
     const canvas = document.getElementById('three-canvas');
     const rect = canvas.getBoundingClientRect();
-    const ndcX =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
-    const ndcY = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+    const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    const ndcY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     groundRaycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera);
     const hits = groundRaycaster.intersectObject(groundMesh);
     return hits.length ? hits[0].point : null;
@@ -521,7 +521,7 @@ function paintAt(e) {
     const { tx, tz, valid } = worldToTile(pt.x, pt.z);
     if (!valid) return;
     const type = paintErase ? 'w' : currentTool;
-    const idx  = tz * params.width + tx;
+    const idx = tz * params.width + tx;
     if (tileData[idx] !== type) {
         tileData[idx] = type;
         redrawTiles();
@@ -531,9 +531,9 @@ function paintAt(e) {
 function hoverAt(e) {
     const pt = getWorldPos(e);
     if (!pt) {
-        document.getElementById('s-tile').textContent  = '—';
+        document.getElementById('s-tile').textContent = '—';
         document.getElementById('s-world').textContent = '—';
-        document.getElementById('s-type').textContent  = '—';
+        document.getElementById('s-type').textContent = '—';
         return;
     }
     document.getElementById('s-world').textContent = `(${pt.x.toFixed(4)}, ${pt.z.toFixed(4)})`;
@@ -587,20 +587,20 @@ const paramInputs = document.querySelectorAll(
     '#p-offsetx, #p-offsetz, #p-width, #p-height, #p-name, #p-scale, #p-center, #p-source-blender'
 );
 paramInputs.forEach(input => {
-    input.addEventListener('input',  () => document.getElementById('btn-apply').classList.add('needs-apply'));
+    input.addEventListener('input', () => document.getElementById('btn-apply').classList.add('needs-apply'));
     input.addEventListener('change', () => document.getElementById('btn-apply').classList.add('needs-apply'));
 });
 
 function readParamInputs() {
     return {
         tileSize: parseFloat(document.getElementById('p-tilesize').value) || 0.0625,
-        offsetX:  parseFloat(document.getElementById('p-offsetx').value)  || 0,
-        offsetZ:  parseFloat(document.getElementById('p-offsetz').value)  || 0,
-        width:    Math.max(1, parseInt(document.getElementById('p-width').value)   || 56),
-        height:   Math.max(1, parseInt(document.getElementById('p-height').value)  || 12),
-        name:     document.getElementById('p-name').value.trim()   || 'map',
-        audio:    document.getElementById('p-audio').value.trim()  || '',
-        scale:    parseFloat(document.getElementById('p-scale').value) || 1.0,
+        offsetX: parseFloat(document.getElementById('p-offsetx').value) || 0,
+        offsetZ: parseFloat(document.getElementById('p-offsetz').value) || 0,
+        width: Math.max(1, parseInt(document.getElementById('p-width').value) || 56),
+        height: Math.max(1, parseInt(document.getElementById('p-height').value) || 12),
+        name: document.getElementById('p-name').value.trim() || 'map',
+        audio: document.getElementById('p-audio').value.trim() || '',
+        scale: parseFloat(document.getElementById('p-scale').value) || 1.0,
         centered: document.getElementById('p-center').checked,
         source_blender: document.getElementById('p-source-blender').checked
     };
@@ -618,12 +618,12 @@ function applyParams() {
     }
 
     const requiresTransformUpdate = (p.scale !== params.scale || p.centered !== params.centered || p.source_blender !== params.source_blender);
-    params   = p;
+    params = p;
     tileData = newTiles;
 
     // Map dimensions may have changed → old snapshots are invalid
-    undoStack    = [];
-    redoStack    = [];
+    undoStack = [];
+    redoStack = [];
     strokeBefore = null;
     updateUndoRedoUI();
 
@@ -638,7 +638,7 @@ function applyParams() {
     // Keep free-look orbit centred on the new world centre
     if (freeTarget) {
         freeTarget.set(
-            p.width  * p.tileSize / 2 - p.offsetX,
+            p.width * p.tileSize / 2 - p.offsetX,
             0,
             p.height * p.tileSize / 2 - p.offsetZ
         );
@@ -653,7 +653,7 @@ function autoSize() {
     const p = readParamInputs();
     const w = Math.round((p.offsetX * 2) / p.tileSize);
     const h = Math.round((p.offsetZ * 2) / p.tileSize);
-    document.getElementById('p-width').value  = w;
+    document.getElementById('p-width').value = w;
     document.getElementById('p-height').value = h;
 }
 
@@ -683,7 +683,7 @@ function toggleModel() {
 }
 function toggleWire() {
     showWire = !showWire;
-    modelGroup.traverse(c => { if (c.isMesh && c._isWire)  c.visible = showWire; });
+    modelGroup.traverse(c => { if (c.isMesh && c._isWire) c.visible = showWire; });
     document.getElementById('wire-btn').textContent = `Wire: ${showWire ? 'ON' : 'OFF'}`;
 }
 function toggleSolid() {
@@ -702,7 +702,7 @@ function fillAll(type) {
 // MODEL LOADING
 document.getElementById('obj-input').addEventListener('change', e => {
     const file = e.target.files[0]; if (!file) return;
-    const url  = URL.createObjectURL(file);
+    const url = URL.createObjectURL(file);
     document.getElementById('no-model-hint').style.display = 'none';
 
     new THREE.OBJLoader().load(url, obj => {
@@ -724,26 +724,26 @@ function applyModelTransforms() {
     //   new_y =  old_z  (Blender's up becomes NDS up)
     //   new_z = -old_y  (negation preserves right-handedness)
     // det = +1 - this is a rotation, not a reflection, so winding is preserved.
-    const blender  = params.source_blender;
-    const swapMat  = blender
+    const blender = params.source_blender;
+    const swapMat = blender
         ? new THREE.Matrix4().set(
             1, 0, 0, 0,
             0, 0, 1, 0,
             0, -1, 0, 0,
             0, 0, 0, 1
-          )
+        )
         : null;
 
     rawModelGroup.traverse(child => {
         if (!child.isMesh) return;
         // Clone geometry when blender flag is on so the swap is non-destructive
         const geo = blender ? child.geometry.clone().applyMatrix4(swapMat) : child.geometry;
-        const wire  = new THREE.Mesh(geo, wireMaterial.clone());
+        const wire = new THREE.Mesh(geo, wireMaterial.clone());
         const solid = new THREE.Mesh(geo, solidMaterial.clone());
-        wire._isWire   = true;
+        wire._isWire = true;
         solid._isSolid = true;
-        wire.visible   = showWire;
-        solid.visible  = showSolid;
+        wire.visible = showWire;
+        solid.visible = showSolid;
         modelGroup.add(wire);
         modelGroup.add(solid);
     });
@@ -793,7 +793,7 @@ document.getElementById('jmap-input').addEventListener('change', e => {
 });
 
 function parseJmap(text) {
-    const lines     = text.split('\n');
+    const lines = text.split('\n');
     const dataLines = [];
     let audio = '', w = 0, h = 0;
 
@@ -811,14 +811,14 @@ function parseJmap(text) {
                 const code = tileMatch[1];
                 if (!TILE_DEFS[code]) {
                     const parsedLabel = tileMatch[3] || tileMatch[2].trim();
-                    const baseColor   = generateDeterministicColor(code + parsedLabel);
+                    const baseColor = generateDeterministicColor(code + parsedLabel);
                     TILE_DEFS[code] = {
-                        label:      parsedLabel,
+                        label: parsedLabel,
                         shortLabel: tileMatch[2].trim(),
-                        key:        '',
-                        bg:         baseColor + '40',
-                        border:     baseColor,
-                        textColor:  '#ffffff'
+                        key: '',
+                        bg: baseColor + '40',
+                        border: baseColor,
+                        textColor: '#ffffff'
                     };
                 }
             }
@@ -831,7 +831,7 @@ function parseJmap(text) {
     const actualH = dataLines.length;
     const actualW = dataLines[0].length;
 
-    document.getElementById('p-width').value  = actualW;
+    document.getElementById('p-width').value = actualW;
     document.getElementById('p-height').value = actualH;
     if (audio) document.getElementById('p-audio').value = audio;
 
@@ -933,7 +933,7 @@ function updateUndoRedoUI() {
 // MINIMAP
 function initMinimap() {
     minimapCanvas = document.getElementById('minimap');
-    minimapCtx    = minimapCanvas.getContext('2d');
+    minimapCtx = minimapCanvas.getContext('2d');
     updateMinimapSize();
 
     // Click on minimap, then pan the main top-down view to that world position
@@ -941,7 +941,7 @@ function initMinimap() {
         if (currentView !== 'top' || isFreeLook) return;
         const rect = minimapCanvas.getBoundingClientRect();
         const mx = (e.clientX - rect.left) / rect.width;
-        const my = (e.clientY - rect.top)  / rect.height;
+        const my = (e.clientY - rect.top) / rect.height;
         const { width: W, height: H, tileSize: ts, offsetX: ox, offsetZ: oz } = params;
         // Map [0,1] minimap coordinates to world position of the clicked tile centre
         panX = mx * W * ts - ox;
@@ -957,7 +957,7 @@ function initMinimap() {
 function updateMinimapSize() {
     if (!minimapCanvas) return;
     const { width: W, height: H } = params;
-    const aspect     = W / H;
+    const aspect = W / H;
     const MAX_W = 160, MAX_H = 100;
     let mw, mh;
     if (aspect >= MAX_W / MAX_H) {
@@ -967,9 +967,9 @@ function updateMinimapSize() {
         mh = MAX_H;
         mw = Math.max(4, Math.round(MAX_H * aspect));
     }
-    minimapCanvas.width  = mw;
+    minimapCanvas.width = mw;
     minimapCanvas.height = mh;
-    minimapCanvas.style.width  = mw + 'px';
+    minimapCanvas.style.width = mw + 'px';
     minimapCanvas.style.height = mh + 'px';
     minimapCtx = minimapCanvas.getContext('2d');
     redrawMinimap();
@@ -985,8 +985,8 @@ function updateMinimapSize() {
 function redrawMinimap() {
     if (!minimapCtx || !minimapCanvas) return;
     const { width: W, height: H, tileSize: ts, offsetX: ox, offsetZ: oz } = params;
-    const mw    = minimapCanvas.width;
-    const mh    = minimapCanvas.height;
+    const mw = minimapCanvas.width;
+    const mh = minimapCanvas.height;
     const cellX = mw / W;
     const cellY = mh / H;
 
@@ -1029,11 +1029,11 @@ function redrawMinimap() {
         // minimap pixels
         const px0 = tx0 * cellX;
         const py0 = tz0 * cellY;
-        const pw  = (tx1 - tx0) * cellX;
-        const ph  = (tz1 - tz0) * cellY;
+        const pw = (tx1 - tx0) * cellX;
+        const ph = (tz1 - tz0) * cellY;
 
         minimapCtx.strokeStyle = '#f0a030';
-        minimapCtx.lineWidth   = 1.5;
+        minimapCtx.lineWidth = 1.5;
         minimapCtx.strokeRect(
             Math.round(px0) + 0.5,
             Math.round(py0) + 0.5,
@@ -1060,8 +1060,8 @@ function initTooltips() {
 
     document.body.addEventListener('mousemove', e => {
         if (tip.style.display === 'none') return;
-        tip.style.left = Math.min(e.clientX + 14, window.innerWidth  - 240) + 'px';
-        tip.style.top  = Math.min(e.clientY + 18, window.innerHeight -  52) + 'px';
+        tip.style.left = Math.min(e.clientX + 14, window.innerWidth - 240) + 'px';
+        tip.style.top = Math.min(e.clientY + 18, window.innerHeight - 52) + 'px';
     });
 }
 

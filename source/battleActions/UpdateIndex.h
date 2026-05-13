@@ -1,6 +1,6 @@
 #pragma once
 #include <nds.h>
-//if you  think this should have a cpp file let me know 
+// if you  think this should have a cpp file let me know
 
 struct UpdateIndex
 {

@@ -7,10 +7,12 @@ from typing import Optional
 
 MAX_BG_SLOTS = 4
 
+
 @dataclass
 class Selection:
     label: str
     target: str
+
 
 @dataclass
 class DialogueLine:
@@ -18,11 +20,12 @@ class DialogueLine:
     label: str
     character: str
     text: str
-    bg: str             
-    bg_index: int = 0   
+    bg: str
+    bg_index: int = 0
     selections: list[Selection] = field(default_factory=list)
     prev_index: Optional[int] = None
     next_index: Optional[int] = None
+
 
 @dataclass
 class Interaction:
@@ -30,11 +33,13 @@ class Interaction:
     description: str
     lines: list[DialogueLine] = field(default_factory=list)
     label_map: dict[str, int] = field(default_factory=dict)
-    bg_order: list[str] = field(default_factory=list)   
+    bg_order: list[str] = field(default_factory=list)
+
 
 class ParseError(Exception):
     def __init__(self, line_num: int, msg: str):
         super().__init__(f"Line {line_num}: {msg}")
+
 
 class DialogueParser:
     def __init__(self, src: str):
@@ -70,9 +75,12 @@ class DialogueParser:
         counter = 0
 
         def resolve_bg(char, override):
-            if override: bg = override
-            elif char in local_bg: bg = local_bg[char]
-            elif char in self.scene_bg_defaults: bg = self.scene_bg_defaults[char]
+            if override:
+                bg = override
+            elif char in local_bg:
+                bg = local_bg[char]
+            elif char in self.scene_bg_defaults:
+                bg = self.scene_bg_defaults[char]
             else:
                 safe = re.sub(r"[^A-Za-z0-9_]", "", char)
                 bg = f"bg{safe}"
@@ -85,20 +93,20 @@ class DialogueParser:
             lbl = f"line_{auto_idx}"
             auto_idx += 1
             return lbl
-        
+
         def split_line(text):
             tokens = text.split(" ")
             currentLine = ""
             finalLine = ""
             for token in tokens:
                 lineSize = len(currentLine) + len(token)
-                if (lineSize > 32):                    
-                    finalLine = finalLine + currentLine + (32 - len(currentLine))*" "
+                if lineSize > 32:
+                    finalLine = finalLine + currentLine + (32 - len(currentLine)) * " "
                     currentLine = token + " "
                 else:
                     currentLine = currentLine + token + " "
             finalLine = finalLine + currentLine
-            if (len(finalLine) == 0):
+            if len(finalLine) == 0:
                 return text
             return finalLine
 
@@ -108,23 +116,34 @@ class DialogueParser:
             pending_label = None
             idx = len(interaction.lines)
             if label in interaction.label_map:
-                raise ParseError(0, f"Duplicate label '@{label}' in '{interaction.name}'")
+                raise ParseError(
+                    0, f"Duplicate label '@{label}' in '{interaction.name}'"
+                )
             bg_index = interaction.bg_order.index(bg)
             text = split_line(text)
-            dl = DialogueLine(index=idx, label=label, character=char,
-                              text=text, bg=bg, bg_index=bg_index)            
+            dl = DialogueLine(
+                index=idx,
+                label=label,
+                character=char,
+                text=text,
+                bg=bg,
+                bg_index=bg_index,
+            )
             interaction.lines.append(dl)
             interaction.label_map[label] = idx
             return dl
 
         while True:
             pn, ps = self._peek()
-            if ps is None: break
-            if re.match(r"^\[interaction\s*:", ps, re.IGNORECASE): break
+            if ps is None:
+                break
+            if re.match(r"^\[interaction\s*:", ps, re.IGNORECASE):
+                break
 
             n, s = self._raw_line()
 
-            if re.match(r"^==.*==$", s): continue
+            if re.match(r"^==.*==$", s):
+                continue
             if m := re.match(r"^@bg\s+(\S+)\s+(.+)$", s):
                 local_bg[m.group(1)] = m.group(2)
                 continue
@@ -145,14 +164,21 @@ class DialogueParser:
                 host = interaction.lines[-1]
                 while True:
                     _, ps2 = self._peek()
-                    if ps2 is None: break
-                    if re.match(r"^\[interaction\s*:", ps2, re.IGNORECASE): break
+                    if ps2 is None:
+                        break
+                    if re.match(r"^\[interaction\s*:", ps2, re.IGNORECASE):
+                        break
                     if cm := re.match(r"^>\s*(.+?)\s*->\s*@(\w+)$", ps2):
                         self._raw_line()
-                        host.selections.append(Selection(label=cm.group(1), target=cm.group(2)))
-                    else: break
+                        host.selections.append(
+                            Selection(label=cm.group(1), target=cm.group(2))
+                        )
+                    else:
+                        break
                 if not host.selections:
-                    raise ParseError(n, "[choice] block has no '> Option -> @label' entries")
+                    raise ParseError(
+                        n, "[choice] block has no '> Option -> @label' entries"
+                    )
                 host.next_index = None
                 continue
 
@@ -162,47 +188,62 @@ class DialogueParser:
                 bg = resolve_bg(char, m.group(2))
                 add_line(char, m.group(3), bg)
                 continue
-            
+
             raise ParseError(n, f"Unrecognised syntax: '{s}'")
 
         lines = interaction.lines
         for i, dl in enumerate(lines):
-            if i > 0: dl.prev_index = i - 1
-            if (dialogue_ends.get(i) == True):
+            if i > 0:
+                dl.prev_index = i - 1
+            if dialogue_ends.get(i) == True:
                 dl.next_index = None
             elif not dl.selections and dl.next_index is None:
                 if i + 1 < len(lines):
                     dl.next_index = i + 1
 
-        for (fi, tgt) in pending_jumps:
+        for fi, tgt in pending_jumps:
             if tgt not in interaction.label_map:
-                raise ParseError(0, f"[jump] unknown label '@{tgt}' in '{interaction.name}'")
+                raise ParseError(
+                    0, f"[jump] unknown label '@{tgt}' in '{interaction.name}'"
+                )
             lines[fi].next_index = interaction.label_map[tgt]
 
         for dl in lines:
             for sel in dl.selections:
                 if sel.target not in interaction.label_map:
-                    raise ParseError(0, f"Choice '{sel.label}' -> unknown '@{sel.target}' in '{interaction.name}'")
+                    raise ParseError(
+                        0,
+                        f"Choice '{sel.label}' -> unknown '@{sel.target}' in '{interaction.name}'",
+                    )
 
     def parse(self) -> list[Interaction]:
         while True:
             n, s = self._raw_line()
-            if s is None: break
-            if re.match(r"^==.*==$", s): continue
+            if s is None:
+                break
+            if re.match(r"^==.*==$", s):
+                continue
             if m := re.match(r"^@bg\s+(\S+)\s+(.+)$", s):
                 self.scene_bg_defaults[m.group(1)] = m.group(2)
                 continue
-            if m := re.match(r"^\[interaction\s*:\s*(\w+)(?:\s*\|\s*(.+))?\]$", s, re.IGNORECASE):
-                ia = Interaction(name=m.group(1), description=(m.group(2) or "").strip())
+            if m := re.match(
+                r"^\[interaction\s*:\s*(\w+)(?:\s*\|\s*(.+))?\]$", s, re.IGNORECASE
+            ):
+                ia = Interaction(
+                    name=m.group(1), description=(m.group(2) or "").strip()
+                )
                 self._parse_interaction(ia)
                 self.interactions.append(ia)
                 continue
-            raise ParseError(n, f"Expected [interaction: name] or @bg directive, got: '{s}'")
+            raise ParseError(
+                n, f"Expected [interaction: name] or @bg directive, got: '{s}'"
+            )
         # sort interactions, and each interaction's bg_order for consistent code output
         self.interactions.sort()
         for ia in self.interactions:
             ia.bg_order.sort()
         return self.interactions
+
 
 class CodeGenerator:
     def __init__(self, interactions: list[Interaction], scene_name: str):
@@ -210,7 +251,8 @@ class CodeGenerator:
         self.scene = scene_name
 
     def _ptr(self, ia: Interaction, idx: Optional[int]) -> str:
-        if idx is None: return "NULL"
+        if idx is None:
+            return "NULL"
         return f"&{self.scene}_{ia.name}_lines[{idx}]"
 
     def _esc(self, s: str) -> str:
@@ -231,13 +273,13 @@ class CodeGenerator:
             "",
             f"extern int {s}_dialogue_bg_slot;",
             "",
-            f"void  {s}_unload();"
+            f"void  {s}_unload();",
         ]
         out.append("")
 
         for ia in self.interactions:
             vp = self._vp(ia)
-            n  = len(ia.lines)
+            n = len(ia.lines)
             nb = len(ia.bg_order)
             desc = f" — {ia.description}" if ia.description else ""
 
@@ -253,7 +295,9 @@ class CodeGenerator:
             ]
             for dl in ia.lines:
                 if not dl.label.startswith("line_"):
-                    out.append(f"inline dialogue* {vp}_{dl.label}() {{ return &{vp}_lines[{dl.index}]; }}")
+                    out.append(
+                        f"inline dialogue* {vp}_{dl.label}() {{ return &{vp}_lines[{dl.index}]; }}"
+                    )
             out.append("")
 
         out += [f"inline void {s}_init_all() {{"]
@@ -267,20 +311,20 @@ class CodeGenerator:
         out = []
         s = self.scene
         out += [
-            f'#include <nds.h>',
+            f"#include <nds.h>",
             f'#include "{s}_dialogue.h"',
             "",
             f"int {s}_dialogue_bg_slot = 0;",
             "",
-            "// background import"
+            "// background import",
         ]
         bgSet = set()
-        for ia in self.interactions:  
+        for ia in self.interactions:
             for i, bg in enumerate(ia.bg_order):
                 bgSet.add(f'#include "{ia.bg_order[i] if ia.bg_order else "myBg"}.h"')
         out.extend(sorted(bgSet))
         out.append("")
-        
+
         out += [
             f"void {s}_unload() {{",
             f"    bgHide({s}_dialogue_bg_slot);",
@@ -288,10 +332,10 @@ class CodeGenerator:
             "",
         ]
 
-        for ia in self.interactions:        
-            vp  = self._vp(ia)
-            n   = len(ia.lines)
-            nb  = len(ia.bg_order)
+        for ia in self.interactions:
+            vp = self._vp(ia)
+            n = len(ia.lines)
+            nb = len(ia.bg_order)
 
             bg_name_entries = ", ".join(f'"{bg}"' for bg in ia.bg_order)
             out.append(f"const char* {vp}_bg_names[{nb}] = {{ {bg_name_entries} }};")
@@ -307,50 +351,66 @@ class CodeGenerator:
                 f"        {vp}_bg_loaders[bgIndex]();",
                 f"}}",
                 "",
-                f"void {vp}_load() {{"
+                f"void {vp}_load() {{",
             ]
-            
-            for i, bg in enumerate(ia.bg_order):
-                nm = ia.bg_order[i] if ia.bg_order else 'myBg'
-                out += [
-                f"    {vp}_bg_loaders[{i}] = [](){{",
-                f"        dmaCopy({nm}Tiles, bgGetGfxPtr({s}_dialogue_bg_slot), {nm}TilesLen);",
-                f"        dmaCopy({nm}Map, bgGetMapPtr({s}_dialogue_bg_slot), {nm}MapLen);",
-                f"        vramSetBankH(VRAM_H_LCD);",
-                f"        dmaCopy({nm}Pal, &VRAM_H_EXT_PALETTE[0][0], {nm}PalLen);",
-                f"        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);",
-                f"        bgShow({s}_dialogue_bg_slot);",
-                f"    }};"
-            ]
-            out += [f"    {vp}_init();", f"}}", "", f"dialogue {vp}_lines[{n}];", "", f"void {vp}_init() {{"]
 
-            sel_var_map: dict[tuple[int,int], str] = {}
+            for i, bg in enumerate(ia.bg_order):
+                nm = ia.bg_order[i] if ia.bg_order else "myBg"
+                out += [
+                    f"    {vp}_bg_loaders[{i}] = [](){{",
+                    f"        dmaCopy({nm}Tiles, bgGetGfxPtr({s}_dialogue_bg_slot), {nm}TilesLen);",
+                    f"        dmaCopy({nm}Map, bgGetMapPtr({s}_dialogue_bg_slot), {nm}MapLen);",
+                    f"        vramSetBankH(VRAM_H_LCD);",
+                    f"        dmaCopy({nm}Pal, &VRAM_H_EXT_PALETTE[0][0], {nm}PalLen);",
+                    f"        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);",
+                    f"        bgShow({s}_dialogue_bg_slot);",
+                    f"    }};",
+                ]
+            out += [
+                f"    {vp}_init();",
+                f"}}",
+                "",
+                f"dialogue {vp}_lines[{n}];",
+                "",
+                f"void {vp}_init() {{",
+            ]
+
+            sel_var_map: dict[tuple[int, int], str] = {}
             any_sel = False
             for dl in ia.lines:
                 for si, sel in enumerate(dl.selections):
                     var = f"{vp}_sel_{dl.index}_{si}"
                     sel_var_map[(dl.index, si)] = var
                     target_idx = ia.label_map[sel.target]
-                    out.append(f'    dialogueSelection {var} = {{ "{self._esc(sel.label)}", false, {self._ptr(ia, target_idx)} }};')
+                    out.append(
+                        f'    dialogueSelection {var} = {{ "{self._esc(sel.label)}", false, {self._ptr(ia, target_idx)} }};'
+                    )
                     any_sel = True
-            if any_sel: out.append("")
+            if any_sel:
+                out.append("")
 
             for dl in ia.lines:
                 prev_ptr = self._ptr(ia, dl.prev_index)
                 next_ptr = self._ptr(ia, dl.next_index)
-                sel_block = f"{{ {', '.join(sel_var_map[(dl.index, si)] for si in range(len(dl.selections)))} }}" if dl.selections else "{}"
-                
+                sel_block = (
+                    f"{{ {', '.join(sel_var_map[(dl.index, si)] for si in range(len(dl.selections)))} }}"
+                    if dl.selections
+                    else "{}"
+                )
+
                 out.append(
                     f'    {vp}_lines[{dl.index}] = {{ "{self._esc(dl.character)}", "{self._esc(dl.text)}", '
-                    f'{dl.bg_index}, {prev_ptr}, {next_ptr}, {sel_block} }};'
+                    f"{dl.bg_index}, {prev_ptr}, {next_ptr}, {sel_block} }};"
                 )
 
             out += ["}", ""]
         return "\n".join(out)
 
+
 def convert(input_file, output_base, config):
     try:
-        with open(input_file, "r", encoding="utf-8") as f: src = f.read()
+        with open(input_file, "r", encoding="utf-8") as f:
+            src = f.read()
     except FileNotFoundError:
         print(f"ERROR: File not found: {input_file}", file=sys.stderr)
         sys.exit(1)
@@ -371,7 +431,7 @@ def convert(input_file, output_base, config):
 
     gen = CodeGenerator(interactions, scene_name)
     cpp = gen.generate_cpp()
-    h   = gen.generate_h()
+    h = gen.generate_h()
 
     if config.get("stdout"):
         print("// ===== .h =====")
@@ -379,11 +439,14 @@ def convert(input_file, output_base, config):
         print("// ===== .cpp =====")
         print(cpp)
     else:
-        h_path   = f"{base}_dialogue.h"
+        h_path = f"{base}_dialogue.h"
         cpp_path = f"{base}_dialogue.cpp"
-        with open(h_path,   "w", encoding="utf-8") as f: f.write(h)
-        with open(cpp_path, "w", encoding="utf-8") as f: f.write(cpp)
+        with open(h_path, "w", encoding="utf-8") as f:
+            f.write(h)
+        with open(cpp_path, "w", encoding="utf-8") as f:
+            f.write(cpp)
         print(f"Written: {h_path} / {cpp_path}")
+
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

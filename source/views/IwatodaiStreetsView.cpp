@@ -42,7 +42,8 @@
 int streetsCharacterTextureId;
 iwatodai_streets_Environment iwatodaiStreetsEnv;
 
-void IwatodaiStreetsView::Init() {
+void IwatodaiStreetsView::Init()
+{
     videoSetMode(MODE_0_3D);
     videoSetModeSub(MODE_0_2D);
 
@@ -82,8 +83,7 @@ void IwatodaiStreetsView::Init() {
         IWATODAI_STREETS_MAP_WIDTH, IWATODAI_STREETS_MAP_HEIGHT, &iwatodai_streets_map[0][0],
         tileSize, worldOffsetX, worldOffsetZ, characterSize,
         speed, angleIncrement, distance, lookAhead,
-        angle, characterTranslate, characterFacingAngle
-    );
+        angle, characterTranslate, characterFacingAngle);
 
     // setup music
     musicCtrl.init(IWATODAI_STREETS_MUSIC, 0.0f, -1.0f);
@@ -93,7 +93,7 @@ void IwatodaiStreetsView::Init() {
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {
+    const unsigned int *bitmaps[IWATODAI_STREETS_TEX_COUNT] = {
         f007_009_07Bitmap,
         f007_009_16Bitmap,
         f007_009_30Bitmap,
@@ -127,7 +127,8 @@ void IwatodaiStreetsView::Init() {
     pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 }
 
-ViewState IwatodaiStreetsView::Update() {
+ViewState IwatodaiStreetsView::Update()
+{
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     bgUpdate();
@@ -136,20 +137,26 @@ ViewState IwatodaiStreetsView::Update() {
     u32 keys = keysHeld();
     u32 pressed = keysDown();
 
-    if (pressed & KEY_START) {
+    if (pressed & KEY_START)
+    {
         isPauseMenuActive = !isPauseMenuActive;
     }
 
-    if (isPauseMenuActive) {
+    if (isPauseMenuActive)
+    {
         ViewState menuResult = pauseMenuCmpt.update(pressed);
-        if (menuResult != ViewState::KEEP_CURRENT) {
+        if (menuResult != ViewState::KEEP_CURRENT)
+        {
             musicCtrl.pause();
             return menuResult;
         }
-    } else {
+    }
+    else
+    {
         camPos = playerCtrl->update(keys);
 
-        if (playerCtrl->isTileAt() == TileType::PREV_SCENE) {
+        if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
+        {
             musicCtrl.pause();
             return ViewState::IWATODAI_DORM;
         }
@@ -157,30 +164,30 @@ ViewState IwatodaiStreetsView::Update() {
         gluLookAt(
             camPos.cameraX, camPos.cameraY, camPos.cameraZ,
             camPos.targetX, camPos.targetY, camPos.targetZ,
-            camPos.upX,     camPos.upY,     camPos.upZ
-        );
+            camPos.upX, camPos.upY, camPos.upZ);
 
         glPushMatrix();
-            iwatodaiStreetsEnv.draw();
+        iwatodaiStreetsEnv.draw();
         glPopMatrix(1);
 
         glPushMatrix();
-            characterPosition charPos = playerCtrl->isCharacterAt();
-            glTranslatef(charPos.x, 0.1, charPos.z);
-            glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
-            characterAnimationCtrl.render();
+        characterPosition charPos = playerCtrl->isCharacterAt();
+        glTranslatef(charPos.x, 0.1, charPos.z);
+        glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
+        characterAnimationCtrl.render();
         glPopMatrix(1);
 
         glFlush(0);
 
         // print coordinates (64x64 area from 0,0 to 64,64)
-        if (enableDebugPrint) {
+        if (enableDebugPrint)
+        {
             iprintf("\x1b[21;0Htile(x,z): %d, %d",
-                (int)((charPos.x + worldOffsetX) / tileSize),
-                (int)((charPos.z + worldOffsetZ) / tileSize));
+                    (int)((charPos.x + worldOffsetX) / tileSize),
+                    (int)((charPos.z + worldOffsetZ) / tileSize));
             iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
-                (int)(charPos.x * 100),
-                (int)(charPos.z * 100));
+                    (int)(charPos.x * 100),
+                    (int)(charPos.z * 100));
             iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
     }
@@ -191,7 +198,8 @@ ViewState IwatodaiStreetsView::Update() {
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiStreetsView::Cleanup() {
+void IwatodaiStreetsView::Cleanup()
+{
     setBrightness(3, 0);
     consoleClear();
 

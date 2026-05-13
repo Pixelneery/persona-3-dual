@@ -3,15 +3,17 @@
 #include "core/globals.h"
 #include "IntroVideoView.h"
 
-
-void IntroVideoView::Init() {
+void IntroVideoView::Init()
+{
     videoCtrl.init(filename, 15.0f, ViewState::INTRO, true);
 }
 
-ViewState IntroVideoView::Update() {
-    return videoCtrl.update(); 
+ViewState IntroVideoView::Update()
+{
+    return videoCtrl.update();
 }
 
-void IntroVideoView::Cleanup() {
+void IntroVideoView::Cleanup()
+{
     videoCtrl.cleanup();
 }

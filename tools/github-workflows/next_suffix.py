@@ -11,6 +11,7 @@ Examples:
     python3 tools/next_suffix.py az  →  ba
     python3 tools/next_suffix.py zz  →  aaa
 """
+
 import sys
 
 

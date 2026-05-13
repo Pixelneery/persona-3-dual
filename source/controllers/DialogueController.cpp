@@ -4,22 +4,25 @@
 
 DialogueController::DialogueController() {}
 
-void DialogueController::start(dialogue* firstLine) {
-    current        = firstLine;
-    optionCount    = 0;
+void DialogueController::start(dialogue *firstLine)
+{
+    current = firstLine;
+    optionCount = 0;
     selectedOption = 0;
-    active         = true;
-    isDisplayed    = false;
-    doRenderOptions= false;
-    animIndex      = 0;
-    animWait       = 0;
-    animDone       = false;
-    prevKeys       = 0;
+    active = true;
+    isDisplayed = false;
+    doRenderOptions = false;
+    animIndex = 0;
+    animWait = 0;
+    animDone = false;
+    prevKeys = 0;
     consoleClear();
 }
 
-void DialogueController::update(u32 keys) {
-    if (!active || current == NULL) {
+void DialogueController::update(u32 keys)
+{
+    if (!active || current == NULL)
+    {
         active = false;
         return;
     }
@@ -28,69 +31,99 @@ void DialogueController::update(u32 keys) {
     prevKeys = keys;
 
     // animate in the dialogue
-    if (!isDisplayed) {
+    if (!isDisplayed)
+    {
         // swap in the bg for this line via the loader callback
         if (bgLoader)
             bgLoader(current->imageId);
 
-        if (!animDone) {
-            if (animIndex <= (int)current->text.length()) {
+        if (!animDone)
+        {
+            if (animIndex <= (int)current->text.length())
+            {
                 iprintf("\x1b[12;0H%s \n",
-                    current->text.substr(0, animIndex).c_str());
+                        current->text.substr(0, animIndex).c_str());
                 animIndex++;
-            } else {
-                animDone        = true;
-                isDisplayed     = true;
-                optionCount     = current->selections.size();
+            }
+            else
+            {
+                animDone = true;
+                isDisplayed = true;
+                optionCount = current->selections.size();
                 doRenderOptions = (optionCount > 0);
             }
             return;
         }
     }
 
-    if (doRenderOptions) {
+    if (doRenderOptions)
+    {
         renderOptions();
         doRenderOptions = false;
     }
 
-    if (keys & KEY_START) {
+    if (keys & KEY_START)
+    {
         exit();
         return;
     }
 
-    if (optionCount > 0) {
+    if (optionCount > 0)
+    {
         // selection dialogue
-        if (pressed & KEY_DOWN) {
+        if (pressed & KEY_DOWN)
+        {
             selectedOption = (selectedOption + 1) % optionCount;
             doRenderOptions = true;
-        } else if (pressed & KEY_UP) {
+        }
+        else if (pressed & KEY_UP)
+        {
             selectedOption = (selectedOption + optionCount - 1) % optionCount;
             doRenderOptions = true;
-        } else if (pressed & KEY_A) {
-            current        = current->selections[selectedOption].next;
-            selectedOption = 0;
-            isDisplayed    = false;
-            animIndex      = 0;
-            animDone       = false;
-            consoleClear();
-            if (current == NULL) { exit(); return; }
         }
-    } else {
+        else if (pressed & KEY_A)
+        {
+            current = current->selections[selectedOption].next;
+            selectedOption = 0;
+            isDisplayed = false;
+            animIndex = 0;
+            animDone = false;
+            consoleClear();
+            if (current == NULL)
+            {
+                exit();
+                return;
+            }
+        }
+    }
+    else
+    {
         // linear dialogue
-        if (pressed & KEY_A) {
-            current     = current->next;
+        if (pressed & KEY_A)
+        {
+            current = current->next;
             isDisplayed = false;
-            animIndex   = 0;
-            animDone    = false;
+            animIndex = 0;
+            animDone = false;
             consoleClear();
-            if (current == NULL) { exit(); return; }
-        } else if (pressed & KEY_B) {
-            current     = current->prev;
+            if (current == NULL)
+            {
+                exit();
+                return;
+            }
+        }
+        else if (pressed & KEY_B)
+        {
+            current = current->prev;
             isDisplayed = false;
-            animIndex   = 0;
-            animDone    = false;
+            animIndex = 0;
+            animDone = false;
             consoleClear();
-            if (current == NULL) { exit(); return; }
+            if (current == NULL)
+            {
+                exit();
+                return;
+            }
         }
     }
 }
@@ -101,12 +134,14 @@ void DialogueController::exit()
     active = false;
 }
 
-void DialogueController::renderOptions() {
+void DialogueController::renderOptions()
+{
     consoleClear();
     iprintf("\x1b[12;0H%s\n", current->text.c_str());
-    for (int i = 0; i < optionCount; i++) {
+    for (int i = 0; i < optionCount; i++)
+    {
         iprintf("%c %s\n",
-            i == selectedOption ? '>' : ' ',
-            current->selections[i].text.c_str());
+                i == selectedOption ? '>' : ' ',
+                current->selections[i].text.c_str());
     }
 }

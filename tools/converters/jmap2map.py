@@ -27,9 +27,9 @@ def _load_tile_map():
     ]
     for json_path in candidates:
         if json_path.exists():
-            with json_path.open('r') as f:
+            with json_path.open("r") as f:
                 data = json.load(f)
-            return data['TILE_MAP']
+            return data["TILE_MAP"]
     raise FileNotFoundError(
         f"Could not find tile_map.json. Searched: {[str(p) for p in candidates]}"
     )
@@ -38,17 +38,17 @@ def _load_tile_map():
 def parse_jmap(path_obj, tile_map):
     rows = []
     audio = None
-    with path_obj.open('r') as f:
+    with path_obj.open("r") as f:
         for raw in f:
-            line = raw.split('#')[0].strip()
-            comment = raw.partition('#')[2].strip()
-            if comment.startswith('@audio'):
+            line = raw.split("#")[0].strip()
+            comment = raw.partition("#")[2].strip()
+            if comment.startswith("@audio"):
                 parts = comment.split(None, 1)
                 if len(parts) == 2:
                     audio = parts[1].strip()
             if not line:
                 continue
-            tokens = [t.strip() for t in line.split(',') if t.strip()]
+            tokens = [t.strip() for t in line.split(",") if t.strip()]
             if not tokens:
                 continue
             row = []
@@ -73,48 +73,49 @@ def validate(rows, path_obj):
 
 
 def to_header(rows, height, width, stem, audio):
-    guard = re.sub(r'[^A-Z0-9]', '_', stem.upper()) + '_H'
-    define_prefix = re.sub(r'[^A-Z0-9]', '_', stem.upper())
+    guard = re.sub(r"[^A-Z0-9]", "_", stem.upper()) + "_H"
+    define_prefix = re.sub(r"[^A-Z0-9]", "_", stem.upper())
 
     lines = []
-    lines.append(f'// Auto-generated from {stem}.jmap - do not edit by hand')
-    lines.append('#include <stdint.h>')
-    lines.append('')
+    lines.append(f"// Auto-generated from {stem}.jmap - do not edit by hand")
+    lines.append("#include <stdint.h>")
+    lines.append("")
     if audio:
         lines.append(f'#define {define_prefix}_MUSIC "{audio}"')
-        lines.append('')
-    lines.append(f'#ifndef {guard}')
-    lines.append(f'#define {guard}')
-    lines.append('')
-    lines.append(f'#define {define_prefix}_MAP_WIDTH  {width}')
-    lines.append(f'#define {define_prefix}_MAP_HEIGHT {height}')
-    lines.append('')
+        lines.append("")
+    lines.append(f"#ifndef {guard}")
+    lines.append(f"#define {guard}")
+    lines.append("")
+    lines.append(f"#define {define_prefix}_MAP_WIDTH  {width}")
+    lines.append(f"#define {define_prefix}_MAP_HEIGHT {height}")
+    lines.append("")
     lines.append(
-        f'static const uint8_t {stem}_map'
-        f'[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{'
+        f"static const uint8_t {stem}_map"
+        f"[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{"
     )
     for r, row in enumerate(rows):
-        comma = ',' if r < height - 1 else ''
-        values = ', '.join(str(v) for v in row)
-        lines.append(f'    {{{values}}}{comma}')
-    lines.append('};')
-    lines.append('')
-    lines.append(f'#endif')
-    return '\n'.join(lines) + '\n'
+        comma = "," if r < height - 1 else ""
+        values = ", ".join(str(v) for v in row)
+        lines.append(f"    {{{values}}}{comma}")
+    lines.append("};")
+    lines.append("")
+    lines.append(f"#endif")
+    return "\n".join(lines) + "\n"
 
 
 # Entry point for build_asset.py dispatch
+
 
 def convert(input_file: str, output_file: str, config: dict) -> None:
     """build_asset.py-compatible entry point."""
     tile_map = _load_tile_map()
 
     jmap_path = Path(input_file)
-    out_path  = Path(output_file)
+    out_path = Path(output_file)
 
     # If the caller passed a directory, derive the .h filename automatically
     if out_path.is_dir() or (not out_path.suffix):
-        out_path = out_path / (jmap_path.stem + '.h')
+        out_path = out_path / (jmap_path.stem + ".h")
 
     stem = jmap_path.stem
 
@@ -125,21 +126,22 @@ def convert(input_file: str, output_file: str, config: dict) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(header)
 
-    print(f'Written: {out_path.name} / ({width}x{height})')
+    print(f"Written: {out_path.name} / ({width}x{height})")
 
 
 # Standalone CLI
 
+
 def main():
     parser = argparse.ArgumentParser(
-        description='Convert a .jmap collision map to a C header file.'
+        description="Convert a .jmap collision map to a C header file."
     )
-    parser.add_argument('input',  help='Input .jmap file')
-    parser.add_argument('output', help='Output .h file (or directory)')
+    parser.add_argument("input", help="Input .jmap file")
+    parser.add_argument("output", help="Output .h file (or directory)")
     args = parser.parse_args()
 
     convert(args.input, args.output, {})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

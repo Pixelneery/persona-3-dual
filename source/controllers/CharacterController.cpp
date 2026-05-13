@@ -24,11 +24,11 @@ bool CharacterController::isTileWalkable(float worldX, float worldZ)
     int tileMinZ = (int)((worldZ - distanceToEdge + worldOffsetZ) / tileSize);
     int tileMaxZ = (int)((worldZ + distanceToEdge + worldOffsetZ) / tileSize);
 
-    for(int z = tileMinZ; z <= tileMaxZ; z++)
+    for (int z = tileMinZ; z <= tileMaxZ; z++)
     {
-        for(int x = tileMinX; x <= tileMaxX; x++)
+        for (int x = tileMinX; x <= tileMaxX; x++)
         {
-            if(isTileAt(x, z) == TileType::COLLISION)
+            if (isTileAt(x, z) == TileType::COLLISION)
             {
                 return false;
             }
@@ -113,17 +113,21 @@ cameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f && deltaZ != 0.0f)
     {
         // set walking animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER)) {
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER))
+        {
             characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER, true);
         }
 
         // normalize diagonal movement to prevent faster speed
-        const float invSqrt2 = 0.707106781187;  // 1/sqrt(2)
+        const float invSqrt2 = 0.707106781187; // 1/sqrt(2)
         deltaX *= invSqrt2;
         deltaZ *= invSqrt2;
-    } else {
+    }
+    else
+    {
         // set idle animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER)) {
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER))
+        {
             characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER, true);
         }
     }

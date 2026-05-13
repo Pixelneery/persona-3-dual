@@ -2,7 +2,7 @@
 
 # Persona 3 Dual — Asset Pipeline (OUTDATED)
 
-> Everything in `assets/` is source. Everything in `source/` or `nitrofiles/` are generated.  
+> Everything in `assets/` is source. Everything in `source/` or `nitrofiles/` are generated.
 > **Never hand-edit generated files** — run `make assets` instead.
 
 ---

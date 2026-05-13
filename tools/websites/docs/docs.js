@@ -67,7 +67,7 @@ async function loadIndex() {
 function docCard(doc) {
     // ?doc= is relative — just the filename, resolved from /docs/
     const href = `?doc=${encodeURIComponent(doc.file)}`;
-    const tag  = doc.tag ? `<span class="card-tag">${escHtml(doc.tag)}</span>` : '';
+    const tag = doc.tag ? `<span class="card-tag">${escHtml(doc.tag)}</span>` : '';
 
     return `
         <a class="card" href="${href}">
@@ -108,8 +108,8 @@ async function loadDoc(file) {
 
     // Pull title from first h1 for the browser tab
     const titleMatch = text.match(/^#\s+(.+)/m);
-    const pageTitle  = titleMatch ? titleMatch[1].replace(/[*_`]/g, '') : file;
-    document.title   = `${pageTitle} — P3 Dual`;
+    const pageTitle = titleMatch ? titleMatch[1].replace(/[*_`]/g, '') : file;
+    document.title = `${pageTitle} — P3 Dual`;
 
     const html = marked.parse(text);
 

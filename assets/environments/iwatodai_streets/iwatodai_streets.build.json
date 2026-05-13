@@ -6,6 +6,10 @@
     "skip_grit": false,
     "grit_flags": "-gTT -gB16 -gb -ftb",
     "rgba": true,
-    "color": [255, 255, 255],
+    "color": [
+        255,
+        255,
+        255
+    ],
     "max_tex_size": 64
 }
