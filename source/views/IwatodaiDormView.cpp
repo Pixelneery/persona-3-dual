@@ -20,6 +20,12 @@
 // sprites
 #include "moon-0.h"
 #include "tuesday.h"
+#include "number-4.h"
+#include "number-7.h"
+#include "afternnoon-0-0.h"
+#include "afternnoon-1-0.h"
+#include "afternnoon-2-0.h"
+#include "skills-level.h"
 
 // TODO: move to header
 int characterTextureId;
@@ -88,7 +94,20 @@ void IwatodaiDormView::Init()
 
     // setup sprites
 	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, 20};  // moon
-    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 15, 66, 143}; // day of the week
+    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 82, 143}; // day of the week
+    sprites[2] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, -11, 140}; // number 4
+    sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 25, 140}; // number 7
+    sprites[4] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, 73, -12}; // afternoon (0)
+    sprites[5] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4, 137, -12}; // afternoon (1)
+    sprites[6] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 5, 217, -17}; // afternoon (2)
+    sprites[7] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 6, 86, 77}; // skills level
+
+    // NOTE: we can have max:
+    // 1 moon
+    // 1 day of the week
+    // 4 numbers
+    // 4 times
+    // 18 skill progress items (all same sprite)
 
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
 	oamInit(&oamSub, SpriteMapping_1D_128, true);
@@ -96,14 +115,31 @@ void IwatodaiDormView::Init()
 	// allocating space for sprite graphics
 	sprites[0].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
     sprites[1].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[2].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[3].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[4].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    sprites[5].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    sprites[6].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[7].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
 
     // copy sprites
 	dmaCopy(moon_0Tiles, sprites[0].gfx, moon_0TilesLen);
     dmaCopy(tuesdayTiles, sprites[1].gfx, tuesdayTilesLen);
+    dmaCopy(number_4Tiles, sprites[2].gfx, number_4TilesLen);
+    dmaCopy(number_7Tiles, sprites[3].gfx, number_7TilesLen);
+    dmaCopy(afternnoon_0_0Tiles, sprites[4].gfx, afternnoon_0_0TilesLen);
+    dmaCopy(afternnoon_1_0Tiles, sprites[5].gfx, afternnoon_1_0TilesLen);
+    dmaCopy(afternnoon_2_0Tiles, sprites[6].gfx, afternnoon_2_0TilesLen);
+    dmaCopy(skills_levelTiles, sprites[7].gfx, skills_levelTilesLen);
 
     vramSetBankI(VRAM_I_LCD);
-    dmaCopy(moon_0Pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moon_0PalLen);
-    dmaCopy(tuesdayPal, &VRAM_I_EXT_SPR_PALETTE[1][0], tuesdayPalLen);
+    dmaCopy(moon_0Pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moon_0PalLen);    // moon palette
+    dmaCopy(tuesdayPal, &VRAM_I_EXT_SPR_PALETTE[1][0], tuesdayPalLen);  // day of the week palette
+    dmaCopy(number_4Pal, &VRAM_I_EXT_SPR_PALETTE[2][0], number_4PalLen);                // numbers palette
+    dmaCopy(afternnoon_0_0Pal, &VRAM_I_EXT_SPR_PALETTE[3][0], afternnoon_0_0PalLen);    // time palette (0)
+    dmaCopy(afternnoon_1_0Pal, &VRAM_I_EXT_SPR_PALETTE[4][0], afternnoon_1_0PalLen);    // time palette (0)
+    dmaCopy(afternnoon_2_0Pal, &VRAM_I_EXT_SPR_PALETTE[5][0], afternnoon_2_0PalLen);    // time palette (0)
+    dmaCopy(skills_levelPal, &VRAM_I_EXT_SPR_PALETTE[6][0], skills_levelPalLen);        // skills level
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
     // setup player controller
@@ -189,7 +225,7 @@ ViewState IwatodaiDormView::Update()
             camPos.upX, camPos.upY, camPos.upZ);
 
         // draw sprites
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 7; i++)
         {
             oamSet(
                 &oamSub,                    // sub display (OamState)
@@ -201,6 +237,27 @@ ViewState IwatodaiDormView::Update()
                 sprites[i].format,
                 sprites[i].gfx,
                 sprites[i].rotationIndex,
+                true,         // double the size of rotated sprites
+                false,        // don't hide the sprite
+                false, false, // vflip, hflip
+                false         // apply mosaic
+            );
+        }
+
+        // render multiple of the same sprits
+        // in this case, the skills level
+        for (int i = 0; i < 3; i++)
+        {
+            oamSet(
+                &oamSub,                    // sub display (OamState)
+                7 + i,                      // oam entry to set (id)
+                sprites[7].x + (13 * i), sprites[7].y, // position
+                1,                          // priority
+                sprites[7].paletteAlpha,    // palette for 16 color sprite or alpha for bmp sprite
+                sprites[7].size,
+                sprites[7].format,
+                sprites[7].gfx,
+                sprites[7].rotationIndex,
                 true,         // double the size of rotated sprites
                 false,        // don't hide the sprite
                 false, false, // vflip, hflip
