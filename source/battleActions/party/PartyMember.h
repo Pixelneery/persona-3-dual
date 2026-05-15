@@ -10,7 +10,6 @@ struct PartyMember : BattleParticipant
     ArmourType armourType;
     Armour armour;
     PersonaBase *persona;
-    PersonaBase *curPersona;
 
     bool guarding = false;
 };

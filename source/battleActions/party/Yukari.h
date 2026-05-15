@@ -13,9 +13,9 @@ struct Yukari : PartyMember
     Yukari()
     {
         name = "Yukari";
-        hp = 720;
-        sp = 50;
-        lv = 2;
+        hp = 51;
+        sp = 45;
+        lv = 1;
 
         armourType = ArmourType::Female;
         armour = rashGuard;
