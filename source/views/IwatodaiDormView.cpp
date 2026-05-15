@@ -93,13 +93,6 @@ void IwatodaiDormView::Init()
     sprites[6] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 5, 217, -17}; // afternoon (2)
     sprites[7] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 6, 86, 77};   // skills level
 
-    // NOTE: we can have max:
-    // 1 moon
-    // 1 day of the week
-    // 4 numbers
-    // 4 times
-    // 18 skill progress items (all same sprite)
-
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
 	oamInit(&oamSub, SpriteMapping_1D_128, true);
 
@@ -115,7 +108,7 @@ void IwatodaiDormView::Init()
 
     // get sprites
     spriteCtrl.switchSprite(MOON, MOON_22, &moonSprite);
-    spriteCtrl.switchSprite(DAY_OF_WEEK, TUESDAY, &dayOfWeekSprite);
+    spriteCtrl.switchSprite(DAY_OF_WEEK, MONDAY, &dayOfWeekSprite);
     spriteCtrl.switchSprite(DIGIT, DIGIT_1, &numberSprites[0]);
     spriteCtrl.switchSprite(DIGIT, DIGIT_3, &numberSprites[1]);
     spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[0]);
@@ -142,13 +135,13 @@ void IwatodaiDormView::Init()
     dmaCopy(skillSprites[0].tiles, sprites[7].gfx, skillSprites[0].tilesLen);
 
     vramSetBankI(VRAM_I_LCD);
-    dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);    // moon palette
-    dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);  // day of the week palette
-    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);                // numbers palette
-    dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);    // time palette (0)
-    dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);    // time palette (1)
-    dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);    // time palette (2)
-    dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], skillSprites[0].palLen);        // skills level
+    dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);              // moon palette
+    dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);    // day of the week palette
+    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);  // numbers palette
+    dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);      // time palette (0)
+    dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);      // time palette (1)
+    dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);      // time palette (2)
+    dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], skillSprites[0].palLen);    // skills level
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
     // setup player controller

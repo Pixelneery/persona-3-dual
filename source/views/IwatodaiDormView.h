@@ -26,6 +26,13 @@ class IwatodaiDormView : public View {
         int bgSubScreen;
         PrintConsole console;
 
+        // NOTE: we can have max:
+        // 1 moon
+        // 1 day of the week
+        // 4 numbers
+        // 4 times
+        // 18 skill progress items (all same sprite)
+
         // sprites
         Sprite sprites[28]; // enough entries for moon, day, digits, times, and repeated skill markers
         SpriteRegister moonSprite;

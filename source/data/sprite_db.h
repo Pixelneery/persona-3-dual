@@ -34,7 +34,13 @@
 #include "moon-29.h"
 
 // days of the week
+#include "sunday.h"
+#include "monday.h"
 #include "tuesday.h"
+#include "wednesday.h"
+#include "thursday.h"
+#include "friday.h"
+#include "saturday.h"
 // numbers
 #include "number-0.h"
 #include "number-1.h"
@@ -56,6 +62,7 @@
 // sprites sharing a palette should point at the same array
 const SpriteDBEntry SPRITE_DB[] = {
     // type, id, tiles, tilesLen,  pal, palLen
+    // moon
     {MOON, MOON_0, moon_0Tiles, moon_0TilesLen, moon_0Pal, moon_0PalLen},
     {MOON, MOON_1, moon_1Tiles, moon_1TilesLen, moon_1Pal, moon_1PalLen},
     {MOON, MOON_2, moon_2Tiles, moon_2TilesLen, moon_2Pal, moon_2PalLen},
@@ -87,7 +94,17 @@ const SpriteDBEntry SPRITE_DB[] = {
     {MOON, MOON_28, moon_28Tiles, moon_28TilesLen, moon_28Pal, moon_28PalLen},
     {MOON, MOON_29, moon_29Tiles, moon_29TilesLen, moon_29Pal, moon_29PalLen},
 
+    // days of thw week
+    {DAY_OF_WEEK, SUNDAY, sundayTiles, sundayTilesLen, sundayPal, sundayPalLen},
+    {DAY_OF_WEEK, MONDAY, mondayTiles, mondayTilesLen, mondayPal, mondayPalLen},
     {DAY_OF_WEEK, TUESDAY, tuesdayTiles, tuesdayTilesLen, tuesdayPal, tuesdayPalLen},
+    {DAY_OF_WEEK, WEDNESDAY, wednesdayTiles, wednesdayTilesLen, wednesdayPal, wednesdayPalLen},
+    {DAY_OF_WEEK,
+     THURSDAY, thursdayTiles, thursdayTilesLen, thursdayPal, thursdayPalLen},
+    {DAY_OF_WEEK, FRIDAY, fridayTiles, fridayTilesLen, fridayPal, fridayPalLen},
+    {DAY_OF_WEEK, SATURDAY, saturdayTiles, saturdayTilesLen, saturdayPal, saturdayPalLen},
+
+    // digits
     {DIGIT, DIGIT_0, number_0Tiles, number_0TilesLen, number_0Pal, number_0PalLen},
     {DIGIT, DIGIT_1, number_1Tiles, number_1TilesLen, number_1Pal, number_1PalLen},
     {DIGIT, DIGIT_2, number_2Tiles, number_2TilesLen, number_2Pal, number_2PalLen},
@@ -98,9 +115,13 @@ const SpriteDBEntry SPRITE_DB[] = {
     {DIGIT, DIGIT_7, number_7Tiles, number_7TilesLen, number_7Pal, number_7PalLen},
     {DIGIT, DIGIT_8, number_8Tiles, number_8TilesLen, number_8Pal, number_8PalLen},
     {DIGIT, DIGIT_9, number_9Tiles, number_9TilesLen, number_9Pal, number_9PalLen},
+
+    // time
     {TIME, AFTERNOON_0_0, afternnoon_0_0Tiles, afternnoon_0_0TilesLen, afternnoon_0_0Pal, afternnoon_0_0PalLen},
     {TIME, AFTERNOON_1_0, afternnoon_1_0Tiles, afternnoon_1_0TilesLen, afternnoon_1_0Pal, afternnoon_1_0PalLen},
     {TIME, AFTERNOON_2_0, afternnoon_2_0Tiles, afternnoon_2_0TilesLen, afternnoon_2_0Pal, afternnoon_2_0PalLen},
+
+    // skills
     {SKILL_SPRITE, SKILLS_LEVEL, skills_levelTiles, skills_levelTilesLen, skills_levelPal, skills_levelPalLen},
 };
 
