@@ -27,7 +27,12 @@ class IwatodaiDormView : public View {
         PrintConsole console;
 
         // sprites
-        Sprite sprites[10]; // random # of sprites for now
+        Sprite sprites[28]; // enough entries for moon, day, digits, times, and repeated skill markers
+        SpriteRegister moonSprite;
+        SpriteRegister dayOfWeekSprite;
+        SpriteRegister numberSprites[4];
+        SpriteRegister timeSprites[4];
+        SpriteRegister skillSprites[18];
 
         // Battle participants
         curPlayer player;

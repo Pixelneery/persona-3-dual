@@ -17,17 +17,6 @@
 
 // bgSubScreen
 #include "menuMockup.h"
-// sprites
-#include "tuesday.h"
-#include "number-4.h"
-#include "number-7.h"
-#include "afternnoon-0-0.h"
-#include "afternnoon-1-0.h"
-#include "afternnoon-2-0.h"
-#include "skills-level.h"
-
-// DEBUG
-SpriteRegister moonSprite{};
 
 // TODO: move to header
 int characterTextureId;
@@ -126,25 +115,40 @@ void IwatodaiDormView::Init()
 
     // get sprites
     spriteCtrl.switchSprite(MOON, MOON_0, &moonSprite);
+    spriteCtrl.switchSprite(DAY_OF_WEEK, TUESDAY, &dayOfWeekSprite);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_4, &numberSprites[0]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_7, &numberSprites[1]);
+    spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[0]);
+    spriteCtrl.switchSprite(TIME, AFTERNOON_1_0, &timeSprites[1]);
+    spriteCtrl.switchSprite(TIME, AFTERNOON_2_0, &timeSprites[2]);
+    spriteCtrl.switchSprite(SKILL_SPRITE, SKILLS_LEVEL, &skillSprites[0]);
+
+    // initialize any extra sprite registers for max-case arrays
+    numberSprites[2] = numberSprites[0];
+    numberSprites[3] = numberSprites[1];
+    timeSprites[3] = timeSprites[2];
+    for (int i = 1; i < 18; ++i) {
+        skillSprites[i] = skillSprites[0];
+    }
 
     // copy sprites
 	dmaCopy(moonSprite.tiles, sprites[0].gfx, moonSprite.tilesLen);
-    dmaCopy(tuesdayTiles, sprites[1].gfx, tuesdayTilesLen);
-    dmaCopy(number_4Tiles, sprites[2].gfx, number_4TilesLen);
-    dmaCopy(number_7Tiles, sprites[3].gfx, number_7TilesLen);
-    dmaCopy(afternnoon_0_0Tiles, sprites[4].gfx, afternnoon_0_0TilesLen);
-    dmaCopy(afternnoon_1_0Tiles, sprites[5].gfx, afternnoon_1_0TilesLen);
-    dmaCopy(afternnoon_2_0Tiles, sprites[6].gfx, afternnoon_2_0TilesLen);
-    dmaCopy(skills_levelTiles, sprites[7].gfx, skills_levelTilesLen);
+    dmaCopy(dayOfWeekSprite.tiles, sprites[1].gfx, dayOfWeekSprite.tilesLen);
+    dmaCopy(numberSprites[0].tiles, sprites[2].gfx, numberSprites[0].tilesLen);
+    dmaCopy(numberSprites[1].tiles, sprites[3].gfx, numberSprites[1].tilesLen);
+    dmaCopy(timeSprites[0].tiles, sprites[4].gfx, timeSprites[0].tilesLen);
+    dmaCopy(timeSprites[1].tiles, sprites[5].gfx, timeSprites[1].tilesLen);
+    dmaCopy(timeSprites[2].tiles, sprites[6].gfx, timeSprites[2].tilesLen);
+    dmaCopy(skillSprites[0].tiles, sprites[7].gfx, skillSprites[0].tilesLen);
 
     vramSetBankI(VRAM_I_LCD);
     dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);    // moon palette
-    dmaCopy(tuesdayPal, &VRAM_I_EXT_SPR_PALETTE[1][0], tuesdayPalLen);  // day of the week palette
-    dmaCopy(number_4Pal, &VRAM_I_EXT_SPR_PALETTE[2][0], number_4PalLen);                // numbers palette
-    dmaCopy(afternnoon_0_0Pal, &VRAM_I_EXT_SPR_PALETTE[3][0], afternnoon_0_0PalLen);    // time palette (0)
-    dmaCopy(afternnoon_1_0Pal, &VRAM_I_EXT_SPR_PALETTE[4][0], afternnoon_1_0PalLen);    // time palette (0)
-    dmaCopy(afternnoon_2_0Pal, &VRAM_I_EXT_SPR_PALETTE[5][0], afternnoon_2_0PalLen);    // time palette (0)
-    dmaCopy(skills_levelPal, &VRAM_I_EXT_SPR_PALETTE[6][0], skills_levelPalLen);        // skills level
+    dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);  // day of the week palette
+    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);                // numbers palette
+    dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);    // time palette (0)
+    dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);    // time palette (1)
+    dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);    // time palette (2)
+    dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], skillSprites[0].palLen);        // skills level
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
     // setup player controller
