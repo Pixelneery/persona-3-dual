@@ -18,7 +18,6 @@
 // bgSubScreen
 #include "menuMockup.h"
 // sprites
-#include "moon-0.h"
 #include "tuesday.h"
 #include "number-4.h"
 #include "number-7.h"
@@ -26,6 +25,9 @@
 #include "afternnoon-1-0.h"
 #include "afternnoon-2-0.h"
 #include "skills-level.h"
+
+// DEBUG
+SpriteRegister moonSprite{};
 
 // TODO: move to header
 int characterTextureId;
@@ -94,13 +96,13 @@ void IwatodaiDormView::Init()
 
     // setup sprites
 	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, 20};  // moon
-    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 82, 143}; // day of the week
+    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 82, 143};  // day of the week
     sprites[2] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, -11, 140}; // number 4
-    sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 25, 140}; // number 7
-    sprites[4] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, 73, -12}; // afternoon (0)
+    sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 25, 140};  // number 7
+    sprites[4] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, 73, -12};  // afternoon (0)
     sprites[5] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4, 137, -12}; // afternoon (1)
     sprites[6] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 5, 217, -17}; // afternoon (2)
-    sprites[7] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 6, 86, 77}; // skills level
+    sprites[7] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 6, 86, 77};   // skills level
 
     // NOTE: we can have max:
     // 1 moon
@@ -122,8 +124,11 @@ void IwatodaiDormView::Init()
     sprites[6].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
     sprites[7].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
 
+    // get sprites
+    spriteCtrl.switchSprite(MOON, MOON_0, &moonSprite);
+
     // copy sprites
-	dmaCopy(moon_0Tiles, sprites[0].gfx, moon_0TilesLen);
+	dmaCopy(moonSprite.tiles, sprites[0].gfx, moonSprite.tilesLen);
     dmaCopy(tuesdayTiles, sprites[1].gfx, tuesdayTilesLen);
     dmaCopy(number_4Tiles, sprites[2].gfx, number_4TilesLen);
     dmaCopy(number_7Tiles, sprites[3].gfx, number_7TilesLen);
@@ -133,7 +138,7 @@ void IwatodaiDormView::Init()
     dmaCopy(skills_levelTiles, sprites[7].gfx, skills_levelTilesLen);
 
     vramSetBankI(VRAM_I_LCD);
-    dmaCopy(moon_0Pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moon_0PalLen);    // moon palette
+    dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);    // moon palette
     dmaCopy(tuesdayPal, &VRAM_I_EXT_SPR_PALETTE[1][0], tuesdayPalLen);  // day of the week palette
     dmaCopy(number_4Pal, &VRAM_I_EXT_SPR_PALETTE[2][0], number_4PalLen);                // numbers palette
     dmaCopy(afternnoon_0_0Pal, &VRAM_I_EXT_SPR_PALETTE[3][0], afternnoon_0_0PalLen);    // time palette (0)

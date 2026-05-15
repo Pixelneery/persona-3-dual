@@ -1,9 +1,17 @@
-typedef struct
-{
+#pragma once
+typedef struct {
     int id;
-    int tiles;
-    int tilesLen;
-    int pal;
-    int palLen;
-    bool operator<(const SpriteRegister &other) const { return id < other.id; }
+    const unsigned int*   tiles;
+    unsigned int          tilesLen;
+    const unsigned short* pal;
+    unsigned int          palLen;
 } SpriteRegister;
+
+typedef struct {
+    int                   type;   // cast to SpriteType when registering
+    int                   id;
+    const unsigned int*   tiles;
+    unsigned int          tilesLen;
+    const unsigned short* pal;
+    unsigned int          palLen;
+} SpriteDBEntry;

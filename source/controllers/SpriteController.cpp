@@ -1,31 +1,17 @@
 #include "SpriteController.h"
+#include "data/sprite_db.h"
 
-void SpriteController::registerSprites(SpriteType spriteType, unordered_set<SpriteRegister> spriteRegisterSet)
-{
-    registeredSprites.insert({spriteType,
-                              spriteRegisterSet});
-}
-
-void SpriteController::switchSprite(SpriteType spriteType, int spriteId, SpriteRegister *spriteRegister)
-{
-    try
-    {
-        // try to get SpriteType
-        unordered_set<SpriteRegister> spriteSet = registeredSprites.at(spriteType);
-
-        // try to get SpriteRegister
-        auto it = spriteSet.find({spriteId, -1, -1, -1, -1});
-
-        if (it != spriteSet.end())
-        {
-            spriteRegister->id = it->id;
-            spriteRegister->tiles = it->tiles;
-            spriteRegister->tilesLen = it->tilesLen;
-            spriteRegister->pal = it->pal;
-            spriteRegister->palLen = it->palLen;
+bool SpriteController::switchSprite(SpriteType type, int spriteId, SpriteRegister* out) const {
+    for (int i = 0; i < SPRITE_DB_LEN; ++i) {
+        const SpriteDBEntry& e = SPRITE_DB[i];
+        if (e.type == type && e.id == spriteId) {
+            out->id      = e.id;
+            out->tiles   = e.tiles;
+            out->tilesLen = e.tilesLen;
+            out->pal     = e.pal;
+            out->palLen  = e.palLen;
+            return true;
         }
     }
-    catch (const std::out_of_range &e)
-    {
-    };
+    return false;  // not found
 }
