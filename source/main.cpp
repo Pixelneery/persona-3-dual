@@ -41,6 +41,7 @@ MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
 const unsigned int *bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+SpriteController spriteCtrl;
 // components
 PauseMenuComponent pauseMenuCmpt;
 bool enableBillboards = true;
