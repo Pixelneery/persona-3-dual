@@ -5,6 +5,7 @@
 #include "../personas/PersonaBase.h"
 #include "../ArmourType.h"
 #include "../armours/Armour.h"
+#include "../BattleParticipant.h"
 
 /*
 St	Represents strength and physical damage.
@@ -13,22 +14,15 @@ En	Represents endurance, which determines your defense and how much damage you c
 Ag	Represents agility, which determines your place in the turn order.
 Lu	Represents luck, which is taken into account when using certain skills involving status afflictions or insta-death abilities.*/
 
-struct Player
+struct Player : BattleParticipant
 {
-    std::string name;
-    s32 hp;
-    s32 sp;
-    u32 lv;
     ArmourType armourType;
     Armour armour;
-    AttackSkill *baseAttackAction;
     PersonaBase **personas;
     PersonaBase *curPersona;
     u32 personaCount;
 
     bool guarding = false;
-    bool oneMore = false;
-    bool knockedDown = false;
 
     Player() {}
     ~Player() {};
