@@ -13,6 +13,8 @@ public:
 
 
 private:
+    touchPosition touch;
+
     int bgMenuHUD;
     int bgSharedSlot;
     PrintConsole console;

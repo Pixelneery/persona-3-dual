@@ -156,3 +156,14 @@ void MenuHUDComponent::drawHUD(int *bgId)
     //     );
     // }
 }
+
+bool MenuHUDComponent::isMenuTouchArea(touchPosition *touch)
+{
+    if (touch->px >= 193 && touch->px <= 250 &&
+        touch->py >= 166 && touch->py <= 184)
+    {
+        return true;
+    }
+    
+    return false;
+}

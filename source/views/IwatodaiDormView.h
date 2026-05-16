@@ -22,6 +22,8 @@ public:
     IwatodaiDormView();
 
 private:
+    touchPosition touch;
+
     // sub screen
     int bgMenuHUD;
     PrintConsole console;

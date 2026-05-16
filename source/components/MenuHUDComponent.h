@@ -29,4 +29,5 @@ private:
 public:
     void loadHUD();
     void drawHUD(int *bgId);
+    bool isMenuTouchArea(touchPosition *touch);
 };
