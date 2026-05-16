@@ -130,7 +130,8 @@ void IntroView::Init()
     dmaCopy(logoSpriteLeftTiles, logoSprite[0].gfx, logoSpriteLeftTilesLen);
     dmaCopy(logoSpriteRightTiles, logoSprite[1].gfx, logoSpriteRightTilesLen);
 
-    dmaCopy(logoSpriteLeftPal, SPRITE_PALETTE, logoSpriteLeftPalLen);
+    // NOTE: left and right will use the same palette. Just ensure that the order of colours when indexed
+    // is THE SAME for both images!
     dmaCopy(logoSpriteRightPal, SPRITE_PALETTE, logoSpriteRightPalLen);
 
     // for slide in animation
