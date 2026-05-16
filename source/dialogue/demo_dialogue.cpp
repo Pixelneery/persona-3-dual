@@ -9,10 +9,6 @@ int demo_dialogue_bg_slot = 0;
 #include "bgYuki.h"
 #include "bgYukiClose.h"
 
-void demo_unload() {
-    bgHide(demo_dialogue_bg_slot);
-}
-
 const char* demo_yuki_guard_argument_bg_names[4] = { "bgAkihiko", "bgGuard", "bgYuki", "bgYukiClose" };
 void (*demo_yuki_guard_argument_bg_loaders[4])() = {
     nullptr,
