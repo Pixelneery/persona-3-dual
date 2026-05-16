@@ -4,65 +4,103 @@
 
 DialogueController::DialogueController() {}
 
+// transition to a new dialogue node and reset animation state
+void DialogueController::advanceTo(dialogue *next)
+{
+    current      = next;
+    animIndex    = 0;
+    animDone     = false;
+    doRenderOptions = false;
+    optionCount  = 0;
+    selectedOption = 0;
+    consoleClear();
+}
+
+// print the text up to animIndex using a precision field
+void DialogueController::renderAnimFrame()
+{
+    iprintf("\x1b[12;0H%.*s \n",
+            animIndex,
+            current->text.c_str());
+}
+
+void DialogueController::renderOptions()
+{
+    // reprint the complete line then list choices below it
+    consoleClear();
+    iprintf("\x1b[12;0H%s\n", current->text.c_str());
+    for (int i = 0; i < optionCount; i++)
+    {
+        iprintf("%c %s\n",
+                i == selectedOption ? '>' : ' ',
+                current->selections[i].text.c_str());
+    }
+}
+
 void DialogueController::start(dialogue *firstLine)
 {
-    current = firstLine;
-    optionCount = 0;
-    selectedOption = 0;
+    loadedImageId = -1; // force a bg load for the very first line
+    prevKeys      = 0;
+    advanceTo(firstLine);
     active = true;
-    isDisplayed = false;
-    doRenderOptions = false;
-    animIndex = 0;
-    animWait = 0;
-    animDone = false;
-    prevKeys = 0;
+}
+
+void DialogueController::exit()
+{
     consoleClear();
+    active = false;
 }
 
 void DialogueController::update(u32 keys)
 {
-    if (!active || current == NULL)
+    if (!active || current == nullptr)
     {
         active = false;
         return;
     }
 
-    u32 pressed = keys & ~prevKeys;
-    prevKeys = keys;
-
-    // animate in the dialogue
-    if (!isDisplayed)
+    // animation
+    if (!animDone)
     {
-        // swap in the bg for this line via the loader callback
-        if (bgLoader)
-            bgLoader(current->imageId);
-
-        if (!animDone)
+        // swap the background exactly once per dialogue line, on the first
+        // frame, and only if the image has actually changed
+        if (animIndex == 0 && bgLoader && current->imageId != loadedImageId)
         {
-            if (animIndex <= (int)current->text.length())
-            {
-                iprintf("\x1b[12;0H%s \n",
-                        current->text.substr(0, animIndex).c_str());
-                animIndex++;
-            }
-            else
-            {
-                animDone = true;
-                isDisplayed = true;
-                optionCount = current->selections.size();
-                doRenderOptions = (optionCount > 0);
-            }
-            return;
+            bgLoader(current->imageId);
+            loadedImageId = current->imageId;
         }
+
+        if (animIndex <= (int)current->text.length())
+        {
+            renderAnimFrame();
+            animIndex++;
+        }
+        else
+        {
+            animDone    = true;
+            optionCount = (int)current->selections.size();
+
+            if (optionCount > 0)
+            {
+                // render the full text + option list now that animation ended
+                doRenderOptions = true;
+            }
+        }
+        return; // consume the frame (don't process input yet)
     }
 
+    // deferred option render (first frame after animation)
     if (doRenderOptions)
     {
         renderOptions();
         doRenderOptions = false;
     }
 
-    if (keys & KEY_START)
+    // input
+    u32 pressed = keys & ~prevKeys;
+    prevKeys    = keys;
+
+    if (pressed & KEY_START)
     {
         exit();
         return;
@@ -74,26 +112,18 @@ void DialogueController::update(u32 keys)
         if (pressed & KEY_DOWN)
         {
             selectedOption = (selectedOption + 1) % optionCount;
-            doRenderOptions = true;
+            renderOptions();
         }
         else if (pressed & KEY_UP)
         {
             selectedOption = (selectedOption + optionCount - 1) % optionCount;
-            doRenderOptions = true;
+            renderOptions();
         }
         else if (pressed & KEY_A)
         {
-            current = current->selections[selectedOption].next;
-            selectedOption = 0;
-            isDisplayed = false;
-            animIndex = 0;
-            animDone = false;
-            consoleClear();
-            if (current == NULL)
-            {
-                exit();
-                return;
-            }
+            dialogue *next = current->selections[selectedOption].next;
+            if (next == nullptr) { exit(); return; }
+            advanceTo(next);
         }
     }
     else
@@ -101,47 +131,15 @@ void DialogueController::update(u32 keys)
         // linear dialogue
         if (pressed & KEY_A)
         {
-            current = current->next;
-            isDisplayed = false;
-            animIndex = 0;
-            animDone = false;
-            consoleClear();
-            if (current == NULL)
-            {
-                exit();
-                return;
-            }
+            dialogue *next = current->next;
+            if (next == nullptr) { exit(); return; }
+            advanceTo(next);
         }
         else if (pressed & KEY_B)
         {
-            current = current->prev;
-            isDisplayed = false;
-            animIndex = 0;
-            animDone = false;
-            consoleClear();
-            if (current == NULL)
-            {
-                exit();
-                return;
-            }
+            dialogue *next = current->prev;
+            if (next == nullptr) { exit(); return; }
+            advanceTo(next);
         }
-    }
-}
-
-void DialogueController::exit()
-{
-    consoleClear();
-    active = false;
-}
-
-void DialogueController::renderOptions()
-{
-    consoleClear();
-    iprintf("\x1b[12;0H%s\n", current->text.c_str());
-    for (int i = 0; i < optionCount; i++)
-    {
-        iprintf("%c %s\n",
-                i == selectedOption ? '>' : ' ',
-                current->selections[i].text.c_str());
     }
 }

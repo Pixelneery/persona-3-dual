@@ -169,6 +169,9 @@ ViewState IwatodaiDormView::Update()
                 battleController.execute();
             }
 
+            bgHide(bgSharedSlot);
+            consoleClear();
+
             // trigger dialogue from interaction
             if (playerCtrl->isTileAt() == TileType::NEXT_SCENE)
             {
@@ -184,10 +187,6 @@ ViewState IwatodaiDormView::Update()
                     dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
                     dialogueCtrl.start(demo_yuki_guard_argument_first());
                 }
-            }
-            else
-            {
-                consoleClear();
             }
         }
 

@@ -242,6 +242,9 @@ class DialogueParser:
         self.interactions.sort()
         for ia in self.interactions:
             ia.bg_order.sort()
+            # remap bg_index now that bg_order is in its final sorted order
+            for dl in ia.lines:
+                dl.bg_index = ia.bg_order.index(dl.bg)
         return self.interactions
 
 
