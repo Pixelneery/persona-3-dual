@@ -12,7 +12,6 @@
 #include "./battleActions/enemies/Merciless_Maya.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
-// implementing from View
 class IwatodaiDormView : public View
 {
 public:
@@ -23,7 +22,10 @@ public:
     IwatodaiDormView();
 
 private:
+    touchPosition touch;
+
     // sub screen
+    int bgMenuHUD;
     PrintConsole console;
 
     // Battle participants

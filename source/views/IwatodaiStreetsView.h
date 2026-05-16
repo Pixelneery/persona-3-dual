@@ -11,9 +11,13 @@ public:
     ViewState Update() override;
     void Cleanup() override;
 
+
 private:
-    PrintConsole console;
+    touchPosition touch;
+
+    int bgMenuHUD;
     int bgSharedSlot;
+    PrintConsole console;
 
     CharacterController *playerCtrl;
     cameraPosition camPos;

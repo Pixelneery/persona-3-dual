@@ -136,6 +136,7 @@ ViewState PauseMenuComponent::update(int keys)
             {
                 nextViewState = result;
                 *isActivePtr = false;
+                bgHide(bgSlot);
             }
             else if (dialogueCtrl.isActive())
             { // added for debug testing of dialogue
@@ -171,6 +172,7 @@ ViewState PauseMenuComponent::update(int keys)
         {
             // otherwise, close the menu
             *isActivePtr = false;
+            bgHide(bgSlot);
         }
     }
 

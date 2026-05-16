@@ -20,6 +20,7 @@
 
 // components
 #include "components/PauseMenuComponent.h"
+#include "components/MenuHUDComponent.h"
 
 // sfx
 #include "soundbank_bin.h"
@@ -41,12 +42,14 @@ MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
 const unsigned int *bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+SpriteController spriteCtrl;
 // components
 PauseMenuComponent pauseMenuCmpt;
 bool enableBillboards = true;
 bool enableCharacterAnim = true;
 bool enableDebugPrint = false;
 bool isPauseMenuActive = false;
+MenuHUDComponent menuHUDCmpt;
 
 View *currentView = nullptr;
 
@@ -103,14 +106,15 @@ int main(int argc, char *argv[])
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = character_texture_3Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = character_texture_4Bitmap;
 
-    // start with DisclaimerView
-    // seed with DS hardware timer for reliable randomness (time() can return 0 on DS)
+    // use DS hardware timer for reliable randomness (time() can return 0 on DS)
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
     srand(TIMER0_DATA);
+
+    // start with DisclaimerView
     SwitchView(new DisclaimerView());
 
     // DEBUG
-    // SwitchView(new IwatodaiStreetsView());
+    // SwitchView(new IwatodaiDormView());
 
     while (pmMainLoop())
     {

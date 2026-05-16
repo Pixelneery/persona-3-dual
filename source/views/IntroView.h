@@ -2,18 +2,6 @@
 #include "core/View.h"
 #include "core/globals.h"
 
-// a simple sprite structure
-typedef struct
-{
-    u16 *gfx;
-    SpriteSize size;
-    SpriteColorFormat format;
-    int rotationIndex;
-    int paletteAlpha;
-    int x;
-    int y;
-} Sprite;
-
 // implementing from View
 class IntroView : public View
 {

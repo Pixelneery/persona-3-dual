@@ -6,8 +6,6 @@
 
 extern int demo_dialogue_bg_slot;
 
-void  demo_unload();
-
 // ── interaction: yuki_guard_argument — Yuki arguing with a guard at the gate
 extern const char* demo_yuki_guard_argument_bg_names[4];
 extern void        (*demo_yuki_guard_argument_bg_loaders[4])();

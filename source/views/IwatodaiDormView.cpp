@@ -28,9 +28,11 @@ void IwatodaiDormView::Init()
     videoSetMode(MODE_0_3D);
     videoSetModeSub(MODE_0_2D);
 
+    // vram banks H & I are also in-use, and D is reserved for 3D environments
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankB(VRAM_B_TEXTURE);
     vramSetBankC(VRAM_C_SUB_BG);
+    vramSetBankD(VRAM_D_SUB_SPRITE);
     bgExtPaletteEnableSub();
 
     // main screen, 3D
@@ -53,9 +55,11 @@ void IwatodaiDormView::Init()
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
     glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
 
-    // setup shared bg slot on sub screen
+    // setup sub screen
     bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+    bgMenuHUD = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgMenuHUD), 2048);
 
     // setup console
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
@@ -64,8 +68,20 @@ void IwatodaiDormView::Init()
     // adjust sub screen image and console to sit correctly on each other
     bgSetPriority(console.bgId, 0);
     bgSetPriority(bgSharedSlot, 1);
-
+    bgSetPriority(bgMenuHUD, 2);
     bgUpdate();
+
+    // set bgMenuHUD img
+    // dmaCopy(menuHUDTiles, bgGetGfxPtr(bgMenuHUD), menuHUDTilesLen);
+    // dmaCopy(menuHUDMap, bgGetMapPtr(bgMenuHUD), menuHUDMapLen);
+    // vramSetBankH(VRAM_H_LCD);
+    // dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
+    // vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+    // bgShow(bgMenuHUD);
+
+    // setup menuHUD
+    // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
+    menuHUDCmpt.loadHUD();
 
     // setup player controller
     playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
@@ -103,6 +119,7 @@ ViewState IwatodaiDormView::Update()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     bgUpdate();
+    oamUpdate(&oamSub);
 
     scanKeys();
     u32 keys = keysHeld();
@@ -113,6 +130,31 @@ ViewState IwatodaiDormView::Update()
         isPauseMenuActive = !isPauseMenuActive;
     }
 
+    // touch input
+    if (pressed & KEY_TOUCH)
+    {
+        touchRead(&touch);
+        if (menuHUDCmpt.isMenuTouchArea(&touch))
+        {
+            isPauseMenuActive = true;
+        }
+    }
+
+    // draw menuHUD
+    if (!dialogueCtrl.isActive() && !battleController.isActive() && !isPauseMenuActive)
+    {
+        menuHUDCmpt.drawHUD(&bgMenuHUD);
+        bgShow(bgMenuHUD);
+
+    }
+    // hide menuHUD if dialogue, battle, or pauseMenu is active
+    else
+    {
+        bgHide(bgMenuHUD);
+        oamClear(&oamSub, 0, 0);
+    }
+
+    // render pauseMenu
     if (isPauseMenuActive)
     {
         ViewState menuResult = pauseMenuCmpt.update(pressed);
@@ -122,8 +164,9 @@ ViewState IwatodaiDormView::Update()
             return menuResult;
         }
     }
+    // render world
     else
-    { // only render world when pause menu is not active
+    {
         // only process world input when dialogue and battle are not active
         if (!dialogueCtrl.isActive() && !battleController.isActive())
         {
@@ -136,8 +179,10 @@ ViewState IwatodaiDormView::Update()
                 battleController.execute();
             }
 
+            bgHide(bgSharedSlot);
+            consoleClear();
+
             // trigger dialogue from interaction
-            demo_unload();
             if (playerCtrl->isTileAt() == TileType::NEXT_SCENE)
             {
                 musicCtrl.pause();
@@ -152,10 +197,6 @@ ViewState IwatodaiDormView::Update()
                     dialogueCtrl.setLoader(demo_yuki_guard_argument_load_bg);
                     dialogueCtrl.start(demo_yuki_guard_argument_first());
                 }
-            }
-            else
-            {
-                consoleClear();
             }
         }
 
@@ -188,13 +229,15 @@ ViewState IwatodaiDormView::Update()
         // print coordinates (64x64 area from 0,0 to 64,64)
         if (enableDebugPrint)
         {
-            iprintf("\x1b[21;0Htile(x,z): %d, %d",
+            iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
+            iprintf("\x1b[20;0H\033[31mTouch y = %04X, %04X\n", touch.rawy, touch.py);
+            iprintf("\x1b[21;0H\033[31mtile(x,z): %d, %d",
                     (int)((charPos.x + worldOffsetX) / tileSize),
                     (int)((charPos.z + worldOffsetZ) / tileSize));
-            iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
+            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d",
                     (int)(charPos.x * 100),
                     (int)(charPos.z * 100));
-            iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+            iprintf("\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
     }
 
@@ -230,6 +273,7 @@ void IwatodaiDormView::Cleanup()
     vramSetBankC(VRAM_C_LCD);
     vramSetBankD(VRAM_D_LCD);
     vramSetBankH(VRAM_H_LCD);
+    vramSetBankI(VRAM_I_LCD);
 
     // cleanup controllers
     delete playerCtrl;

@@ -119,7 +119,6 @@ void IntroView::Init()
     // showing logo as sprite
     logoSprite[0] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, -25, 100};
     logoSprite[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 39, 100};
-    // logoSprite[1] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 15, 120, 100};
 
     // initialize sub sprite engine with 1D mapping, 128 byte boundry, no external palette support
     oamInit(&oamMain, SpriteMapping_1D_128, false);

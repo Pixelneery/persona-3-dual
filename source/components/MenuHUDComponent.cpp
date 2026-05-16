@@ -1,0 +1,169 @@
+#include "MenuHUDComponent.h"
+
+void MenuHUDComponent::loadHUD()
+{
+    // setup sprites
+    // moon
+	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, -15};
+    // day of the week
+    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 134, 143};
+    // numbers
+    sprites[2] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, -11, 141}; // month (10s)
+    sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 15, 141};  // month (1s)
+    sprites[4] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 54, 141};  // day (10s)
+    sprites[5] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 80, 141};  // day (1s)
+    // time
+    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, -27, -5}; // piece 0
+    sprites[7] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4, 37, -5};  // piece 1
+    sprites[8] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 5, 101, -5}; // piece 2
+    sprites[9] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 6, 165, -5}; // piece 3
+    // skill level
+    sprites[10] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 7, 90, 77};
+    // slash
+    sprites[11] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 2, 52, 157};
+
+	// initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
+	oamInit(&oamSub, SpriteMapping_1D_128, true);
+
+	// allocating space for sprite graphics
+    //moon
+	sprites[0].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    // day of the week
+    sprites[1].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    // numbers
+    sprites[2].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[3].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[4].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[5].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    // time
+    sprites[6].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    sprites[7].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    sprites[8].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    sprites[9].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    // skill level
+    sprites[10].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
+    // slash
+    sprites[11].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
+
+    // get sprites
+    // moon
+    spriteCtrl.switchSprite(MOON, MOON_22, &moonSprite);
+    // day of the week
+    spriteCtrl.switchSprite(DAY_OF_WEEK, TUESDAY, &dayOfWeekSprite);
+    // numbers
+    spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[0]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_4, &numberSprites[1]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[2]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_7, &numberSprites[3]);
+    // time
+    spriteCtrl.switchSprite(TIME, EARLY_MORNING_0_0, &timeSprites[0]);
+    spriteCtrl.switchSprite(TIME, EARLY_MORNING_1_0, &timeSprites[1]);
+    spriteCtrl.switchSprite(TIME, EARLY_MORNING_2_0, &timeSprites[2]);
+    spriteCtrl.switchSprite(TIME, EARLY_MORNING_3_0, &timeSprites[3]);
+    // skill level
+    spriteCtrl.switchSprite(SKILL_SPRITE, SKILLS_LEVEL, &skillSprites[0]);
+    // slash
+    spriteCtrl.switchSprite(DIGIT, SLASH, &slashSprite);
+
+    // TODO: initialize any extra sprite registers for max-case arrays?
+    // ...
+
+    // copy sprites
+    // moon
+	dmaCopy(moonSprite.tiles, sprites[0].gfx, moonSprite.tilesLen);
+    // day of the week
+    dmaCopy(dayOfWeekSprite.tiles, sprites[1].gfx, dayOfWeekSprite.tilesLen);
+    // numbers
+    dmaCopy(numberSprites[0].tiles, sprites[2].gfx, numberSprites[0].tilesLen);
+    dmaCopy(numberSprites[1].tiles, sprites[3].gfx, numberSprites[1].tilesLen);
+    dmaCopy(numberSprites[2].tiles, sprites[4].gfx, numberSprites[2].tilesLen);
+    dmaCopy(numberSprites[3].tiles, sprites[5].gfx, numberSprites[3].tilesLen);
+    // time
+    dmaCopy(timeSprites[0].tiles, sprites[6].gfx, timeSprites[0].tilesLen);
+    dmaCopy(timeSprites[1].tiles, sprites[7].gfx, timeSprites[1].tilesLen);
+    dmaCopy(timeSprites[2].tiles, sprites[8].gfx, timeSprites[2].tilesLen);
+    dmaCopy(timeSprites[3].tiles, sprites[9].gfx, timeSprites[3].tilesLen);
+    // skill level
+    dmaCopy(skillSprites[0].tiles, sprites[10].gfx, skillSprites[0].tilesLen);
+    // slash
+    dmaCopy(slashSprite.tiles, sprites[11].gfx, slashSprite.tilesLen);
+
+    // NOTE: we are currently assuming that the sprite extended palette will be set on VRAM bank I
+    vramSetBankI(VRAM_I_LCD);
+    dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);              // moon
+    dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);    // day of the week
+    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);  // numbers & slash
+    dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);      // time (0)
+    dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);      // time (1)
+    dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);      // time (2)
+    dmaCopy(timeSprites[3].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], timeSprites[3].palLen);      // time (3)
+    dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[7][0], skillSprites[0].palLen);    // skill level
+    vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+};
+
+void MenuHUDComponent::loadBg(int *bgId)
+{
+    dmaCopy(menuHUDTiles, bgGetGfxPtr(*bgId), menuHUDTilesLen);
+    dmaCopy(menuHUDMap, bgGetMapPtr(*bgId), menuHUDMapLen);
+    vramSetBankH(VRAM_H_LCD);
+    dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
+    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+}
+
+void MenuHUDComponent::drawHUD(int *bgId)
+{
+    // draw bg
+    loadBg(bgId);
+
+    // draw sprites
+    for (int i = 0; i < 12; i++)
+    {
+        oamSet(
+            &oamSub,                    // sub display (OamState)
+            i,                          // oam entry to set (id)
+            sprites[i].x, sprites[i].y, // position
+            1,                          // priority
+            sprites[i].paletteAlpha,    // palette for 16 color sprite or alpha for bmp sprite
+            sprites[i].size,
+            sprites[i].format,
+            sprites[i].gfx,
+            sprites[i].rotationIndex,
+            true,         // double the size of rotated sprites
+            false,        // don't hide the sprite
+            false, false, // vflip, hflip
+            false         // apply mosaic
+        );
+    }
+
+    // render multiple of the same sprits
+    // in this case, the skills level
+    // for (int i = 0; i < 3; i++)
+    // {
+    //     oamSet(
+    //         &oamSub,                    // sub display (OamState)
+    //         7 + i,                      // oam entry to set (id)
+    //         sprites[7].x + (13 * i), sprites[7].y, // position
+    //         1,                          // priority
+    //         sprites[7].paletteAlpha,    // palette for 16 color sprite or alpha for bmp sprite
+    //         sprites[7].size,
+    //         sprites[7].format,
+    //         sprites[7].gfx,
+    //         sprites[7].rotationIndex,
+    //         true,         // double the size of rotated sprites
+    //         false,        // don't hide the sprite
+    //         false, false, // vflip, hflip
+    //         false         // apply mosaic
+    //     );
+    // }
+}
+
+bool MenuHUDComponent::isMenuTouchArea(touchPosition *touch)
+{
+    if (touch->px >= 193 && touch->px <= 250 &&
+        touch->py >= 166 && touch->py <= 184)
+    {
+        return true;
+    }
+    
+    return false;
+}

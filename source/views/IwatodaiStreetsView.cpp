@@ -50,7 +50,7 @@ void IwatodaiStreetsView::Init()
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankB(VRAM_B_TEXTURE);
     vramSetBankC(VRAM_C_SUB_BG);
-    vramSetBankD(VRAM_D_TEXTURE);
+    vramSetBankD(VRAM_D_SUB_SPRITE);
     bgExtPaletteEnableSub();
 
     glInit();
@@ -72,12 +72,21 @@ void IwatodaiStreetsView::Init()
 
     // sub screen console
     bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+    bgMenuHUD = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgMenuHUD), 2048);
+
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
     consoleSelect(&console);
+
     bgSetPriority(console.bgId, 0);
     bgSetPriority(bgSharedSlot, 1);
+    bgSetPriority(bgMenuHUD, 2);
     bgUpdate();
+
+    // setup menuHUD
+    // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
+    menuHUDCmpt.loadHUD();
 
     playerCtrl = new CharacterController(
         IWATODAI_STREETS_MAP_WIDTH, IWATODAI_STREETS_MAP_HEIGHT, &iwatodai_streets_map[0][0],
@@ -132,6 +141,7 @@ ViewState IwatodaiStreetsView::Update()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     bgUpdate();
+    oamUpdate(&oamSub);
 
     scanKeys();
     u32 keys = keysHeld();
@@ -140,6 +150,30 @@ ViewState IwatodaiStreetsView::Update()
     if (pressed & KEY_START)
     {
         isPauseMenuActive = !isPauseMenuActive;
+    }
+
+    // touch input
+    if (pressed & KEY_TOUCH)
+    {
+        touchRead(&touch);
+        if (menuHUDCmpt.isMenuTouchArea(&touch))
+        {
+            isPauseMenuActive = true;
+        }
+    }
+
+    // draw menuHUD
+    if (!isPauseMenuActive)
+    {
+        menuHUDCmpt.drawHUD(&bgMenuHUD);
+        bgShow(bgMenuHUD);
+
+    }
+    // hide menuHUD if pauseMenu is active
+    else
+    {
+        bgHide(bgMenuHUD);
+        oamClear(&oamSub, 0, 0);
     }
 
     if (isPauseMenuActive)
@@ -153,6 +187,9 @@ ViewState IwatodaiStreetsView::Update()
     }
     else
     {
+        consoleClear();
+        bgHide(bgSharedSlot);
+
         camPos = playerCtrl->update(keys);
 
         if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
@@ -182,13 +219,15 @@ ViewState IwatodaiStreetsView::Update()
         // print coordinates (64x64 area from 0,0 to 64,64)
         if (enableDebugPrint)
         {
-            iprintf("\x1b[21;0Htile(x,z): %d, %d",
+            iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
+            iprintf("\x1b[20;0H\033[31mTouch y = %04X, %04X\n", touch.rawy, touch.py);
+            iprintf("\x1b[21;0H\033[31mtile(x,z): %d, %d",
                     (int)((charPos.x + worldOffsetX) / tileSize),
                     (int)((charPos.z + worldOffsetZ) / tileSize));
-            iprintf("\x1b[22;0Htranslate(x,z): %d, %d",
+            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d",
                     (int)(charPos.x * 100),
                     (int)(charPos.z * 100));
-            iprintf("\x1b[23;0Hangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+            iprintf("\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
     }
 
@@ -215,6 +254,7 @@ void IwatodaiStreetsView::Cleanup()
     vramSetBankC(VRAM_C_LCD);
     vramSetBankD(VRAM_D_LCD);
     vramSetBankH(VRAM_H_LCD);
+    vramSetBankI(VRAM_I_LCD);
 
     delete playerCtrl;
     playerCtrl = nullptr;

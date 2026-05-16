@@ -28,7 +28,7 @@ endif
 #---------------------------------------------------------------------------------
 TARGET      :=  $(shell basename $(CURDIR))
 BUILD       :=  build
-SOURCES     :=  source source/views source/controllers source/core source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions
+SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions
 DATA        :=
 INCLUDES    :=  include source
 

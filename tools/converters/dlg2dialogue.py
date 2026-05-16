@@ -242,6 +242,9 @@ class DialogueParser:
         self.interactions.sort()
         for ia in self.interactions:
             ia.bg_order.sort()
+            # remap bg_index now that bg_order is in its final sorted order
+            for dl in ia.lines:
+                dl.bg_index = ia.bg_order.index(dl.bg)
         return self.interactions
 
 
@@ -272,8 +275,6 @@ class CodeGenerator:
             '#include "controllers/DialogueController.h"',
             "",
             f"extern int {s}_dialogue_bg_slot;",
-            "",
-            f"void  {s}_unload();",
         ]
         out.append("")
 
@@ -324,13 +325,6 @@ class CodeGenerator:
                 bgSet.add(f'#include "{ia.bg_order[i] if ia.bg_order else "myBg"}.h"')
         out.extend(sorted(bgSet))
         out.append("")
-
-        out += [
-            f"void {s}_unload() {{",
-            f"    bgHide({s}_dialogue_bg_slot);",
-            f"}}",
-            "",
-        ]
 
         for ia in self.interactions:
             vp = self._vp(ia)
