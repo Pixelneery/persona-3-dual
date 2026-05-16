@@ -84,64 +84,92 @@ void IwatodaiDormView::Init()
     bgUpdate();
 
     // setup sprites
-	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, 20};  // moon
-    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 82, 143};  // day of the week
-    sprites[2] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, -11, 140}; // number 4
-    sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 25, 140};  // number 7
-    sprites[4] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, 73, -12};  // afternoon (0)
-    sprites[5] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4, 137, -12}; // afternoon (1)
-    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 5, 201, -12}; // afternoon (2) 201
-    sprites[7] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 6, 86, 77};   // skills level
+    // moon
+	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, 20};
+    // day of the week
+    sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 82, 143};
+    // numbers
+    sprites[2] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 0, 0};     // month (far)
+    sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, -11, 140}; // month (close)
+    sprites[4] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 25, 140};  // day (close)
+    sprites[5] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 0, 20};    // day (far)
+    // time
+    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, 9, -12};   // piece 0
+    sprites[7] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4, 73, -12};  // piece 1
+    sprites[8] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 5, 137, -12}; // piece 2
+    sprites[9] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 6, 201, -12}; // piece 3
+    // skill level
+    sprites[10] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 7, 86, 77};
 
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
 	oamInit(&oamSub, SpriteMapping_1D_128, true);
 
 	// allocating space for sprite graphics
+    //moon
 	sprites[0].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    // day of the week
     sprites[1].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    // numbers
     sprites[2].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
     sprites[3].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
-    sprites[4].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
-    sprites[5].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    sprites[4].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[5].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    // time
     sprites[6].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
-    sprites[7].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
+    sprites[7].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    sprites[8].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    sprites[9].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
+    // skill level
+    sprites[10].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
 
     // get sprites
+    // moon
     spriteCtrl.switchSprite(MOON, MOON_22, &moonSprite);
+    // day of the week
     spriteCtrl.switchSprite(DAY_OF_WEEK, MONDAY, &dayOfWeekSprite);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_1, &numberSprites[0]);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_3, &numberSprites[1]);
+    // numbers
+    spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[0]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_1, &numberSprites[1]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_3, &numberSprites[2]);
+    spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[3]);
+    // time
     spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[0]);
     spriteCtrl.switchSprite(TIME, AFTERNOON_1_0, &timeSprites[1]);
     spriteCtrl.switchSprite(TIME, AFTERNOON_2_0, &timeSprites[2]);
+    spriteCtrl.switchSprite(TIME, AFTERNOON_0_0, &timeSprites[3]);
+    // skill level
     spriteCtrl.switchSprite(SKILL_SPRITE, SKILLS_LEVEL, &skillSprites[0]);
 
-    // initialize any extra sprite registers for max-case arrays
-    numberSprites[2] = numberSprites[0];
-    numberSprites[3] = numberSprites[1];
-    timeSprites[3] = timeSprites[2];
-    for (int i = 1; i < 18; ++i) {
-        skillSprites[i] = skillSprites[0];
-    }
+    // TODO: initialize any extra sprite registers for max-case arrays?
+    // ...
 
     // copy sprites
+    // moon
 	dmaCopy(moonSprite.tiles, sprites[0].gfx, moonSprite.tilesLen);
+    // day of the week
     dmaCopy(dayOfWeekSprite.tiles, sprites[1].gfx, dayOfWeekSprite.tilesLen);
+    // numbers
     dmaCopy(numberSprites[0].tiles, sprites[2].gfx, numberSprites[0].tilesLen);
     dmaCopy(numberSprites[1].tiles, sprites[3].gfx, numberSprites[1].tilesLen);
-    dmaCopy(timeSprites[0].tiles, sprites[4].gfx, timeSprites[0].tilesLen);
-    dmaCopy(timeSprites[1].tiles, sprites[5].gfx, timeSprites[1].tilesLen);
-    dmaCopy(timeSprites[2].tiles, sprites[6].gfx, timeSprites[2].tilesLen);
-    dmaCopy(skillSprites[0].tiles, sprites[7].gfx, skillSprites[0].tilesLen);
+    dmaCopy(numberSprites[2].tiles, sprites[4].gfx, numberSprites[2].tilesLen);
+    dmaCopy(numberSprites[3].tiles, sprites[5].gfx, numberSprites[3].tilesLen);
+    // time
+    dmaCopy(timeSprites[0].tiles, sprites[6].gfx, timeSprites[0].tilesLen);
+    dmaCopy(timeSprites[1].tiles, sprites[7].gfx, timeSprites[1].tilesLen);
+    dmaCopy(timeSprites[2].tiles, sprites[8].gfx, timeSprites[2].tilesLen);
+    dmaCopy(timeSprites[3].tiles, sprites[9].gfx, timeSprites[3].tilesLen);
+    // skill level
+    dmaCopy(skillSprites[0].tiles, sprites[10].gfx, skillSprites[0].tilesLen);
 
     vramSetBankI(VRAM_I_LCD);
-    dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);              // moon palette
-    dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);    // day of the week palette
-    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);  // numbers palette
-    dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);      // time palette (0)
-    dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);      // time palette (1)
-    dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);      // time palette (2)
-    dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], skillSprites[0].palLen);    // skills level
+    dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);              // moon
+    dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);    // day of the week
+    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);  // numbers
+    dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);      // time (0)
+    dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);      // time (1)
+    dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);      // time (2)
+    dmaCopy(timeSprites[3].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], timeSprites[3].palLen);      // time (3)
+    dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[7][0], skillSprites[0].palLen);    // skill level
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 
     // setup player controller
@@ -227,7 +255,7 @@ ViewState IwatodaiDormView::Update()
             camPos.upX, camPos.upY, camPos.upZ);
 
         // draw sprites
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 11; i++)
         {
             oamSet(
                 &oamSub,                    // sub display (OamState)
@@ -248,24 +276,24 @@ ViewState IwatodaiDormView::Update()
 
         // render multiple of the same sprits
         // in this case, the skills level
-        for (int i = 0; i < 3; i++)
-        {
-            oamSet(
-                &oamSub,                    // sub display (OamState)
-                7 + i,                      // oam entry to set (id)
-                sprites[7].x + (13 * i), sprites[7].y, // position
-                1,                          // priority
-                sprites[7].paletteAlpha,    // palette for 16 color sprite or alpha for bmp sprite
-                sprites[7].size,
-                sprites[7].format,
-                sprites[7].gfx,
-                sprites[7].rotationIndex,
-                true,         // double the size of rotated sprites
-                false,        // don't hide the sprite
-                false, false, // vflip, hflip
-                false         // apply mosaic
-            );
-        }
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     oamSet(
+        //         &oamSub,                    // sub display (OamState)
+        //         7 + i,                      // oam entry to set (id)
+        //         sprites[7].x + (13 * i), sprites[7].y, // position
+        //         1,                          // priority
+        //         sprites[7].paletteAlpha,    // palette for 16 color sprite or alpha for bmp sprite
+        //         sprites[7].size,
+        //         sprites[7].format,
+        //         sprites[7].gfx,
+        //         sprites[7].rotationIndex,
+        //         true,         // double the size of rotated sprites
+        //         false,        // don't hide the sprite
+        //         false, false, // vflip, hflip
+        //         false         // apply mosaic
+        //     );
+        // }
 
         oamUpdate(&oamSub);
 
