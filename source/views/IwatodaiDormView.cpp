@@ -90,7 +90,7 @@ void IwatodaiDormView::Init()
     sprites[3] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 2, 25, 140};  // number 7
     sprites[4] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 3, 73, -12};  // afternoon (0)
     sprites[5] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 4, 137, -12}; // afternoon (1)
-    sprites[6] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 5, 217, -17}; // afternoon (2)
+    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 5, 201, -12}; // afternoon (2) 201
     sprites[7] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 6, 86, 77};   // skills level
 
 	// initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
@@ -103,7 +103,7 @@ void IwatodaiDormView::Init()
     sprites[3].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
     sprites[4].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
     sprites[5].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
-    sprites[6].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[6].gfx = oamAllocateGfx(&oamSub, SpriteSize_64x32, SpriteColorFormat_256Color);
     sprites[7].gfx = oamAllocateGfx(&oamSub, SpriteSize_16x16, SpriteColorFormat_256Color);
 
     // get sprites
