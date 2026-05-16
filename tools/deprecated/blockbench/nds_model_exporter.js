@@ -3,7 +3,7 @@
 
     Plugin.register('nds_model_exporter', {
         title: 'NDS Model Exporter for Blockbench',
-        author: 'Taha Rashid',
+        author: 'P3D Team',
         description: 'Automates exporting Hierarchical JSON and isolated OBJs to a ZIP file. Auto-detects texture size. Built for the Persona 3 Dual project.',
         version: '1.0.8',
         variant: 'both',

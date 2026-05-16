@@ -39,7 +39,7 @@ NITRODATA   :=  nitrofiles
 
 GAME_TITLE     := Persona 3 Dual
 GAME_SUBTITLE1 := A Fan Recreation
-GAME_SUBTITLE2 := Demake by Taha Rashid
+GAME_SUBTITLE2 := Demake by P3D Team
 export GAME_ICON := $(CURDIR)/../icon.bmp
 
 #---------------------------------------------------------------------------------

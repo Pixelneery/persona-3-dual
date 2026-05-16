@@ -1,13 +1,13 @@
 """
 NDS Model Exporter for Blender
-Author: Taha Rashid
+Author: P3D Team
 Version: 2.1.3 (Bake World Space Geometry + Texture Name Sync + Axis Fix)
 Blender: 3.x / 4.x
 """
 
 bl_info = {
     "name": "NDS Model Exporter",
-    "author": "Taha Rashid",
+    "author": "P3D Team",
     "version": (2, 1, 3),
     "blender": (3, 0, 0),
     "location": "File > Export > NDS Model (.zip)",
