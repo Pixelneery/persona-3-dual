@@ -13,7 +13,7 @@ public:
 
 
 private:
-    int bgSubScreen;
+    int bgMenuHUD;
     int bgSharedSlot;
     PrintConsole console;
 

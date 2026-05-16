@@ -23,7 +23,7 @@ public:
 
 private:
     // sub screen
-    int bgSubScreen;
+    int bgMenuHUD;
     PrintConsole console;
 
     // Battle participants

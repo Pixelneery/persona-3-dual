@@ -3,6 +3,8 @@
 #include "core/globals.h"
 #include "core/enums.h"
 #include "core/structs.h"
+// menuHUD bg
+#include "menuHUD.h"
 
 class MenuHUDComponent
 {
@@ -23,7 +25,8 @@ private:
     SpriteRegister skillSprites[18];
     SpriteRegister slashSprite;
 
+    void loadBg(int *bgId);
 public:
     void loadHUD();
-    void drawHUD();
+    void drawHUD(int *bgId);
 };

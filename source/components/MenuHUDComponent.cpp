@@ -101,8 +101,20 @@ void MenuHUDComponent::loadHUD()
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 };
 
-void MenuHUDComponent::drawHUD()
+void MenuHUDComponent::loadBg(int *bgId)
 {
+    dmaCopy(menuHUDTiles, bgGetGfxPtr(*bgId), menuHUDTilesLen);
+    dmaCopy(menuHUDMap, bgGetMapPtr(*bgId), menuHUDMapLen);
+    vramSetBankH(VRAM_H_LCD);
+    dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
+    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+}
+
+void MenuHUDComponent::drawHUD(int *bgId)
+{
+    // draw bg
+    loadBg(bgId);
+
     // draw sprites
     for (int i = 0; i < 12; i++)
     {

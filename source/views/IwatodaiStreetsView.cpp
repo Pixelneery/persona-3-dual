@@ -38,8 +38,6 @@
 // model
 #include "models/character.h"
 #include "character.h"
-// menuHUD
-#include "menuHUD.h"
 
 int streetsCharacterTextureId;
 iwatodai_streets_Environment iwatodaiStreetsEnv;
@@ -74,29 +72,20 @@ void IwatodaiStreetsView::Init()
 
     // sub screen console
     bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
-    bgSubScreen = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
+    bgMenuHUD = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSubScreen), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgMenuHUD), 2048);
 
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
     consoleSelect(&console);
 
     bgSetPriority(console.bgId, 0);
     bgSetPriority(bgSharedSlot, 1);
-    bgSetPriority(bgSubScreen, 2);
-
-    // set bgSubScreen img
-    dmaCopy(menuHUDTiles, bgGetGfxPtr(bgSubScreen), menuHUDTilesLen);
-    dmaCopy(menuHUDMap, bgGetMapPtr(bgSubScreen), menuHUDMapLen);
-    vramSetBankH(VRAM_H_LCD);
-    dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
-    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-    bgShow(bgSubScreen);
-
+    bgSetPriority(bgMenuHUD, 2);
     bgUpdate();
 
     // setup menuHUD
-    // uses VRAM bank I for sprite extended palettes
+    // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
     menuHUDCmpt.loadHUD();
 
     playerCtrl = new CharacterController(
@@ -152,6 +141,7 @@ ViewState IwatodaiStreetsView::Update()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     bgUpdate();
+    oamUpdate(&oamSub);
 
     scanKeys();
     u32 keys = keysHeld();
@@ -160,6 +150,20 @@ ViewState IwatodaiStreetsView::Update()
     if (pressed & KEY_START)
     {
         isPauseMenuActive = !isPauseMenuActive;
+    }
+
+    // draw menuHUD
+    if (!isPauseMenuActive)
+    {
+        menuHUDCmpt.drawHUD(&bgMenuHUD);
+        bgShow(bgMenuHUD);
+
+    }
+    // hide menuHUD if pauseMenu is active
+    else
+    {
+        bgHide(bgMenuHUD);
+        oamClear(&oamSub, 0, 0);
     }
 
     if (isPauseMenuActive)
@@ -173,6 +177,9 @@ ViewState IwatodaiStreetsView::Update()
     }
     else
     {
+        consoleClear();
+        bgHide(bgSharedSlot);
+        
         camPos = playerCtrl->update(keys);
 
         if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
@@ -185,10 +192,6 @@ ViewState IwatodaiStreetsView::Update()
             camPos.cameraX, camPos.cameraY, camPos.cameraZ,
             camPos.targetX, camPos.targetY, camPos.targetZ,
             camPos.upX, camPos.upY, camPos.upZ);
-
-        // draw menuHUD
-        menuHUDCmpt.drawHUD();
-        oamUpdate(&oamSub);
 
         glPushMatrix();
         iwatodaiStreetsEnv.draw();
