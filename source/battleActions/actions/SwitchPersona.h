@@ -2,20 +2,19 @@
 #include <stdio.h>
 
 #include "ActionBase.h"
-#include "../party/Player.h"
+#include "../party/PartyMember.h"
 #include "../UpdateIndex.h"
 
 struct SwitchPersona : ActionBase
 {
     UpdateIndex updateIndex;
-    Player *player;
 
-    SwitchPersona(Player *iPlayer) : player(iPlayer)
+    SwitchPersona(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
     {
         name = "SwitchPersona";
         possibleUsers = ParticipantType::Player;
     }
 
     void execute() override;
-    bool update(u32 *keys) override;
+    bool update(u32 *keys, PartyMember *user) override;
 };

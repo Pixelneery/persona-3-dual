@@ -6,9 +6,10 @@
 #include "../armours/Armour.h"
 #include "../BattleParticipant.h"
 #include "../ParticipantType.h"
-#include "../actions/ActionBase.h"
 #include "./battleActions/UpdateIndex.h"
 #include "CharacterProfile.h"
+
+struct ActionBase;
 
 struct PartyMember : BattleParticipant
 {
@@ -16,14 +17,14 @@ struct PartyMember : BattleParticipant
     u32 index = 0;
 
     Armour armour;
-    PersonaBase **personas;
+    std::vector<PersonaBase *> personas;
     PersonaBase *curPersona;
     u32 personaCount;
 
     bool guarding = false;
 
     CharacterProfile *characterProfile;
-    std::array<ActionBase *, 4> *actions = {nullptr};
+    std::array<ActionBase *, 4> *actions = nullptr;
 
     PartyMember(CharacterProfile *iCharacterProfile) : characterProfile(iCharacterProfile)
     {
@@ -39,11 +40,9 @@ struct PartyMember : BattleParticipant
         personas = characterProfile->personas;
         curPersona = characterProfile->curPersona;
         personaCount = characterProfile->personaCount;
-
-        battleStats = characterProfile->battleStats;
     }
     ~PartyMember() {};
 
-    void Init(std::vector<BattleParticipant *> *iBattleParticipant, std::array<ActionBase *, 4> *iActions);
+    void Init(std::array<ActionBase *, 4> *iActions);
     bool TakeTurn(u32 *keys) override;
 };

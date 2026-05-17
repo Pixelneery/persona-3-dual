@@ -7,7 +7,7 @@ void Guard::execute()
     iprintf("Guarding\n");
 }
 
-bool Guard::update(u32 *keys)
+bool Guard::update(u32 *keys, PartyMember *user)
 {
     user->guarding = true;
     inProgress = false;

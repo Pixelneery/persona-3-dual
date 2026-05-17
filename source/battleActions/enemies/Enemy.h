@@ -2,8 +2,9 @@
 #include <nds.h>
 #include <string>
 #include "../skills/AttackSkill.h"
-#include "../BattleStats.h"
+#include "../party/PartyMember.h"
 #include "../BattleParticipant.h"
+#include "../DeductAttackCost.h"
 
 /*
 St	Represents strength and physical damage.
@@ -22,6 +23,11 @@ struct Enemy : BattleParticipant
     {
         participantType = ParticipantType::Enemy;
     }
+
+    std::vector<BattleParticipant *> *enemies;
+    std::vector<PartyMember *> *partyMembers;
+
+    void Init(std::vector<BattleParticipant *> *iEnemies, std::vector<PartyMember *> *iPartyMembers);
 
     // enemys have indivual ais in the future
     bool TakeTurn(u32 *keys) override;

@@ -1,8 +1,8 @@
 #pragma once
 #include <nds.h>
 #include <vector>
-#include "skills/AttackSkill.h"
-#include "ParticipantType.h"
+#include "../skills/AttackSkill.h"
+#include "../ParticipantType.h"
 #include "../personas/PersonaBase.h"
 
 struct CharacterProfile
@@ -16,9 +16,8 @@ struct CharacterProfile
     ArmourType armourType;
     Armour armour;
     AttackSkill *baseAttackAction;
-    PersonaBase **personas;
+    std::vector<PersonaBase *> personas;
+
     PersonaBase *curPersona;
     u32 personaCount;
-
-    BattleStats battleStats;
 };

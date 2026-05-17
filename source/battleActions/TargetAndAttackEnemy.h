@@ -9,12 +9,10 @@
 
 struct TargetAndAttackActionEnemy
 {
-
-    PartyMember *user;
     std::vector<BattleParticipant *> *targets;
     u32 *targetIndex;
 
-    TargetAndAttackActionEnemy(std::vector<BattleParticipant *> *iTargets, PartyMember *iUser, u32 *iTargetIndex) : targets(iTargets), user(iUser), targetIndex(iTargetIndex) {}
+    TargetAndAttackActionEnemy(std::vector<BattleParticipant *> *iTargets, u32 *iTargetIndex) : targets(iTargets), targetIndex(iTargetIndex) {}
 
-    bool update(u32 *keys, AttackSkill *attack);
+    bool update(u32 *keys, AttackSkill *attack, PartyMember *user);
 };

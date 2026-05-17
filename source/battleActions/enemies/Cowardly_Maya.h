@@ -19,22 +19,22 @@ struct Cowardly_Maya : Enemy
         hp = 83;
         sp = 20;
         lv = 2;
-        st = 2;
-        ma = 3;
-        en = 3;
-        ag = 2;
-        lu = 2;
+        battleStats.st = 2;
+        battleStats.ma = 3;
+        battleStats.en = 3;
+        battleStats.ag = 2;
+        battleStats.lu = 2;
         attackSkill = myAttackSkill;
         attackCount = 1;
 
-        affinities[Element::Slash] = Weak;
-        affinities[Element::Strike] = Neutral;
-        affinities[Element::Pierce] = Neutral;
-        affinities[Element::Fire] = Weak;
-        affinities[Element::Ice] = Neutral;
-        affinities[Element::Electricity] = Neutral;
-        affinities[Element::Wind] = Neutral;
-        affinities[Element::Light] = Neutral;
-        affinities[Element::Dark] = Neutral;
+        battleStats.affinities[Element::Slash] = BattleStats::Weak;
+        battleStats.affinities[Element::Strike] = BattleStats::Neutral;
+        battleStats.affinities[Element::Pierce] = BattleStats::Neutral;
+        battleStats.affinities[Element::Fire] = BattleStats::Weak;
+        battleStats.affinities[Element::Ice] = BattleStats::Neutral;
+        battleStats.affinities[Element::Electricity] = BattleStats::Neutral;
+        battleStats.affinities[Element::Wind] = BattleStats::Neutral;
+        battleStats.affinities[Element::Light] = BattleStats::Neutral;
+        battleStats.affinities[Element::Dark] = BattleStats::Neutral;
     }
 };

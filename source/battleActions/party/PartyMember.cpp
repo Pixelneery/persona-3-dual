@@ -1,8 +1,8 @@
 #include "PartyMember.h"
+#include "../actions/ActionBase.h"
 
-void PartyMember::Init(std::vector<BattleParticipant *> *iBattleParticipant, std::array<ActionBase *, 4> *iActions)
+void PartyMember::Init(std::array<ActionBase *, 4> *iActions)
 {
-    battleParticipants = iBattleParticipant;
     actions = iActions;
     if (participantType == ParticipantType::Player)
     {
@@ -34,7 +34,7 @@ bool PartyMember::TakeTurn(u32 *keys)
     {
         if (actions->at(i)->inProgress)
         {
-            return actions->at(i)->update(keys);
+            return actions->at(i)->update(keys, this);
         }
     }
 

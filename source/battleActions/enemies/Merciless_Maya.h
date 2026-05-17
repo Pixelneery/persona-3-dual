@@ -19,22 +19,22 @@ struct Merciless_Maya : Enemy
         hp = 83;
         sp = 15;
         lv = 2;
-        st = 2;
-        ma = 4;
-        en = 3;
-        ag = 2;
-        lu = 2;
+        battleStats.st = 2;
+        battleStats.ma = 4;
+        battleStats.en = 3;
+        battleStats.ag = 2;
+        battleStats.lu = 2;
         attackSkill = myAttackSkill;
         attackCount = 1;
 
-        affinities[Element::Slash] = Weak;
-        affinities[Element::Strike] = Neutral;
-        affinities[Element::Pierce] = Neutral;
-        affinities[Element::Fire] = Resist;
-        affinities[Element::Ice] = Weak;
-        affinities[Element::Electricity] = Null;
-        affinities[Element::Wind] = Neutral;
-        affinities[Element::Light] = Neutral;
-        affinities[Element::Dark] = Neutral;
+        battleStats.affinities[Element::Slash] = BattleStats::Weak;
+        battleStats.affinities[Element::Strike] = BattleStats::Neutral;
+        battleStats.affinities[Element::Pierce] = BattleStats::Neutral;
+        battleStats.affinities[Element::Fire] = BattleStats::Resist;
+        battleStats.affinities[Element::Ice] = BattleStats::Weak;
+        battleStats.affinities[Element::Electricity] = BattleStats::Null;
+        battleStats.affinities[Element::Wind] = BattleStats::Neutral;
+        battleStats.affinities[Element::Light] = BattleStats::Neutral;
+        battleStats.affinities[Element::Dark] = BattleStats::Neutral;
     }
 };

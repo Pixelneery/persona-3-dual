@@ -7,7 +7,6 @@
 void BattleController::execute()
 {
     active = true;
-    actions = {&attack, &guard, &persona, &switchPersona};
 
     for (BattleParticipant *participant : *battleParticipants)
     {
@@ -20,6 +19,15 @@ void BattleController::execute()
             partyMembers->push_back(participant);
         }
     }
+
+    player->Init(&actions);
+    yukari->Init(&actions);
+    junpei->Init(&actions);
+
+    // dont harcode, move
+    battleParticipants->push_back(player);
+    battleParticipants->push_back(yukari);
+    battleParticipants->push_back(junpei);
 }
 
 void BattleController::update(u32 keys)
@@ -65,20 +73,17 @@ void BattleController::update(u32 keys)
     */
 }
 
-void BattleController::enemyTurn()
-{
-    if (enemies->at(counter)->knockedDown)
-    {
-        // recovery logic in the future
-        enemies->at(counter)->knockedDown = false;
-    }
-}
-
 void BattleController::exit()
 {
-    actions[index]->inProgress = false;
+    // TODO: proper exit
+    //  actions[index]->inProgress = false;
     consoleClear();
     active = false;
 }
 
-BattleController::BattleController(Player *iPlayer, std::vector<Enemy *> *iEnemies) : player(iPlayer), enemies(iEnemies), attack(enemies, player), guard(player), persona(enemies, player), switchPersona(player) {}
+BattleController::BattleController(std::vector<BattleParticipant *> *iBattleParticipant)
+    : battleParticipants(iBattleParticipant),
+      attack(battleParticipants, partyMembers, enemies),
+      guard(battleParticipants, partyMembers, enemies),
+      persona(battleParticipants, partyMembers, enemies),
+      switchPersona(battleParticipants, partyMembers, enemies) {}

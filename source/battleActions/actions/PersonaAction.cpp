@@ -8,14 +8,14 @@ void PersonaAction::execute()
     menuState = SelectSkill;
 }
 
-bool PersonaAction::update(u32 *keys)
+bool PersonaAction::update(u32 *keys, PartyMember *user)
 {
     if (menuState == SelectSkill)
     {
-        u32 skillCount = player->curPersona->attackCount;
+        u32 skillCount = user->curPersona->attackCount;
         updateIndex.update(*keys, targetIndex, skillCount);
 
-        AttackSkill *curSkill = player->curPersona->attackSkill[targetIndex];
+        AttackSkill *curSkill = user->curPersona->attackSkill[targetIndex];
 
         if (*keys & KEY_LEFT || *keys & KEY_RIGHT)
         {
@@ -28,12 +28,12 @@ bool PersonaAction::update(u32 *keys)
         {
             if (curSkill->race == AttackSkill::mag)
             {
-                if (!DeductAttackCost(&player->sp, curSkill->cost, "not enough SP\n"))
+                if (!DeductAttackCost(&user->sp, curSkill->cost, "not enough SP\n"))
                     return false;
             }
             else if (curSkill->race == AttackSkill::phys)
             {
-                if (!DeductAttackCost(&player->hp, curSkill->cost, "not enough HP\n"))
+                if (!DeductAttackCost(&user->hp, curSkill->cost, "not enough HP\n"))
                     return false;
             }
 
@@ -52,7 +52,7 @@ bool PersonaAction::update(u32 *keys)
 
         updateIndex.update(*keys, targetIndex, enemyCount);
 
-        bool madeAction = targetAndAttackActionEnemy->update(keys, selectedSkill);
+        bool madeAction = targetAndAttackActionEnemy->update(keys, selectedSkill, user);
         if (madeAction)
         {
             targetIndex = 0;

@@ -10,18 +10,16 @@
 struct AttackAction : ActionBase
 {
     UpdateIndex updateIndex;
-    std::vector<BattleParticipant *> *targets;
-    PartyMember *user;
     TargetAndAttackActionEnemy *targetAndAttackActionEnemy;
 
-    AttackAction(std::vector<BattleParticipant *> *iTargets, PartyMember *iUser) : targets(iTargets), user(iUser)
+    AttackAction(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
     {
         name = "AttackAction";
         possibleUsers = ParticipantType::Party;
         // TODO: dont forget to clear in the future
-        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(targets, user, &targetIndex);
+        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, &targetIndex);
     }
 
     void execute() override;
-    bool update(u32 *keys) override;
+    bool update(u32 *keys, PartyMember *user) override;
 };

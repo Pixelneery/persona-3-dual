@@ -1,6 +1,6 @@
 #include "TargetAndAttackEnemy.h"
 
-bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack)
+bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack, PartyMember *user)
 {
 
     if (*keys & KEY_LEFT || *keys & KEY_RIGHT)

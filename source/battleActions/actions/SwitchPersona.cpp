@@ -6,27 +6,27 @@ void SwitchPersona::execute()
     targetIndex = 0;
 }
 
-bool SwitchPersona::update(u32 *keys)
+bool SwitchPersona::update(u32 *keys, PartyMember *user)
 {
-    updateIndex.update(*keys, targetIndex, player->personaCount);
+    updateIndex.update(*keys, targetIndex, user->personaCount);
 
     if (*keys & KEY_LEFT || *keys & KEY_RIGHT)
     {
         iprintf("Cur: ");
-        iprintf(player->personas[targetIndex]->name.c_str());
+        iprintf(user->personas[targetIndex]->name.c_str());
         iprintf("\n");
     }
 
     if (*keys & KEY_A)
     {
-        if (player->curPersona == player->personas[targetIndex])
+        if (user->curPersona == user->personas[targetIndex])
         {
             iprintf("already selected this Persona\n");
             return false;
         }
         iprintf("Sel: ");
-        player->curPersona = player->personas[targetIndex];
-        iprintf(player->curPersona->name.c_str());
+        user->curPersona = user->personas[targetIndex];
+        iprintf(user->curPersona->name.c_str());
         iprintf("\n");
 
         inProgress = false;

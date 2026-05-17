@@ -6,7 +6,6 @@
 // environments
 #include "environments/iwatodai_dorm.h"
 // battle-related
-#include "./battleActions/party/curPlayer.h"
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/enemies/Cowardly_Maya.h"
 #include "./battleActions/enemies/Merciless_Maya.h"
@@ -28,7 +27,6 @@ private:
     PrintConsole console;
 
     // Battle participants
-    curPlayer player;
     Cowardly_Maya cowardly_Maya;
     Merciless_Maya merciless_Maya;
     std::vector<BattleParticipant *> *battleParticipants;

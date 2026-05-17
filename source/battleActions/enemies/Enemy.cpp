@@ -1,18 +1,16 @@
 #include "Enemy.h"
-#include "../battleActions/DeductAttackCost.h"
+
+void Enemy::Init(std::vector<BattleParticipant *> *iEnemies, std::vector<PartyMember *> *iPartyMembers)
+{
+    enemies = iEnemies;
+    partyMembers = iPartyMembers;
+}
 
 bool Enemy::TakeTurn(u32 *keys)
 {
     u32 randomNum = rand() % attackCount + 1;
 
-    u8 potentialTargetsCount = 0;
-    for (int i = 0; i < battleParticipants->size(); i++)
-    {
-        if (battleParticipants->at(i)->participantType == ParticipantType::Party || battleParticipants->at(i)->participantType == ParticipantType::Player)
-            potentialTargetsCount++;
-    }
-
-    u8 target = rand() % potentialTargetsCount;
+    PartyMember *target = partyMembers->at(rand() % partyMembers->size());
 
     u32 damage;
     AttackSkill *curSkill;
@@ -21,15 +19,15 @@ bool Enemy::TakeTurn(u32 *keys)
     if (randomNum == 0)
     {
         curSkill = baseAttackAction;
-        damage = curSkill->calculateDamageEnemyRegular(battleStats.getBattleStats(), player->curPersona->getBattleStats(), &enemies->at(counter)->lv, &player->lv, &player->armour);
+        damage = curSkill->calculateDamageEnemyRegular(battleStats.getBattleStats(), target->curPersona->getBattleStats(), &lv, &target->lv, &target->armour);
     }
     else
     {
-        curSkill = enemies->at(counter)->attackSkill[randomNum - 1];
-        damage = curSkill->calculateDamageEnemySkill(enemies->at(counter)->getBattleStats(), player->curPersona->getBattleStats(), &enemies->at(counter)->lv, &player->lv, &player->armour);
+        curSkill = attackSkill[randomNum - 1];
+        damage = curSkill->calculateDamageEnemySkill(battleStats.getBattleStats(), target->curPersona->getBattleStats(), &lv, &target->lv, &target->armour);
     }
 
-    if (player->guarding)
+    if (target->guarding)
     {
         iprintf("player guarded\n");
         damage *= 0.4;
@@ -38,22 +36,14 @@ bool Enemy::TakeTurn(u32 *keys)
     bool attacked = false;
     if (curSkill->race == AttackSkill::mag)
     {
-        if (!DeductAttackCost(&enemies->at(counter)->sp, curSkill->cost, "not enough SP\n"))
-        {
-            counter++;
-        }
-        else
+        if (DeductAttackCost(&sp, curSkill->cost, "not enough SP\n"))
         {
             attacked = true;
         }
     }
     else if (curSkill->race == AttackSkill::phys)
     {
-        if (!DeductAttackCost(&enemies->at(counter)->hp, curSkill->cost, "not enough HP\n"))
-        {
-            counter++;
-        }
-        else
+        if (DeductAttackCost(&hp, curSkill->cost, "not enough HP\n"))
         {
             attacked = true;
         }
@@ -61,13 +51,14 @@ bool Enemy::TakeTurn(u32 *keys)
 
     if (attacked)
     {
-        player->hp -= (s32)damage;
+        target->hp -= (s32)damage;
         iprintf("Attack with: ");
         iprintf(curSkill->name.c_str());
         iprintf("\n");
         char str[50];
-        std::sprintf(str, "remaining player hp: %ld \n", player->hp);
+        std::sprintf(str, "remaining target hp: %ld \n", target->hp);
         iprintf(str);
+        /*
         if (player->hp <= 0)
         {
             player->hp = 72;
@@ -75,34 +66,14 @@ bool Enemy::TakeTurn(u32 *keys)
             exit();
             return;
         }
+            */
 
-        u32 affinity = player->curPersona->affinities[curSkill->element];
-        if (affinity == BattleStats::Affinity::Weak && !player->knockedDown && !player->guarding)
+        u32 affinity = target->curPersona->affinities[curSkill->element];
+        if (affinity == BattleStats::Affinity::Weak && !target->knockedDown && !target->guarding)
         {
-            enemies->at(counter)->oneMore = true;
+            oneMore = true;
             iprintf("one more!\n");
-            player->knockedDown = true;
+            target->knockedDown = true;
         }
-
-        if (!enemies->at(counter)->oneMore)
-        {
-            counter++;
-        }
-        else
-        {
-            enemies->at(counter)->oneMore = false;
-        }
-    }
-
-    if (counter >= enemies->size())
-    {
-        player->guarding = false;
-        if (player->knockedDown)
-        {
-            // recovery logic in the future
-            player->knockedDown = false;
-        }
-        isEnemyTurn = false;
-        counter = 0;
     }
 }
