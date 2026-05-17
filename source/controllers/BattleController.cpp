@@ -61,6 +61,9 @@ void BattleController::update(u32 keys)
                             break;
                         }
                     }
+
+                    if (enemies.size() == 0)
+                        exit();
                 }
                 else if (dead->participantType == ParticipantType::Party || dead->participantType == ParticipantType::Player)
                 {
@@ -72,6 +75,9 @@ void BattleController::update(u32 keys)
                             break;
                         }
                     }
+
+                    if (partyMembers.size() == 0)
+                        exit();
                 }
 
                 battleParticipants->erase(battleParticipants->begin() + i);
