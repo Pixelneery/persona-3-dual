@@ -7,6 +7,12 @@
 void BattleController::execute()
 {
     active = true;
+
+    // TODO: method for selecting party members in the future
+    player = new PartyMember(&characterProfiles->player);
+    yukari = new PartyMember(&characterProfiles->yukari);
+    junpei = new PartyMember(&characterProfiles->junpei);
+
     player->Init(&actions);
     yukari->Init(&actions);
     junpei->Init(&actions);
@@ -102,8 +108,9 @@ void BattleController::exit()
     active = false;
 }
 
-BattleController::BattleController(std::vector<BattleParticipant *> *iBattleParticipant)
+BattleController::BattleController(std::vector<BattleParticipant *> *iBattleParticipant, CharacterProfiles *iCharacterProfiles)
     : battleParticipants(iBattleParticipant),
+      characterProfiles(iCharacterProfiles),
       attack(battleParticipants, &partyMembers, &enemies),
       guard(battleParticipants, &partyMembers, &enemies),
       persona(battleParticipants, &partyMembers, &enemies),

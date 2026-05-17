@@ -35,16 +35,17 @@ private:
 
     std::array<ActionBase *, 4> actions = {&attack, &guard, &persona, &switchPersona};
 
-    // TODO: temp hardcoded battle participants
-    PartyMember *player = new PartyMember(&CharacterProfiles::player);
-    PartyMember *yukari = new PartyMember(&CharacterProfiles::yukari);
-    PartyMember *junpei = new PartyMember(&CharacterProfiles::junpei);
+    CharacterProfiles *characterProfiles;
+    // TODO: method for selecting party members in the future
+    PartyMember *player = nullptr;
+    PartyMember *yukari = nullptr;
+    PartyMember *junpei = nullptr;
 
 public:
     bool isActive() { return active; };
     void execute();
     void update(u32 keys);
     void exit();
-    BattleController(std::vector<BattleParticipant *> *iBattleParticipants);
+    BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles);
     ~BattleController() {}
 };

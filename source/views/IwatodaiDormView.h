@@ -26,6 +26,8 @@ private:
     // sub screen
     PrintConsole console;
 
+    // init Character Profiles
+    CharacterProfiles characterProfiles;
     // Battle participants
     Cowardly_Maya cowardly_Maya;
     Merciless_Maya merciless_Maya;

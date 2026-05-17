@@ -106,9 +106,6 @@ int main(int argc, char *argv[])
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = character_texture_3Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = character_texture_4Bitmap;
 
-    // init Character Profiles
-    CharacterProfiles::InitializeProfiles();
-
     // start with DisclaimerView
     // seed with DS hardware timer for reliable randomness (time() can return 0 on DS)
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;

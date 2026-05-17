@@ -21,7 +21,7 @@ iwatodai_dorm_Environment iwatodaiDormEnv;
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView() : battleParticipants(new std::vector<BattleParticipant *>({&merciless_Maya, &cowardly_Maya})),
-                                       battleController(battleParticipants) {}
+                                       battleController(battleParticipants, &characterProfiles) {}
 
 void IwatodaiDormView::Init()
 {
@@ -96,6 +96,9 @@ void IwatodaiDormView::Init()
     // setup pause menu
     // use the same shared background slot as the demo dialogue
     pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
+
+    // setup character profiles
+    characterProfiles.InitializeProfiles();
 }
 
 ViewState IwatodaiDormView::Update()

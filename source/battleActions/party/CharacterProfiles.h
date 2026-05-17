@@ -12,11 +12,11 @@
 #include "../armours/PlainShirt.h"
 #include "../armours/RashGuard.h"
 
-namespace CharacterProfiles
+struct CharacterProfiles
 {
-    extern CharacterProfile player;
-    extern CharacterProfile yukari;
-    extern CharacterProfile junpei;
+    CharacterProfile player;
+    CharacterProfile yukari;
+    CharacterProfile junpei;
 
     void InitializeProfiles();
-}
+};
