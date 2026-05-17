@@ -39,6 +39,7 @@ void BattleController::update(u32 keys)
     if (turnResult)
     {
 
+        iprintf("Previous attaker: ");
         iprintf(currentParticipantTurn->name.c_str());
         iprintf("\n");
 
@@ -46,10 +47,38 @@ void BattleController::update(u32 keys)
         {
             if (battleParticipants->at(i)->hp <= 0)
             {
+                // adjusts the index for the next round so it wont skip an entry
+                turnsTaken--;
+                BattleParticipant *dead = battleParticipants->at(i);
+
+                if (dead->participantType == ParticipantType::Enemy)
+                {
+                    for (u32 j = 0; j < enemies.size(); j++)
+                    {
+                        if (enemies.at(j) == dead)
+                        {
+                            enemies.erase(enemies.begin() + j);
+                            break;
+                        }
+                    }
+                }
+                else if (dead->participantType == ParticipantType::Party || dead->participantType == ParticipantType::Player)
+                {
+                    for (u32 j = 0; j < partyMembers.size(); j++)
+                    {
+                        if (partyMembers.at(j) == dead)
+                        {
+                            partyMembers.erase(partyMembers.begin() + j);
+                            break;
+                        }
+                    }
+                }
+
                 battleParticipants->erase(battleParticipants->begin() + i);
                 i--;
             }
         }
+
         if (!currentParticipantTurn->oneMore)
             turnsTaken++;
         else

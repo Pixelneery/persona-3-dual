@@ -8,7 +8,7 @@ void Enemy::Init(std::vector<BattleParticipant *> *iEnemies, std::vector<BattleP
 
 bool Enemy::TakeTurn(u32 *keys)
 {
-    u32 randomNum = rand() % attackCount + 1;
+    u32 randomNum = rand() % (attackCount + 1);
 
     PartyMember *target = static_cast<PartyMember *>(partyMembers->at(rand() % partyMembers->size()));
 
@@ -54,6 +54,7 @@ bool Enemy::TakeTurn(u32 *keys)
         target->hp -= (s32)damage;
         iprintf("Attack with: ");
         iprintf(curSkill->name.c_str());
+        iprintf("\n");
         iprintf("Attacking: ");
         iprintf(target->name.c_str());
         iprintf("\n");
