@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <filesystem.h>
 #include <maxmod9.h>
+#include "core/enums.h"
 
 // states
-#include "core/View.h"
+#include "core/BaseView.h"
 #include "views/DisclaimerView.h"
 #include "views/IntroVideoView.h"
 #include "views/IntroView.h"
@@ -51,14 +52,14 @@ bool enableDebugPrint = false;
 bool isPauseMenuActive = false;
 MenuHUDComponent menuHUDCmpt;
 
-View *currentView = nullptr;
+BaseView *currentView = nullptr;
 
-void SwitchView(View *newView)
+void SwitchView(BaseView *newView)
 {
     // cleanup any existing view
     if (currentView != nullptr)
     {
-        currentView->Cleanup();
+        currentView->cleanup();
 
         // free memory
         delete currentView;
@@ -68,7 +69,7 @@ void SwitchView(View *newView)
     currentView = newView;
     if (currentView != nullptr)
     {
-        currentView->Init();
+        currentView->init();
     }
 }
 
@@ -123,7 +124,7 @@ int main(int argc, char *argv[])
         // check state of currentView
         if (currentView != nullptr)
         {
-            ViewState nextState = currentView->Update();
+            ViewState nextState = currentView->update();
             if (nextState == ViewState::INTRO)
             {
                 SwitchView(new IntroView());

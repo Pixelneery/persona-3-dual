@@ -42,7 +42,7 @@
 int streetsCharacterTextureId;
 iwatodai_streets_Environment iwatodaiStreetsEnv;
 
-void IwatodaiStreetsView::Init()
+void IwatodaiStreetsView::init()
 {
     videoSetMode(MODE_0_3D);
     videoSetModeSub(MODE_0_2D);
@@ -136,7 +136,7 @@ void IwatodaiStreetsView::Init()
     pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 }
 
-ViewState IwatodaiStreetsView::Update()
+ViewState IwatodaiStreetsView::update()
 {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -237,7 +237,7 @@ ViewState IwatodaiStreetsView::Update()
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiStreetsView::Cleanup()
+void IwatodaiStreetsView::cleanup()
 {
     setBrightness(3, 0);
     consoleClear();

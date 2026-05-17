@@ -22,7 +22,7 @@ int bgSubLogo;
 int bgSubSky;
 PrintConsole consoleIntro;
 
-void IntroView::Init()
+void IntroView::init()
 {
     // set video mode for 3 text layers and 1 extended rotation layer
     videoSetMode(MODE_3_2D);
@@ -185,7 +185,7 @@ void IntroView::Init()
     }
 }
 
-ViewState IntroView::Update()
+ViewState IntroView::update()
 {
     musicCtrl.update();
     scanKeys();
@@ -358,7 +358,7 @@ ViewState IntroView::Update()
     return ViewState::KEEP_CURRENT;
 }
 
-void IntroView::Cleanup()
+void IntroView::cleanup()
 {
     // clear screen
     setBrightness(3, 0);

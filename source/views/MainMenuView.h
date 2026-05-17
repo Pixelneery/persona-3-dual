@@ -1,8 +1,8 @@
 #pragma once
-#include "core/View.h"
+#include "core/BaseView.h"
 #include "components/MainMenuComponent.h"
 
-class MainMenuView : public View
+class MainMenuView : public BaseView
 {
 private:
     MainMenuComponent mainMenuCmpt;
@@ -26,8 +26,7 @@ private:
     int fluctuation = 50;
 
 public:
-    // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
-    void Init() override;
-    ViewState Update() override;
-    void Cleanup() override;
+    void init() override;
+    ViewState update() override;
+    void cleanup() override;
 };

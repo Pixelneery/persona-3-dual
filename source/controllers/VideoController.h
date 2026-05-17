@@ -1,9 +1,9 @@
 #pragma once
 #include <nds.h>
-#include "core/View.h"
-#include "core/globals.h"
 #include <string>
-#include <fat.h>
+#include "core/globals.h"
+#include "core/enums.h"
+// #include <fat.h>
 
 #define FRAME_W 256
 #define FRAME_H 192

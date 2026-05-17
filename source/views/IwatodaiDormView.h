@@ -1,4 +1,4 @@
-#include "core/View.h"
+#include "core/BaseView.h"
 #include <nds/arm9/console.h>
 // controllers
 #include "controllers/DialogueController.h"
@@ -12,13 +12,12 @@
 #include "./battleActions/enemies/Merciless_Maya.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
-class IwatodaiDormView : public View
+class IwatodaiDormView : public BaseView
 {
 public:
-    // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
-    void Init() override;
-    ViewState Update() override;
-    void Cleanup() override;
+    void init() override;
+    ViewState update() override;
+    void cleanup() override;
     IwatodaiDormView();
 
 private:

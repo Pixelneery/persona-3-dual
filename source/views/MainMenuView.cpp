@@ -8,7 +8,7 @@
 #include "doorBackground.h"
 #include "fogBackground.h"
 
-void MainMenuView::Init()
+void MainMenuView::init()
 {
     // setup music
     musicCtrl.init("nitro:/music/aria_of_the_soul.pcm", 0.0f, 164.940f);
@@ -111,7 +111,7 @@ void MainMenuView::Init()
     }
 }
 
-ViewState MainMenuView::Update()
+ViewState MainMenuView::update()
 {
     scanKeys();
     int pressed = keysDown();
@@ -184,7 +184,7 @@ ViewState MainMenuView::Update()
     return ViewState::KEEP_CURRENT;
 }
 
-void MainMenuView::Cleanup()
+void MainMenuView::cleanup()
 {
     // clear screen
     setBrightness(3, 0);

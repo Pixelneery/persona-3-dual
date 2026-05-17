@@ -1,15 +1,14 @@
 #pragma once
-#include "core/View.h"
+#include "core/BaseView.h"
 #include "core/globals.h"
 
-// implementing from View
-class IntroVideoView : public View
+class IntroVideoView : public BaseView
 {
 public:
     IntroVideoView(const char *filename) : filename(filename) {}
-    void Init() override;
-    ViewState Update() override;
-    void Cleanup() override;
+    void init() override;
+    ViewState update() override;
+    void cleanup() override;
 
 private:
     const char *filename;
