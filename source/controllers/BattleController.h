@@ -25,7 +25,6 @@ private:
     bool isEnemyTurn = false;
 
     std::vector<BattleParticipant *> *battleParticipants;
-    // needs to be battleparticipant so i can just vecotr push back based on participant type aloneyy
     std::vector<BattleParticipant *> enemies;
     std::vector<BattleParticipant *> partyMembers;
 

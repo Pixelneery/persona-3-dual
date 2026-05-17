@@ -8,7 +8,7 @@ void SwitchPersona::execute()
 
 bool SwitchPersona::update(u32 *keys, PartyMember *user)
 {
-    updateIndex.update(*keys, targetIndex, user->personaCount);
+    updateIndex.update(*keys, targetIndex, user->personas.size());
 
     if (*keys & KEY_LEFT || *keys & KEY_RIGHT)
     {

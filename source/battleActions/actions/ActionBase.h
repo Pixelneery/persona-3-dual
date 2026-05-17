@@ -8,7 +8,6 @@
 
 struct ActionBase
 {
-    bool canUse = false;
     bool inProgress = false;
     u32 targetIndex = 0;
     std::string name = "";

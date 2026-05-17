@@ -8,7 +8,7 @@ void PartyMember::Init(std::array<ActionBase *, 4> *iActions)
     {
         for (int i = 0; i < actions->size(); i++)
         {
-            actions->at(i)->canUse = true;
+            canUseAction[i] = true;
         }
     }
     else if (participantType == ParticipantType::Party)
@@ -17,11 +17,11 @@ void PartyMember::Init(std::array<ActionBase *, 4> *iActions)
         {
             if (actions->at(i)->possibleUsers == ParticipantType::Party)
             {
-                actions->at(i)->canUse = true;
+                canUseAction[i] = true;
             }
             else
             {
-                actions->at(i)->canUse = false;
+                canUseAction[i] = false;
             }
         }
     }
@@ -47,7 +47,7 @@ bool PartyMember::TakeTurn(u32 *keys)
         iprintf("\n");
     }
 
-    if (*keys & KEY_A && actions->at(index)->canUse)
+    if (*keys & KEY_A && canUseAction[index])
     {
         actions->at(index)->execute();
     }

@@ -19,5 +19,4 @@ struct CharacterProfile
     std::vector<PersonaBase *> personas;
 
     PersonaBase *curPersona;
-    u32 personaCount;
 };

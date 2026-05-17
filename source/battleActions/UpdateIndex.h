@@ -5,7 +5,7 @@
 struct UpdateIndex
 {
 
-    void update(u32 &keys, u32 &index, u32 &structureSize)
+    void update(u32 &keys, u32 &index, u32 structureSize)
     {
         if (keys & KEY_LEFT)
         {

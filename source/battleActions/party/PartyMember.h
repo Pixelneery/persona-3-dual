@@ -19,11 +19,12 @@ struct PartyMember : BattleParticipant
     Armour armour;
     std::vector<PersonaBase *> personas;
     PersonaBase *curPersona;
-    u32 personaCount;
 
     bool guarding = false;
 
     CharacterProfile *characterProfile;
+
+    bool canUseAction[4];
     std::array<ActionBase *, 4> *actions = nullptr;
 
     PartyMember(CharacterProfile *iCharacterProfile) : characterProfile(iCharacterProfile)
@@ -39,7 +40,6 @@ struct PartyMember : BattleParticipant
         armour = characterProfile->armour;
         personas = characterProfile->personas;
         curPersona = characterProfile->curPersona;
-        personaCount = characterProfile->personaCount;
     }
     ~PartyMember() {};
 
