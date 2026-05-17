@@ -5,7 +5,7 @@
 
 // sfx
 #include "soundbank.h"
-// dummy backgrounds
+// backgrounds
 #include "bgAkihiko.h"
 #include "bgKenji.h"
 #include "bgYukari.h"
@@ -15,492 +15,235 @@
 
 DialogueController dialogueCtrl;
 
-// add background setup here, and assign the bgLoader index to the appropriate PauseOption in PauseMenuComponent.h
-// NOTE: we can easily pass in custom bgLoaders. The reason I'm not implementing this behaviour is because I don't
-// think they need to be different across interactions. The PauseMenuComponent should remain the same between
-// different views
-void PauseMenuComponent::setBgLoaders()
-{
-    bgLoaders[0] = [](int slot)
-    {
-        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(slot), bgAkihikoTilesLen);
-        dmaCopy(bgAkihikoMap, bgGetMapPtr(slot), bgAkihikoMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(slot);
-    };
-    bgLoaders[1] = [](int slot)
-    {
-        dmaCopy(bgKenjiTiles, bgGetGfxPtr(slot), bgKenjiTilesLen);
-        dmaCopy(bgKenjiMap, bgGetMapPtr(slot), bgKenjiMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgKenjiPal, &VRAM_H_EXT_PALETTE[0][0], bgKenjiPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(slot);
-    };
-    bgLoaders[2] = [](int slot)
-    {
-        dmaCopy(bgYukariTiles, bgGetGfxPtr(slot), bgYukariTilesLen);
-        dmaCopy(bgYukariMap, bgGetMapPtr(slot), bgYukariMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukariPal, &VRAM_H_EXT_PALETTE[0][0], bgYukariPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(slot);
-    };
-    bgLoaders[3] = [](int slot)
-    {
-        dmaCopy(bgYukariCloseTiles, bgGetGfxPtr(slot), bgYukariCloseTilesLen);
-        dmaCopy(bgYukariCloseMap, bgGetMapPtr(slot), bgYukariCloseMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukariClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukariClosePalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(slot);
-    };
-}
-
 void PauseMenuComponent::loadBg(int bgIndex)
 {
-    if (bgIndex >= 0 && bgIndex < 4 && bgLoaders[bgIndex])
-        bgLoaders[bgIndex](bgSlot);
+    if (bgIndex < 0) return;
+
+    switch (bgIndex)
+    {
+        case 0: // Akihiko
+            dmaCopy(bgAkihikoTiles, bgGetGfxPtr(bgSlot), bgAkihikoTilesLen);
+            dmaCopy(bgAkihikoMap, bgGetMapPtr(bgSlot), bgAkihikoMapLen);
+            vramSetBankH(VRAM_H_LCD);
+            dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
+            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+            break;
+
+        case 1: // Kenji
+            dmaCopy(bgKenjiTiles, bgGetGfxPtr(bgSlot), bgKenjiTilesLen);
+            dmaCopy(bgKenjiMap, bgGetMapPtr(bgSlot), bgKenjiMapLen);
+            vramSetBankH(VRAM_H_LCD);
+            dmaCopy(bgKenjiPal, &VRAM_H_EXT_PALETTE[0][0], bgKenjiPalLen);
+            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+            break;
+
+        case 2: // Yukari
+            dmaCopy(bgYukariTiles, bgGetGfxPtr(bgSlot), bgYukariTilesLen);
+            dmaCopy(bgYukariMap, bgGetMapPtr(bgSlot), bgYukariMapLen);
+            vramSetBankH(VRAM_H_LCD);
+            dmaCopy(bgYukariPal, &VRAM_H_EXT_PALETTE[0][0], bgYukariPalLen);
+            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+            break;
+
+        case 3: // YukariClose
+            dmaCopy(bgYukariCloseTiles, bgGetGfxPtr(bgSlot), bgYukariCloseTilesLen);
+            dmaCopy(bgYukariCloseMap, bgGetMapPtr(bgSlot), bgYukariCloseMapLen);
+            vramSetBankH(VRAM_H_LCD);
+            dmaCopy(bgYukariClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukariClosePalLen);
+            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+            break;
+
+        default:
+            break;
+    }
 }
 
-void PauseMenuComponent::cancelSFX()
+void PauseMenuComponent::init(int iBgSlot, bool *isActive, const std::string &iPauseMessage)
 {
-    musicCtrl.stopSFX(sfxMenuHandle);
-    musicCtrl.stopSFX(sfxSelectHandle);
-    musicCtrl.stopSFX(sfxCancelHandle);
-}
-
-void PauseMenuComponent::init(int iBgSlot, bool *isActive)
-{
-    // point to music
-    musicCtrl.loadSFX(SFX_MENU);
-    musicCtrl.loadSFX(SFX_SELECT);
-    musicCtrl.loadSFX(SFX_CANCEL);
-
-    // set default options
+    BaseMenu::init(iBgSlot, isActive, iPauseMessage);
     options = menuOptions;
     optionCount = MENU_OPTIONS;
-    selectedOption = 0;
-    startIndex = 0;
-
-    // set bg loaders
-    bgSlot = iBgSlot;
-    setBgLoaders();
-
-    isActivePtr = isActive;
-
-    // initialize view state
-    nextViewState = ViewState::KEEP_CURRENT;
 }
 
 ViewState PauseMenuComponent::update(int keys)
 {
-    // added for debug testing of dialogue
+    // dialogue controller takes full control when active
     if (dialogueCtrl.isActive())
     {
         dialogueCtrl.update(keys);
         return ViewState::KEEP_CURRENT;
     }
 
-    // navigate options
-    if (keys & KEY_DOWN)
-    {
-        sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
-        selectedOption = (selectedOption + 1) % optionCount;
-    }
-    else if (keys & KEY_UP)
-    {
-        sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
-        selectedOption = (selectedOption + optionCount - 1) % optionCount;
-    }
-
-    // Adjust scroll position
-    if (selectedOption < startIndex)
-        startIndex = selectedOption;
-    if (selectedOption >= startIndex + visibleOptions)
-        startIndex = selectedOption - visibleOptions + 1;
-
-    else if (keys & KEY_A)
-    {
-        cancelSFX();
-        sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
-
-        PauseState currentState = {options, optionCount, selectedOption, startIndex};
-
-        if (options[selectedOption].onSelect != nullptr)
-        {
-            ViewState result = (this->*(options[selectedOption].onSelect))();
-            if (result != ViewState::KEEP_CURRENT)
-            {
-                nextViewState = result;
-                *isActivePtr = false;
-                bgHide(bgSlot);
-            }
-            else if (dialogueCtrl.isActive())
-            { // added for debug testing of dialogue
-                return ViewState::KEEP_CURRENT;
-            }
-            // if we changed options, push current state to stack
-            if (options != currentState.options)
-            {
-                prevOptions.push(currentState);
-            }
-        }
-    }
-
-    if (keys & KEY_B)
-    {
-        cancelSFX();
-        musicCtrl.playSFX(SFX_CANCEL, 255, 128);
-        selectedOption = 0;
-        startIndex = 0;
-
-        // if we're in a submenu, return to main menu
-        if (!prevOptions.empty())
-        {
-            PauseState prevState = prevOptions.top();
-            prevOptions.pop();
-
-            options = prevState.options;
-            optionCount = prevState.optionCount;
-            selectedOption = prevState.selectedOption;
-            startIndex = prevState.startIndex;
-        }
-        else
-        {
-            // otherwise, close the menu
-            *isActivePtr = false;
-            bgHide(bgSlot);
-        }
-    }
-
-    consoleClear();
-    printf("\x1b[0;0H");
-
-    // blink the "Pause" text
-    if (frame % 60 < 30)
-    {
-        iprintf("Pause\n");
-    }
-    else
-    {
-        iprintf("\n");
-    }
-
-    // display options
-    for (int i = 0; i < visibleOptions && startIndex + i < optionCount; i++)
-    {
-        int option = startIndex + i;
-        iprintf("%c %s\n", option == selectedOption ? '>' : ' ', options[option].name);
-    }
-
-    // load selectedOption's background
-    int bgIndex = options[selectedOption].bgIndex;
-    if (bgIndex != -1)
-    {
-        loadBg(bgIndex);
-        bgShow(bgSlot);
-    }
-    else
-    {
-        bgHide(bgSlot);
-    }
-
-    ViewState viewState = nextViewState;
-    nextViewState = ViewState::KEEP_CURRENT;
-    return viewState;
+    return BaseMenu::update(keys);
 }
 
-// OPTION HANDLERS
-// menuOption handlers
+// menu navigation handlers
+
+ViewState PauseMenuComponent::openDebugMenu()
+{
+    return changeMenu(debugOptions, DEBUG_OPTIONS);
+}
+
 ViewState PauseMenuComponent::openSkillMenu()
 {
-    selectedOption = 0;
-    startIndex = 0;
-    options = skillOptions;
-    optionCount = SKILL_OPTIONS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(skillOptions, SKILL_OPTIONS);
 }
 
 ViewState PauseMenuComponent::openItemMenu()
 {
-    selectedOption = 0;
-    startIndex = 0;
-    options = itemOptions;
-    optionCount = ITEM_OPTIONS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(itemOptions, ITEM_OPTIONS);
 }
 
 ViewState PauseMenuComponent::openPersonaMenu()
 {
-    selectedOption = 0;
-    startIndex = 0;
-    options = personaOptions;
-    optionCount = PERSONA_OPTIONS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(personaOptions, PERSONA_OPTIONS);
 }
 
 ViewState PauseMenuComponent::openEquipMenu()
 {
-    selectedOption = 0;
-    startIndex = 0;
-    options = equipOptions;
-    optionCount = EQUIP_OPTIONS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(equipOptions, EQUIP_OPTIONS);
 }
 
 ViewState PauseMenuComponent::openStatusMenu()
 {
-    selectedOption = 0;
-    startIndex = 0;
-    options = statsOptions;
-    optionCount = STATS_OPTIONS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(statsOptions, STATS_OPTIONS);
 }
 
 ViewState PauseMenuComponent::openSLinkMenu()
 {
-    selectedOption = 0;
-    startIndex = 0;
-    options = sLinkOptions;
-    optionCount = S_LINK_OPTIONS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(sLinkOptions, S_LINK_OPTIONS);
 }
 
 ViewState PauseMenuComponent::openSystemMenu()
 {
-    selectedOption = 0;
-    startIndex = 0;
-    options = systemOptions;
-    optionCount = SYSTEM_OPTIONS;
-    return ViewState::KEEP_CURRENT;
-}
-
-// Debug options
-ViewState PauseMenuComponent::openDebugMenu()
-{
-    selectedOption = 0;
-    startIndex = 0;
-    options = debugOptions;
-    optionCount = DEBUG_OPTIONS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(systemOptions, SYSTEM_OPTIONS);
 }
 
 ViewState PauseMenuComponent::openCharacterAnimMenu()
 {
-    selectedOption = 0;
-    startIndex = 0;
-    options = characterAnimOptions;
-    optionCount = CHARACTER_ANIM_OPTIONS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(characterAnimOptions, CHARACTER_ANIM_OPTIONS);
 }
 
-// generic handlers
-// this is where we would implement functionality for going into a sub-menu, or selecting a skill, item, etc.
+// selection handlers
+
 ViewState PauseMenuComponent::skillOptionSelected()
 {
-    selectedOption = 0;
-    options = skills;
-    optionCount = SKILLS;
-    return ViewState::KEEP_CURRENT;
+    return changeMenu(skills, SKILLS);
 }
 
 ViewState PauseMenuComponent::itemOptionSelected()
 {
-    // ...
     return ViewState::KEEP_CURRENT;
 }
 
 ViewState PauseMenuComponent::equipOptionSelected()
 {
-    // ...
     return ViewState::KEEP_CURRENT;
 }
 
 ViewState PauseMenuComponent::personaOptionSelected()
 {
-    // ...
     return ViewState::KEEP_CURRENT;
 }
 
 ViewState PauseMenuComponent::statsOptionSelected()
 {
-    // ...
     return ViewState::KEEP_CURRENT;
 }
 
 ViewState PauseMenuComponent::sLinkOptionSelected()
 {
-    // ...
     return ViewState::KEEP_CURRENT;
 }
 
 ViewState PauseMenuComponent::systemOptionSelected()
 {
-    // ...
     return ViewState::KEEP_CURRENT;
 }
 
-// Debug options
 ViewState PauseMenuComponent::debugOptionSelected()
 {
-    // set the next view state based on the selected debug option
     ViewState selectedView;
-    switch (selectedOption)
+    switch (static_cast<DebugOption>(selectedOption))
     {
-    case DISCLAIMER_VIEW:
-        selectedView = ViewState::DISCLAIMER;
-        musicCtrl.pause();
-        break;
-    case INTRO_VIDEO_VIEW:
-        selectedView = ViewState::INTRO_VIDEO;
-        break;
-    case INTRO_VIEW:
-        selectedView = ViewState::INTRO;
-        break;
-    case MAIN_MENU_VIEW:
-        selectedView = ViewState::MAIN_MENU;
-        break;
-    case IWATODAI_DORM_VIEW:
-        selectedView = ViewState::IWATODAI_DORM;
-        break;
-    case IWATODAI_STREETS_VIEW:
-        selectedView = ViewState::IWATODAI_STREETS;
-        break;
-    case DEBUG_DIALOGUE:
-        consoleClear();
-        demo_yukari_kenji_argument_load();
-        dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-        dialogueCtrl.start(demo_yukari_kenji_argument_first());
-        selectedView = ViewState::KEEP_CURRENT;
-        break;
-    case TOGGLE_BILLBOARDS:
-        enableBillboards = !enableBillboards;
-        *isActivePtr = false;
-        selectedView = ViewState::KEEP_CURRENT;
-        break;
-    case TOGGLE_DEBUG_PRINT:
-        enableDebugPrint = true;
-        *isActivePtr = false;
-        selectedView = ViewState::KEEP_CURRENT;
-    default:
-        selectedView = ViewState::KEEP_CURRENT;
+        case DebugOption::DISCLAIMER_VIEW:
+            musicCtrl.pause();
+            selectedView = ViewState::DISCLAIMER;
+            break;
+        case DebugOption::INTRO_VIDEO_VIEW:
+            selectedView = ViewState::INTRO_VIDEO;
+            break;
+        case DebugOption::INTRO_VIEW:
+            selectedView = ViewState::INTRO;
+            break;
+        case DebugOption::MAIN_MENU_VIEW:
+            selectedView = ViewState::MAIN_MENU;
+            break;
+        case DebugOption::IWATODAI_DORM_VIEW:
+            selectedView = ViewState::IWATODAI_DORM;
+            break;
+        case DebugOption::IWATODAI_STREETS_VIEW:
+            selectedView = ViewState::IWATODAI_STREETS;
+            break;
+        case DebugOption::DEBUG_DIALOGUE:
+            consoleClear();
+            demo_yukari_kenji_argument_load();
+            dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
+            dialogueCtrl.start(demo_yukari_kenji_argument_first());
+            selectedView = ViewState::KEEP_CURRENT;
+            break;
+        case DebugOption::TOGGLE_BILLBOARDS:
+            enableBillboards = !enableBillboards;
+            *isActivePtr = false;
+            selectedView = ViewState::KEEP_CURRENT;
+            break;
+        case DebugOption::TOGGLE_DEBUG_PRINT:
+            enableDebugPrint = true;
+            *isActivePtr = false;
+            selectedView = ViewState::KEEP_CURRENT;
+            break;
+        default:
+            selectedView = ViewState::KEEP_CURRENT;
     }
     return selectedView;
 }
 
 ViewState PauseMenuComponent::characterAnimOptionSelected()
 {
-    // stop currently playing animation
     characterAnimationCtrl.stop();
 
-    // set the next view state based on the selected debug option
-    ViewState selectedView;
-    switch (selectedOption)
+    ViewState selectedView = ViewState::KEEP_CURRENT;
+    switch (static_cast<CharacterAnimOption>(selectedOption))
     {
-    case TOGGLE_AUTO_ANIM:
-        enableCharacterAnim = !enableCharacterAnim;
-        break;
-    case ANIM_1:
-        characterAnimationCtrl.set((Model_character)0, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_2:
-        characterAnimationCtrl.set((Model_character)1, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_3:
-        characterAnimationCtrl.set((Model_character)2, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_4:
-        characterAnimationCtrl.set((Model_character)3, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_5:
-        characterAnimationCtrl.set((Model_character)4, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_6:
-        characterAnimationCtrl.set((Model_character)5, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_7:
-        characterAnimationCtrl.set((Model_character)6, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_8:
-        characterAnimationCtrl.set((Model_character)7, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_9:
-        characterAnimationCtrl.set((Model_character)8, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_10:
-        characterAnimationCtrl.set((Model_character)9, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_11:
-        characterAnimationCtrl.set((Model_character)10, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_12:
-        characterAnimationCtrl.set((Model_character)11, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_13:
-        characterAnimationCtrl.set((Model_character)12, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_14:
-        characterAnimationCtrl.set((Model_character)13, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_15:
-        characterAnimationCtrl.set((Model_character)14, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_16:
-        characterAnimationCtrl.set((Model_character)15, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_17:
-        characterAnimationCtrl.set((Model_character)16, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_18:
-        characterAnimationCtrl.set((Model_character)17, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_19:
-        characterAnimationCtrl.set((Model_character)18, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_20:
-        characterAnimationCtrl.set((Model_character)19, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_21:
-        characterAnimationCtrl.set((Model_character)20, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_22:
-        characterAnimationCtrl.set((Model_character)21, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_23:
-        characterAnimationCtrl.set((Model_character)22, true);
-        enableCharacterAnim = false;
-        break;
-    case ANIM_24:
-        characterAnimationCtrl.set((Model_character)23, true);
-        enableCharacterAnim = false;
-        break;
-    default:
-        selectedView = ViewState::KEEP_CURRENT;
+        case CharacterAnimOption::TOGGLE_AUTO_ANIM:
+            enableCharacterAnim = !enableCharacterAnim;
+            break;
+        case CharacterAnimOption::ANIM_1:  characterAnimationCtrl.set((Model_character)0,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_2:  characterAnimationCtrl.set((Model_character)1,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_3:  characterAnimationCtrl.set((Model_character)2,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_4:  characterAnimationCtrl.set((Model_character)3,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_5:  characterAnimationCtrl.set((Model_character)4,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_6:  characterAnimationCtrl.set((Model_character)5,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_7:  characterAnimationCtrl.set((Model_character)6,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_8:  characterAnimationCtrl.set((Model_character)7,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_9:  characterAnimationCtrl.set((Model_character)8,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_10: characterAnimationCtrl.set((Model_character)9,  true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_11: characterAnimationCtrl.set((Model_character)10, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_12: characterAnimationCtrl.set((Model_character)11, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_13: characterAnimationCtrl.set((Model_character)12, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_14: characterAnimationCtrl.set((Model_character)13, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_15: characterAnimationCtrl.set((Model_character)14, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_16: characterAnimationCtrl.set((Model_character)15, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_17: characterAnimationCtrl.set((Model_character)16, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_18: characterAnimationCtrl.set((Model_character)17, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_19: characterAnimationCtrl.set((Model_character)18, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_20: characterAnimationCtrl.set((Model_character)19, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_21: characterAnimationCtrl.set((Model_character)20, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_22: characterAnimationCtrl.set((Model_character)21, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_23: characterAnimationCtrl.set((Model_character)22, true); enableCharacterAnim = false; break;
+        case CharacterAnimOption::ANIM_24: characterAnimationCtrl.set((Model_character)23, true); enableCharacterAnim = false; break;
+        default:
+            break;
     }
 
     *isActivePtr = false;

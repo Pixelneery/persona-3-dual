@@ -1,9 +1,8 @@
 #pragma once
-#include "core/View.h"
+#include "core/BaseView.h"
 #include "core/globals.h"
 
-// implementing from View
-class IntroView : public View
+class IntroView : public BaseView
 {
 private:
     Sprite logoSprite[2];
@@ -35,8 +34,7 @@ private:
     int fluctuation = 50;
 
 public:
-    // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
-    void Init() override;
-    ViewState Update() override;
-    void Cleanup() override;
+    void init() override;
+    ViewState update() override;
+    void cleanup() override;
 };

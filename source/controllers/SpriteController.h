@@ -5,6 +5,10 @@
 
 class SpriteController {
 public:
-    // iterates through the DB to find the correct sprite
-    bool switchSprite(SpriteType type, int spriteId, SpriteRegister* out) const;
+    template<typename SpriteID>
+    bool switchSprite(SpriteType type, SpriteID spriteId, SpriteRegister* out) const {
+        return switchSpriteImpl(type, static_cast<int>(spriteId), out);
+    }
+private:
+    bool switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out) const;
 };

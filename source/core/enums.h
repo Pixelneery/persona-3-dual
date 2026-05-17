@@ -1,6 +1,17 @@
 #pragma once
 
-enum SpriteType
+enum class ViewState
+{
+    KEEP_CURRENT,
+    DISCLAIMER,
+    INTRO_VIDEO,
+    INTRO,
+    MAIN_MENU,
+    IWATODAI_DORM,
+    IWATODAI_STREETS,
+};
+
+enum class SpriteType
 {
     NONE = 0,
     MOON,
@@ -11,7 +22,7 @@ enum SpriteType
     CUSTOM,
 };
 
-enum MoonSprite
+enum class MoonSprite
 {
     MOON_0 = 0,
     MOON_1,
@@ -45,7 +56,7 @@ enum MoonSprite
     MOON_29
 };
 
-enum DayOfWeekSprite
+enum class DayOfWeekSprite
 {
     SUNDAY = 0,
     MONDAY,
@@ -56,7 +67,7 @@ enum DayOfWeekSprite
     SATURDAY
 };
 
-enum TimeSprite
+enum class TimeSprite
 {
     AFTER_SCHOOL_0_0 = 0,
     AFTER_SCHOOL_1_0,
@@ -80,12 +91,12 @@ enum TimeSprite
     MORNING_1_0,
 };
 
-enum SkillSprite
+enum class SkillSprite
 {
     SKILLS_LEVEL = 0
 };
 
-enum DigitSprite
+enum class DigitSprite
 {
     DIGIT_0 = 0,
     DIGIT_1,
@@ -98,4 +109,124 @@ enum DigitSprite
     DIGIT_8,
     DIGIT_9,
     SLASH
+};
+
+enum class TileType
+{
+    NO_COLLISION = 0,
+    COLLISION = 1,
+    SAVE = 2,
+    PREV_SCENE = 3,
+    NEXT_SCENE = 4,
+    CHARACTER_Akihiko = 100
+};
+
+enum class MainMenuOptions
+{
+    LOAD_GAME = 0,
+    RETURN_TO_TITLE,
+};
+
+enum class LevelOptions
+{
+    IWATODAI_DORM = 0,
+    IWATODAI_STREETS
+};
+
+enum class PauseMenuOption
+{
+    SKILL = 0,
+    ITEM = 1,
+    PERSONA = 2,
+    EQUIP = 3,
+    STATUS = 4,
+    S_LINK = 5,
+    SYSTEM = 6
+};
+
+enum class Character
+{
+    MAKOTO = 0,
+    YUKARI = 1,
+    JUNPEI = 2,
+    AKIHIKO = 3,
+    MITSURU = 4,
+    AIGIS = 5,
+    KEN = 6,
+    KOROMARU = 7,
+    SHINJIRO = 8
+};
+
+enum class Item
+{
+    LIFE_STONE = 0,
+    MEDICINE = 1,
+    BEAD = 2
+};
+
+enum class Persona
+{
+    JACK_FROST = 0,
+    BLACK_FROST = 1,
+    KING_FROST = 2
+};
+
+enum class SLink
+{
+    FOOL = 0,
+    MAGICIAN = 1,
+    EMPEROR = 2
+};
+
+enum class SystemOption
+{
+    TUTORIAL = 0,
+    CONFIG = 1,
+    DICTIONARY = 2,
+    LOAD_DATA = 3,
+    SAVE_DATA = 4,
+    RETURN_TO_TITLE = 5
+};
+
+enum class DebugOption
+{
+    DISCLAIMER_VIEW = 0,
+    INTRO_VIDEO_VIEW = 1,
+    INTRO_VIEW = 2,
+    MAIN_MENU_VIEW = 3,
+    IWATODAI_DORM_VIEW = 4,
+    IWATODAI_STREETS_VIEW = 5,
+    DEBUG_DIALOGUE = 6,
+    TOGGLE_BILLBOARDS = 7,
+    TOGGLE_DEBUG_PRINT = 8,
+    PLAY_CHARACTER_ANIM = 9
+};
+
+enum class CharacterAnimOption
+{
+    TOGGLE_AUTO_ANIM = 0,
+    ANIM_1 = 1,
+    ANIM_2 = 2,
+    ANIM_3 = 3,
+    ANIM_4 = 4,
+    ANIM_5 = 5,
+    ANIM_6 = 6,
+    ANIM_7 = 7,
+    ANIM_8 = 8,
+    ANIM_9 = 9,
+    ANIM_10 = 10,
+    ANIM_11 = 11,
+    ANIM_12 = 12,
+    ANIM_13 = 13,
+    ANIM_14 = 14,
+    ANIM_15 = 15,
+    ANIM_16 = 16,
+    ANIM_17 = 17,
+    ANIM_18 = 18,
+    ANIM_19 = 19,
+    ANIM_20 = 20,
+    ANIM_21 = 21,
+    ANIM_22 = 22,
+    ANIM_23 = 23,
+    ANIM_24 = 24
 };

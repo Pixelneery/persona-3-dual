@@ -42,7 +42,7 @@
 int streetsCharacterTextureId;
 iwatodai_streets_Environment iwatodaiStreetsEnv;
 
-void IwatodaiStreetsView::Init()
+void IwatodaiStreetsView::init()
 {
     videoSetMode(MODE_0_3D);
     videoSetModeSub(MODE_0_2D);
@@ -136,7 +136,7 @@ void IwatodaiStreetsView::Init()
     pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 }
 
-ViewState IwatodaiStreetsView::Update()
+ViewState IwatodaiStreetsView::update()
 {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -237,24 +237,13 @@ ViewState IwatodaiStreetsView::Update()
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiStreetsView::Cleanup()
+void IwatodaiStreetsView::cleanup()
 {
-    setBrightness(3, 0);
-    consoleClear();
-
-    pauseMenuCmpt.cancelSFX();
-    isPauseMenuActive = false;
+    BaseView::cleanup();
 
     iwatodaiStreetsEnv.cleanup();
     glDeleteTextures(1, &streetsCharacterTextureId);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankB(VRAM_B_LCD);
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankH(VRAM_H_LCD);
-    vramSetBankI(VRAM_I_LCD);
 
     delete playerCtrl;
     playerCtrl = nullptr;

@@ -7,27 +7,15 @@
 #include "menuSilhouetteBackground.h"
 #include "doorBackground.h"
 #include "fogBackground.h"
-// sfx
-#include "soundbank.h"
 
-mm_sfxhand sfxMenuHandle;
-mm_sfxhand sfxSelectHandle;
-mm_sfxhand sfxCancelHandle;
-
-void cancelSFX()
+void MainMenuView::init()
 {
-    musicCtrl.stopSFX(sfxMenuHandle);
-    musicCtrl.stopSFX(sfxSelectHandle);
-    musicCtrl.stopSFX(sfxCancelHandle);
-}
-
-void MainMenuView::Init()
-{
-    // point to music
-    musicCtrl.loadSFX(SFX_MENU);
-    musicCtrl.loadSFX(SFX_SELECT);
-    musicCtrl.loadSFX(SFX_CANCEL);
+    // setup music
     musicCtrl.init("nitro:/music/aria_of_the_soul.pcm", 0.0f, 164.940f);
+
+    // setup menu
+    isMainMenuCmptActive = true;
+    mainMenuCmpt.init(-1, &isMainMenuCmptActive);
 
     // transition both screens from white
     for (int i = 16; i > 0; i--)
@@ -77,8 +65,8 @@ void MainMenuView::Init()
 
     // reset background vram
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
-    dmaFillHalfWords(1, bgGetMapPtr(bg[0]), 2048);
-    dmaFillHalfWords(2, bgGetMapPtr(bg[0]), 2048);
+    dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
+    dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
 
     // copy graphics to vram
     dmaCopy(menuSilhouetteBackgroundTiles, bgGetGfxPtr(bg[0]), menuSilhouetteBackgroundTilesLen);
@@ -122,127 +110,19 @@ void MainMenuView::Init()
             musicCtrl.update();
         }
     }
-
-    // set default options to menuOptions
-    options = menuOptions;
-    optionCount = menuOptionCount;
 }
 
-ViewState MainMenuView::Update()
+ViewState MainMenuView::update()
 {
     scanKeys();
-    int keys = keysDown();
+    int pressed = keysDown();
 
-    // display option text
-    if (keys & KEY_DOWN)
+    ViewState result = mainMenuCmpt.update(pressed);
+    if (result != ViewState::KEEP_CURRENT)
     {
-        sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
-        selectedOption = (selectedOption + 1) % optionCount;
-    }
-
-    if (keys & KEY_UP)
-    {
-        sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
-        selectedOption = (selectedOption + optionCount - 1) % optionCount;
-    }
-
-    if (keys & KEY_A)
-    {
-        sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);
-        options[selectedOption].selected = true;
-    }
-
-    if (keys & KEY_B)
-    {
-        sfxCancelHandle = musicCtrl.playSFX(SFX_CANCEL, 255, 128);
-        options[selectedOption].selected = false;
-    }
-
-    consoleClear();
-    // choosing which options to display
-    if (menuOptions[0].selected)
-    {
-        cancelSFX();
-        musicCtrl.playSFX(SFX_SELECT, 255, 128);
-
-        // select sceneOptions
-        menuOptions[0].selected = false;
-        selectedOption = 0;
-        options = sceneOptions;
-        optionCount = sceneOptionCount;
-    }
-    else if (menuOptions[1].selected)
-    {
-        cancelSFX();
-        musicCtrl.playSFX(SFX_CANCEL, 255, 128);
         musicCtrl.pause();
-
-        // selected "Return to Title"
-        for (int i = 0; i > -16; i--)
-        {
-            setBrightness(3, i);
-            for (int duration = 0; duration <= 2; duration++)
-            {
-                musicCtrl.update();
-                swiWaitForVBlank();
-            }
-        }
-        return ViewState::INTRO;
+        return result;
     }
-    else if (sceneOptions[0].selected)
-    {
-        cancelSFX();
-        musicCtrl.playSFX(SFX_SELECT, 255, 128);
-        musicCtrl.pause();
-
-        // selected "Iwatodai Dorm"
-        for (int i = 0; i > -16; i--)
-        {
-            setBrightness(3, i);
-            for (int duration = 0; duration <= 2; duration++)
-            {
-                musicCtrl.update();
-                swiWaitForVBlank();
-            }
-        }
-        return ViewState::IWATODAI_DORM;
-    }
-    else if (sceneOptions[1].selected)
-    {
-        cancelSFX();
-        musicCtrl.playSFX(SFX_SELECT, 255, 128);
-        musicCtrl.pause();
-
-        // selected "Iwatodai Streets"
-        for (int i = 0; i > -16; i--)
-        {
-            setBrightness(3, i);
-            for (int duration = 0; duration <= 2; duration++)
-            {
-                musicCtrl.update();
-                swiWaitForVBlank();
-            }
-        }
-        return ViewState::IWATODAI_STREETS;
-    }
-    else if (sceneOptions[2].selected)
-    {
-        cancelSFX();
-        musicCtrl.playSFX(SFX_CANCEL, 255, 128);
-
-        // select menuOptions
-        sceneOptions[2].selected = false;
-        selectedOption = 0;
-        options = menuOptions;
-        optionCount = menuOptionCount;
-    }
-
-    for (int option = 0; option < optionCount; option++)
-    {
-        // display options
-        iprintf("%c %s\n", option == selectedOption ? '>' : ' ', options[option].name);
-    }
-
     musicCtrl.update();
 
     // scroll silhouette background
@@ -305,22 +185,14 @@ ViewState MainMenuView::Update()
     return ViewState::KEEP_CURRENT;
 }
 
-void MainMenuView::Cleanup()
+void MainMenuView::cleanup()
 {
-    // clear screen
-    setBrightness(3, 0);
-    consoleClear();
+    BaseView::cleanup();
 
     // reset backgrounds
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
     dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
-
-    // reset vram
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankB(VRAM_B_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankE(VRAM_E_LCD);
 
     // disable blending
     REG_BLDCNT = 0;

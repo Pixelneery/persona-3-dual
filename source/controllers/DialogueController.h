@@ -2,24 +2,8 @@
 #include <nds.h>
 #include <string>
 #include <vector>
+#include "core/structs.h"
 using namespace std;
-
-struct dialogue;
-struct dialogueSelection
-{
-    string text;
-    bool isSelected;
-    dialogue *next;
-};
-struct dialogue
-{
-    string characterName;
-    string text;
-    int imageId;
-    dialogue *prev;
-    dialogue *next;
-    vector<dialogueSelection> selections;
-};
 
 class DialogueController
 {

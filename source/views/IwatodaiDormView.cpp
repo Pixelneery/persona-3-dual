@@ -23,7 +23,7 @@ iwatodai_dorm_Environment iwatodaiDormEnv;
 IwatodaiDormView::IwatodaiDormView() : enemies(new std::vector<Enemy *>({&merciless_Maya, &cowardly_Maya})),
                                        battleController(&player, enemies) {}
 
-void IwatodaiDormView::Init()
+void IwatodaiDormView::init()
 {
     videoSetMode(MODE_0_3D);
     videoSetModeSub(MODE_0_2D);
@@ -114,7 +114,7 @@ void IwatodaiDormView::Init()
     pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 }
 
-ViewState IwatodaiDormView::Update()
+ViewState IwatodaiDormView::update()
 {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -250,15 +250,9 @@ ViewState IwatodaiDormView::Update()
     return ViewState::KEEP_CURRENT;
 }
 
-void IwatodaiDormView::Cleanup()
+void IwatodaiDormView::cleanup()
 {
-    // clear screen
-    setBrightness(3, 0);
-    consoleClear();
-
-    // stop pause menu sfx
-    pauseMenuCmpt.cancelSFX();
-    isPauseMenuActive = false;
+    BaseView::cleanup();
 
     // cleanup environment
     iwatodaiDormEnv.cleanup();
@@ -266,14 +260,6 @@ void IwatodaiDormView::Cleanup()
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-
-    // reset vram
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankB(VRAM_B_LCD);
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankH(VRAM_H_LCD);
-    vramSetBankI(VRAM_I_LCD);
 
     // cleanup controllers
     delete playerCtrl;

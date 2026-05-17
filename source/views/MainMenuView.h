@@ -1,37 +1,13 @@
 #pragma once
-#include "core/View.h"
+#include "core/BaseView.h"
+#include "components/MainMenuComponent.h"
 
-typedef struct
-{
-    const char *name;
-    bool selected;
-} Option;
-
-// implementing from View
-class MainMenuView : public View
+class MainMenuView : public BaseView
 {
 private:
+    MainMenuComponent mainMenuCmpt;
+    bool isMainMenuCmptActive;
     int bg[3];
-
-    // for options
-    Option menuOptions[2] =
-        {
-            {"Load Game", false},
-            {"Return to Title", false}};
-
-    // TODO: add Gekkoukan Classroom & Tartarus Level 1 demo levels
-    Option sceneOptions[3] =
-        {
-            {"Iwatodai Dorm", false},
-            {"Iwatodai Streets", false},
-            {"Back", false}};
-
-    const int menuOptionCount = 2;
-    const int sceneOptionCount = 3;
-    // generic
-    Option *options;
-    int optionCount;
-    int selectedOption = 0;
 
     // for silhouette animation
     int silhouetteX = -256;
@@ -50,8 +26,7 @@ private:
     int fluctuation = 50;
 
 public:
-    // override tells compiler we intend to override a virtual fn in a base class (i.e. View)
-    void Init() override;
-    ViewState Update() override;
-    void Cleanup() override;
+    void init() override;
+    ViewState update() override;
+    void cleanup() override;
 };

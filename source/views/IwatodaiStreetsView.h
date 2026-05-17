@@ -1,15 +1,15 @@
 #pragma once
-#include "core/View.h"
+#include "core/BaseView.h"
 #include "controllers/CharacterController.h"
 #include "environments/iwatodai_streets.h"
 #include <nds/arm9/console.h>
 
-class IwatodaiStreetsView : public View
+class IwatodaiStreetsView : public BaseView
 {
 public:
-    void Init() override;
-    ViewState Update() override;
-    void Cleanup() override;
+    void init() override;
+    ViewState update() override;
+    void cleanup() override;
 
 
 private:

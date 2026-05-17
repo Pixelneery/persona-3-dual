@@ -1,4 +1,5 @@
 #pragma once
+#include <nds.h>
 #include <maxmod9.h>
 #include <stdio.h>
 

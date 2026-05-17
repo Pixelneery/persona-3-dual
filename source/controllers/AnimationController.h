@@ -1,46 +1,10 @@
 #pragma once
 #include <nds.h>
 #include <vector>
+#include "core/structs.h"
 
 using namespace std;
 
-struct Keyframe
-{
-    int time;             // frame number
-    s16 rotX, rotY, rotZ; // rotation  (32768 == 360°)
-    s16 posX, posY, posZ; // translation in v16 fixed-point
-};
-
-struct AnimTrack
-{
-    vector<Keyframe> frames;
-};
-
-struct Animation
-{
-    int duration; // total frame count
-    vector<AnimTrack> nodeTracks;
-};
-
-// A SubList holds the display-list words for one texture group within a node.
-// texSlot == -1 means "no texture" (bind nothing before calling this list).
-struct SubList
-{
-    int texSlot;
-    vector<u32> displayList; // displayList[0] == dlSize, rest == words
-    u32 displayListSize;
-};
-
-struct AnimNode
-{
-    int id;
-    int parentId;
-    vector<SubList> subLists; // one entry per material/texture group
-    vector<int> children;
-
-    // Absolute pivot in v16 fixed-point, loaded from the MDL2 file
-    v16 pivotX, pivotY, pivotZ;
-};
 class AnimationController
 {
 public:

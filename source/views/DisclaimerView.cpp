@@ -7,7 +7,7 @@
 #include "cautionBackground.h"
 #include "cautionBackgroundSub.h"
 
-void DisclaimerView::Init()
+void DisclaimerView::init()
 {
     // set video mode for 3 text layers and 1 extended rotation layer
     videoSetMode(MODE_3_2D);
@@ -98,25 +98,16 @@ void DisclaimerView::Init()
     }
 }
 
-ViewState DisclaimerView::Update()
+ViewState DisclaimerView::update()
 {
     // transition to IntroVideoView
     musicCtrl.update();
     return ViewState::INTRO_VIDEO;
 }
 
-void DisclaimerView::Cleanup()
+void DisclaimerView::cleanup()
 {
-    // clear screen
-    setBrightness(3, 0);
-    consoleClear();
-
-    // reset vram
-    vramSetBankA(VRAM_A_LCD);
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankE(VRAM_E_LCD);
-    vramSetBankH(VRAM_H_LCD);
+    BaseView::cleanup();
 
     // reset backgrounds
     dmaFillHalfWords(0, bgGetMapPtr(bg[1]), 2048);

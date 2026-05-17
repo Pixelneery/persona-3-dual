@@ -47,23 +47,23 @@ void MenuHUDComponent::loadHUD()
 
     // get sprites
     // moon
-    spriteCtrl.switchSprite(MOON, MOON_22, &moonSprite);
+    spriteCtrl.switchSprite(SpriteType::MOON, MoonSprite::MOON_22, &moonSprite);
     // day of the week
-    spriteCtrl.switchSprite(DAY_OF_WEEK, TUESDAY, &dayOfWeekSprite);
+    spriteCtrl.switchSprite(SpriteType::DAY_OF_WEEK, DayOfWeekSprite::TUESDAY, &dayOfWeekSprite);
     // numbers
-    spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[0]);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_4, &numberSprites[1]);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_0, &numberSprites[2]);
-    spriteCtrl.switchSprite(DIGIT, DIGIT_7, &numberSprites[3]);
+    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[0]);
+    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_4, &numberSprites[1]);
+    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_0, &numberSprites[2]);
+    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::DIGIT_7, &numberSprites[3]);
     // time
-    spriteCtrl.switchSprite(TIME, EARLY_MORNING_0_0, &timeSprites[0]);
-    spriteCtrl.switchSprite(TIME, EARLY_MORNING_1_0, &timeSprites[1]);
-    spriteCtrl.switchSprite(TIME, EARLY_MORNING_2_0, &timeSprites[2]);
-    spriteCtrl.switchSprite(TIME, EARLY_MORNING_3_0, &timeSprites[3]);
+    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_0_0, &timeSprites[0]);
+    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_1_0, &timeSprites[1]);
+    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_2_0, &timeSprites[2]);
+    spriteCtrl.switchSprite(SpriteType::TIME, TimeSprite::EARLY_MORNING_3_0, &timeSprites[3]);
     // skill level
-    spriteCtrl.switchSprite(SKILL_SPRITE, SKILLS_LEVEL, &skillSprites[0]);
+    spriteCtrl.switchSprite(SpriteType::SKILL_SPRITE, SkillSprite::SKILLS_LEVEL, &skillSprites[0]);
     // slash
-    spriteCtrl.switchSprite(DIGIT, SLASH, &slashSprite);
+    spriteCtrl.switchSprite(SpriteType::DIGIT, DigitSprite::SLASH, &slashSprite);
 
     // TODO: initialize any extra sprite registers for max-case arrays?
     // ...

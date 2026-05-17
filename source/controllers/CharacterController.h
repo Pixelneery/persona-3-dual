@@ -1,38 +1,8 @@
 #pragma once
 #include <stdint.h>
 #include "core/geometry.h"
-
-// TODO: move this to globals?
-enum class TileType
-{
-    NO_COLLISION = 0, // walkable area
-    COLLISION = 1,    // non-walkable area. Legacy = 5
-    SAVE = 2,         // save interaction point
-    PREV_SCENE = 3,   // load last location
-    NEXT_SCENE = 4,   // load next location
-    CHARACTER_Akihiko = 100
-};
-
-struct cameraPosition
-{
-    float cameraX;
-    float cameraY;
-    float cameraZ;
-    float targetX;
-    float targetY;
-    float targetZ;
-    float upX;
-    float upY;
-    float upZ;
-};
-
-struct characterPosition
-{
-    float x;
-    float z;
-    float angle;
-    float facingAngle;
-};
+#include "core/enums.h"
+#include "core/structs.h"
 
 class CharacterController
 {
