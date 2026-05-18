@@ -17,7 +17,15 @@ bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack, PartyMem
         iprintf("\n");
 
         u32 damage = attack->calculateDamagePlayer(&user->curPersona->battleStats, &targets->at(*targetIndex)->battleStats, &user->lv, &targets->at(*targetIndex)->lv);
+        u32 accuracy = attack->calculateHitratePlayer(&user->curPersona->battleStats, &targets->at(*targetIndex)->battleStats);
 
+        bool hitted = accuracy > (rand() % 100);
+
+        if (!hitted)
+        {
+            iprintf("missed\n");
+            return true;
+        }
         u32 affinity = targets->at(*targetIndex)->battleStats.affinities[attack->element];
         if (affinity == BattleStats::Affinity::Weak && !targets->at(*targetIndex)->knockedDown)
         {
@@ -35,7 +43,6 @@ bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack, PartyMem
         char str2[50];
         std::sprintf(str2, "remaing Enemy hp: %ld \n", targets->at(*targetIndex)->hp);
         iprintf(str2);
-
         return true;
     }
 

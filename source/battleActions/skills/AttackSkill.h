@@ -31,14 +31,14 @@ struct AttackSkill
     }
 
     // TODO: hopefully correct, should be looked at by someone that knows some  math
-    u32 calculateHitratePlayer(BattleStats *attackerStats, BattleStats *defenderStats, u32 hitRate)
+    u32 calculateHitratePlayer(BattleStats *attackerStats, BattleStats *defenderStats)
     {
         float accuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
         return (u32)(accuracy * hitRate);
     }
 
     // TODO: hopefully correct, should be looked at by someone that knows some  math
-    u32 calculateHitrateEnemy(BattleStats *attackerStats, BattleStats *defenderStats, Shoe *shoe, u32 hitRate)
+    u32 calculateHitrateEnemy(BattleStats *attackerStats, BattleStats *defenderStats, Shoe *shoe)
     {
         float baseAccuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
         float shoeMultiplier = (float)(attackerStats->ag + 200) / (shoe->evasion / 2.0f + 200);
