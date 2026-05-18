@@ -16,12 +16,13 @@ class VideoController
 {
 public:
     VideoController() {};
-    void init(std::string iFileName, float iFps, ViewState iNextState);
+    void init(std::string iFileName, float iFps, ViewState iNextState, bool iIsSkippable);
     ViewState update();
     void cleanup();
 
 private:
     ViewState nextState;
+    bool isSkippable;
     float fps;
 
     FILE *videoFile;
