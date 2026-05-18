@@ -10,5 +10,6 @@ struct Agi : AttackSkill
         element = Fire;
         cost = 3;
         name = "Agi";
+        hitRate = 99;
     }
 };

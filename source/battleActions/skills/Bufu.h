@@ -10,5 +10,6 @@ struct Bufu : AttackSkill
         element = Ice;
         cost = 3;
         name = "Bufu";
+        hitRate = 99;
     }
 };

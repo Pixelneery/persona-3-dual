@@ -11,5 +11,6 @@ struct Power_Slash : AttackSkill
         element = Slash;
         cost = 7;
         name = "Power_Slash";
+        hitRate = 92;
     }
 };

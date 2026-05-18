@@ -11,5 +11,6 @@ struct Pierce_Attack : AttackSkill
         element = Pierce;
         cost = 0;
         name = "Pierce_Attack";
+        hitRate = 90;
     }
 };

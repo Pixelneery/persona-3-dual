@@ -11,5 +11,6 @@ struct Bash : AttackSkill
         // TODO: should be 10% of hp, add percantage support later
         cost = 10;
         name = "Bash";
+        hitRate = 90;
     }
 };

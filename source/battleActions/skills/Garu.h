@@ -10,5 +10,6 @@ struct Garu : AttackSkill
         element = Wind;
         cost = 3;
         name = "Garu";
+        hitRate = 99;
     }
 };

@@ -19,6 +19,7 @@ struct AttackSkill
     s32 cost;
     Race race;
     u32 element;
+    u32 hitRate;
     std::string name;
 
     u32 calculateDamagePlayer(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)

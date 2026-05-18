@@ -11,5 +11,6 @@ struct Slash_Attack : AttackSkill
         element = Slash;
         cost = 0;
         name = "Slash_Attack";
+        hitRate = 90;
     }
 };

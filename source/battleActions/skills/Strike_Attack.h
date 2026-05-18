@@ -11,5 +11,6 @@ struct Strike_Attack : AttackSkill
         element = Strike;
         cost = 0;
         name = "Strike_Attack";
+        hitRate = 90;
     }
 };
