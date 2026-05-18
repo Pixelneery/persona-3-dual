@@ -13,7 +13,7 @@ void VideoController::init(string iFileName, float iFps,
     fileEOF = false;
 
     // use single interweaved file
-    string videoPath = "nitro:/video/" + iFileName;
+    string videoPath = fatBasePath + "video/" + iFileName;
 
     readIndex = 0;
     writeIndex = 0;

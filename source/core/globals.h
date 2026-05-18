@@ -14,6 +14,7 @@ class PauseMenuComponent;
 extern volatile int frame;
 extern int fps;
 extern int fpsTimer;
+extern std::string fatBasePath;
 
 // controllers
 extern MusicController musicCtrl;

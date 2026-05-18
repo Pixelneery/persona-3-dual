@@ -90,20 +90,20 @@ void IwatodaiDormView::init()
     // 1/3 chance of a surprise
     if (rand() % 3 == 0)
     {
-        musicCtrl.init("nitro:/music/toms_diner_suzanne_vega.pcm", 0.0f, 234.568f);
+        musicCtrl.init((fatBasePath + "music/toms_diner_suzanne_vega.pcm").c_str(), 0.0f, 234.568f);
     }
     else
     {
-        musicCtrl.init(IWATODAI_DORM_MUSIC, 0.0f, 920.973f);
+        musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
     }
 
     // setup character model
-    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
+    characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
     const unsigned int *bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = {textureBitmap};
-    iwatodaiDormEnv.load("nitro:/environments/iwatodai_dorm.bin", bitmapsEnv);
+    iwatodaiDormEnv.load((fatBasePath + "environments/iwatodai_dorm.bin").c_str(), bitmapsEnv);
     totalPolyCount = iwatodaiDormEnv.getPolyCount();
 
     // setup dialogue

@@ -11,7 +11,7 @@
 void MainMenuView::init()
 {
     // setup music
-    musicCtrl.init("nitro:/music/aria_of_the_soul.pcm", 0.0f, 164.940f);
+    musicCtrl.init((fatBasePath + "music/aria_of_the_soul.pcm").c_str(), 0.0f, 164.940f);
 
     // setup menu
     isMainMenuCmptActive = true;

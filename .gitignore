@@ -1,17 +1,17 @@
-/build
 persona-3-dual.nds
 persona-3-dual.elf
-.DS_Store
+persona-3-dual.lst
 
 # no auto-generated files should be committed
+/build
 # /source/dialogue
 # /source/environments
 # /source/maps
 # /source/models
+/data/music
+/data/video
+/data/models
 
-/nitrofiles/music
-/nitrofiles/video
-# /nitrofiles/models
 /tools/converters/__pycache__
 *.pyc
-persona-3-dual.lst
+.DS_Store

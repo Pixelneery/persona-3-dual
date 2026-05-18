@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <filesystem.h>
+#include <string>
 #include <maxmod9.h>
 #include "core/enums.h"
+#include <dirent.h>
 
 // states
 #include "core/BaseView.h"
@@ -33,14 +35,13 @@
 #include "character_texture_2.h"
 #include "character_texture_3.h"
 #include "character_texture_4.h"
-
-// character profiles
-#include "battleActions/party/CharacterProfiles.h"
+#include <fat.h>
 
 // variables
 volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
+string fatBasePath = "";
 // controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
@@ -86,11 +87,24 @@ int main(int argc, char *argv[])
 {
     irqSet(IRQ_VBLANK, Vblank);
 
-    // load NitroFS
-    if (!nitroFSInit(NULL))
+    // Initialize DLDI/FAT instead
+    if (!fatInitDefault())
     {
         consoleDemoInit();
-        iprintf("NitroFS failed!\n");
+        iprintf("FAT initialization failed!\nPlease ensure the SD card is inserted.\n");
+        while(1) swiWaitForVBlank();
+    }
+
+    // dynamically resolve runtime path using argv[0]
+    if (argc > 0 && argv[0] != nullptr)
+    {
+        string execPath(argv[0]);
+        size_t lastSlash = execPath.find_last_of('/');
+
+        if (lastSlash != string::npos)
+        {
+            fatBasePath = execPath.substr(0, lastSlash + 1) + "data/";
+        }
     }
 
     // initialize maxmod (for audio)

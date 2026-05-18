@@ -35,7 +35,7 @@ INCLUDES    :=  include source
 # Add environment subdirectories directly to the GRAPHICS build pipeline
 GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*) $(wildcard assets/models/*)
 SFX       	:=  assets/sfx
-NITRODATA   :=  nitrofiles
+NITRODATA   :=
 
 GAME_TITLE     := Persona 3 Dual
 GAME_SUBTITLE1 := A Fan Recreation
@@ -59,8 +59,8 @@ ASSETS_ENVIRONMENTS := $(CURDIR)/assets/environments
 ASSETS_MODELS   := $(CURDIR)/assets/models
 ASSETS_MAPS     := $(CURDIR)/assets/maps
 
-NITRO_MUSIC     := $(CURDIR)/nitrofiles/music
-NITRO_VIDEO     := $(CURDIR)/nitrofiles/video
+NITRO_MUSIC     := $(CURDIR)/data/music
+NITRO_VIDEO     := $(CURDIR)/data/video
 
 #---------------------------------------------------------------------------------
 # MMUTIL OS select
@@ -181,7 +181,7 @@ help:
 assets: dirs dialogue music video environments jmaps models
 
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/nitrofiles/models $(CURDIR)/nitrofiles/environments
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(NITRO_MUSIC) $(NITRO_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments
 
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(ASSETS_DIALOGUE)/%.build.json)
@@ -212,9 +212,9 @@ $(CURDIR)/source/environments/%.h: $(ASSETS_ENVIRONMENTS)/%/$$*.obj \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/$$*.build.json) \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/$$*.build.json)
 	@echo "  ENV   $*"
-	@mkdir -p $(dir $@) $(CURDIR)/nitrofiles/environments
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/nitrofiles/environments
-	@mv $(CURDIR)/nitrofiles/environments/$*.h $@
+	@mkdir -p $(dir $@) $(CURDIR)/data/environments
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/data/environments
+	@mv $(CURDIR)/data/environments/$*.h $@
 	@touch $@
 
 environments: $(ENVIRONMENT_OUT)
@@ -224,9 +224,9 @@ $(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
 		$$(wildcard $(ASSETS_MODELS)/%/$$*.build.json) \
 		$$(wildcard $(ASSETS_MODELS)/$$*.build.json)
 	@echo "  MODEL $*"
-	@mkdir -p $(dir $@) $(CURDIR)/nitrofiles/models
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/nitrofiles/models/$*.bin
-	@mv $(CURDIR)/nitrofiles/models/$*.h $@
+	@mkdir -p $(dir $@) $(CURDIR)/data/models
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/data/models/$*.bin
+	@mv $(CURDIR)/data/models/$*.h $@
 	@touch $@
 
 models: $(MODEL_OUT)
@@ -244,7 +244,8 @@ clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/nitrofiles/models/* $(CURDIR)/nitrofiles/environments/*
+	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/data/models/* $(CURDIR)/data/environments/*
+	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
 else
@@ -252,7 +253,6 @@ else
 DEPENDS :=  $(OFILES:.o=.d)
 
 $(OUTPUT).nds   :   $(OUTPUT).elf
-$(OUTPUT).nds   :   $(shell find $(TOPDIR)/$(NITRODATA))
 $(OUTPUT).elf   :   $(OFILES)
 
 soundbank.bin soundbank.h : $(SFXFILES)
@@ -271,3 +271,28 @@ soundbank.bin soundbank.h : $(SFXFILES)
 
 -include $(DEPENDS)
 endif
+
+#---------------------------------------------------------------------------------
+# Generate a FAT32 SD Card image
+#---------------------------------------------------------------------------------
+sdcard: $(OUTPUT).nds
+	@echo "Generating sdcard.img (2GB)..."
+	@# 1. Allocate a 2GB file
+	@$(VENV_PYTHON) -c "with open('sdcard.img', 'wb') as f: f.truncate(512 * 1024 * 1024 * 4)"
+
+	@# 2. Format the file as a FAT filesystem named P3D_SD
+	@mformat -i sdcard.img -v P3D_SD -F ::
+
+	@# 3. Create the parent /roms folder
+	@mmd -i sdcard.img ::/roms
+
+	@# 4. Create the nested /roms/nds folder
+	@mmd -i sdcard.img ::/roms/nds
+
+	@# 5. Inject the compiled ROM into the /roms/nds folder
+	@mcopy -i sdcard.img $(OUTPUT).nds ::/roms/nds/
+
+	@# 6. Inject the data folder directly into the /roms/nds folder next to the ROM
+	@mcopy -s -i sdcard.img $(CURDIR)/data ::/roms/nds/
+
+	@echo "Successfully built sdcard.img"

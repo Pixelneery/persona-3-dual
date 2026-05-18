@@ -95,10 +95,10 @@ void IwatodaiStreetsView::init()
         angle, characterTranslate, characterFacingAngle);
 
     // setup music
-    musicCtrl.init(IWATODAI_STREETS_MUSIC, 0.0f, -1.0f);
+    musicCtrl.init((fatBasePath + "/music/changing_seasons.pcm").c_str(), 0.0f, -1.0f);
 
     // setup character model
-    characterAnimationCtrl.loadModel("nitro:/models/character.bin");
+    characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
@@ -129,7 +129,7 @@ void IwatodaiStreetsView::init()
         f007_009_03Bitmap,
         f007_009_wood01Bitmap,
     };
-    iwatodaiStreetsEnv.load("nitro:/environments/iwatodai_streets.bin", bitmaps);
+    iwatodaiStreetsEnv.load((fatBasePath + "environments/iwatodai_streets.bin").c_str(), bitmaps);
     totalPolyCount = iwatodaiStreetsEnv.getPolyCount();
 
     // pause menu
