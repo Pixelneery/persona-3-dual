@@ -125,6 +125,7 @@ enum class TileType
 enum class MainMenuOptions
 {
     LOAD_GAME = 0,
+    SETTINGS,
     RETURN_TO_TITLE,
 };
 
@@ -133,6 +134,19 @@ enum class LevelOptions
     IWATODAI_DORM = 0,
     IWATODAI_STREETS,
     CUTSCENE_1
+};
+
+enum class SettingIntroOptions
+{
+    ORIGINAL = 0,
+    FES,
+    PORTABLE,
+    RELOAD
+};
+
+enum class SettingOptions
+{
+    CHANGE_INTRO_VIDEO = 0
 };
 
 enum class PauseMenuOption

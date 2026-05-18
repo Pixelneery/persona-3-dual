@@ -42,6 +42,7 @@ volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
+std::string introVideoPath = "reload.vid";
 // controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
@@ -161,9 +162,7 @@ int main(int argc, char *argv[])
             }
             else if (nextState == ViewState::INTRO_VIDEO)
             {
-                const char *intros[] = {"fes.vid", "base.vid", "portable.vid"};
-                const char *introFile = intros[rand() % 3];
-                SwitchView(new VideoView(introFile, ViewState::INTRO));
+                SwitchView(new VideoView(introVideoPath.c_str(), ViewState::INTRO));
             }
             else if (nextState == ViewState::CUTSCENE_1)
             {

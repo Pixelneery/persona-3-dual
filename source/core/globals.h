@@ -15,6 +15,8 @@ extern volatile int frame;
 extern int fps;
 extern int fpsTimer;
 extern std::string fatBasePath;
+// TODO: save introVideoPath into some sort of .sav file when save support is implemented
+extern std::string introVideoPath;
 
 // controllers
 extern MusicController musicCtrl;

@@ -63,13 +63,17 @@ void MainMenuComponent::init(int iBgSlot, bool *isActive, const std::string &iPa
 ViewState MainMenuComponent::mainMenuOptionSelected()
 {
     ViewState selectedView;
-    switch (selectedOption)
+    switch (static_cast<MainMenuOptions>(selectedOption))
     {
-        case (int)MainMenuOptions::LOAD_GAME:
+        case MainMenuOptions::LOAD_GAME:
             changeMenu(levelOptions, LEVEL_OPTIONS);
             selectedView = ViewState::KEEP_CURRENT;
             break;
-        case (int)MainMenuOptions::RETURN_TO_TITLE:
+        case MainMenuOptions::SETTINGS:
+            changeMenu(settingOptions, SETTING_OPTIONS);
+            selectedView = ViewState::KEEP_CURRENT;
+            break;
+        case MainMenuOptions::RETURN_TO_TITLE:
             selectedView = ViewState::INTRO;
             break;
         default:
@@ -82,15 +86,15 @@ ViewState MainMenuComponent::mainMenuOptionSelected()
 ViewState MainMenuComponent::levelOptionSelected()
 {
     ViewState selectedView;
-    switch (selectedOption)
+    switch (static_cast<LevelOptions>(selectedOption))
     {
-        case (int)LevelOptions::IWATODAI_DORM:
+        case LevelOptions::IWATODAI_DORM:
             selectedView = ViewState::IWATODAI_DORM;
             break;
-        case (int)LevelOptions::IWATODAI_STREETS:
+        case LevelOptions::IWATODAI_STREETS:
             selectedView = ViewState::IWATODAI_STREETS;
             break;
-        case (int)LevelOptions::CUTSCENE_1:
+        case LevelOptions::CUTSCENE_1:
             selectedView = ViewState::CUTSCENE_1;
             break;
         default:
@@ -98,4 +102,43 @@ ViewState MainMenuComponent::levelOptionSelected()
     }
 
     return selectedView;
+}
+
+ViewState MainMenuComponent::settingOptionSelected()
+{
+    ViewState selectedView;
+    switch (static_cast<SettingOptions>(selectedOption))
+    {
+        case SettingOptions::CHANGE_INTRO_VIDEO:
+            changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
+            selectedView = ViewState::KEEP_CURRENT;
+        default:
+            selectedView = ViewState::KEEP_CURRENT;
+    }
+
+    return selectedView;
+}
+
+ViewState MainMenuComponent::settingIntroOptionSelected()
+{
+    switch (static_cast<SettingIntroOptions>(selectedOption))
+    {
+        case SettingIntroOptions::ORIGINAL:
+            introVideoPath = "base.vid";
+            break;
+        case SettingIntroOptions::FES:
+            introVideoPath = "fes.vid";
+            break;
+        case SettingIntroOptions::PORTABLE:
+            introVideoPath = "portable.vid";
+            break;
+        case SettingIntroOptions::RELOAD:
+            introVideoPath = "reload.vid";
+            break;
+        default:
+            introVideoPath = "reload.vid";
+    }
+
+    changeMenu(settingOptions, SETTING_OPTIONS);
+    return ViewState::KEEP_CURRENT;
 }
