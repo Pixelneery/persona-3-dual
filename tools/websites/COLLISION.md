@@ -48,12 +48,9 @@ Each area is authored as a `.jmap` file in `assets/maps/`. The build system conv
 
 ```
 # My Area collision map  WIDTHxHEIGHT
-#
-# @audio nitro:/music/my_music.pcm
 ```
 
 - The `WIDTHxHEIGHT` comment is parsed to set map dimensions
-- `@audio` sets the music that plays in this area
 
 ### Tile Grid
 
@@ -105,8 +102,6 @@ Create `assets/maps/my_area.jmap`:
 
 ```
 # My Area collision map  10x8
-#
-# @audio nitro:/music/my_music.pcm
 #
 # Tile key:
 #   c = collision

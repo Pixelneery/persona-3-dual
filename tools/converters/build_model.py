@@ -19,7 +19,7 @@ def convert(input_file, output_file, config):
       3. Delete _textures.txt — it is a transient build artefact.
 
     The .grit files are written into the model's ASSET directory (next to the
-    PNGs), not into nitrofiles/.  That way they are found by the Makefile's
+    PNGs), not into data/.  That way they are found by the Makefile's
     GRAPHICS scan of  assets/models/*  and compiled into the binary just like
     environment textures.
     """
@@ -29,7 +29,7 @@ def convert(input_file, output_file, config):
 
     obj2model.convert(input_file, output_file, config)
 
-    # _textures.txt lands next to the .bin (in nitrofiles/models/)
+    # _textures.txt lands next to the .bin (in data/models/)
     output_dir = os.path.dirname(os.path.abspath(output_file))
     tex_list = os.path.join(output_dir, f"{base_name}_textures.txt")
 

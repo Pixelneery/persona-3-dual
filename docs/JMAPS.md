@@ -10,12 +10,9 @@ Each area is authored as a `.jmap` file in `assets/maps/`. The build system conv
 
 ```
 # Example collision map  WIDTHxHEIGHT
-#
-# @audio nitro:/music/my_music.pcm
 ```
 
 - The `WIDTHxHEIGHT` comment is parsed to set map dimensions
-- `@audio` sets the music path for this area (see [AUDIO.md](AUDIO.md))
 
 ### Tile Key Reference
 
@@ -50,13 +47,11 @@ c, c, c, c, c, c, c, c
 
 Running `make` produces `source/maps/<name>.h` containing:
 
-- `#define <NAME>_MUSIC` — the `@audio` path as a string
 - `#define <NAME>_MAP_WIDTH` and `<NAME>_MAP_HEIGHT`
 - `static const uint8_t <name>_map[HEIGHT][WIDTH]` — the tile grid as integers
 
 Example:
 ```cpp
-#define IWATODAI_DORM_MUSIC "nitro:/music/iwatodai_dorm.pcm"
 #define IWATODAI_DORM_MAP_WIDTH  56
 #define IWATODAI_DORM_MAP_HEIGHT 42
 static const uint8_t iwatodai_dorm_map[42][56] = { ... };

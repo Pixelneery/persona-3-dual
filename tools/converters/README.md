@@ -2,7 +2,7 @@
 
 # Persona 3 Dual — Asset Pipeline (OUTDATED)
 
-> Everything in `assets/` is source. Everything in `source/` or `nitrofiles/` are generated.
+> Everything in `assets/` is source. Everything in `source/` or `data/` are generated.
 > **Never hand-edit generated files** — run `make assets` instead.
 
 ---
@@ -47,11 +47,11 @@ Place a `.build.json` file next to your asset with the same base name (e.g., `ta
 ```text
 assets/
   dialogue/       .dlg scripts          → source/dialogue/
-  music/          .mp3 music            → nitrofiles/music/
+  music/          .mp3 music            → data/music/
   sfx/            .wav SFX              → soundbank.bin (via mmutil)
-  video/          .mp4 cutscenes        → nitrofiles/video/
-  environments/   .obj static rooms     → nitrofiles/environments/ & source/environments/
-  models/         .json animated models → nitrofiles/models/ & source/models/
+  video/          .mp4 cutscenes        → data/video/
+  environments/   .obj static rooms     → data/environments/ & source/environments/
+  models/         .json animated models → data/models/ & source/models/
   maps/           .png collision maps   → source/maps/
 
 source/
@@ -60,7 +60,7 @@ source/
   models/         *.h                   (auto-generated animation enums)
   maps/           *.h                   (auto-generated collision arrays)
 
-nitrofiles/
+data/
   music/          *.pcm                 (auto-generated)
   video/          *.vid                 (auto-generated)
   environments/   *.bin                 (auto-generated display lists)
@@ -90,7 +90,7 @@ Converts an `.obj` + `.mtl` + `.png` collection into a zero-boilerplate C++ head
 | | |
 |---|---|
 | **Input** | `assets/environments/<name>/<name>.obj` (plus textures) |
-| **Output** | `nitrofiles/environments/<name>.bin`, `source/environments/<name>_env.h`, and `.grit` sidecars |
+| **Output** | `data/environments/<name>.bin`, `source/environments/<name>_env.h`, and `.grit` sidecars |
 | **Config** | `assets/environments/<name>/<name>.build.json` (e.g., `{"no_center": true, "source_blender": true}`) |
 
 ---
@@ -104,7 +104,7 @@ Compiles a hierarchical `.json` skeleton and per-bone `.obj` parts into a highly
 | | |
 |---|---|
 | **Input** | `assets/models/<name>/<name>.json` (plus isolated `.obj`s) |
-| **Output** | `nitrofiles/models/<name>.bin` and `source/models/<name>.h` |
+| **Output** | `data/models/<name>.bin` and `source/models/<name>.h` |
 | **Config** | `assets/models/<name>/<name>.build.json` (e.g., `{"texsize": [128, 128], "source_blender": true}`) |
 
 ### `dlg2dialogue.py` — Dialogue Compiler
@@ -126,7 +126,7 @@ Converts MP3s to raw 16-bit stereo PCM at 32 kHz for `maxmod`.
 | | |
 |---|---|
 | **Input** | `assets/music/<name>.mp3` |
-| **Output** | `nitrofiles/music/<name>.pcm` |
+| **Output** | `data/music/<name>.pcm` |
 
 ---
 
@@ -137,7 +137,7 @@ Encodes an MP4 video into a custom, interleaved `.vid` format containing raw vid
 | | |
 |---|---|
 | **Input** | `assets/video/<name>.mp4` |
-| **Output** | `nitrofiles/video/<name>.vid` |
+| **Output** | `data/video/<name>.vid` |
 | **Config** | `<name>.build.json` (e.g., `{"fps": 24, "bits": 16, "size": "256x192"}`) |
 
 ---

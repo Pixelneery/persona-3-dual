@@ -13,7 +13,7 @@
 
     "search.exclude": {
         "**/build": true,
-        "**/nitrofiles": true,
+        "**/data": true,
         "**/*.d": true
     },
 

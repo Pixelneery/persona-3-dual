@@ -1,6 +1,6 @@
 # Persona 3 Dual — Asset Pipeline (OUTDATED?)
 
-> Everything in `assets/` is source. Everything in `source/` or `nitrofiles/` is generated.
+> Everything in `assets/` is source. Everything in `source/` or `data/` is generated.
 > **Never hand-edit generated files** — run `make assets` instead.
 
 ---
@@ -37,9 +37,9 @@ make help
 ```text
 assets/
   dialogue/       .dlg scripts          → source/dialogue/
-  music/          .mp3 music            → nitrofiles/music/
+  music/          .mp3 music            → data/music/
   sfx/            .wav SFX              → soundbank.bin (via mmutil)
-  video/          .mp4 cutscenes        → nitrofiles/video/
+  video/          .mp4 cutscenes        → data/video/
   environments/   .obj static rooms     → source/environments/
   models/         .json animated models → source/models/
   maps/           .png collision maps   → source/maps/
@@ -50,7 +50,7 @@ source/
   models/         *.h hierarchy headers (auto-generated)
   maps/           *.h collision arrays  (auto-generated)
 
-nitrofiles/
+data/
   music/          *.pcm                 (auto-generated)
   video/          *.vid                 (auto-generated)
 
@@ -137,7 +137,7 @@ Converts MP3s to raw 16-bit stereo PCM at 32 kHz for `maxmod`.
 | | |
 |---|---|
 | **Input** | `assets/music/<name>.mp3` |
-| **Output** | `nitrofiles/music/<name>.pcm` |
+| **Output** | `data/music/<name>.pcm` |
 
 ---
 
@@ -148,7 +148,7 @@ Encodes MP4 video to an interleaved `.vid` file.
 | | |
 |---|---|
 | **Input** | `assets/video/<name>.mp4` |
-| **Output** | `nitrofiles/video/<name>.vid` |
+| **Output** | `data/video/<name>.vid` |
 
 **Make flags**
 

@@ -55,7 +55,7 @@ let params = {
     tileSize: 0.0625,
     offsetX: 0, offsetZ: 0,
     width: 0, height: 0,
-    name: 'map', audio: '',
+    name: 'map',
     scale: 1.0, centered: true, source_blender: false
 };
 let tileData = new Array(0 * 0).fill('w');
@@ -599,7 +599,6 @@ function readParamInputs() {
         width: Math.max(1, parseInt(document.getElementById('p-width').value) || 56),
         height: Math.max(1, parseInt(document.getElementById('p-height').value) || 12),
         name: document.getElementById('p-name').value.trim() || 'map',
-        audio: document.getElementById('p-audio').value.trim() || '',
         scale: parseFloat(document.getElementById('p-scale').value) || 1.0,
         centered: document.getElementById('p-center').checked,
         source_blender: document.getElementById('p-source-blender').checked
@@ -795,13 +794,11 @@ document.getElementById('jmap-input').addEventListener('change', e => {
 function parseJmap(text) {
     const lines = text.split('\n');
     const dataLines = [];
-    let audio = '', w = 0, h = 0;
+    w = 0, h = 0;
 
     for (const line of lines) {
         const t = line.trim();
         if (!t || t.startsWith('#')) {
-            const audioM = t.match(/@audio\s+(.+)/);
-            if (audioM) audio = audioM[1].trim();
             const sizeM = t.match(/(\d+)x(\d+)/);
             if (sizeM) { w = parseInt(sizeM[1]); h = parseInt(sizeM[2]); }
 
@@ -833,7 +830,6 @@ function parseJmap(text) {
 
     document.getElementById('p-width').value = actualW;
     document.getElementById('p-height').value = actualH;
-    if (audio) document.getElementById('p-audio').value = audio;
 
     applyParams(); // also clears undo/redo, rebuilds grid, resizes minimap
     buildPalette();
@@ -850,11 +846,10 @@ function parseJmap(text) {
 
 // EXPORT
 function exportJmap() {
-    const { width: W, height: H, name, audio } = params;
+    const { width: W, height: H, name } = params;
     const lines = [];
     lines.push(`# ${name} collision map  ${W}x${H}`);
     lines.push(`#`);
-    if (audio) lines.push(`# @audio ${audio}`);
     lines.push(`#`);
     lines.push(`# Tile key:`);
     for (const [k, def] of Object.entries(TILE_DEFS)) {

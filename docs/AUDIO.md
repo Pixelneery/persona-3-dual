@@ -8,7 +8,7 @@ Audio is handled by `MusicController` (`source/controllers/MusicController.h`), 
 
 ### Format
 
-All music is stored as raw PCM in `nitrofiles/music/`. Source files are `.mp3` in `assets/music/` and are converted automatically by the Makefile via FFmpeg:
+All music is stored as raw PCM in `data/music/`. Source files are `.mp3` in `assets/music/` and are converted automatically by the Makefile via FFmpeg:
 
 ```
 ffmpeg -i input.mp3 -f s16le -ar 32000 -ac 2 output.pcm
@@ -26,7 +26,7 @@ musicCtrl.init(filePath, loopStartSeconds, loopEndSeconds);
 
 | Parameter | Description |
 |-----------|-------------|
-| `filePath` | Path to `.pcm` in NitroFS, e.g. `"nitro:/music/tightrope.pcm"` |
+| `filePath` | Path to `.pcm` in FAT, e.g. `"fatBasePath + "music/tightrope.pcm"` |
 | `loopStartSeconds` | Time in seconds to loop back to when the loop end is reached |
 | `loopEndSeconds` | Time in seconds to trigger the loop. Use `-1.0f` to play through without looping |
 
@@ -35,8 +35,8 @@ musicCtrl.init(filePath, loopStartSeconds, loopEndSeconds);
 ### Adding New Music
 
 1. Drop the `.mp3` into `assets/music/`
-2. Run `make`, it converts automatically to `nitrofiles/music/<name>.pcm`
-3. Reference it in code as `"nitro:/music/<name>.pcm"`
+2. Run `make`, it converts automatically to `data/music/<name>.pcm`
+3. Reference it in code as `"fatBasePath + "music/<name>.pcm"`
 
 To find loop points, open the file in Audacity and locate the loop region visually. For extended/full-play tracks, use `0.0f` as loop start and the full duration as loop end (get duration via `ffprobe -v quiet -show_entries format=duration -of csv=p=0 input.mp3`).
 
@@ -98,20 +98,26 @@ Normally plays the dorm theme, with a rare easter egg:
 
 ```cpp
 // equal chance between N tracks
-const char* tracks[] = {"nitro:/music/a.pcm", "nitro:/music/b.pcm"};
-musicCtrl.init(tracks[rand() % 2], loopStart, loopEnd);
+const std::string tracks[] = {
+        fatBasePath + "music/a.pcm",
+        fatBasePath + "music/b.pcm"
+};
+musicCtrl.init(tracks[rand() % 2].c_str(), loopStart, loopEnd);
 
 // weighted (e.g. 1/3 chance of easter egg)
 if (rand() % 3 == 0) {
-    musicCtrl.init("nitro:/music/easter_egg.pcm", 0.0f, duration);
+    musicCtrl.init((fatBasePath + "music/easter_egg.pcm").c_str(), 0.0f, duration);
 } else {
-    musicCtrl.init("nitro:/music/normal.pcm", 0.0f, duration);
+    musicCtrl.init((fatBasePath + "music/normal.pcm").c_str(), 0.0f, duration);
 }
 
 // per-track loop points
-const char* tracks[] = {"nitro:/music/a.pcm", "nitro:/music/b.pcm"};
+const std::string tracks[] = {
+        fatBasePath + "music/a.pcm",
+        fatBasePath + "music/a.pcm"
+};
 const float loopStarts[] = {17.962f, 0.0f};
 const float loopEnds[]   = {66.082f, 295.706f};
 int pick = rand() % 2;
-musicCtrl.init(tracks[pick], loopStarts[pick], loopEnds[pick]);
+musicCtrl.init(tracks[pick].c_str(), loopStarts[pick], loopEnds[pick]);
 ```
