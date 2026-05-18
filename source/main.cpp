@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
             {
                 const char *intros[] = {"fes.vid", "base.vid", "portable.vid"};
                 const char *introFile = intros[rand() % 3];
-                SwitchView(new VideoView("cutscene-1.vid", ViewState::INTRO));
+                SwitchView(new VideoView(introFile, ViewState::INTRO));
             }
             else if (nextState == ViewState::CUTSCENE_1)
             {
