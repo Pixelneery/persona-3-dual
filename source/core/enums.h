@@ -9,7 +9,8 @@ enum class ViewState
     MAIN_MENU,
     IWATODAI_DORM,
     IWATODAI_STREETS,
-    CUTSCENE_1
+    CUTSCENE_1,
+    SIGN_CONTRACT
 };
 
 enum class SpriteType

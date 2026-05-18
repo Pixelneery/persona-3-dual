@@ -15,6 +15,7 @@
 #include "views/MainMenuView.h"
 #include "views/IwatodaiDormView.h"
 #include "views/IwatodaiStreetsView.h"
+#include "views/SignContractView.h"
 
 // controllers
 #include "controllers/MusicController.h"
@@ -166,7 +167,11 @@ int main(int argc, char *argv[])
             }
             else if (nextState == ViewState::CUTSCENE_1)
             {
-                SwitchView(new VideoView("cutscene-1.vid", ViewState::MAIN_MENU));
+                SwitchView(new VideoView("cutscene-1.vid", ViewState::SIGN_CONTRACT));
+            }
+            else if (nextState == ViewState::SIGN_CONTRACT)
+            {
+                SwitchView(new SignContractView());
             }
         }
 
