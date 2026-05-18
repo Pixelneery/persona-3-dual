@@ -153,6 +153,12 @@ def interweave(
     with open(raw_video, "rb") as f_vid, open(pcm_audio, "rb") as f_aud, open(
         out_vid, "wb"
     ) as f_out:
+
+        # write 16-byte metadata header dynamically mapping configurations
+        magic = b"VID\0"
+        header = struct.pack("<4s H B B H H 4x", magic, int(fps), int(bpp), 0, w, h)
+        f_out.write(header)
+
         if pal_file:
             with open(pal_file, "rb") as f_pal:
                 f_out.write(f_pal.read(512))
@@ -193,7 +199,7 @@ def convert(input_path, output_path, config):
     if not output_path.endswith(".vid"):
         output_path += ".vid"
 
-    print("Processing...")
+    print(f"Processing ({bits}-bit, {fps} fps)...")
     with tempfile.TemporaryDirectory() as tmp_dir:
         raw_vid = os.path.join(tmp_dir, "v.raw")
         pcm_aud = os.path.join(tmp_dir, "a.pcm")

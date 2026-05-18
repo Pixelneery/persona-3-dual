@@ -54,7 +54,10 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
         }
 
         s_ringAvailable -= bytesToRead;
-        s_elapsedSamples += (bytesToRead / BYTES_PER_FRAME);
+
+        // always increment elapsed samples by the requested amount to keep time moving.
+        // this prevents the video controller from deadlocking if the SD card reads too slowly
+        s_elapsedSamples += (bytesReq / BYTES_PER_FRAME);
 
         // fill remainder with silence if the ring buffer underruns
         if (bytesToRead < bytesReq)

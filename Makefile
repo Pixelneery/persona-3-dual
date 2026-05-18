@@ -179,25 +179,25 @@ dirs:
 
 sdcard: sdcard.img
 #---------------------------------------------------------------------------------
-$(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $(wildcard $(ASSETS_DIALOGUE)/%.build.json)
+$(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $$(wildcard $(ASSETS_DIALOGUE)/$$*.build.json)
 	@echo "  DLG   $(notdir $<)"
 	@mkdir -p $(dir $@)
 	@cd $(CURDIR)/source/dialogue && \
-		$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $*
+		$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$*"
 dialogue: $(DIALOGUE_OUT)
 
 #---------------------------------------------------------------------------------
 $(DATA_MUSIC)/%.pcm: $(ASSETS_MUSIC)/%.mp3
 	@echo "  PCM   $(notdir $<)"
 	@mkdir -p $(dir $@)
-	@ffmpeg -i $< -f s16le -ar 32000 -ac 2 $@ -y -loglevel error
+	@ffmpeg -i "$<" -f s16le -ar 32000 -ac 2 "$@" -y -loglevel error
 music: $(MUSIC_OUT)
 
 #---------------------------------------------------------------------------------
-$(DATA_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $(wildcard $(ASSETS_VIDEO)/%.build.json)
+$(DATA_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $$(wildcard $(ASSETS_VIDEO)/$$*.build.json)
 	@echo "  VID   $(notdir $<)"
 	@mkdir -p $(dir $@)
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(basename $@)
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(basename $@)"
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
@@ -208,7 +208,7 @@ $(CURDIR)/source/environments/%.h: $(ASSETS_ENVIRONMENTS)/%/$$*.obj \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/$$*.build.json)
 	@echo "  ENV   $*"
 	@mkdir -p $(dir $@) $(CURDIR)/data/environments
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/data/environments
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/environments"
 	@mv $(CURDIR)/data/environments/$*.h $@
 	@touch $@
 
@@ -220,7 +220,7 @@ $(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
 		$$(wildcard $(ASSETS_MODELS)/$$*.build.json)
 	@echo "  MODEL $*"
 	@mkdir -p $(dir $@) $(CURDIR)/data/models
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $(CURDIR)/data/models/$*.bin
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/models/$*.bin"
 	@mv $(CURDIR)/data/models/$*.h $@
 	@touch $@
 
@@ -230,7 +230,7 @@ models: $(MODEL_OUT)
 $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.jmap
 	@echo "  JMAP  $(notdir $<)"
 	@mkdir -p $(dir $@)
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py $< $@
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$@"
 
 jmaps: $(JMAP_OUT)
 

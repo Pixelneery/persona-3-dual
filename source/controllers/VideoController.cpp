@@ -1,6 +1,7 @@
 #include <nds.h>
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h> // for memcmp
 #include "core/globals.h"
 #include "VideoController.h"
 
@@ -8,17 +9,17 @@ void VideoController::init(std::string iFileName, float iFps,
                            ViewState iNextState, bool iIsSkippable)
 {
     nextState = iNextState;
-    fps = iFps;
+    fps = iFps; // default fallback if no header exists
     isSkippable = iIsSkippable;
     fileEOF = false;
 
-    // use single interweaved file
     std::string videoPath = fatBasePath + "video/" + iFileName;
 
     readIndex = 0;
     writeIndex = 0;
     framesAvailable = 0;
     currentFrame = 0;
+    ramBuffer = nullptr;
 
     videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
     videoSetModeSub(MODE_0_2D);
@@ -27,17 +28,6 @@ void VideoController::init(std::string iFileName, float iFps,
     vramSetBankD(VRAM_D_MAIN_BG_0x06020000);
     vramSetBankC(VRAM_C_SUB_BG);
 
-#if BYTES_PER_PX == 1
-    bg = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
-#else
-    bgExtPaletteEnable();
-    bg = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
-#endif
-
-    // clear memory
-    dmaFillWords(0, bgGetGfxPtr(bg), FRAME_SIZE);
-
-    // initialize the ring buffer for video audio
     musicCtrl.initVideoAudio();
 
     videoFile = fopen(videoPath.c_str(), "rb");
@@ -49,24 +39,52 @@ void VideoController::init(std::string iFileName, float iFps,
             swiWaitForVBlank();
     }
 
-#if BYTES_PER_PX == 1
-    u16 palette[256];
-    size_t palRead = fread(palette, 2, 256, videoFile);
-    if (palRead != 256)
-    {
-        consoleDemoInit();
-        iprintf("ERR: palette read failed");
-        while (1)
-            swiWaitForVBlank();
+    // dynamic header reading
+    u8 header[16];
+    size_t hRead = fread(header, 1, 16, videoFile);
+
+    // validate if the new magic "VID\0" Header is present
+    if (hRead == 16 && memcmp(header, "VID\0", 4) == 0) {
+        // bit-shifts safeguard against unaligned memory access crashes on the ARM9
+        fps = (float)(header[4] | (header[5] << 8));
+        bpp = header[6];
+        frameW = header[8] | (header[9] << 8);
+        frameH = header[10] | (header[11] << 8);
+    } else {
+        // fallback for older files without header (Assuming 16-bit, 256x192)
+        fseek(videoFile, 0, SEEK_SET);
+        bpp = 2;
+        frameW = 256;
+        frameH = 192;
     }
 
-    for (int i = 0; i < 256; i++)
-    {
-        BG_PALETTE[i] = palette[i];
-    }
-#endif
+    frameSize = frameW * frameH * bpp;
+    bufferSize = frameSize * FRAMES_TO_BUFFER;
 
-    ramBuffer = (u8 *)memalign(32, BUFFER_SIZE);
+    // configure DS backgrounds dynamically depending on parsed BPP
+    if (bpp == 1) {
+        bg = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+
+        u16 palette[256];
+        size_t palRead = fread(palette, 2, 256, videoFile);
+        if (palRead != 256) {
+            consoleDemoInit();
+            iprintf("ERR: palette read failed");
+            while (1) swiWaitForVBlank();
+        }
+
+        for (int i = 0; i < 256; i++) {
+            BG_PALETTE[i] = palette[i];
+        }
+    } else {
+        bgExtPaletteEnable();
+        bg = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
+    }
+
+    // clear memory
+    dmaFillWords(0, bgGetGfxPtr(bg), frameSize);
+
+    ramBuffer = (u8 *)memalign(32, bufferSize);
     if (!ramBuffer)
     {
         consoleDemoInit();
@@ -93,20 +111,22 @@ void VideoController::refillBuffer()
         return;
     }
 
-    // read audio data and push to ring buffer immediately
+    // clamp audio buffer to prevent potential stack buffer overflow
     if (audioSize > 0)
     {
-        fread(audioBuf, 1, audioSize, videoFile);
-        musicCtrl.pushVideoAudio(audioBuf, audioSize);
+        u32 safeSize = (audioSize > sizeof(audioBuf)) ? sizeof(audioBuf) : audioSize;
+        fread(audioBuf, 1, safeSize, videoFile);
+        musicCtrl.pushVideoAudio(audioBuf, safeSize);
+        if (audioSize > safeSize) fseek(videoFile, audioSize - safeSize, SEEK_CUR); // Skip overflowing remainder
     }
 
-    // read video frame
-    u8 *dest = &ramBuffer[writeIndex * FRAME_SIZE];
-    size_t bytes = fread(dest, 1, FRAME_SIZE, videoFile);
+    // read video frame utilizing dynamic frameSize
+    u8 *dest = &ramBuffer[writeIndex * frameSize];
+    size_t bytes = fread(dest, 1, frameSize, videoFile);
 
-    if (bytes == FRAME_SIZE)
+    if (bytes == frameSize)
     {
-        DC_FlushRange(dest, FRAME_SIZE);
+        DC_FlushRange(dest, frameSize);
         writeIndex = (writeIndex + 1) % FRAMES_TO_BUFFER;
         framesAvailable++;
     }
@@ -164,9 +184,9 @@ ViewState VideoController::update()
     {
         swiWaitForVBlank();
         dmaCopy(
-            &ramBuffer[readIndex * FRAME_SIZE],
+            &ramBuffer[readIndex * frameSize],
             bgGetGfxPtr(bg),
-            FRAME_SIZE);
+            frameSize);
         readIndex = (readIndex + 1) % FRAMES_TO_BUFFER;
         framesAvailable--;
         currentFrame++;
@@ -177,22 +197,16 @@ ViewState VideoController::update()
 
 void VideoController::cleanup()
 {
-    // clear memory
-    dmaFillWords(0, bgGetGfxPtr(bg), FRAME_SIZE);
+    if (ramBuffer != nullptr)
+    {
+        dmaFillWords(0, bgGetGfxPtr(bg), frameSize);
+        free(ramBuffer);
+        ramBuffer = nullptr;
+    }
 
-    // free resources
     if (videoFile != nullptr)
     {
         fclose(videoFile);
         videoFile = nullptr;
     }
-
-    if (ramBuffer != nullptr)
-    {
-        free(ramBuffer);
-        ramBuffer = nullptr;
-    }
-
-    // NOTE: musicCtrl.cleanup() also needs to be called, but this is handled
-    // by BaseView
 }
