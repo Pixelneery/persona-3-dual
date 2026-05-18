@@ -1,8 +1,6 @@
 // Auto-generated from iwatodai_streets.jmap - do not edit by hand
 #include <stdint.h>
 
-#define IWATODAI_STREETS_MUSIC "nitro:/music/changing_seasons.pcm"
-
 #ifndef IWATODAI_STREETS_H
 #define IWATODAI_STREETS_H
 

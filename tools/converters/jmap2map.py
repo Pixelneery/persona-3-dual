@@ -37,15 +37,9 @@ def _load_tile_map():
 
 def parse_jmap(path_obj, tile_map):
     rows = []
-    audio = None
     with path_obj.open("r") as f:
         for raw in f:
             line = raw.split("#")[0].strip()
-            comment = raw.partition("#")[2].strip()
-            if comment.startswith("@audio"):
-                parts = comment.split(None, 1)
-                if len(parts) == 2:
-                    audio = parts[1].strip()
             if not line:
                 continue
             tokens = [t.strip() for t in line.split(",") if t.strip()]
@@ -57,7 +51,7 @@ def parse_jmap(path_obj, tile_map):
                     raise ValueError(f"Unknown tile token '{tok}' in {path_obj.name}")
                 row.append(tile_map[tok])
             rows.append(row)
-    return rows, audio
+    return rows
 
 
 def validate(rows, path_obj):
@@ -72,7 +66,7 @@ def validate(rows, path_obj):
     return len(rows), width
 
 
-def to_header(rows, height, width, stem, audio):
+def to_header(rows, height, width, stem):
     guard = re.sub(r"[^A-Z0-9]", "_", stem.upper()) + "_H"
     define_prefix = re.sub(r"[^A-Z0-9]", "_", stem.upper())
 
@@ -80,9 +74,6 @@ def to_header(rows, height, width, stem, audio):
     lines.append(f"// Auto-generated from {stem}.jmap - do not edit by hand")
     lines.append("#include <stdint.h>")
     lines.append("")
-    if audio:
-        lines.append(f'#define {define_prefix}_MUSIC "{audio}"')
-        lines.append("")
     lines.append(f"#ifndef {guard}")
     lines.append(f"#define {guard}")
     lines.append("")
@@ -119,9 +110,9 @@ def convert(input_file: str, output_file: str, config: dict) -> None:
 
     stem = jmap_path.stem
 
-    rows, audio = parse_jmap(jmap_path, tile_map)
+    rows = parse_jmap(jmap_path, tile_map)
     height, width = validate(rows, jmap_path)
-    header = to_header(rows, height, width, stem, audio)
+    header = to_header(rows, height, width, stem)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(header)
