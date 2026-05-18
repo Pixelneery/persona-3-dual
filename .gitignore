@@ -15,3 +15,4 @@ persona-3-dual.lst
 /tools/converters/__pycache__
 *.pyc
 .DS_Store
+sdcard.img

@@ -283,16 +283,10 @@ sdcard: $(OUTPUT).nds
 	@# 2. Format the file as a FAT filesystem named P3D_SD
 	@mformat -i sdcard.img -v P3D_SD -F ::
 
-	@# 3. Create the parent /roms folder
-	@mmd -i sdcard.img ::/roms
+	@# 3. Inject the compiled ROM directly into the root of the image
+	@mcopy -i sdcard.img $(OUTPUT).nds ::/
 
-	@# 4. Create the nested /roms/nds folder
-	@mmd -i sdcard.img ::/roms/nds
-
-	@# 5. Inject the compiled ROM into the /roms/nds folder
-	@mcopy -i sdcard.img $(OUTPUT).nds ::/roms/nds/
-
-	@# 6. Inject the data folder directly into the /roms/nds folder next to the ROM
-	@mcopy -s -i sdcard.img $(CURDIR)/data ::/roms/nds/
+	@# 4. Inject the data folder directly into the root next to the ROM
+	@mcopy -s -i sdcard.img $(CURDIR)/data ::/
 
 	@echo "Successfully built sdcard.img"
