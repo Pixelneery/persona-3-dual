@@ -4,7 +4,7 @@
 #include "core/globals.h"
 #include "VideoController.h"
 
-void VideoController::init(string iFileName, float iFps,
+void VideoController::init(std::string iFileName, float iFps,
                            ViewState iNextState, bool iIsSkippable)
 {
     nextState = iNextState;
@@ -13,7 +13,7 @@ void VideoController::init(string iFileName, float iFps,
     fileEOF = false;
 
     // use single interweaved file
-    string videoPath = fatBasePath + "video/" + iFileName;
+    std::string videoPath = fatBasePath + "video/" + iFileName;
 
     readIndex = 0;
     writeIndex = 0;

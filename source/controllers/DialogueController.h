@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include "core/structs.h"
-using namespace std;
 
 class DialogueController
 {

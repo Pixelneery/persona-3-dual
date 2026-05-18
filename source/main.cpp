@@ -41,7 +41,7 @@
 volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
-string fatBasePath = "";
+std::string fatBasePath = "";
 // controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
@@ -98,10 +98,10 @@ int main(int argc, char *argv[])
     // dynamically resolve runtime path using argv[0]
     if (argc > 0 && argv[0] != nullptr)
     {
-        string execPath(argv[0]);
+        std::string execPath(argv[0]);
         size_t lastSlash = execPath.find_last_of('/');
 
-        if (lastSlash != string::npos)
+        if (lastSlash != std::string::npos)
         {
             fatBasePath = execPath.substr(0, lastSlash + 1) + "data/";
         }

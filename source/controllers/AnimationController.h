@@ -3,8 +3,6 @@
 #include <vector>
 #include "core/structs.h"
 
-using namespace std;
-
 class AnimationController
 {
 public:
@@ -49,13 +47,13 @@ private:
     Keyframe getInterpolatedFrame(const AnimTrack &track, int currentTime, int nodeId);
     static int textureSizeToEnum(int px);
 
-    vector<AnimNode> modelNodes;
-    vector<Animation> animations;
-    vector<int> trackIndices; // per-node cached search position
-    vector<int> rootNodes;
+    std::vector<AnimNode> modelNodes;
+    std::vector<Animation> animations;
+    std::vector<int> trackIndices; // per-node cached search position
+    std::vector<int> rootNodes;
 
     // One GL texture ID per texture slot.  Empty if loadTextures() not called.
-    vector<int> textureIDs;
+    std::vector<int> textureIDs;
 
     int currentAnimIndex = -1;
     int currentFrame = 0;
