@@ -51,6 +51,15 @@ bool Enemy::TakeTurn(u32 *keys)
 
     if (attacked)
     {
+        u32 accuracy = curSkill->calculateHitrateEnemy(&battleStats, &target->curPersona->battleStats, &target->shoe);
+
+        bool hitted = accuracy > u32(rand() % 100);
+
+        if (!hitted)
+        {
+            iprintf("missed\n");
+            return true;
+        }
         target->hp -= (s32)damage;
         iprintf("Attack with: ");
         iprintf(curSkill->name.c_str());

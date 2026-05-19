@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include <algorithm>
 #include "../Element.h"
 #include "../BattleStats.h"
 #include "../shoes/Shoe.h"
@@ -33,8 +34,9 @@ struct AttackSkill
     // TODO: hopefully correct, should be looked at by someone that knows some  math
     u32 calculateHitratePlayer(BattleStats *attackerStats, BattleStats *defenderStats)
     {
-        float accuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
-        return (u32)(accuracy * hitRate);
+        float baseAccuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
+        u32 multipliedAccuracy = (u32)(baseAccuracy * hitRate);
+        return std::clamp(multipliedAccuracy, (u32)50, (u32)99);
     }
 
     // TODO: hopefully correct, should be looked at by someone that knows some  math
@@ -42,7 +44,8 @@ struct AttackSkill
     {
         float baseAccuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
         float shoeMultiplier = (float)(attackerStats->ag + 200) / (shoe->evasion / 2.0f + 200);
-        return (u32)(baseAccuracy * hitRate * shoeMultiplier);
+        u32 multipliedAccuracy = baseAccuracy * hitRate * shoeMultiplier;
+        return std::clamp(multipliedAccuracy, (u32)50, (u32)99);
     }
 
     u32 calculateDamageEnemySkill(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour = nullptr)

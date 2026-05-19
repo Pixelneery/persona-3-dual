@@ -19,7 +19,7 @@ bool TargetAndAttackActionEnemy::update(u32 *keys, AttackSkill *attack, PartyMem
         u32 damage = attack->calculateDamagePlayer(&user->curPersona->battleStats, &targets->at(*targetIndex)->battleStats, &user->lv, &targets->at(*targetIndex)->lv);
         u32 accuracy = attack->calculateHitratePlayer(&user->curPersona->battleStats, &targets->at(*targetIndex)->battleStats);
 
-        bool hitted = accuracy > (rand() % 100);
+        bool hitted = accuracy > u32(rand() % 100);
 
         if (!hitted)
         {
