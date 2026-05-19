@@ -1,0 +1,35 @@
+# Build outputs
+persona-3-dual.nds
+persona-3-dual.elf
+persona-3-dual.lst
+build/
+sdcard.img
+sdcard.img.idx
+sdcard.img.gz
+data.zip
+
+# Large generated data (not committed, but may exist locally)
+data/music/
+data/video/
+data/models/
+
+# Python
+__pycache__/
+tools/converters/__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Version control
+.git
+.gitattributes
+.gitmodules
+
+# Editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# CI (not needed inside the image)
+.github/

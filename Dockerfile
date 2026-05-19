@@ -1,0 +1,58 @@
+# Persona 3 Dual - Developer Environment
+#
+# Based on the official devkitPro image so devkitARM is already set up.
+# Adds nds-dev (libnds + NDS toolchain), ffmpeg, mtools, and Python deps.
+#
+# Build:  docker build -t p3d-dev-dev .
+# Use:    docker run --rm -it -v "$(pwd)":/project p3d-dev-dev
+# Make:   docker run --rm -v "$(pwd)":/project p3d-dev-dev make
+
+FROM devkitpro/devkitarm:latest
+
+LABEL maintainer="P3D Team"
+LABEL description="Full build environment for Persona 3 Dual (NDS homebrew)"
+
+# Suppress interactive apt prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# System packages
+# ffmpeg       – video/audio asset conversion (used by the asset pipeline)
+# mtools       – FAT image creation (sdcard.img)
+# libblas3     – required by ffmpeg at runtime (update-alternatives symlink)
+# liblapack3   – same as above
+# python3 / pip – asset pipeline scripts
+# zip / gzip   – packaging release artifacts
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ffmpeg \
+        mtools \
+        libblas3 \
+        liblapack3 \
+        python3 \
+        python3-pip \
+        python3-venv \
+        zip \
+        gzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# NDS toolchain
+# devkitARM is already in the base image; nds-dev adds the NDS-specific libs.
+RUN dkp-pacman -Sy --noconfirm nds-dev
+
+# Python virtual environment
+# The Makefile calls /root/.venv/bin/python3 directly (matching the GitHub
+# Actions workflow which creates ~/.venv on the runner, resolving to /root/.venv).
+# We create the venv at that exact path so both environments resolve the same way.
+COPY tools/requirements.txt /tmp/requirements.txt
+RUN python3 -m venv /root/.venv \
+    && /root/.venv/bin/pip install --upgrade pip \
+    && /root/.venv/bin/pip install -r /tmp/requirements.txt
+
+# Put the venv on PATH so bare `python3` and `pip` also work interactively.
+ENV PATH="/root/.venv/bin:$PATH"
+
+# Working directory
+# Mount your repo here:  -v "$(pwd)":/project
+WORKDIR /project
+
+# Default: drop into a shell so developers can run make, explore, debug, etc.
+CMD ["/bin/bash"]

@@ -52,7 +52,85 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 
 ## Developer Setup
 
-### 1. Install System Dependencies
+Two paths are available. **Docker (recommended)** works identically on Windows, macOS, and Linux and requires no manual toolchain installation. The **manual path** is still documented below if you prefer a native setup.
+
+---
+
+### Option A — Docker (Recommended)
+
+Docker wraps the entire toolchain into a single image, so you get an identical build environment regardless of your OS.
+
+#### 1. Install Docker
+
+| Platform | Download |
+|----------|----------|
+| Windows / macOS | [Docker Desktop](https://www.docker.com/products/docker-desktop/) |
+| Linux (Ubuntu/Debian) | [See Docker's Website for your Distro](https://docs.docker.com/desktop/setup/install/linux/) |
+
+Verify the install:
+```
+docker --version
+```
+
+#### 2. Clone the Repo
+
+```bash
+git clone https://github.com/TheBossT910/persona-3-dual.git
+cd persona-3-dual
+```
+
+#### 3. Build the Docker Image
+
+Run this **once** (or again whenever `Dockerfile` or `tools/requirements.txt` changes). It downloads and caches all dependencies:
+
+```bash
+docker build -t p3d-dev .
+```
+
+> First build takes a few minutes while devkitARM downloads. Subsequent builds use the Docker layer cache and much quicker.
+
+#### 4. Compile the ROM
+
+```bash
+# Linux / macOS
+docker run --rm -v "$(pwd)":/project p3d-dev make
+
+# Windows (Command Prompt)
+docker run --rm -v "%cd%":/project p3d-dev make
+
+# Windows (PowerShell)
+docker run --rm -v "${PWD}:/project" p3d-dev make
+```
+
+This produces `persona-3-dual.nds` and `sdcard.img` in your repo folder, the same as a native build.
+
+#### 5. Interactive Shell (optional)
+
+If you want to poke around, run commands manually, or debug the build:
+
+```bash
+# Linux / macOS
+docker run --rm -it -v "$(pwd)":/project p3d-dev
+
+# Windows PowerShell
+docker run --rm -it -v "${PWD}:/project" p3d-dev
+```
+
+You're now inside the container at `/project` (your repo). Type `exit` to leave.
+
+#### Useful Docker Commands
+
+| Command | What it does |
+|---------|--------------|
+| `docker build -t p3d-dev .` | (Re)build the dev image |
+| `docker images` | List images on your machine |
+| `docker rmi p3d-dev` | Delete the image (frees disk space) |
+| `docker ps` | List running containers |
+
+### Option B — Manual Setup (Legacy)
+> This install path is no longer supported, but is kept here for documentation/legacy purposes. This section will be removed by Milestone #1.
+
+#### 1. Install System Dependencies
 
 **Windows:**
 1. Install [devkitPro](https://devkitpro.org/wiki/Getting_Started) using the official graphical installer (ensure `nds-dev` is checked).
@@ -73,7 +151,7 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
    `sudo apt update && sudo apt install python3 python3-venv ffmpeg mtools`
 3. Install [melonDS](https://melonds.kuribo64.net/downloads.php).
 
-### 2. Setup the Project
+#### 2. Setup the Project
 Once the system tools are installed, open your terminal, clone the repo, navigate to the project folder, and set up the Python environment:
 
 ```
