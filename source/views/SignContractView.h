@@ -7,8 +7,6 @@ private:
     int bg[3];
     bool isLastName = true;
     bool isNameConfirmed = false;
-    std::string lastName;
-    std::string firstName;
 
     // sfx
     mm_sfxhand sfxMenuHandle;

@@ -44,6 +44,8 @@ int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
 std::string introVideoPath = "reload.vid";
+std::string lastName = "";
+std::string firstName = "";
 // controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
