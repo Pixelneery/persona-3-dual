@@ -88,20 +88,17 @@ ViewState MainMenuComponent::levelOptionSelected()
     ViewState selectedView;
     switch (static_cast<LevelOptions>(selectedOption))
     {
+        case LevelOptions::START_GAME:
+            selectedView = ViewState::CUTSCENE_1;
+            break;
         case LevelOptions::IWATODAI_DORM:
             selectedView = ViewState::IWATODAI_DORM;
             break;
         case LevelOptions::IWATODAI_STREETS:
             selectedView = ViewState::IWATODAI_STREETS;
             break;
-        case LevelOptions::CUTSCENE_1:
-            selectedView = ViewState::CUTSCENE_1;
-            break;
         case LevelOptions::SIGN_CONTRACT:
             selectedView = ViewState::SIGN_CONTRACT;
-            break;
-        case LevelOptions::CUTSCENE_2:
-            selectedView = ViewState::CUTSCENE_2;
             break;
         default:
             selectedView = ViewState::KEEP_CURRENT;

@@ -2,7 +2,7 @@
 #include "core/BaseMenu.h"
 
 #define MAIN_MENU_OPTIONS 3
-#define LEVEL_OPTIONS 5
+#define LEVEL_OPTIONS 4
 #define SETTING_OPTIONS 1
 #define SETTING_INTRO_OPTIONS 4
 
@@ -20,11 +20,10 @@ private:
 
     MenuOption levelOptions[LEVEL_OPTIONS] =
     {
+        {"Start Game", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Dorm", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Streets", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
-        {"Cutscene 1 (Start)", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Sign Contract", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
-        {"Cutscene 2", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
     };
 
     MenuOption settingOptions[SETTING_OPTIONS] =

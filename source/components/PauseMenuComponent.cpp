@@ -185,6 +185,9 @@ ViewState PauseMenuComponent::debugOptionSelected()
         case DebugOption::IWATODAI_STREETS_VIEW:
             selectedView = ViewState::IWATODAI_STREETS;
             break;
+        case DebugOption::SIGN_CONTRACT_VIEW:
+            selectedView = ViewState::SIGN_CONTRACT;
+            break;
         case DebugOption::DEBUG_DIALOGUE:
             consoleClear();
             demo_yukari_kenji_argument_load();

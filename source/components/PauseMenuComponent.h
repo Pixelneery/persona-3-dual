@@ -10,7 +10,7 @@
 #define STATS_OPTIONS 9
 #define S_LINK_OPTIONS 3
 #define SYSTEM_OPTIONS 6
-#define DEBUG_OPTIONS 10
+#define DEBUG_OPTIONS 11
 #define CHARACTER_ANIM_OPTIONS 25
 #define SKILLS 2
 
@@ -40,6 +40,7 @@ private:
         {"MainMenuView",              -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"IwatodaiDormView",          -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"IwatodaiStreetView",        -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"SignContractView",          -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"Debug Dialogue",            -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"Toggle Billboards",         -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"Toggle Debug Print",        -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
