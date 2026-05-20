@@ -6,6 +6,7 @@
 void VideoView::init()
 {
     videoCtrl.init(filename, 15.0f, nextView);
+    setBrightness(2, -16);
 }
 
 ViewState VideoView::update()
