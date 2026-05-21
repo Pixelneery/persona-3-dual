@@ -9,7 +9,6 @@
 // sfx
 #include "soundbank.h"
 
-
 void SignContractView::cancelSFX()
 {
     musicCtrl.stopSFX(sfxMenuHandle);
@@ -102,15 +101,15 @@ ViewState SignContractView::update()
 
         if (isLastName)
         {
-            if (!lastName.empty())
+            if (!saveData.lastName.empty())
             {
-                lastName.pop_back();
+                saveData.lastName.pop_back();
                 iprintf("%c", key);
             }
         }
         else if (!isLastName && !isNameConfirmed)
         {
-            if (firstName.empty())
+            if (saveData.firstName.empty())
             {
                 isLastName = true;
                 consoleSelect(&console);
@@ -121,10 +120,11 @@ ViewState SignContractView::update()
                 iprintf("\x1b[11;6HEnter your last name");
 
                 consoleSelect(&console);
-                iprintf("\x1b[0;0H%s", lastName.c_str());
-            } else
+                iprintf("\x1b[0;0H%s", saveData.lastName.c_str());
+            }
+            else
             {
-                firstName.pop_back();
+                saveData.firstName.pop_back();
                 iprintf("%c", key);
             }
         }
@@ -139,7 +139,7 @@ ViewState SignContractView::update()
             iprintf("\x1b[11;6HEnter your first name");
 
             consoleSelect(&console);
-            iprintf("\x1b[0;0H%s", firstName.c_str());
+            iprintf("\x1b[0;0H%s", saveData.firstName.c_str());
         }
     }
     // Return (10) or "A"
@@ -175,11 +175,11 @@ ViewState SignContractView::update()
             consoleSelect(&console);
 
             // center the text
-            int posLastName = 15 - (lastName.length()/2);
-            int posFirstName = 15 - (firstName.length()/2);
+            int posLastName = 15 - (saveData.lastName.length() / 2);
+            int posFirstName = 15 - (saveData.firstName.length() / 2);
 
-            iprintf("\x1b[8;%iH%s,", posLastName, lastName.c_str());
-            iprintf("\x1b[9;%iH%s", posFirstName, firstName.c_str());
+            iprintf("\x1b[8;%iH%s,", posLastName, saveData.lastName.c_str());
+            iprintf("\x1b[9;%iH%s", posFirstName, saveData.firstName.c_str());
         }
         else
         {
@@ -209,16 +209,15 @@ ViewState SignContractView::update()
 
         if (isLastName)
         {
-            lastName.push_back(key);
+            saveData.lastName.push_back(key);
         }
         else
         {
-            firstName.push_back(key);
+            saveData.firstName.push_back(key);
         }
 
         iprintf("%c", key);
     }
-
 
     // animate text
     durationCounter++;
