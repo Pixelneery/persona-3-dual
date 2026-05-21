@@ -37,4 +37,5 @@ public:
     virtual ViewState update(int keys);
     void cancelSFX();
     ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
+    void prevOption();
 };

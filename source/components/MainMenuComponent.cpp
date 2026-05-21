@@ -141,7 +141,6 @@ ViewState MainMenuComponent::settingIntroOptionSelected()
     default:
         saveData.introVideoPath = "reload.vid";
     }
-
-    changeMenu(settingOptions, SETTING_OPTIONS);
+    
     return ViewState::KEEP_CURRENT;
 }

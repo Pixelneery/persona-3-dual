@@ -65,7 +65,7 @@ void SignContractView::init()
 
     consoleSelect(&animatedConsole);
     iprintf("\x1b[11;6HEnter your last name");
-    iprintf("\x1b[0;0H");
+    iprintf("\x1b[0;0H%s", saveData.lastName.c_str());
     consoleSelect(&console);
 
     // setup animated text
@@ -160,7 +160,7 @@ ViewState SignContractView::update()
             iprintf("\x1b[11;5HEnter your first name");
 
             consoleSelect(&console);
-            iprintf("\x1b[0;0H");
+            iprintf("\x1b[0;0H%s", saveData.firstName.c_str());
         }
         else if (!isNameConfirmed)
         {
