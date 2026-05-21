@@ -90,6 +90,9 @@ ViewState MainMenuComponent::levelOptionSelected()
         case (int)LevelOptions::IWATODAI_STREETS:
             selectedView = ViewState::IWATODAI_STREETS;
             break;
+        case (int)LevelOptions::STATION:
+            selectedView = ViewState::STATION;
+            break;
         default:
             selectedView = ViewState::KEEP_CURRENT;
     }

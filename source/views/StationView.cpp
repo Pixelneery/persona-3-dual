@@ -5,8 +5,8 @@
 #include "math.h"
 #include "StationView.h"
 
-// dummy map
-#include "maps/iwatodai_streets.h"
+// map
+#include "maps/station.h"
 // environment
 #include "environments/station.h"
 // textures
@@ -75,7 +75,7 @@ void StationView::init()
     menuHUDCmpt.loadHUD();
 
     playerCtrl = new CharacterController(
-        IWATODAI_STREETS_MAP_WIDTH, IWATODAI_STREETS_MAP_HEIGHT, &iwatodai_streets_map[0][0],
+        STATION_MAP_WIDTH, STATION_MAP_HEIGHT, &station_map[0][0],
         tileSize, worldOffsetX, worldOffsetZ, characterSize,
         speed, angleIncrement, distance, lookAhead,
         angle, characterTranslate, characterFacingAngle);

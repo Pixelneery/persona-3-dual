@@ -131,7 +131,8 @@ enum class MainMenuOptions
 enum class LevelOptions
 {
     IWATODAI_DORM = 0,
-    IWATODAI_STREETS
+    IWATODAI_STREETS,
+    STATION
 };
 
 enum class PauseMenuOption
@@ -192,15 +193,16 @@ enum class SystemOption
 enum class DebugOption
 {
     DISCLAIMER_VIEW = 0,
-    INTRO_VIDEO_VIEW = 1,
-    INTRO_VIEW = 2,
-    MAIN_MENU_VIEW = 3,
-    IWATODAI_DORM_VIEW = 4,
-    IWATODAI_STREETS_VIEW = 5,
-    DEBUG_DIALOGUE = 6,
-    TOGGLE_BILLBOARDS = 7,
-    TOGGLE_DEBUG_PRINT = 8,
-    PLAY_CHARACTER_ANIM = 9
+    INTRO_VIDEO_VIEW,
+    INTRO_VIEW,
+    MAIN_MENU_VIEW,
+    IWATODAI_DORM_VIEW,
+    IWATODAI_STREETS_VIEW,
+    STATION_VIEW,
+    DEBUG_DIALOGUE,
+    TOGGLE_BILLBOARDS,
+    TOGGLE_DEBUG_PRINT,
+    PLAY_CHARACTER_ANIM,
 };
 
 enum class CharacterAnimOption

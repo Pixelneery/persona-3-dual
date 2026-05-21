@@ -30,7 +30,7 @@ private:
     const float distance = 0.7f;
     const float lookAhead = 0.3f;
     // spawn in the middle of the street, facing along it (X axis)
-    const Point2D<float> characterTranslate = Point2D<float>(0.0f, 0.0f);
+    const Point2D<float> characterTranslate = Point2D<float>(-0.0175f, 1.3216f);
     const float angle = 1.5708f; // 90 degrees in radians — faces along X
     const float characterFacingAngle = 90.0f;
     int totalPolyCount = 0;
