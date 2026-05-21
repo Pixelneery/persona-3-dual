@@ -47,7 +47,7 @@ private:
     // movement and viewpoint
     const float speed = 0.02f;
     const float angleIncrement = 0.05f;
-    const float distance = 0.5f;
+    const float distance = 0.7f;
     const float lookAhead = 0.3f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0, 0);
