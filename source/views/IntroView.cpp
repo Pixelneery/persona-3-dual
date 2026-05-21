@@ -17,11 +17,6 @@
 // sfx
 #include "soundbank.h"
 
-// sub screen
-int bgSubLogo;
-int bgSubSky;
-PrintConsole consoleIntro;
-
 void IntroView::init()
 {
     // set video mode for 3 text layers and 1 extended rotation layer
@@ -54,8 +49,8 @@ void IntroView::init()
     bgSubSky = bgInitSub(1, BgType_Text8bpp, BgSize_T_256x256, 1, 2);  // sky (sub screen)
 
     // setup console
-    consoleInit(&consoleIntro, 2, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
-    consoleSelect(&consoleIntro);
+    consoleInit(&console, 2, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
+    consoleSelect(&console);
 
     // need to set priority to properly display
     // 0 is highest, 3 is lowest
@@ -64,7 +59,7 @@ void IntroView::init()
     bgSetPriority(bg[2], 3); // sky
     bgSetPriority(bg[3], 2); // overlay
     // adjust sub screen image and console to sit correctly on each other
-    bgSetPriority(consoleIntro.bgId, 0);
+    bgSetPriority(console.bgId, 0);
     bgSetPriority(bgSubLogo, 1);
     bgSetPriority(bgSubSky, 2);
 

@@ -54,15 +54,24 @@ void SignContractView::init()
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
     // setup console
-    consoleInit(&console, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
-    consoleSelect(&console);
-    keyboardInit(&keyboard, 1, BgType_Text4bpp, BgSize_T_256x512, 3, 1, false, true);
-    bgSetPriority(console.bgId, 0);
-    bgSetPriority(keyboard.background, 1);
+    consoleInit(&animatedConsole, 0, BgType_Text4bpp, BgSize_T_256x256, 5, 3, false, true);
+    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
+    keyboardInit(&keyboard, 2, BgType_Text4bpp, BgSize_T_256x512, 3, 1, false, true);
+
+    bgSetPriority(animatedConsole.bgId, 0);
+    bgSetPriority(console.bgId, 1);
+    bgSetPriority(keyboard.background, 2);
+
     keyboardShow();
 
+    consoleSelect(&animatedConsole);
     iprintf("\x1b[11;6HEnter your last name");
     iprintf("\x1b[0;0H");
+    consoleSelect(&console);
+
+    // setup animated text
+    REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG0 | BLEND_DST_BACKDROP;
+    REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
 
     // transition both screens from black
     for (int i = -16; i < 0; i++)
@@ -104,8 +113,14 @@ ViewState SignContractView::update()
             if (firstName.empty())
             {
                 isLastName = true;
+                consoleSelect(&console);
+                consoleClear();
+
+                consoleSelect(&animatedConsole);
                 consoleClear();
                 iprintf("\x1b[11;6HEnter your last name");
+
+                consoleSelect(&console);
                 iprintf("\x1b[0;0H%s", lastName.c_str());
             } else
             {
@@ -116,8 +131,14 @@ ViewState SignContractView::update()
         else
         {
             isNameConfirmed = false;
+            consoleSelect(&console);
+            consoleClear();
+
+            consoleSelect(&animatedConsole);
             consoleClear();
             iprintf("\x1b[11;6HEnter your first name");
+
+            consoleSelect(&console);
             iprintf("\x1b[0;0H%s", firstName.c_str());
         }
     }
@@ -131,15 +152,27 @@ ViewState SignContractView::update()
         if (isLastName)
         {
             isLastName = false;
+            consoleSelect(&console);
+            consoleClear();
+
+            consoleSelect(&animatedConsole);
             consoleClear();
             iprintf("\x1b[11;5HEnter your first name");
+
+            consoleSelect(&console);
             iprintf("\x1b[0;0H");
         }
         else if (!isNameConfirmed)
         {
             isNameConfirmed = true;
+            consoleSelect(&console);
+            consoleClear();
+
+            consoleSelect(&animatedConsole);
             consoleClear();
             iprintf("\x1b[11;7HConfirm your name?");
+
+            consoleSelect(&console);
 
             // center the text
             int posLastName = 15 - (lastName.length()/2);
@@ -184,6 +217,31 @@ ViewState SignContractView::update()
         }
 
         iprintf("%c", key);
+    }
+
+
+    // animate text
+    durationCounter++;
+    if (durationCounter >= duration)
+    {
+        durationCounter = 0;
+        textAlpha += textAlphaDirection;
+
+        // start fading out
+        if (textAlpha >= 16)
+        {
+            textAlpha = 16;
+            textAlphaDirection = -1;
+        }
+        // start fading in
+        else if (textAlpha <= 0)
+        {
+            textAlpha = 0;
+            textAlphaDirection = 1;
+        }
+
+        REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG0 | BLEND_DST_BACKDROP;
+        REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
     }
 
     musicCtrl.update();

@@ -10,7 +10,14 @@ private:
 
     // console
     PrintConsole console;
+    PrintConsole animatedConsole;
     Keyboard keyboard;
+
+    // text animation
+    int duration = 4;
+    int durationCounter = 0;
+    int textAlpha = 0;
+    int textAlphaDirection = 0;
 
     // sfx
     mm_sfxhand sfxMenuHandle;
