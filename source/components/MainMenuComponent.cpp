@@ -97,6 +97,9 @@ ViewState MainMenuComponent::levelOptionSelected()
     case LevelOptions::IWATODAI_STREETS:
         selectedView = ViewState::IWATODAI_STREETS;
         break;
+    case LevelOptions::STATION:
+        selectedView = ViewState::STATION;
+        break;
     case LevelOptions::SIGN_CONTRACT:
         selectedView = ViewState::SIGN_CONTRACT;
         break;
@@ -115,9 +118,6 @@ ViewState MainMenuComponent::settingOptionSelected()
     case SettingOptions::CHANGE_INTRO_VIDEO:
         changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
         selectedView = ViewState::KEEP_CURRENT;
-        case (int)LevelOptions::STATION:
-            selectedView = ViewState::STATION;
-            break;
     default:
         selectedView = ViewState::KEEP_CURRENT;
     }
