@@ -1,34 +1,5 @@
 name: Build ROM
 
-# -----------------------------------------------------------------------------
-# PLAYING ON 3DS - QUICK SETUP GUIDE
-# -----------------------------------------------------------------------------
-#
-# AUTO-UPDATES (Universal Updater)
-# ---------------------------------
-# 1. Install Universal Updater on your 3DS if you haven't already
-#    https://github.com/Universal-Team/Universal-Updater/releases
-# 2. Open Universal Updater -> Settings (gear icon) -> UniStores -> Add UniStore
-# 3. Enter this URL:
-#    https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/unistore/persona-3-dual.unistore
-# 4. Find "Persona 3 Dual" in the store and tap Install/Update
-#    - Downloads the ROM to /roms/nds/persona-3-dual.nds
-#    - Extracts game data to /roms/nds/data/
-# 5. Repeat step 4 any time you want to update to the latest build
-#
-# HOME MENU SHORTCUT (Forwarder)
-# --------------------------------
-# Only needs to be done once, after installing via Universal Updater above.
-# 1. Install "NDS Forwarder Generator" via Universal Updater
-# 2. Launch it and navigate to /roms/nds/persona-3-dual.nds, select it
-# 3. It generates a .cia file on your SD card
-# 4. Open FBI, navigate to the .cia, and install it
-# 5. Persona 3 Dual now appears as a tile on your 3DS home menu
-#    Note: the shortcut keeps working after updates since the ROM
-#    always stays at the same path
-#
-# -----------------------------------------------------------------------------
-
 #  Triggers
 #  push to main/master  ->  full build + tag + release
 #  pull_request         ->  build + artifact only (no tag, no release)
@@ -331,6 +302,23 @@ jobs:
             echo "|-----------|------|"
             echo "| SHA-256   | \`${{ steps.checksums.outputs.sha256 }}\` |"
             echo "| MD5       | \`${{ steps.checksums.outputs.md5 }}\` |"
+            echo ""
+            echo "## Playing on 3DS"
+            echo ""
+            echo "### Auto-Updates (Universal Updater)"
+            echo "1. Install [Universal Updater](https://github.com/Universal-Team/Universal-Updater/releases) if you haven't already"
+            echo "2. Open Universal Updater → Settings → UniStores → Add UniStore"
+            echo "3. Enter this URL: \`https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/unistore/persona-3-dual.unistore\`"
+            echo "4. Find **Persona 3 Dual** in the store and tap **Install/Update**"
+            echo "5. Repeat step 4 any time you want to update to the latest build"
+            echo ""
+            echo "### Home Menu Shortcut (Forwarder)"
+            echo "Only needs to be done once, after installing via Universal Updater above."
+            echo "1. Install **NDS Forwarder Generator** via Universal Updater"
+            echo "2. Launch it and navigate to \`/roms/nds/persona-3-dual.nds\`, select it"
+            echo "3. It generates a \`.cia\` file on your SD card"
+            echo "4. Open **FBI**, navigate to the \`.cia\`, and install it"
+            echo "5. Persona 3 Dual now appears as a tile on your 3DS home menu"
           } > release-notes.md
 
           echo "--- Release notes preview ---"
