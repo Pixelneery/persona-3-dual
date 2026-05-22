@@ -52,7 +52,7 @@ bool PersonaAction::update(u32 *keys, PartyMember *user)
 
         updateIndex.update(*keys, targetIndex, enemyCount);
 
-        bool madeAction = targetAndAttackActionEnemy->update(keys, selectedSkill, user);
+        bool madeAction = targetAndExecute->update(keys, selectedSkill, user);
         if (madeAction)
         {
             targetIndex = 0;

@@ -4,14 +4,14 @@
 
 #include "ActionBase.h"
 #include "../party/PartyMember.h"
-#include "../TargetAndAttackEnemy.h"
+#include "../TargetAndExecute.h"
 #include "../UpdateIndex.h"
 
 struct PersonaAction : ActionBase
 {
     UpdateIndex updateIndex;
     AttackSkill *selectedSkill;
-    TargetAndAttackActionEnemy *targetAndAttackActionEnemy;
+    TargetAndExecute *targetAndExecute;
 
     PersonaAction(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
     {
@@ -19,10 +19,8 @@ struct PersonaAction : ActionBase
         possibleUsers = ParticipantType::Party;
 
         // TODO: dont forget to clear in the future
-        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, &targetIndex);
+        targetAndExecute = new TargetAndExecute(enemies, &targetIndex);
     }
-
-    //  TargetAndAttackActionEnemy targetAndAttackActionEnemy(player.);
 
     enum MenuState
     {
