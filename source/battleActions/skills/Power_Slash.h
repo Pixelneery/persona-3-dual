@@ -7,11 +7,12 @@ struct Power_Slash : AttackSkill
     {
         // TODO: make cost %S
         movePower = 50;
-        race = phys;
         element = Slash;
         cost = 7;
         name = "Power_Slash";
         hitRate = 92;
+        skillRace = SkillRace::phys;
         skillTarget = SkillTarget::OppositionTeam;
+        skillType = SkillType::Attack;
     }
 };

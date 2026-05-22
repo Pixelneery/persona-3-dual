@@ -8,23 +8,10 @@
 #include "../Element.h"
 #include "../BattleStats.h"
 #include "../shoes/Shoe.h"
-#include "SkillTarget.h"
+#include "Skill.h"
 
-struct AttackSkill
+struct AttackSkill : Skill
 {
-    enum Race
-    {
-        phys,
-        mag
-    };
-
-    std::string name;
-    s32 cost;
-    Race race;
-    u32 element;
-    u32 hitRate;
-    u32 movePower;
-    SkillTarget skillTarget;
 
     u32 calculateDamagePlayer(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
     {

@@ -7,11 +7,12 @@ struct Slash_Attack : AttackSkill
     {
         // TODO: movePower should be correct, not confirmed tough yet
         movePower = 10;
-        race = phys;
         element = Slash;
         cost = 0;
         name = "Slash_Attack";
         hitRate = 90;
+        skillRace = SkillRace::phys;
         skillTarget = SkillTarget::OppositionTeam;
+        skillType = SkillType::Attack;
     }
 };
