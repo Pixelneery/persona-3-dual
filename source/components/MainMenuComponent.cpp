@@ -8,48 +8,48 @@
 
 void MainMenuComponent::loadBg(int bgIndex)
 {
-    if (bgIndex < 0) return;
+    if (bgIndex < 0)
+        return;
 
-    switch(bgIndex)
+    switch (bgIndex)
     {
-        case 0: // Akihiko
-            dmaCopy(bgAkihikoTiles, bgGetGfxPtr(bgSlot), bgAkihikoTilesLen);
-            dmaCopy(bgAkihikoMap, bgGetMapPtr(bgSlot), bgAkihikoMapLen);
-            vramSetBankH(VRAM_H_LCD);
-            dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
-            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-            break;
+    case 0: // Akihiko
+        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(bgSlot), bgAkihikoTilesLen);
+        dmaCopy(bgAkihikoMap, bgGetMapPtr(bgSlot), bgAkihikoMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        break;
 
-        case 1: // Kenji
-            dmaCopy(bgKenjiTiles, bgGetGfxPtr(bgSlot), bgKenjiTilesLen);
-            dmaCopy(bgKenjiMap, bgGetMapPtr(bgSlot), bgKenjiMapLen);
-            vramSetBankH(VRAM_H_LCD);
-            dmaCopy(bgKenjiPal, &VRAM_H_EXT_PALETTE[0][0], bgKenjiPalLen);
-            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-            break;
+    case 1: // Kenji
+        dmaCopy(bgKenjiTiles, bgGetGfxPtr(bgSlot), bgKenjiTilesLen);
+        dmaCopy(bgKenjiMap, bgGetMapPtr(bgSlot), bgKenjiMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgKenjiPal, &VRAM_H_EXT_PALETTE[0][0], bgKenjiPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        break;
 
-        case 2: // Yukari
-            dmaCopy(bgYukariTiles, bgGetGfxPtr(bgSlot), bgYukariTilesLen);
-            dmaCopy(bgYukariMap, bgGetMapPtr(bgSlot), bgYukariMapLen);
-            vramSetBankH(VRAM_H_LCD);
-            dmaCopy(bgYukariPal, &VRAM_H_EXT_PALETTE[0][0], bgYukariPalLen);
-            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-            bgShow(bgSlot);
-            break;
+    case 2: // Yukari
+        dmaCopy(bgYukariTiles, bgGetGfxPtr(bgSlot), bgYukariTilesLen);
+        dmaCopy(bgYukariMap, bgGetMapPtr(bgSlot), bgYukariMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgYukariPal, &VRAM_H_EXT_PALETTE[0][0], bgYukariPalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(bgSlot);
+        break;
 
-        case 3: // YukariClose
-            dmaCopy(bgYukariCloseTiles, bgGetGfxPtr(bgSlot), bgYukariCloseTilesLen);
-            dmaCopy(bgYukariCloseMap, bgGetMapPtr(bgSlot), bgYukariCloseMapLen);
-            vramSetBankH(VRAM_H_LCD);
-            dmaCopy(bgYukariClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukariClosePalLen);
-            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-            bgShow(bgSlot);
-            break;
+    case 3: // YukariClose
+        dmaCopy(bgYukariCloseTiles, bgGetGfxPtr(bgSlot), bgYukariCloseTilesLen);
+        dmaCopy(bgYukariCloseMap, bgGetMapPtr(bgSlot), bgYukariCloseMapLen);
+        vramSetBankH(VRAM_H_LCD);
+        dmaCopy(bgYukariClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukariClosePalLen);
+        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgShow(bgSlot);
+        break;
 
-        default:
-            break;
+    default:
+        break;
     }
-
 }
 
 void MainMenuComponent::init(int iBgSlot, bool *isActive, const std::string &iPauseMessage)
@@ -63,17 +63,21 @@ void MainMenuComponent::init(int iBgSlot, bool *isActive, const std::string &iPa
 ViewState MainMenuComponent::mainMenuOptionSelected()
 {
     ViewState selectedView;
-    switch (selectedOption)
+    switch (static_cast<MainMenuOptions>(selectedOption))
     {
-        case (int)MainMenuOptions::LOAD_GAME:
-            changeMenu(levelOptions, LEVEL_OPTIONS);
-            selectedView = ViewState::KEEP_CURRENT;
-            break;
-        case (int)MainMenuOptions::RETURN_TO_TITLE:
-            selectedView = ViewState::INTRO;
-            break;
-        default:
-            selectedView = ViewState::KEEP_CURRENT;
+    case MainMenuOptions::LOAD_GAME:
+        changeMenu(levelOptions, LEVEL_OPTIONS);
+        selectedView = ViewState::KEEP_CURRENT;
+        break;
+    case MainMenuOptions::SETTINGS:
+        changeMenu(settingOptions, SETTING_OPTIONS);
+        selectedView = ViewState::KEEP_CURRENT;
+        break;
+    case MainMenuOptions::RETURN_TO_TITLE:
+        selectedView = ViewState::INTRO;
+        break;
+    default:
+        selectedView = ViewState::KEEP_CURRENT;
     }
 
     return selectedView;
@@ -82,20 +86,64 @@ ViewState MainMenuComponent::mainMenuOptionSelected()
 ViewState MainMenuComponent::levelOptionSelected()
 {
     ViewState selectedView;
-    switch (selectedOption)
+    switch (static_cast<LevelOptions>(selectedOption))
     {
-        case (int)LevelOptions::IWATODAI_DORM:
-            selectedView = ViewState::IWATODAI_DORM;
-            break;
-        case (int)LevelOptions::IWATODAI_STREETS:
-            selectedView = ViewState::IWATODAI_STREETS;
-            break;
-        case (int)LevelOptions::STATION:
-            selectedView = ViewState::STATION;
-            break;
-        default:
-            selectedView = ViewState::KEEP_CURRENT;
+    case LevelOptions::START_GAME:
+        selectedView = ViewState::CUTSCENE_1;
+        break;
+    case LevelOptions::IWATODAI_DORM:
+        selectedView = ViewState::IWATODAI_DORM;
+        break;
+    case LevelOptions::IWATODAI_STREETS:
+        selectedView = ViewState::IWATODAI_STREETS;
+        break;
+    case LevelOptions::STATION:
+        selectedView = ViewState::STATION;
+        break;
+    case LevelOptions::SIGN_CONTRACT:
+        selectedView = ViewState::SIGN_CONTRACT;
+        break;
+    default:
+        selectedView = ViewState::KEEP_CURRENT;
     }
 
     return selectedView;
+}
+
+ViewState MainMenuComponent::settingOptionSelected()
+{
+    ViewState selectedView;
+    switch (static_cast<SettingOptions>(selectedOption))
+    {
+    case SettingOptions::CHANGE_INTRO_VIDEO:
+        changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
+        selectedView = ViewState::KEEP_CURRENT;
+    default:
+        selectedView = ViewState::KEEP_CURRENT;
+    }
+
+    return selectedView;
+}
+
+ViewState MainMenuComponent::settingIntroOptionSelected()
+{
+    switch (static_cast<SettingIntroOptions>(selectedOption))
+    {
+    case SettingIntroOptions::ORIGINAL:
+        saveData.introVideoPath = "base.vid";
+        break;
+    case SettingIntroOptions::FES:
+        saveData.introVideoPath = "fes.vid";
+        break;
+    case SettingIntroOptions::PORTABLE:
+        saveData.introVideoPath = "portable.vid";
+        break;
+    case SettingIntroOptions::RELOAD:
+        saveData.introVideoPath = "reload.vid";
+        break;
+    default:
+        saveData.introVideoPath = "reload.vid";
+    }
+
+    return ViewState::KEEP_CURRENT;
 }

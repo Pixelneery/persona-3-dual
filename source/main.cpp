@@ -10,11 +10,12 @@
 // states
 #include "core/BaseView.h"
 #include "views/DisclaimerView.h"
-#include "views/IntroVideoView.h"
+#include "views/VideoView.h"
 #include "views/IntroView.h"
 #include "views/MainMenuView.h"
 #include "views/IwatodaiDormView.h"
 #include "views/IwatodaiStreetsView.h"
+#include "views/SignContractView.h"
 #include "views/StationView.h"
 
 // controllers
@@ -43,6 +44,11 @@ volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
+Save saveData = {
+    "reload.vid",
+    "",
+    ""
+};
 // controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
@@ -93,7 +99,8 @@ int main(int argc, char *argv[])
     {
         consoleDemoInit();
         iprintf("FAT initialization failed!\nPlease ensure the SD card is inserted.\n");
-        while(1) swiWaitForVBlank();
+        while (1)
+            swiWaitForVBlank();
     }
 
     // dynamically resolve runtime path using argv[0]
@@ -162,9 +169,19 @@ int main(int argc, char *argv[])
             }
             else if (nextState == ViewState::INTRO_VIDEO)
             {
-                const char *intros[] = {"fes.vid", "base.vid", "portable.vid"};
-                const char *introFile = intros[rand() % 3];
-                SwitchView(new IntroVideoView(introFile));
+                SwitchView(new VideoView(saveData.introVideoPath.c_str(), ViewState::INTRO));
+            }
+            else if (nextState == ViewState::CUTSCENE_1)
+            {
+                SwitchView(new VideoView("cutscene-1.vid", ViewState::SIGN_CONTRACT));
+            }
+            else if (nextState == ViewState::SIGN_CONTRACT)
+            {
+                SwitchView(new SignContractView());
+            }
+            else if (nextState == ViewState::CUTSCENE_2)
+            {
+                SwitchView(new VideoView("cutscene-2.vid", ViewState::IWATODAI_DORM));
             }
             else if (nextState == ViewState::STATION)
             {

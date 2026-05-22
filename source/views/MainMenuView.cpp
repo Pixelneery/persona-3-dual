@@ -40,13 +40,16 @@ void MainMenuView::init()
     vramSetBankD(VRAM_D_MAIN_BG_0x06020000);
     // map vram bank B to main engine sprites (slot 0)
     vramSetBankB(VRAM_B_MAIN_SPRITE);
+    // map vram to sub screen
+    vramSetBankC(VRAM_C_SUB_BG);
 
     // enable extended palettes
     bgExtPaletteEnable();
 
-    // debug init
-    // NOTE: for some reason, we cant use vram bank C. It might be because of consoleDemoInit...
-    consoleDemoInit();
+    // setup console
+    consoleInit(&console, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, false, true);
+    consoleSelect(&console);
+    bgSetPriority(console.bgId, 0);
 
     // set brightness on bottom screen to completely dark (no visible image)
     setBrightness(2, -16);

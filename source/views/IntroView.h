@@ -9,6 +9,11 @@ private:
     int bg[4];
     touchPosition touchXY;
 
+    // sub screen
+    int bgSubLogo;
+    int bgSubSky;
+    PrintConsole console;
+
     // for silhouette animation
     int silhouetteX = -256;
     int silhouetteY = 192;

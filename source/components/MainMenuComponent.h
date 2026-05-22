@@ -1,7 +1,10 @@
+#include "core/globals.h"
 #include "core/BaseMenu.h"
 
-#define MAIN_MENU_OPTIONS 2
-#define LEVEL_OPTIONS 3
+#define MAIN_MENU_OPTIONS 3
+#define LEVEL_OPTIONS 5
+#define SETTING_OPTIONS 1
+#define SETTING_INTRO_OPTIONS 4
 
 class MainMenuComponent : public BaseMenu
 {
@@ -10,20 +13,38 @@ protected:
 private:
     MenuOption mainMenuOptions[MAIN_MENU_OPTIONS] =
     {
-        {"Load Game",       -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
+        {"Load Game", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
+        {"Settings", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
         {"Return to Title", -1, MENU_BIND(MainMenuComponent, mainMenuOptionSelected)},
     };
 
     MenuOption levelOptions[LEVEL_OPTIONS] =
     {
+        {"Start Game",       -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Dorm",    -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Streets", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Station",          -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
+        {"Sign Contract", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
+    };
+
+    MenuOption settingOptions[SETTING_OPTIONS] =
+    {
+        {"Change Intro Video", -1, MENU_BIND(MainMenuComponent, settingOptionSelected)},
+    };
+
+    MenuOption settingIntroOptions[SETTING_INTRO_OPTIONS] =
+    {
+        {"Original", -1, MENU_BIND(MainMenuComponent, settingIntroOptionSelected)},
+        {"FES", -1, MENU_BIND(MainMenuComponent, settingIntroOptionSelected)},
+        {"Portable", -1, MENU_BIND(MainMenuComponent, settingIntroOptionSelected)},
+        {"Reload", -1, MENU_BIND(MainMenuComponent, settingIntroOptionSelected)},
     };
 
     // option handlers
     ViewState mainMenuOptionSelected();
     ViewState levelOptionSelected();
+    ViewState settingOptionSelected();
+    ViewState settingIntroOptionSelected();
 public:
     void init(int iBgSlot, bool *isActive, const std::string &iPauseMessage = "") override;
 };

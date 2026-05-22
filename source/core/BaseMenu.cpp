@@ -19,7 +19,8 @@ void BaseMenu::init(int iBgSlot, bool *isActive, const std::string &iPauseMessag
     // set default options
     selectedOption = 0;
     startIndex = 0;
-    while (!prevOptions.empty()) prevOptions.pop();
+    while (!prevOptions.empty())
+        prevOptions.pop();
 
     pauseMessage = iPauseMessage;
     bgSlot = iBgSlot;
@@ -67,7 +68,8 @@ ViewState BaseMenu::update(int keys)
             {
                 nextViewState = result;
                 *isActivePtr = false;
-                if (bgSlot >= 0) bgHide(bgSlot);
+                if (bgSlot >= 0)
+                    bgHide(bgSlot);
             }
 
             // if we changed options, push current state to stack
@@ -84,24 +86,7 @@ ViewState BaseMenu::update(int keys)
         musicCtrl.playSFX(SFX_CANCEL, 255, 128);
         selectedOption = 0;
         startIndex = 0;
-
-        // if we're in a submenu, return to main menu
-        if (!prevOptions.empty())
-        {
-            MenuState prevState = prevOptions.top();
-            prevOptions.pop();
-
-            options = prevState.options;
-            optionCount = prevState.optionCount;
-            selectedOption = prevState.selectedOption;
-            startIndex = prevState.startIndex;
-        }
-        else
-        {
-            // otherwise, close the menu
-            *isActivePtr = false;
-            if (bgSlot >= 0) bgHide(bgSlot);
-        }
+        prevOption();
     }
 
     consoleClear();
@@ -144,10 +129,33 @@ ViewState BaseMenu::update(int keys)
     return viewState;
 }
 
-ViewState BaseMenu::changeMenu(MenuOption* newOptions, int newOptionCount) {
+ViewState BaseMenu::changeMenu(MenuOption *newOptions, int newOptionCount)
+{
     selectedOption = 0;
     startIndex = 0;
     options = newOptions;
     optionCount = newOptionCount;
     return ViewState::KEEP_CURRENT;
+}
+
+void BaseMenu::prevOption()
+{
+    // if we're in a submenu, return to main menu
+    if (!prevOptions.empty())
+    {
+        MenuState prevState = prevOptions.top();
+        prevOptions.pop();
+
+        options = prevState.options;
+        optionCount = prevState.optionCount;
+        selectedOption = prevState.selectedOption;
+        startIndex = prevState.startIndex;
+    }
+    else
+    {
+        // otherwise, close the menu
+        *isActivePtr = false;
+        if (bgSlot >= 0)
+            bgHide(bgSlot);
+    }
 }

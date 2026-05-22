@@ -25,7 +25,7 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
 
     if (s_isVideoAudio)
     {
-        if (s_isPaused)
+        if (!s_ringBuffer || s_isPaused)
         {
             memset(dest, 0, bytesReq);
             return length;
@@ -54,7 +54,10 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
         }
 
         s_ringAvailable -= bytesToRead;
-        s_elapsedSamples += (bytesToRead / BYTES_PER_FRAME);
+
+        // always increment elapsed samples by the requested amount to keep time moving.
+        // this prevents the video controller from deadlocking if the SD card reads too slowly
+        s_elapsedSamples += (bytesReq / BYTES_PER_FRAME);
 
         // fill remainder with silence if the ring buffer underruns
         if (bytesToRead < bytesReq)
@@ -243,6 +246,9 @@ void MusicController::cleanup()
 {
     if (s_streamOpen)
     {
+        s_isVideoAudio = false;
+        s_audioFile = nullptr;
+
         mmStreamClose();
         s_streamOpen = false;
     }
@@ -251,13 +257,9 @@ void MusicController::cleanup()
         fclose(s_audioFile);
         s_audioFile = nullptr;
     }
-    if (s_isVideoAudio)
+    if (s_ringBuffer)
     {
-        if (s_ringBuffer)
-        {
-            free(s_ringBuffer);
-            s_ringBuffer = nullptr;
-        }
-        s_isVideoAudio = false;
+        free(s_ringBuffer);
+        s_ringBuffer = nullptr;
     }
 }
