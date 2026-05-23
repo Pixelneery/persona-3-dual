@@ -1,11 +1,13 @@
 {
   "storeInfo": {
+    "$schema": "https://db.universal-team.net/unistore.schema.json",
     "title": "Persona 3 Dual",
     "author": "P3D Team",
     "description": "A Nintendo DS demake of Persona 3, developed in C++ using devkitPro.",
     "version": 3,
+    "revision": 1,
     "url": "https://raw.githubusercontent.com/pixelkat5/persona-3-dual/main/unistore/p3d.unistore",
-    "file": "/unistore/p3d.unistore"
+    "file": "p3d.unistore"
   },
   "storeContent": [
     {
