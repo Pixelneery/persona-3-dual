@@ -7,9 +7,59 @@ const float AttackSkill::levelMultipliers[24] = {
     1.01f, 1.03f, 1.09f, 1.16f, 1.25f,
     1.34f, 1.41f, 1.47f, 1.49f, 1.5f};
 
+u32 AttackSkill::calculateDamagePlayer(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
+{
+    damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
+    // todo: level diffrence never goes under 0 for either party during boss fights
+    return (u32)floor(sqrt((float)(movePower * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
+}
+
+// TODO: hopefully correct, should be looked at by someone that knows some  math
+u32 AttackSkill::calculateHitratePlayer(BattleStats *attackerStats, BattleStats *defenderStats)
+{
+    if (hitRate == 100)
+        return true;
+
+    float baseAccuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
+    u32 multipliedAccuracy = (u32)(baseAccuracy * hitRate);
+    return std::clamp(multipliedAccuracy, (u32)50, (u32)99);
+}
+
+u32 AttackSkill::calculateDamageEnemyRegular(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour)
+{
+    // This value is used if an enemy attacks another enemy
+    u32 armourValue = (armour != nullptr) ? armour->defense : 10;
+
+    damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
+    // todo: level diffrence never goes under 0 for either party during boss fights
+    return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) * affinityMtp);
+}
+
+u32 AttackSkill::calculateDamageEnemySkill(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel, Armour *armour)
+{
+    // This value is used if an enemy attacks another enemy
+    u32 armourValue = (armour != nullptr) ? armour->defense : 10;
+
+    damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
+    // todo: level diffrence never goes under 0 for either party during boss fights
+    return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) * affinityMtp);
+}
+
+// TODO: hopefully correct, should be looked at by someone that knows some  math
+u32 AttackSkill::calculateHitrateEnemy(BattleStats *attackerStats, BattleStats *defenderStats, Shoe *shoe)
+{
+    if (hitRate == 100)
+        return true;
+
+    float baseAccuracy = (float)(attackerStats->ag + 200) / (defenderStats->ag + 200);
+    float shoeMultiplier = (float)(attackerStats->ag + 200) / (shoe->evasion / 2.0f + 200);
+    u32 multipliedAccuracy = baseAccuracy * hitRate * shoeMultiplier;
+    return std::clamp(multipliedAccuracy, (u32)50, (u32)99);
+}
+
 void AttackSkill::damageSetup(BattleStats *attackerStats, BattleStats *defenderStats, u32 *attackerLevel, u32 *defenderLevel)
 {
-    if (race == phys)
+    if (skillRace == SkillRace::phys)
         Atk = attackerStats->st;
     else
         Atk = attackerStats->ma;

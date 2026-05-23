@@ -14,8 +14,6 @@ struct BattleParticipant
     AttackSkill *baseAttackAction;
     ParticipantType participantType;
 
-    BattleStats battleStats;
-
     bool oneMore = false;
     // knocked will be needed in the future, no use yet
     bool knockedDown = false;

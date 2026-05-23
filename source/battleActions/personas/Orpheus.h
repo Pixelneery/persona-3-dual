@@ -9,7 +9,7 @@ struct Orpheus : PersonaBase
 {
     Agi agi;
     Bash bash;
-    AttackSkill *myAttcking[2];
+    Skill *mySkills[2];
 
     Orpheus()
     {
@@ -21,10 +21,10 @@ struct Orpheus : PersonaBase
         battleStats.ag = 2;
         battleStats.lu = 2;
 
-        myAttcking[0] = &agi;
-        myAttcking[1] = &bash;
+        mySkills[0] = &agi;
+        mySkills[1] = &bash;
         attackCount = 2;
-        attackSkill = myAttcking;
+        skills = mySkills;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;
         battleStats.affinities[Element::Strike] = BattleStats::Neutral;

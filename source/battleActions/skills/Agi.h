@@ -5,11 +5,12 @@ struct Agi : AttackSkill
 {
     Agi()
     {
-        moveDamage = 40;
-        race = mag;
+        movePower = 40;
         element = Fire;
         cost = 3;
         name = "Agi";
         hitRate = 99;
+        skillRace = SkillRace::mag;
+        skillTarget = SkillTarget::OppositionTeam;
     }
 };

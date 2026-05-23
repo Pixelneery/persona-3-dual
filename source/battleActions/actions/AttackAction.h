@@ -5,19 +5,19 @@
 #include <stdio.h>
 #include <vector>
 #include "../UpdateIndex.h"
-#include "../TargetAndAttackEnemy.h"
+#include "../TargetAndExecute.h"
 
 struct AttackAction : ActionBase
 {
     UpdateIndex updateIndex;
-    TargetAndAttackActionEnemy *targetAndAttackActionEnemy;
+    TargetAndExecute *targetAndExecute;
 
     AttackAction(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
     {
         name = "AttackAction";
         possibleUsers = ParticipantType::Party;
         // TODO: dont forget to clear in the future
-        targetAndAttackActionEnemy = new TargetAndAttackActionEnemy(enemies, &targetIndex);
+        targetAndExecute = new TargetAndExecute(&targetIndex);
     }
 
     void execute() override;
