@@ -4,25 +4,19 @@
 #include "core/globals.h"
 #include "core/enums.h"
 
-#define FRAME_W 256
-#define FRAME_H 192
-#define BYTES_PER_PX 1 // 8 bit = 1, 16 bit = 2
-#define FRAME_SIZE (FRAME_W * FRAME_H * BYTES_PER_PX)
 #define FRAMES_TO_BUFFER 15
-#define BUFFER_SIZE (FRAME_SIZE * FRAMES_TO_BUFFER)
 #define READS_PER_UPDATE 3
 
 class VideoController
 {
 public:
     VideoController() {};
-    void init(std::string iFileName, float iFps, ViewState iNextState, bool iIsSkippable);
+    void init(std::string iFileName, float iFps, ViewState iNextState);
     ViewState update();
     void cleanup();
 
 private:
     ViewState nextState;
-    bool isSkippable;
     float fps;
 
     FILE *videoFile;
@@ -35,7 +29,14 @@ private:
     int writeIndex;
     int framesAvailable;
 
-    u8 audioBuf[16384]; // temp buffer for reading interwoven audio chunk
+    // dynamic video variables
+    u16 frameW;
+    u16 frameH;
+    u8 bpp;
+    u32 frameSize;
+    u32 bufferSize;
+
+    u8 audioBuf[16384];
 
     void refillBuffer();
 };

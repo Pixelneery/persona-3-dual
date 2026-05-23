@@ -54,6 +54,32 @@ musicCtrl.stopSFX(h);                                 // stop
 
 ---
 
+#### Intro Screen (`IntroView`)
+Tightrope plays on the title/intro screen with
+
+| Track | File | Chance | Loop Start | Loop End |
+|-------|------|--------|------------|----------|
+| Tightrope | `tightrope.pcm` | 50% | 17.962s | 66.082s |
+
+#### Intro Video (`IntroVideoView`)
+By default, the reload intro video plays, but you can change the intro via MainMenuView Settings
+
+| Video | File |
+|-------|------|
+| Persona 3 Base intro | `base.vid` |
+| Persona 3 FES intro | `fes.vid` |
+| Persona 3 Portable intro | `portable.vid` |
+| Persona 3 Reload intro | `reload.vid` |
+
+Video audio is embedded in the `.vid` file and handled separately via `musicCtrl.initVideoAudio()`.
+
+#### Iwatodai Dorm (`IwatodaiDormView`)
+Plays the standard dorm theme.
+
+| Track | File | Loop Start | Loop End |
+|-------|------|------------|----------|
+| Iwatodai Dorm | `iwatodai_dorm.pcm` | 0.0s | 920.973s (full play) |
+
 ## Random Music Selection
 
 The random seed is set once at boot in `main.cpp` using the DS hardware timer:
@@ -65,36 +91,7 @@ srand(TIMER0_DATA);
 
 This gives a different seed each run since `TIMER0_DATA` counts CPU cycles from power-on.
 
-### Current Random Selections
-
-#### Intro Screen (`IntroView`)
-Tightrope plays on the title/intro screen with a **50/50** chance between two versions:
-
-| Track | File | Chance | Loop Start | Loop End |
-|-------|------|--------|------------|----------|
-| Tightrope | `tightrope.pcm` | 50% | 17.962s | 66.082s |
-| Tightrope (Floor Mix) | `tightrope_floor_mix.pcm` | 50% | 0.0s | 295.706s (full play) |
-
-#### Intro Video (`IntroVideoView`)
-A random intro video plays with equal probability each boot:
-
-| Video | File | Chance |
-|-------|------|--------|
-| Persona 3 FES intro | `fes.vid` | 33.3% |
-| Persona 3 base intro | `base.vid` | 33.3% |
-| Persona 3 Portable intro | `portable.vid` | 33.3% |
-
-Video audio is embedded in the `.vid` file and handled separately via `musicCtrl.initVideoAudio()`.
-
-#### Iwatodai Dorm (`IwatodaiDormView`)
-Normally plays the dorm theme, with a rare easter egg:
-
-| Track | File | Chance | Loop Start | Loop End |
-|-------|------|--------|------------|----------|
-| Iwatodai Dorm | `iwatodai_dorm.pcm` | 66.6% | 0.0s | 920.973s (full play) |
-| Tom's Diner (Suzanne Vega) | `toms_diner_suzanne_vega.pcm` | 33.3% | 0.0s | 234.568s (full play) |
-
-### Adding a New Random Selection
+### Adding a Random Selection
 
 ```cpp
 // equal chance between N tracks

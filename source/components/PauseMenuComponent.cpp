@@ -170,9 +170,6 @@ ViewState PauseMenuComponent::debugOptionSelected()
             musicCtrl.pause();
             selectedView = ViewState::DISCLAIMER;
             break;
-        case DebugOption::INTRO_VIDEO_VIEW:
-            selectedView = ViewState::INTRO_VIDEO;
-            break;
         case DebugOption::INTRO_VIEW:
             selectedView = ViewState::INTRO;
             break;
@@ -184,6 +181,21 @@ ViewState PauseMenuComponent::debugOptionSelected()
             break;
         case DebugOption::IWATODAI_STREETS_VIEW:
             selectedView = ViewState::IWATODAI_STREETS;
+            break;
+        case DebugOption::STATION_VIEW:
+            selectedView = ViewState::STATION;
+            break;
+        case DebugOption::SIGN_CONTRACT_VIEW:
+            selectedView = ViewState::SIGN_CONTRACT;
+            break;
+        case DebugOption::INTRO_VIDEO:
+            selectedView = ViewState::INTRO_VIDEO;
+            break;
+        case DebugOption::CUTSCENE_1:
+            selectedView = ViewState::CUTSCENE_1;
+            break;
+        case DebugOption::CUTSCENE_2:
+            selectedView = ViewState::CUTSCENE_2;
             break;
         case DebugOption::DEBUG_DIALOGUE:
             consoleClear();

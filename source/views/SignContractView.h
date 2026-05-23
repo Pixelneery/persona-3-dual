@@ -1,0 +1,32 @@
+#pragma once
+#include "core/BaseView.h"
+
+class SignContractView : public BaseView
+{
+private:
+    int bg[3];
+    bool isLastName = true;
+    bool isNameConfirmed = false;
+
+    // console
+    PrintConsole console;
+    PrintConsole animatedConsole;
+    Keyboard keyboard;
+
+    // text animation
+    int duration = 4;
+    int durationCounter = 0;
+    int textAlpha = 0;
+    int textAlphaDirection = 0;
+
+    // sfx
+    mm_sfxhand sfxMenuHandle;
+    mm_sfxhand sfxSelectHandle;
+    mm_sfxhand sfxCancelHandle;
+
+    void cancelSFX();
+public:
+    void init() override;
+    ViewState update() override;
+    void cleanup() override;
+};

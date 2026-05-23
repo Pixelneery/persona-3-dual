@@ -5,16 +5,16 @@
 #include <string>
 class BaseMenu;
 
-typedef struct
+struct SpriteRegister
 {
     int id;
     const unsigned int *tiles;
     unsigned int tilesLen;
     const unsigned short *pal;
     unsigned int palLen;
-} SpriteRegister;
+};
 
-typedef struct
+struct SpriteDBEntry
 {
     SpriteType type;
     int id;
@@ -22,10 +22,10 @@ typedef struct
     unsigned int tilesLen;
     const unsigned short *pal;
     unsigned int palLen;
-} SpriteDBEntry;
+};
 
 //a simple sprite structure
-typedef struct
+struct Sprite
 {
    u16* gfx;
    SpriteSize size;
@@ -34,22 +34,22 @@ typedef struct
    int paletteAlpha;
    int x;
    int y;
-} Sprite;
+};
 
-typedef struct
+struct MenuOption
 {
     const char *name;
     int bgIndex;
     ViewState (BaseMenu::*onSelect)();
-} MenuOption;
+};
 
-typedef struct
+struct MenuState
 {
     MenuOption *options;
     int optionCount;
     int selectedOption;
     int startIndex;
-} MenuState;
+};
 
 // From AnimationController.h
 struct Keyframe
@@ -124,4 +124,12 @@ struct dialogue
     dialogue *prev;
     dialogue *next;
     std::vector<dialogueSelection> selections;
+};
+
+// Saves
+struct Save
+{
+    std::string introVideoPath;
+    std::string lastName;
+    std::string firstName;
 };

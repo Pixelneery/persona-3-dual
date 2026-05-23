@@ -9,6 +9,10 @@ enum class ViewState
     MAIN_MENU,
     IWATODAI_DORM,
     IWATODAI_STREETS,
+    CUTSCENE_1,
+    SIGN_CONTRACT,
+    CUTSCENE_2,
+    STATION
 };
 
 enum class SpriteType
@@ -124,13 +128,30 @@ enum class TileType
 enum class MainMenuOptions
 {
     LOAD_GAME = 0,
+    SETTINGS,
     RETURN_TO_TITLE,
 };
 
 enum class LevelOptions
 {
-    IWATODAI_DORM = 0,
-    IWATODAI_STREETS
+    START_GAME = 0,
+    IWATODAI_DORM,
+    IWATODAI_STREETS,
+    STATION,
+    SIGN_CONTRACT,
+};
+
+enum class SettingIntroOptions
+{
+    ORIGINAL = 0,
+    FES,
+    PORTABLE,
+    RELOAD
+};
+
+enum class SettingOptions
+{
+    CHANGE_INTRO_VIDEO = 0
 };
 
 enum class PauseMenuOption
@@ -191,15 +212,19 @@ enum class SystemOption
 enum class DebugOption
 {
     DISCLAIMER_VIEW = 0,
-    INTRO_VIDEO_VIEW = 1,
-    INTRO_VIEW = 2,
-    MAIN_MENU_VIEW = 3,
-    IWATODAI_DORM_VIEW = 4,
-    IWATODAI_STREETS_VIEW = 5,
-    DEBUG_DIALOGUE = 6,
-    TOGGLE_BILLBOARDS = 7,
-    TOGGLE_DEBUG_PRINT = 8,
-    PLAY_CHARACTER_ANIM = 9
+    INTRO_VIEW,
+    MAIN_MENU_VIEW,
+    IWATODAI_DORM_VIEW,
+    IWATODAI_STREETS_VIEW,
+    STATION_VIEW,
+    SIGN_CONTRACT_VIEW,
+    INTRO_VIDEO,
+    CUTSCENE_1,
+    CUTSCENE_2,
+    DEBUG_DIALOGUE,
+    TOGGLE_BILLBOARDS,
+    TOGGLE_DEBUG_PRINT,
+    PLAY_CHARACTER_ANIM
 };
 
 enum class CharacterAnimOption

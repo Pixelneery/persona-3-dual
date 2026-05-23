@@ -1,14 +1,24 @@
 name: Build ROM
 
 #  Triggers
-#  • push to main/master  ->  full build + tag + release
-#  • pull_request         ->  build + artifact only (no tag, no release)
-#  • workflow_dispatch    ->  manual trigger, behaves like a push
+#  push to main/master  ->  full build + tag + release
+#  pull_request         ->  build + artifact only (no tag, no release)
+#  workflow_dispatch    ->  manual trigger, behaves like a push
 on:
   push:
     branches: [main, master]
+    paths-ignore:
+      - 'tools/**'
+      - 'docs/**'
+      - 'Dockerfile'
+      - '.dockerignore'
   pull_request:
     branches: [main, master]
+    paths-ignore:
+      - 'tools/**'
+      - 'docs/**'
+      - 'Dockerfile'
+      - '.dockerignore'
   workflow_dispatch:
 
 # Cancel any in-progress run on the same branch/PR when a new one starts.

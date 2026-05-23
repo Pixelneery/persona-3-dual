@@ -63,6 +63,18 @@ body {
     white-space: nowrap;
 }
 
+#home-link {
+    color: inherit;
+    text-decoration: none;
+    -webkit-text-stroke: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+
+#home-link:hover {
+    opacity: 0.75;
+}
+
 #map-info {
     color: var(--dim);
     font-size: 11px;

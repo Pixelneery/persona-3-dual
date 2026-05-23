@@ -17,11 +17,6 @@
 // sfx
 #include "soundbank.h"
 
-// sub screen
-int bgSubLogo;
-int bgSubSky;
-PrintConsole consoleIntro;
-
 void IntroView::init()
 {
     // set video mode for 3 text layers and 1 extended rotation layer
@@ -54,8 +49,8 @@ void IntroView::init()
     bgSubSky = bgInitSub(1, BgType_Text8bpp, BgSize_T_256x256, 1, 2);  // sky (sub screen)
 
     // setup console
-    consoleInit(&consoleIntro, 2, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
-    consoleSelect(&consoleIntro);
+    consoleInit(&console, 2, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
+    consoleSelect(&console);
 
     // need to set priority to properly display
     // 0 is highest, 3 is lowest
@@ -64,7 +59,7 @@ void IntroView::init()
     bgSetPriority(bg[2], 3); // sky
     bgSetPriority(bg[3], 2); // overlay
     // adjust sub screen image and console to sit correctly on each other
-    bgSetPriority(consoleIntro.bgId, 0);
+    bgSetPriority(console.bgId, 0);
     bgSetPriority(bgSubLogo, 1);
     bgSetPriority(bgSubSky, 2);
 
@@ -141,14 +136,7 @@ void IntroView::init()
 
     // point to music
     musicCtrl.loadSFX(SFX_SELECT);
-    const std::string tightropes[] = {
-        fatBasePath + "music/tightrope.pcm",
-        fatBasePath + "music/tightrope_floor_mix.pcm"
-    };
-    const float loopStarts[] = {17.962f, 0.0f};
-    const float loopEnds[] = {66.082f, 295.706f};
-    int pick = rand() % 2;
-    musicCtrl.init(tightropes[pick].c_str(), loopStarts[pick], loopEnds[pick]);
+    musicCtrl.init((fatBasePath + "music/tightrope.pcm").c_str(), 17.962f, 66.082f);
 
     // hide sub screen text and attribution text layer
     REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG2 | BLEND_SRC_BG0 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;

@@ -209,7 +209,7 @@ ViewState IwatodaiStreetsView::update()
 
         glPushMatrix();
         characterPosition charPos = playerCtrl->isCharacterAt();
-        glTranslatef(charPos.x, 0.1, charPos.z);
+        glTranslatef(charPos.x, 0.05, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         characterAnimationCtrl.render();
         glPopMatrix(1);

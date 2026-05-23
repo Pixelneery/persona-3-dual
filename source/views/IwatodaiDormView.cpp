@@ -87,15 +87,7 @@ void IwatodaiDormView::init()
     playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
 
     // setup music
-    // 1/3 chance of a surprise
-    if (rand() % 3 == 0)
-    {
-        musicCtrl.init((fatBasePath + "music/toms_diner_suzanne_vega.pcm").c_str(), 0.0f, 234.568f);
-    }
-    else
-    {
-        musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
-    }
+    musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
 
     // setup character model
     characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());

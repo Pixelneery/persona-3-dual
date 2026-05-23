@@ -1,6 +1,6 @@
 ## Contributing
-### Want to help? Join the [Discord!](https://discord.gg/TPBXX8tmSG) Any help, big or small, would be greatly appreciated!
-Check the [Project Board](https://github.com/users/TheBossT910/projects/2) for open tasks, then jump into [Discord](https://discord.gg/TPBXX8tmSG) to coordinate with the team.
+### Want to help? Join the [Discord!](https://discord.gg/CQnkc5gS6a) Any help, big or small, would be greatly appreciated!
+Check the [Project Board](https://github.com/orgs/p3d-project/projects/1) for open tasks, then jump into [Discord](https://discord.gg/CQnkc5gS6a) to coordinate with the team.
 
 ### Pull Requests
 

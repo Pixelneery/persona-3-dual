@@ -5,6 +5,7 @@
 class MainMenuView : public BaseView
 {
 private:
+    PrintConsole console;
     MainMenuComponent mainMenuCmpt;
     bool isMainMenuCmptActive;
     int bg[3];

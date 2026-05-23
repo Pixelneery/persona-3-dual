@@ -4,10 +4,10 @@ A Nintendo DS demake of **Persona 3**, developed in C++ using devkitPro. This pr
 
 The name is a nod to the online joke about a DS version of Persona 3 called "Persona 3 Dual".
 
-![Stars](https://img.shields.io/github/stars/TheBossT910/persona-3-dual?style=flat-square&color=gold)
-![Forks](https://img.shields.io/github/forks/TheBossT910/persona-3-dual?style=flat-square&color=blue)
-![Last Commit](https://img.shields.io/github/last-commit/TheBossT910/persona-3-dual?style=flat-square&color=green)
-![License](https://img.shields.io/github/license/TheBossT910/persona-3-dual?style=flat-square)
+![Stars](https://img.shields.io/github/stars/p3d-project/persona-3-dual?style=flat-square&color=gold)
+![Forks](https://img.shields.io/github/forks/p3d-project/persona-3-dual?style=flat-square&color=blue)
+![Last Commit](https://img.shields.io/github/last-commit/p3d-project/persona-3-dual?style=flat-square&color=green)
+![License](https://img.shields.io/github/license/p3d-project/persona-3-dual?style=flat-square)
 
 [![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
 ![Platform](https://img.shields.io/badge/platform-Nintendo%20DS-red?style=flat-square)
@@ -18,7 +18,7 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 
 [![Discord](https://img.shields.io/discord/1498850477545357482?label=Discord&logo=discord&style=flat-square&color=5865F2)](https://discord.gg/Xtmu76PveV)
 
-### Want to help? Join the [Discord!](https://discord.gg/Xtmu76PveV) Any help, big or small, would be greatly appreciated!
+### Want to help? Join the [Discord!](https://discord.gg/CQnkc5gS6a) Any help, big or small, would be greatly appreciated!
 
 
 <img width="444" height="519" alt="20260417_231005" src="https://github.com/user-attachments/assets/8dd225c8-f3eb-4b80-8ec4-feb381e4b71d" />
@@ -75,7 +75,7 @@ docker --version
 #### 2. Clone the Repo
 
 ```bash
-git clone https://github.com/TheBossT910/persona-3-dual.git
+git clone https://github.com/p3d-project/persona-3-dual.git
 cd persona-3-dual
 ```
 
@@ -208,7 +208,7 @@ Requires [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/) with DLDI
 
 ## Roadmap
 
-See the [Project Board](https://github.com/users/TheBossT910/projects/2) for current progress and open issues.
+See the [Project Board](https://github.com/orgs/p3d-project/projects/1) for current progress and open issues.
 
 ### ✅ Major Completed Features
 
@@ -273,11 +273,11 @@ The goal of Milestone 1 is a polished, presentable demo showcasing core scenes a
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=TheBossT910%2Fpersona-3-dual&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=p3d-project%2Fpersona-3-dual&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=TheBossT910/persona-3-dual&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=p3d-project/persona-3-dual&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=p3d-project/persona-3-dual&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=p3d-project/persona-3-dual&type=date&legend=top-left" />
  </picture>
 </a>
 
