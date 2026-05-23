@@ -21,8 +21,7 @@
         "icon_index": 0,
         "icon": "https://raw.githubusercontent.com/pixelkat5/persona-3-dual/main/icon.bmp"
       },
-      "script": {
-        "Install/Update": [
+      "Install/Update": [
           {
             "type": "downloadFile",
             "file": "https://github.com/pixelkat5/persona-3-dual/releases/latest/download/persona-3-dual.nds",
@@ -46,8 +45,7 @@
             "file": "sdmc:/roms/nds/data.zip",
             "message": "Cleaning up..."
           }
-        ]
-      }
+      ]
     }
   ]
 }
