@@ -7,7 +7,7 @@
 struct Hermes : PersonaBase
 {
     Power_Slash power_Slash;
-    AttackSkill *myAttcking[1];
+    Skill *mySkills[1];
 
     Hermes()
     {
@@ -19,9 +19,9 @@ struct Hermes : PersonaBase
         battleStats.ag = 3;
         battleStats.lu = 1;
 
-        myAttcking[0] = &power_Slash;
+        mySkills[0] = &power_Slash;
         attackCount = 1;
-        attackSkill = myAttcking;
+        skills = mySkills;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;
         battleStats.affinities[Element::Strike] = BattleStats::Neutral;

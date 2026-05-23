@@ -9,7 +9,7 @@ struct Forneus : PersonaBase
 {
     Bash bash;
     Bufu bufu;
-    AttackSkill *myAttcking[2];
+    Skill *mySkills[2];
 
     Forneus()
     {
@@ -21,10 +21,10 @@ struct Forneus : PersonaBase
         battleStats.ag = 6;
         battleStats.lu = 4;
 
-        myAttcking[0] = &bash;
-        myAttcking[1] = &bufu;
+        mySkills[0] = &bash;
+        mySkills[1] = &bufu;
         attackCount = 2;
-        attackSkill = myAttcking;
+        skills = mySkills;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;
         battleStats.affinities[Element::Strike] = BattleStats::Neutral;

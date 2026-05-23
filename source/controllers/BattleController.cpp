@@ -44,7 +44,6 @@ void BattleController::update(u32 keys)
     bool turnResult = currentParticipantTurn->TakeTurn(&keys);
     if (turnResult)
     {
-
         iprintf("Previous attaker: ");
         iprintf(currentParticipantTurn->name.c_str());
         iprintf("\n");

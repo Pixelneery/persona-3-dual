@@ -12,7 +12,7 @@ bool AttackAction::update(u32 *keys, PartyMember *user)
 {
     updateIndex.update(*keys, targetIndex, enemies->size());
 
-    bool madeAction = targetAndAttackActionEnemy->update(keys, user->baseAttackAction, user);
+    bool madeAction = targetAndExecute->update(keys, user->baseAttackAction, user, enemies);
     if (madeAction)
     {
         targetIndex = 0;

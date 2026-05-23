@@ -34,14 +34,14 @@ bool Enemy::TakeTurn(u32 *keys)
     }
 
     bool attacked = false;
-    if (curSkill->race == AttackSkill::mag)
+    if (curSkill->skillRace == SkillRace::mag)
     {
         if (DeductAttackCost(&sp, curSkill->cost, "not enough SP\n"))
         {
             attacked = true;
         }
     }
-    else if (curSkill->race == AttackSkill::phys)
+    else if (curSkill->skillRace == SkillRace::phys)
     {
         if (DeductAttackCost(&hp, curSkill->cost, "not enough HP\n"))
         {

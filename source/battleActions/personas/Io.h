@@ -3,11 +3,13 @@
 
 #include "../skills/AttackSkill.h"
 #include "../skills/Garu.h"
+#include "../skills/Dia.h"
 
 struct Io : PersonaBase
 {
     Garu garu;
-    AttackSkill *myAttcking[1];
+    Dia dia;
+    Skill *mySkills[2];
 
     Io()
     {
@@ -19,9 +21,10 @@ struct Io : PersonaBase
         battleStats.ag = 2;
         battleStats.lu = 2;
 
-        myAttcking[0] = &garu;
-        attackCount = 1;
-        attackSkill = myAttcking;
+        mySkills[0] = &garu;
+        mySkills[1] = &dia;
+        attackCount = 2;
+        skills = mySkills;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;
         battleStats.affinities[Element::Strike] = BattleStats::Neutral;

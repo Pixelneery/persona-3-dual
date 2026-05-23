@@ -17,6 +17,7 @@ struct Enemy : BattleParticipant
 {
     AttackSkill **attackSkill;
     u32 attackCount;
+    BattleStats battleStats;
     // add arcana in the future
 
     Enemy()

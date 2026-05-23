@@ -10,5 +10,6 @@ enum Element
     Strike,
     Slash,
     Pierce,
+    Heal,
     Almighty
 };
