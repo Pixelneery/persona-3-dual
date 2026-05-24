@@ -1,26 +1,23 @@
 #pragma once
 #include <nds.h>
-#include <stdio.h>
 #include <string>
+#include "../BattleResult.h"
 #include "../ParticipantType.h"
-#include "../BattleParticipant.h"
-#include "../party/PartyMember.h"
 
-struct ActionBase
-{
-    bool inProgress = false;
-    u32 targetIndex = 0;
-    std::string name = "";
+// Forward declarations — full types are only needed in .cpp files
+struct BattleParticipant;
+struct PartyMember;
+struct Skill;
+
+struct ActionBase {
+    std::string name;
     ParticipantType possibleUsers;
 
-    std::vector<BattleParticipant *> *allParticipants;
-    std::vector<BattleParticipant *> *party;
-    std::vector<BattleParticipant *> *enemies;
+    // Resolve the action for the given actor and target.
+    // skill is provided for PersonaAction; other actions may ignore it.
+    // Side effects (HP change, knockedDown) are applied directly inside resolve().
+    // The returned BattleResult carries the outcome for display/logging.
+    virtual BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) = 0;
 
-    virtual void execute() = 0;
-    virtual bool update(u32 *keys, PartyMember *user) = 0;
-
-    ActionBase(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies)
-        : allParticipants(iAllParticipants), party(iParty), enemies(iEnemies) {}
     virtual ~ActionBase() = default;
 };

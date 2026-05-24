@@ -2,14 +2,12 @@
 #include "ActionBase.h"
 #include "../party/PartyMember.h"
 
-struct Guard : ActionBase
-{
-    Guard(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
-    {
+struct Guard : ActionBase {
+    Guard() {
         name = "Guard";
         possibleUsers = ParticipantType::Party;
     }
 
-    void execute() override;
-    bool update(u32 *keys, PartyMember *user) override;
+    // Sets user->guarding = true. No target needed; pass nullptr.
+    BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) override;
 };

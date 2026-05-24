@@ -17,6 +17,4 @@ struct BattleParticipant
     bool oneMore = false;
     // knocked will be needed in the future, no use yet
     bool knockedDown = false;
-
-    virtual bool TakeTurn(u32 *keys);
 };
