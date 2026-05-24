@@ -10,15 +10,21 @@ on:
     paths-ignore:
       - 'tools/**'
       - 'docs/**'
+      - 'unistore/**'
       - 'Dockerfile'
       - '.dockerignore'
+      - '*.md'
+      - '**.md'
   pull_request:
     branches: [main, master]
     paths-ignore:
       - 'tools/**'
       - 'docs/**'
+      - 'unistore/**'
       - 'Dockerfile'
       - '.dockerignore'
+      - '*.md'
+      - '**.md'
   workflow_dispatch:
 
 # Cancel any in-progress run on the same branch/PR when a new one starts.
@@ -42,7 +48,23 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0   # Full history required so git tag --list sees all tags
-          lfs: true        # Fetch real LFS files (mp4, etc.) not just pointer stubs
+          lfs: false       # Don't auto-download LFS files; we restore them from cache below
+
+      # Cache LFS objects keyed to the LFS pointer files.
+      # On a cache hit the actual binaries are restored without hitting the LFS server.
+      # On a miss we do a real lfs pull and save the result for next time.
+      - name: Cache Git LFS objects
+        id: cache-lfs
+        uses: actions/cache@v5
+        with:
+          path: .git/lfs
+          key: lfs-${{ runner.os }}-${{ hashFiles('.gitattributes') }}-${{ github.sha }}
+          restore-keys: |
+            lfs-${{ runner.os }}-${{ hashFiles('.gitattributes') }}-
+            lfs-${{ runner.os }}-
+
+      - name: Pull LFS files
+        run: git lfs pull
 
       # Version tag (push / workflow_dispatch only)
       # Format: YYwWWn  ->  e.g. "26w18a"
@@ -173,6 +195,17 @@ jobs:
             pip install -r tools/requirements.txt
           fi
 
+      # Cache compiled object files so unchanged source files are not recompiled.
+      # Keyed to the full tree hash so any source change produces a fresh key,
+      # but restore-keys fall back to the most recent build for incremental reuse.
+      - name: Cache build objects
+        uses: actions/cache@v5
+        with:
+          path: build/
+          key: build-objects-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            build-objects-${{ runner.os }}-
+
       # ROM compile
       - name: Compile ROM
         run: make
@@ -182,8 +215,10 @@ jobs:
       # Since most of the FAT image is empty space, gzip typically reduces it
       # to roughly the size of the actual game data - a small fraction of 2 GB.
       # Users decompress once with: gzip -d sdcard.img.gz
+      # -1 is fastest compression; the image is mostly empty FAT space so the
+      # size difference vs -9 is negligible while the speed difference is large.
       - name: Compress SD card image
-        run: gzip -9 sdcard.img
+        run: gzip -1 sdcard.img
 
       # Package the data folder as a zip for hardware users.
       # Released alongside the ROM and sdcard.img.gz so that TWiLight Menu++ users
@@ -302,6 +337,26 @@ jobs:
             echo "|-----------|------|"
             echo "| SHA-256   | \`${{ steps.checksums.outputs.sha256 }}\` |"
             echo "| MD5       | \`${{ steps.checksums.outputs.md5 }}\` |"
+            echo ""
+            echo "## Playing on 3DS"
+            echo ""
+            echo "### Auto-Updates (Universal Updater)"
+            echo "1. Install [Universal Updater](https://github.com/Universal-Team/Universal-Updater/releases) if you haven't already"
+            echo "2. Open Universal Updater, go to **Settings** > **Select UniStore** > tap the **+** icon at the bottom"
+            echo "3. Scan the QR code below with the QR icon, or tap the keyboard icon and enter the URL manually:"
+            echo ""
+            echo "![UniStore QR Code](https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/unistore/unistore-qr.png)"
+            echo ""
+            echo "\`https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/unistore/p3d.unistore\`"
+            echo "4. Find **Persona 3 Dual** in the store and tap **Install/Update**"
+            echo ""
+            echo "### Home Menu Shortcut (Forwarder)"
+            echo "Only needs to be done once, after installing via Universal Updater above."
+            echo "1. Install **NDS Forwarder Generator** via Universal Updater"
+            echo "2. Launch it and navigate to \`/roms/nds/persona-3-dual.nds\`, select it"
+            echo "3. It generates a \`.cia\` file on your SD card"
+            echo "4. Open **FBI**, navigate to the \`.cia\`, and install it"
+            echo "5. Persona 3 Dual now appears as a tile on your 3DS home menu"
           } > release-notes.md
 
           echo "--- Release notes preview ---"
