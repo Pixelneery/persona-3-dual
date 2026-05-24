@@ -159,7 +159,7 @@ void BattleController::update(u32 keys)
             else
                 r = persona.resolve(actor, target, selectedSkill);
 
-            applyResult(r);
+            applyResult(r, target);
             advanceTurn();
         }
 
@@ -177,7 +177,7 @@ void BattleController::update(u32 keys)
         AttackSkill*       skill  = e->pickSkill();
         BattleParticipant* target = e->pickTarget(partyMembers);
         BattleResult r = e->resolve(target, skill);
-        applyResult(r);
+        applyResult(r, target);
         advanceTurn();
         break;
     }
@@ -201,14 +201,29 @@ bool BattleController::actorCanUse(PartyMember* actor, u32 idx)
     return actions[idx]->possibleUsers == ParticipantType::Party;
 }
 
-void BattleController::applyResult(const BattleResult& r)
+void BattleController::applyResult(const BattleResult& r, BattleParticipant* target)
 {
     if (!r.log.empty()) {
         iprintf(r.log.c_str());
         iprintf("\n");
     }
-    if (r.oneMore)
+
+    if (r.hit && target && r.hpDelta != 0) {
+        char buf[48];
+        if (r.hpDelta < 0)
+            std::sprintf(buf, "Damage: %ld\n", (long)-r.hpDelta);
+        else
+            std::sprintf(buf, "HP healed: %ld\n", (long)r.hpDelta);
+        iprintf(buf);
+
+        std::sprintf(buf, "%s HP: %ld\n", target->name.c_str(), (long)target->hp);
+        iprintf(buf);
+    }
+
+    if (r.oneMore) {
+        iprintf("One More!\n");
         currentParticipantTurn->oneMore = true;
+    }
 }
 
 void BattleController::advanceTurn()

@@ -66,7 +66,7 @@ private:
     PartyMember* junpei = nullptr;
 
     bool actorCanUse(PartyMember* actor, u32 idx);
-    void applyResult(const BattleResult& r);
+    void applyResult(const BattleResult& r, BattleParticipant* target = nullptr);
     void advanceTurn();
     void removeDeadParticipants();
 
