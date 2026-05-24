@@ -92,7 +92,7 @@ void IwatodaiStreetsView::init()
         IWATODAI_STREETS_MAP_WIDTH, IWATODAI_STREETS_MAP_HEIGHT, &iwatodai_streets_map[0][0],
         tileSize, worldOffsetX, worldOffsetZ, characterSize,
         speed, angleIncrement, distance, lookAhead,
-        angle, characterTranslate, characterFacingAngle);
+        angle, height, characterTranslate, characterFacingAngle);
 
     // setup music
     musicCtrl.init((fatBasePath + "/music/changing_seasons.pcm").c_str(), 0.0f, -1.0f);
@@ -209,7 +209,7 @@ ViewState IwatodaiStreetsView::update()
 
         glPushMatrix();
         characterPosition charPos = playerCtrl->isCharacterAt();
-        glTranslatef(charPos.x, 0.05, charPos.z);
+        glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         characterAnimationCtrl.render();
         glPopMatrix(1);

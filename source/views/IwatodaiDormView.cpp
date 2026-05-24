@@ -7,17 +7,44 @@
 
 // model
 #include "models/character.h"
-// environment
-#include "environments/iwatodai_dorm.h"
-#include "texture.h"
-// maps
-#include "maps/iwatodai_dorm.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
-
-// TODO: move to header
-int characterTextureId;
-iwatodai_dorm_Environment iwatodaiDormEnv;
+// environment textures
+#include "f007_002bolt03.h"
+#include "f007_002door01.h"
+#include "f007_002door02.h"
+#include "f007_002floor01.h"
+#include "f007_002floor02.h"
+#include "f007_002floor03.h"
+#include "f007_002glow02.h"
+#include "f007_002kzr01.h"
+#include "f007_002kzr02.h"
+#include "f007_002kzr03.h"
+#include "f007_002kzr04.h"
+#include "f007_002obj01.h"
+#include "f007_002obj02.h"
+#include "f007_002obj03.h"
+#include "f007_002obj04.h"
+#include "f007_002obj05.h"
+#include "f007_002obj07.h"
+#include "f007_002obj09.h"
+#include "f007_002obj10.h"
+#include "f007_002obj11.h"
+#include "f007_002obj12.h"
+#include "f007_002obj13.h"
+#include "f007_002obj14.h"
+#include "f007_002obj15.h"
+#include "f007_002shadow01.h"
+#include "f007_002step01.h"
+#include "f007_002step02.h"
+#include "f007_002wall01.h"
+#include "f007_002wall02.h"
+#include "f007_002wall03.h"
+#include "f007_002wall04.h"
+#include "f007_002wall05.h"
+#include "f007_002wall06.h"
+#include "f007_002bolt02.h"
+#include "f007_002bolt01.h"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView() : battleParticipants(new std::vector<BattleParticipant *>({&merciless_Maya, &cowardly_Maya})),
@@ -71,20 +98,13 @@ void IwatodaiDormView::init()
     bgSetPriority(bgMenuHUD, 2);
     bgUpdate();
 
-    // set bgMenuHUD img
-    // dmaCopy(menuHUDTiles, bgGetGfxPtr(bgMenuHUD), menuHUDTilesLen);
-    // dmaCopy(menuHUDMap, bgGetMapPtr(bgMenuHUD), menuHUDMapLen);
-    // vramSetBankH(VRAM_H_LCD);
-    // dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
-    // vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-    // bgShow(bgMenuHUD);
-
     // setup menuHUD
     // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
     menuHUDCmpt.loadHUD();
 
     // setup player controller
-    playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, characterTranslate, characterFacingAngle);
+    // TODO: add mapping
+    playerCtrl = new CharacterController(0, 0, nullptr, tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, height, characterTranslate, characterFacingAngle);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
@@ -94,9 +114,47 @@ void IwatodaiDormView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int *bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = {textureBitmap};
-    iwatodaiDormEnv.load((fatBasePath + "environments/iwatodai_dorm.bin").c_str(), bitmapsEnv);
-    totalPolyCount = iwatodaiDormEnv.getPolyCount();
+    const unsigned int *bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_COUNT] =
+        {
+            f007_002wall01Bitmap,
+            f007_002wall02Bitmap,
+            f007_002wall03Bitmap,
+            f007_002door02Bitmap,
+            f007_002kzr01Bitmap,
+            f007_002kzr02Bitmap,
+            f007_002obj01Bitmap,
+            f007_002obj04Bitmap,
+            f007_002obj07Bitmap,
+            f007_002obj11Bitmap,
+            f007_002wall04Bitmap,
+            f007_002wall05Bitmap,
+            f007_002wall06Bitmap,
+            f007_002obj10Bitmap,
+            f007_002step01Bitmap,
+            f007_002step02Bitmap,
+            f007_002kzr03Bitmap,
+            f007_002kzr04Bitmap,
+            f007_002door01Bitmap,
+            f007_002obj03Bitmap,
+            f007_002shadow01Bitmap,
+            f007_002obj09Bitmap,
+            f007_002bolt01Bitmap,
+            f007_002glow02Bitmap,
+            f007_002floor01Bitmap,
+            f007_002floor02Bitmap,
+            f007_002floor03Bitmap,
+            f007_002obj02Bitmap,
+            f007_002obj05Bitmap,
+            f007_002obj14Bitmap,
+            f007_002obj15Bitmap,
+            f007_002bolt02Bitmap,
+            f007_002bolt03Bitmap,
+            f007_002obj12Bitmap,
+            f007_002obj13Bitmap,
+        };
+
+    iwatodaiDormFloor1Env.load((fatBasePath + "environments/iwatodai_dorm_floor_1.bin").c_str(), bitmapsEnv);
+    totalPolyCount = iwatodaiDormFloor1Env.getPolyCount();
 
     // setup dialogue
     demo_dialogue_bg_slot = bgSharedSlot;
@@ -202,8 +260,8 @@ ViewState IwatodaiDormView::update()
 
         // draw environment
         glPushMatrix();
-        iwatodaiDormEnv.draw();
-        iwatodaiDormEnv.drawBillboards(
+        iwatodaiDormFloor1Env.draw();
+        iwatodaiDormFloor1Env.drawBillboards(
             enableBillboards, // billboards face camera
             camPos.cameraX, camPos.cameraY, camPos.cameraZ);
         glPopMatrix(1);
@@ -212,7 +270,7 @@ ViewState IwatodaiDormView::update()
         glPushMatrix();
         // move character
         characterPosition charPos = playerCtrl->isCharacterAt();
-        glTranslatef(charPos.x, 0.1, charPos.z);
+        glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
 
         // draw character
@@ -250,7 +308,7 @@ void IwatodaiDormView::cleanup()
     BaseView::cleanup();
 
     // cleanup environment
-    iwatodaiDormEnv.cleanup();
+    iwatodaiDormFloor1Env.cleanup();
     // reset textures
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot

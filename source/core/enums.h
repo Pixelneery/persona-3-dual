@@ -12,7 +12,8 @@ enum class ViewState
     CUTSCENE_1,
     SIGN_CONTRACT,
     CUTSCENE_2,
-    STATION
+    STATION,
+    DEBUG_VIEW
 };
 
 enum class SpriteType
@@ -135,6 +136,7 @@ enum class MainMenuOptions
 enum class LevelOptions
 {
     START_GAME = 0,
+    DEBUG,
     IWATODAI_DORM,
     IWATODAI_STREETS,
     STATION,
@@ -218,6 +220,7 @@ enum class DebugOption
     IWATODAI_STREETS_VIEW,
     STATION_VIEW,
     SIGN_CONTRACT_VIEW,
+    DEBUG_VIEW,
     INTRO_VIDEO,
     CUTSCENE_1,
     CUTSCENE_2,

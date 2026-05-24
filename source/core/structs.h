@@ -104,6 +104,7 @@ struct characterPosition
 {
     float x;
     float z;
+    float y;    // height
     float angle;
     float facingAngle;
 };

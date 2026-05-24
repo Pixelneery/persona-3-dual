@@ -25,6 +25,7 @@ public:
     const float lookAhead;
 
     // translation (mutable)
+    float height = 0.0;
     float angle = 0.0;
     Point2D<float> characterTranslate = Point2D<float>(0.0, 0.0);
     // float translateX = 0.0;
@@ -35,7 +36,7 @@ public:
         int iMapWidth, int iMapHeight, const uint8_t *iCollisionMap,
         float iTileSize, float iWorldOffsetX, float iWorldOffsetZ, Point2D<float> iCharacterSize,
         float iSpeed, float iAngleIncrement, float iDistance, float iLookAhead,
-        float iAngle, Point2D<float> iCharacterTranslate, float iCharacterFacingAngle) : mapWidth(iMapWidth),
+        float iAngle, float iHeight, Point2D<float> iCharacterTranslate, float iCharacterFacingAngle) : mapWidth(iMapWidth),
                                                                                          mapHeight(iMapHeight),
                                                                                          collisionMap(iCollisionMap),
                                                                                          tileSize(iTileSize),
@@ -49,6 +50,7 @@ public:
     {
         // set inital position
         angle = iAngle;
+        height = iHeight;
         characterTranslate = iCharacterTranslate;
         characterFacingAngle = iCharacterFacingAngle;
     };

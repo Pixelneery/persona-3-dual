@@ -53,6 +53,7 @@ characterPosition CharacterController::isCharacterAt()
 
     charPos.x = characterTranslate.x;
     charPos.z = characterTranslate.z;
+    charPos.y = height;
     charPos.angle = angle;
     charPos.facingAngle = characterFacingAngle;
 
@@ -163,16 +164,16 @@ cameraPosition CharacterController::update(u32 keys)
 
     // set camera positions
     camPos.cameraX = characterTranslate.x + (sin(angle) * distance);
-    camPos.cameraY = 0.6f;
+    camPos.cameraY = 0.6f + height;
     camPos.cameraZ = characterTranslate.z - (cos(angle) * distance);
 
     // look further down the same path the camera is facing
     camPos.targetX = characterTranslate.x - (sin(angle) * lookAhead);
-    camPos.targetY = 0.1f;
+    camPos.targetY = 0.1f + height;
     camPos.targetZ = characterTranslate.z + (cos(angle) * lookAhead);
 
     camPos.upX = 0.0f;
-    camPos.upY = 1.0f;
+    camPos.upY = 1.0f + height;
     camPos.upZ = 0.0f;
 
     return camPos;
