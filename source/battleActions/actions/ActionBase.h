@@ -4,7 +4,7 @@
 #include "../BattleResult.h"
 #include "../ParticipantType.h"
 
-// Forward declarations — full types are only needed in .cpp files
+// Forward declarations
 struct BattleParticipant;
 struct PartyMember;
 struct Skill;
