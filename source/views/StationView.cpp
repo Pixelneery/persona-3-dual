@@ -81,7 +81,7 @@ void StationView::init()
         angle, height, characterTranslate, characterFacingAngle);
 
     // setup music
-    musicCtrl.init((fatBasePath + "/music/paulowina_mall.pcm").c_str(), 0.0f, -1.0f);
+    musicCtrl.init((fatBasePath + "/music/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
 
     // setup character model
     characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());
@@ -167,7 +167,7 @@ ViewState StationView::update()
         if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
         {
             musicCtrl.pause();
-            return ViewState::PAULOWINA_MALL;
+            return ViewState::PAULOWNIA_MALL;
         }
 
         gluLookAt(

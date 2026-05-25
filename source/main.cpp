@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
             {
                 SwitchView(new DebugView());
             }
-            else if (nextState == ViewState::PAULOWINA_MALL)
+            else if (nextState == ViewState::PAULOWNIA_MALL)
             {
                 SwitchView(new PaulowniaMallView());
             }

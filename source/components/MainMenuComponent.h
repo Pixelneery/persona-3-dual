@@ -25,7 +25,7 @@ private:
         {"Iwatodai Dorm",    -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Streets", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Station",          -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
-        {"Paulowina Mall",   -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
+        {"Paulownia Mall",   -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Sign Contract",    -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
     };
 

@@ -188,8 +188,8 @@ ViewState PauseMenuComponent::debugOptionSelected()
         case DebugOption::SIGN_CONTRACT_VIEW:
             selectedView = ViewState::SIGN_CONTRACT;
             break;
-        case DebugOption::PAULOWINA_MALL_VIEW:
-            selectedView = ViewState::PAULOWINA_MALL;
+        case DebugOption::PAULOWNIA_MALL_VIEW:
+            selectedView = ViewState::PAULOWNIA_MALL;
             break;
         case DebugOption::DEBUG_VIEW:
             selectedView = ViewState::DEBUG_VIEW;

@@ -41,7 +41,7 @@ private:
         {"IwatodaiStreetView",        -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"StationView",               -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"SignContractView",          -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"PaulowinaMallView",         -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"PaulowniaMallView",         -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"DebugView",                 -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"IntroVideo",                -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"Cutscene1",                 -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
