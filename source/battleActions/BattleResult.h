@@ -2,9 +2,10 @@
 #include <nds.h>
 #include <string>
 
-struct BattleResult {
-    bool hit     = false;
-    s32  hpDelta = 0;    // negative = damage dealt, positive = HP healed
+struct BattleResult
+{
+    bool hit = false;
+    s32 hpDelta = 0;
     bool oneMore = false;
-    std::string log;     // human-readable description of what happened
+    std::string log;
 };
