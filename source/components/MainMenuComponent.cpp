@@ -103,6 +103,9 @@ ViewState MainMenuComponent::levelOptionSelected()
     case LevelOptions::STATION:
         selectedView = ViewState::STATION;
         break;
+    case LevelOptions::PAULOWNIA_MALL:
+        selectedView = ViewState::PAULOWNIA_MALL;
+        break;
     case LevelOptions::SIGN_CONTRACT:
         selectedView = ViewState::SIGN_CONTRACT;
         break;

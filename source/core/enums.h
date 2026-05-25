@@ -13,7 +13,8 @@ enum class ViewState
     SIGN_CONTRACT,
     CUTSCENE_2,
     STATION,
-    DEBUG_VIEW
+    DEBUG_VIEW,
+    PAULOWNIA_MALL,
 };
 
 enum class SpriteType
@@ -140,6 +141,7 @@ enum class LevelOptions
     IWATODAI_DORM,
     IWATODAI_STREETS,
     STATION,
+    PAULOWNIA_MALL,
     SIGN_CONTRACT,
 };
 
@@ -220,6 +222,7 @@ enum class DebugOption
     IWATODAI_STREETS_VIEW,
     STATION_VIEW,
     SIGN_CONTRACT_VIEW,
+    PAULOWNIA_MALL_VIEW,
     DEBUG_VIEW,
     INTRO_VIDEO,
     CUTSCENE_1,
