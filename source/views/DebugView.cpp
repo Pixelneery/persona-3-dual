@@ -67,14 +67,6 @@ void DebugView::init()
     bgSetPriority(bgMenuHUD, 2);
     bgUpdate();
 
-    // set bgMenuHUD img
-    // dmaCopy(menuHUDTiles, bgGetGfxPtr(bgMenuHUD), menuHUDTilesLen);
-    // dmaCopy(menuHUDMap, bgGetMapPtr(bgMenuHUD), menuHUDMapLen);
-    // vramSetBankH(VRAM_H_LCD);
-    // dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
-    // vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-    // bgShow(bgMenuHUD);
-
     // setup menuHUD
     // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
     menuHUDCmpt.loadHUD();
@@ -100,6 +92,9 @@ void DebugView::init()
     // setup pause menu
     // use the same shared background slot as the demo dialogue
     pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
+
+    // setup battle menu
+    battleMenuCmpt.init(-1, &isBattleMenuActive);
 
     // setup character profiles
     characterProfiles.InitializeProfiles();

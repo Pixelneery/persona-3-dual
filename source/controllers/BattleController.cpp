@@ -2,6 +2,7 @@
 #include "./battleActions/DeductAttackCost.h"
 #include <cstdlib>
 #include <ctime>
+#include "core/globals.h"
 
 BattleController::BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles)
     : battleParticipants(iBattleParticipants), characterProfiles(iCharacterProfiles)
@@ -49,18 +50,15 @@ void BattleController::update(u32 keys)
     case BattlePhase::ChooseAction:
     {
         PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
-        u32 count = (u32)actions.size();
-        updateIndex.update(keys, actionIndex, count);
 
-        if (keys & KEY_LEFT || keys & KEY_RIGHT)
-        {
-            iprintf("Action: ");
-            iprintf(actions[actionIndex]->name.c_str());
-            iprintf("\n");
-        }
+        // render battleMenu
+        battleMenuCmpt.loadActionOptions(&actions);
+        actionIndex = -1;
+        actionIndex = (int)battleMenuCmpt.update(keys);
 
-        if (keys & KEY_A && actorCanUse(actor, actionIndex))
+        if (((int)actionIndex != -1) && (keys & KEY_A) && actorCanUse(actor, actionIndex))
         {
+            consoleClear();
             if (actionIndex == ACTION_ATTACK)
             {
                 selectedSkill = nullptr;
