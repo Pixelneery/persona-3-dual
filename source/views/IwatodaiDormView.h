@@ -6,6 +6,7 @@
 // environments
 #include "environments/iwatodai_dorm_floor_1.h"
 // battle-related
+#include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/enemies/Cowardly_Maya.h"
 #include "./battleActions/enemies/Merciless_Maya.h"
@@ -37,6 +38,9 @@ private:
     Cowardly_Maya cowardly_Maya;
     Merciless_Maya merciless_Maya;
     std::vector<BattleParticipant *> *battleParticipants;
+
+    // hardcoded for now, we will have to build a battle creater for tartarus anyways
+    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
     // controllers
     BattleController battleController;

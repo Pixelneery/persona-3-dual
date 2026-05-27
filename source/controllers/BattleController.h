@@ -39,21 +39,16 @@ private:
     bool active = false;
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
     u32 turnsTaken = 0;
-    // TODO: update after a round (how to recognize that?)
-    u32 roundCount = 0;
 
     BattlePhase phase;
     BattleParticipant *currentParticipantTurn = nullptr;
+    u32 currentParticipantIndex = 0;
 
     u32 actionIndex = 0;
     u32 skillIndex = 0;
     u32 personaIndex = 0;
     u32 targetIndex = 0;
     Skill *selectedSkill = nullptr;
-
-    u32 turnOrderIndex = 0;
-    u32 roundCount = 0;
-    std::vector<BattleParticipant *> turnOrder;
 
     UpdateIndex updateIndex;
 
@@ -78,7 +73,7 @@ private:
     void applyResult(const BattleResult &r, BattleParticipant *target = nullptr);
     void advanceTurn();
     void calculateTurnOrder();
-    void removeDeadParticipants();
+    void handleDeadParticipants();
 
 public:
     bool isActive() const
@@ -96,6 +91,6 @@ public:
 
     // TODO: battle start condizion in constructor
 
-    BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles);
+    BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles, BattleStartCondition iBattleStartCondition);
     ~BattleController() {}
 };
