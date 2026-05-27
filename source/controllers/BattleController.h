@@ -14,7 +14,6 @@
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/CharacterProfiles.h"
-#include "./battleActions/UpdateIndex.h"
 
 enum class BattlePhase
 {
@@ -45,8 +44,6 @@ private:
     u32 personaIndex = 0;
     u32 targetIndex = 0;
     Skill *selectedSkill = nullptr;
-
-    UpdateIndex updateIndex;
 
     std::vector<BattleParticipant *> *battleParticipants;
     std::vector<BattleParticipant *> enemies;

@@ -52,7 +52,7 @@ void BattleController::update(u32 keys)
         PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
 
         // render battleMenu
-        battleMenuCmpt.loadActionOptions(&actions);
+        battleMenuCmpt.loadActionOptions(&actions, actor->name);
         actionIndex = -1;
         actionIndex = (int)battleMenuCmpt.update(keys);
 
@@ -88,7 +88,7 @@ void BattleController::update(u32 keys)
     case BattlePhase::ChooseSkill:
     {
         PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
-        
+
         // render battleMenu
         battleMenuCmpt.loadSkillOptions(actor->curPersona);
         skillIndex = -1;
@@ -120,22 +120,16 @@ void BattleController::update(u32 keys)
     case BattlePhase::ChoosePersona:
     {
         PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
-        u32 personaCount = (u32)actor->personas.size();
-        updateIndex.update(keys, personaIndex, personaCount);
 
-        if (keys & KEY_LEFT || keys & KEY_RIGHT)
-        {
-            iprintf("Persona: ");
-            iprintf(actor->personas[personaIndex]->name.c_str());
-            iprintf("\n");
-        }
+        battleMenuCmpt.loadPersonaOptions(&actor->personas);
+        personaIndex = -1;
+        personaIndex = (int)battleMenuCmpt.update(keys);
 
-        if (keys & KEY_A)
+        if (((int)personaIndex != -1) && (keys & KEY_A))
         {
+            consoleClear();
             if (actor->curPersona == actor->personas[personaIndex])
-            {
                 iprintf("already selected this Persona\n");
-            }
             else
             {
                 actor->curPersona = actor->personas[personaIndex];
@@ -158,17 +152,11 @@ void BattleController::update(u32 keys)
         bool healTarget = selectedSkill && selectedSkill->skillType == SkillType::Heal;
         std::vector<BattleParticipant *> &targets = healTarget ? partyMembers : enemies;
 
-        u32 count = (u32)targets.size();
-        updateIndex.update(keys, targetIndex, count);
+        battleMenuCmpt.loadTargetOptions(&targets, healTarget);
+        targetIndex = -1;
+        targetIndex = (int)battleMenuCmpt.update(keys);
 
-        if (keys & KEY_LEFT || keys & KEY_RIGHT)
-        {
-            iprintf("Target: ");
-            iprintf(targets[targetIndex]->name.c_str());
-            iprintf("\n");
-        }
-
-        if (keys & KEY_A)
+        if (((int)targetIndex != -1) && (keys & KEY_A))
         {
             BattleParticipant *target = targets[targetIndex];
             BattleResult battleResult;

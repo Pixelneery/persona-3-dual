@@ -20,7 +20,7 @@ void BattleMenuComponent::init(int iBgSlot, bool *isActive, const std::string &i
 }
 
 // option loaders
-void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions)
+void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name)
 {
     // skip if action options have already been loaded
     if (loadedOption == 1)
@@ -33,7 +33,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions)
 
     // indicate we loaded option
     loadedOption = 1;
-    pauseMessage = "Actions";
+    pauseMessage = name.c_str();
     int count = actions->size();
 
     for (int i = 0; i < count; i++)
@@ -72,6 +72,57 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
         MenuOption option =
         {
             persona->skills[i]->name.c_str(),
+            -1,
+            MENU_BIND(BattleMenuComponent, battleOptionSelected)
+        };
+        battleOptions.push_back(option);
+    }
+
+    options = battleOptions.data();
+    optionCount = count;
+}
+
+void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas)
+{
+    if (loadedOption == 3)
+        return;
+
+    battleOptions.clear();
+    loadedOption = 3;
+    pauseMessage = "Persona";
+    int count = (int)personas->size();
+
+    for (int i = 0; i < count; i++)
+    {
+        MenuOption option =
+        {
+            personas->at(i)->name.c_str(),
+            -1,
+            MENU_BIND(BattleMenuComponent, battleOptionSelected)
+        };
+        battleOptions.push_back(option);
+    }
+
+    options = battleOptions.data();
+    optionCount = count;
+}
+
+void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* targets, bool healTarget)
+{
+    int targetLoadedOption = healTarget ? 5 : 4;
+    if (loadedOption == targetLoadedOption)
+        return;
+
+    battleOptions.clear();
+    loadedOption = targetLoadedOption;
+    pauseMessage = "Target";
+    int count = (int)targets->size();
+
+    for (int i = 0; i < count; i++)
+    {
+        MenuOption option =
+        {
+            targets->at(i)->name.c_str(),
             -1,
             MENU_BIND(BattleMenuComponent, battleOptionSelected)
         };
