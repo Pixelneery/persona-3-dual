@@ -88,18 +88,15 @@ void BattleController::update(u32 keys)
     case BattlePhase::ChooseSkill:
     {
         PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
-        u32 skillCount = actor->curPersona->attackCount;
-        updateIndex.update(keys, skillIndex, skillCount);
+        
+        // render battleMenu
+        battleMenuCmpt.loadSkillOptions(actor->curPersona);
+        skillIndex = -1;
+        skillIndex = (int)battleMenuCmpt.update(keys);
 
-        if (keys & KEY_LEFT || keys & KEY_RIGHT)
+        if (((int)skillIndex != -1) && (keys & KEY_A))
         {
-            iprintf("Skill: ");
-            iprintf(actor->curPersona->skills[skillIndex]->name.c_str());
-            iprintf("\n");
-        }
-
-        if (keys & KEY_A)
-        {
+            consoleClear();
             Skill *s = actor->curPersona->skills[skillIndex];
             bool canAfford = false;
             if (s->skillRace == SkillRace::mag)

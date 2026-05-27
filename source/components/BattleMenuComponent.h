@@ -8,15 +8,16 @@ class BattleMenuComponent : public BaseMenu
 protected:
     void loadBg(int bgIndex) override;
 private:
-    int loadedOption = 0;   // 1 = actionOptions
-    std::array<ActionBase*, 4> actions;
+    // TODO: create enum
+    int loadedOption = 0;   // 1 = actionOptions, 2 = skillOptions
 
-    std::vector<MenuOption> actionOptions;
+    std::vector<MenuOption> battleOptions;
 
     // option handlers
-    int actionOptionSelected();
+    int battleOptionSelected();
 public:
     void init(int iBgSlot, bool *isActive, const std::string &iPauseMessage = "") override;
     // option loaders
-    void loadActionOptions(std::array<ActionBase*, 4>* iActions);
+    void loadActionOptions(std::array<ActionBase*, 4>* actions);
+    void loadSkillOptions(PersonaBase* persona);
 };

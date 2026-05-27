@@ -16,44 +16,74 @@ void BattleMenuComponent::init(int iBgSlot, bool *isActive, const std::string &i
 {
     BaseMenu::init(iBgSlot, isActive, iPauseMessage);
     options = nullptr;
-    optionCount = -1;
+    optionCount = 0;
 }
 
 // option loaders
-void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* iActions)
+void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions)
 {
-    // skip if options have already been loaded
+    // skip if action options have already been loaded
     if (loadedOption == 1)
     {
         return;
     };
 
     // set new options
-    actionOptions.clear();
-    actions = *iActions;
+    battleOptions.clear();
 
     // indicate we loaded option
     loadedOption = 1;
     pauseMessage = "Actions";
-    int count = actions.size();
+    int count = actions->size();
 
     for (int i = 0; i < count; i++)
     {
         MenuOption option =
         {
-            actions[i]->name.c_str(),
+            actions->at(i)->name.c_str(),
             -1,
-            MENU_BIND(BattleMenuComponent, actionOptionSelected)
+            MENU_BIND(BattleMenuComponent, battleOptionSelected)
         };
-        actionOptions.push_back(option);
+        battleOptions.push_back(option);
     }
 
-    options = actionOptions.data();
+    options = battleOptions.data();
+    optionCount = count;
+}
+
+void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
+{
+    // skip if action options have already been loaded
+    if (loadedOption == 2)
+    {
+        return;
+    };
+
+    // set new options
+    battleOptions.clear();
+
+    // indicate we loaded option
+    loadedOption = 2;
+    pauseMessage = "Skills";
+    int count = persona->attackCount;
+
+    for (int i = 0; i < count; i++)
+    {
+        MenuOption option =
+        {
+            persona->skills[i]->name.c_str(),
+            -1,
+            MENU_BIND(BattleMenuComponent, battleOptionSelected)
+        };
+        battleOptions.push_back(option);
+    }
+
+    options = battleOptions.data();
     optionCount = count;
 }
 
 // option handlers
-int BattleMenuComponent::actionOptionSelected()
+int BattleMenuComponent::battleOptionSelected()
 {
     *isActivePtr = false;
     pauseMessage = "";
