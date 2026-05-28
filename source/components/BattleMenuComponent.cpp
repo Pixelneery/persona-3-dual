@@ -157,6 +157,8 @@ bool BattleMenuComponent::isAlertExpired(int durationFrames) const
 void BattleMenuComponent::reset()
 {
     loadedOption = BattleMenuOptions::NONE;
+    *isActivePtr = false;
+    pauseMessage = "";
     selectedOption = 0;
     startIndex = 0;
 }
@@ -177,7 +179,7 @@ ViewState BattleMenuComponent::update(int keys)
 // option handlers
 int BattleMenuComponent::battleOptionSelected()
 {
-    *isActivePtr = false;
-    pauseMessage = "";
-    return selectedOption;
+    int returnSelectedOption = selectedOption;
+    reset();
+    return returnSelectedOption;
 }
