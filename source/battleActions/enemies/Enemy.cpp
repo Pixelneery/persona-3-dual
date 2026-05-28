@@ -10,7 +10,13 @@ AttackSkill *Enemy::pickSkill()
 
 BattleParticipant *Enemy::pickTarget(std::vector<BattleParticipant *> &partyMembers)
 {
-    return partyMembers[rand() % partyMembers.size()];
+    BattleParticipant *target = nullptr;
+    do
+    {
+        target = partyMembers[rand() % partyMembers.size()];
+    } while (target->hp <= 0);
+
+    return target;
 }
 
 BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)

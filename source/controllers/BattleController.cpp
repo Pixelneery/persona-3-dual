@@ -164,7 +164,6 @@ void BattleController::update(u32 keys)
         bool healTarget = selectedSkill && selectedSkill->skillType == SkillType::Heal;
         std::vector<BattleParticipant *> &targets = healTarget ? partyMembers : enemies;
 
-        u32 count = (u32)targets.size();
         updateIndex.updateSkipDead(keys, targetIndex, targets);
 
         if (keys & KEY_LEFT || keys & KEY_RIGHT)

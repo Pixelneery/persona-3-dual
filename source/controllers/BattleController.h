@@ -37,7 +37,6 @@ private:
     static constexpr u32 ACTION_SWITCH = 3;
 
     bool active = false;
-    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
     u32 turnsTaken = 0;
 
     BattlePhase phase;
@@ -57,6 +56,7 @@ private:
     std::vector<BattleParticipant *> partyMembers;
 
     CharacterProfiles *characterProfiles;
+    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
     AttackAction attack;
     Guard guard;
