@@ -17,22 +17,22 @@ BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)
 {
     PartyMember *party = static_cast<PartyMember *>(target);
 
-    iprintf("targeting: %s\n", target->name.c_str());
-
     bool canAttack = false;
     if (skill->skillRace == SkillRace::mag)
-        canAttack = DeductAttackCost(&sp, skill->cost, "not enough SP\n");
+        canAttack = DeductAttackCost(&sp, skill->cost);
     else
-        canAttack = DeductAttackCost(&hp, skill->cost, "not enough HP\n");
+        canAttack = DeductAttackCost(&hp, skill->cost);
 
     if (!canAttack)
         return {false, 0, false, skill->name};
+
+    std::string targetLog = name + " targets " + target->name + "\n";
 
     u32 accuracy = skill->calculateHitrateEnemy(&battleStats, &party->curPersona->battleStats, &party->shoe);
     bool hit = accuracy > u32(rand() % 100);
 
     if (!hit)
-        return {false, 0, false, "Miss"};
+        return {false, 0, false, targetLog + "Miss"};
 
     u32 damage = (skill == baseAttackAction)
                      ? skill->calculateDamageEnemyRegular(&battleStats, &party->curPersona->battleStats, &lv, &target->lv, &party->armour)
@@ -50,5 +50,5 @@ BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)
     }
 
     target->hp -= (s32)damage;
-    return {true, -(s32)damage, oneMoreResult, skill->name};
+    return {true, -(s32)damage, oneMoreResult, targetLog + skill->name};
 }

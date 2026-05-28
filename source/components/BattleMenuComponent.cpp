@@ -1,4 +1,5 @@
 #include "BattleMenuComponent.h"
+#include "core/globals.h"
 
 // dummy backgrounds
 #include "bgAkihiko.h"
@@ -131,6 +132,42 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* tar
 
     options = battleOptions.data();
     optionCount = count;
+}
+
+void BattleMenuComponent::loadAlertOptions(const std::string& text)
+{
+    if (loadedOption == 6)
+        return;
+
+    battleOptions.clear();
+    loadedOption = 6;
+    pauseMessage = text;
+    optionCount = 0;
+    alertStartFrame = frame;
+}
+
+bool BattleMenuComponent::isAlertExpired(int durationFrames) const
+{
+    return (frame - alertStartFrame) >= durationFrames;
+}
+
+void BattleMenuComponent::reset()
+{
+    loadedOption = 0;
+    selectedOption = 0;
+    startIndex = 0;
+}
+
+ViewState BattleMenuComponent::update(int keys)
+{
+    if (loadedOption == 6)
+    {
+        consoleClear();
+        iprintf("\x1b[0;0H");
+        iprintf("%s", pauseMessage.c_str());
+        return ViewState::KEEP_CURRENT;
+    }
+    return BaseMenu::update(keys);
 }
 
 // option handlers

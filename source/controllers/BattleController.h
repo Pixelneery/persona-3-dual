@@ -2,6 +2,7 @@
 
 #include <nds.h>
 #include <array>
+#include <string>
 #include <vector>
 
 #include "./battleActions/actions/AttackAction.h"
@@ -21,6 +22,7 @@ enum class BattlePhase
     ChooseSkill,
     ChoosePersona,
     ChooseTarget,
+    ShowAlert,
     EnemyTurn,
     Done
 };
@@ -44,6 +46,9 @@ private:
     u32 personaIndex = 0;
     u32 targetIndex = 0;
     Skill *selectedSkill = nullptr;
+
+    std::string pendingAlert;
+    BattlePhase alertReturnPhase = BattlePhase::Done;
 
     std::vector<BattleParticipant *> *battleParticipants;
     std::vector<BattleParticipant *> enemies;

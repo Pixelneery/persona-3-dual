@@ -34,7 +34,7 @@ void BattleController::execute()
         phase = BattlePhase::EnemyTurn;
     else
     {
-        actionIndex = 0;
+        actionIndex = -1;
         phase = BattlePhase::ChooseAction;
     }
 }
@@ -62,7 +62,7 @@ void BattleController::update(u32 keys)
             if (actionIndex == ACTION_ATTACK)
             {
                 selectedSkill = nullptr;
-                targetIndex = 0;
+                targetIndex = -1;
                 phase = BattlePhase::ChooseTarget;
             }
             else if (actionIndex == ACTION_GUARD)
@@ -73,12 +73,12 @@ void BattleController::update(u32 keys)
             }
             else if (actionIndex == ACTION_PERSONA)
             {
-                skillIndex = 0;
+                skillIndex = -1;
                 phase = BattlePhase::ChooseSkill;
             }
             else if (actionIndex == ACTION_SWITCH)
             {
-                personaIndex = 0;
+                personaIndex = -1;
                 phase = BattlePhase::ChoosePersona;
             }
         }
@@ -96,19 +96,25 @@ void BattleController::update(u32 keys)
 
         if (((int)skillIndex != -1) && (keys & KEY_A))
         {
-            consoleClear();
             Skill *s = actor->curPersona->skills[skillIndex];
             bool canAfford = false;
             if (s->skillRace == SkillRace::mag)
-                canAfford = DeductAttackCost(&actor->sp, s->cost, "not enough SP\n");
+                canAfford = DeductAttackCost(&actor->sp, s->cost);
             else
-                canAfford = DeductAttackCost(&actor->hp, s->cost, "not enough HP\n");
+                canAfford = DeductAttackCost(&actor->hp, s->cost);
 
             if (canAfford)
             {
                 selectedSkill = s;
                 targetIndex = 0;
                 phase = BattlePhase::ChooseTarget;
+            }
+            else
+            {
+                pendingAlert = (s->skillRace == SkillRace::mag) ? "Not enough SP\n" : "Not enough HP\n";
+                alertReturnPhase = BattlePhase::ChooseSkill;
+                battleMenuCmpt.reset();
+                phase = BattlePhase::ShowAlert;
             }
         }
 
@@ -127,15 +133,17 @@ void BattleController::update(u32 keys)
 
         if (((int)personaIndex != -1) && (keys & KEY_A))
         {
-            consoleClear();
             if (actor->curPersona == actor->personas[personaIndex])
-                iprintf("already selected this Persona\n");
+            {
+                pendingAlert = "Already using this Persona\n";
+                alertReturnPhase = BattlePhase::ChoosePersona;
+                battleMenuCmpt.reset();
+                phase = BattlePhase::ShowAlert;
+            }
             else
             {
                 actor->curPersona = actor->personas[personaIndex];
-                iprintf("Switched to: ");
-                iprintf(actor->curPersona->name.c_str());
-                iprintf("\n");
+                pendingAlert = "Switched to: " + actor->curPersona->name + "\n";
                 advanceTurn();
             }
         }
@@ -171,8 +179,21 @@ void BattleController::update(u32 keys)
 
         if (keys & KEY_B)
         {
-            targetIndex = 0;
+            targetIndex = -1;
             phase = (actionIndex == ACTION_ATTACK) ? BattlePhase::ChooseAction : BattlePhase::ChooseSkill;
+        }
+        break;
+    }
+
+    case BattlePhase::ShowAlert:
+    {
+        battleMenuCmpt.loadAlertOptions(pendingAlert);
+        battleMenuCmpt.update(keys);
+        if (battleMenuCmpt.isAlertExpired(120))
+        {
+            pendingAlert.clear();
+            battleMenuCmpt.reset();
+            phase = alertReturnPhase;
         }
         break;
     }
@@ -210,10 +231,7 @@ bool BattleController::actorCanUse(PartyMember *actor, u32 actionIndex)
 void BattleController::applyResult(const BattleResult &battleResult, BattleParticipant *target)
 {
     if (!battleResult.log.empty())
-    {
-        iprintf(battleResult.log.c_str());
-        iprintf("\n");
-    }
+        pendingAlert += battleResult.log + "\n";
 
     if (battleResult.hit && target && battleResult.hpDelta != 0)
     {
@@ -222,15 +240,15 @@ void BattleController::applyResult(const BattleResult &battleResult, BattleParti
             std::sprintf(buf, "Damage: %ld\n", (long)-battleResult.hpDelta);
         else
             std::sprintf(buf, "HP healed: %ld\n", (long)battleResult.hpDelta);
-        iprintf(buf);
+        pendingAlert += buf;
 
         std::sprintf(buf, "%s HP: %ld\n", target->name.c_str(), (long)target->hp);
-        iprintf(buf);
+        pendingAlert += buf;
     }
 
     if (battleResult.oneMore)
     {
-        iprintf("One More!\n");
+        pendingAlert += "One More!\n";
         currentParticipantTurn->oneMore = true;
     }
 }
@@ -253,14 +271,27 @@ void BattleController::advanceTurn()
     }
 
     currentParticipantTurn = battleParticipants->at(turnsTaken % battleParticipants->size());
+
+    BattlePhase nextPhase;
     if (currentParticipantTurn->participantType == ParticipantType::Enemy)
     {
-        phase = BattlePhase::EnemyTurn;
+        nextPhase = BattlePhase::EnemyTurn;
     }
     else
     {
-        actionIndex = 0;
-        phase = BattlePhase::ChooseAction;
+        actionIndex = -1;
+        nextPhase = BattlePhase::ChooseAction;
+    }
+
+    if (!pendingAlert.empty())
+    {
+        alertReturnPhase = nextPhase;
+        battleMenuCmpt.reset();
+        phase = BattlePhase::ShowAlert;
+    }
+    else
+    {
+        phase = nextPhase;
     }
 }
 
@@ -312,7 +343,5 @@ void BattleController::removeDeadParticipants()
         battleParticipants->erase(battleParticipants->begin() + i);
     }
 
-    iprintf("Previous attacker: ");
-    iprintf(currentParticipantTurn->name.c_str());
-    iprintf("\n");
+    pendingAlert += "Previous attacker: " + currentParticipantTurn->name + "\n";
 }
