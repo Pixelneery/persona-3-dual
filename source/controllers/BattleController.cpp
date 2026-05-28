@@ -311,7 +311,7 @@ void BattleController::calculateTurnOrder()
                           bool aIsParty = a->participantType == ParticipantType::Party || a->participantType == ParticipantType::Player;
                           bool bIsParty = b->participantType == ParticipantType::Party || b->participantType == ParticipantType::Player;
 
-                        //priotetize by type
+                        //prioritize by type
                           if (aIsParty != bIsParty)
                               return aIsParty > bIsParty;
                         //decided by agility when same group
@@ -324,7 +324,7 @@ void BattleController::calculateTurnOrder()
                           bool aIsEnemy = a->participantType == ParticipantType::Enemy;
                           bool bIsEnemy = b->participantType == ParticipantType::Enemy;
 
-                        //priotetize by type
+                        //prioritize by type
                           if (aIsEnemy != bIsEnemy)
                               return aIsEnemy > bIsEnemy;
                         //decided by agility when same group
