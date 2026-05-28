@@ -6,6 +6,7 @@
 #include "controllers/SpriteController.h"
 #include "components/PauseMenuComponent.h"
 #include "components/MenuHUDComponent.h"
+#include "components/BattleMenuComponent.h"
 
 class MenuHUDComponent;
 class PauseMenuComponent;
@@ -32,3 +33,4 @@ extern bool enableDebugPrint;
 extern bool enableCharacterAnim;
 extern bool isPauseMenuActive;
 extern MenuHUDComponent menuHUDCmpt;
+extern BattleMenuComponent battleMenuCmpt;

@@ -29,6 +29,7 @@
 // components
 #include "components/PauseMenuComponent.h"
 #include "components/MenuHUDComponent.h"
+#include "components/BattleMenuComponent.h"
 
 // sfx
 #include "soundbank_bin.h"
@@ -64,6 +65,7 @@ bool enableCharacterAnim = true;
 bool enableDebugPrint = false;
 bool isPauseMenuActive = false;
 MenuHUDComponent menuHUDCmpt;
+BattleMenuComponent battleMenuCmpt;
 
 BaseView *currentView = nullptr;
 

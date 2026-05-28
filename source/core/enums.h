@@ -158,6 +158,17 @@ enum class SettingOptions
     CHANGE_INTRO_VIDEO = 0
 };
 
+enum class BattleMenuOptions
+{
+    NONE = 0,
+    ACTION,
+    SKILL,
+    PERSONA,
+    TARGET_ENEMY,
+    TARGET_HEAL,
+    ALERT
+};
+
 enum class PauseMenuOption
 {
     SKILL = 0,

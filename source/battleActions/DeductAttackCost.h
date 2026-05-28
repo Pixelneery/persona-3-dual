@@ -2,13 +2,10 @@
 #include <nds.h>
 #include "skills/AttackSkill.h"
 
-inline auto DeductAttackCost = [](s32 *stat, s32 cost, const char *msg) -> bool
+inline auto DeductAttackCost = [](s32 *stat, s32 cost) -> bool
 {
     if (*stat < cost)
-    {
-        iprintf(msg);
         return false;
-    }
     *stat -= cost;
     return true;
 };
