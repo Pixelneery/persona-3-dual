@@ -9,8 +9,9 @@
 
 struct PartyMember : BattleParticipant
 {
-    Armour armour;
-    Shoe shoe;
+    ArmourType *armourType;
+    Armour *armour;
+    Shoe *shoe;
     std::vector<PersonaBase *> personas;
     PersonaBase *curPersona;
 
@@ -28,7 +29,9 @@ struct PartyMember : BattleParticipant
         baseAttackAction = characterProfile->baseAttackAction;
         participantType = characterProfile->participantType;
 
-        armour = characterProfile->armour;
+        armourType = &characterProfile->armourType;
+        armour = &characterProfile->armour;
+        shoe = &characterProfile->shoe;
         personas = characterProfile->personas;
         curPersona = characterProfile->curPersona;
     }

@@ -10,6 +10,7 @@
 #include "./battleActions/enemies/Cowardly_Maya.h"
 #include "./battleActions/enemies/Merciless_Maya.h"
 #include "./battleActions/BattleParticipant.h"
+#include "./battleActions/BattleStartCondition.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
 class DebugView : public BaseView
@@ -37,6 +38,8 @@ private:
     Cowardly_Maya cowardly_Maya;
     Merciless_Maya merciless_Maya;
     std::vector<BattleParticipant *> *battleParticipants;
+
+    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
     // controllers
     BattleController battleController;

@@ -18,7 +18,7 @@ struct Orpheus : PersonaBase
         battleStats.st = 2;
         battleStats.ma = 2;
         battleStats.en = 2;
-        battleStats.ag = 2;
+        battleStats.ag = 3;
         battleStats.lu = 2;
 
         mySkills[0] = &agi;

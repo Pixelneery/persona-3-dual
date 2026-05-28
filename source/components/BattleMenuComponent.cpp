@@ -110,8 +110,6 @@ void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase *> *persona
 void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant *> *targets, bool healTarget)
 {
     BattleMenuOptions targetLoadedOption = healTarget ? BattleMenuOptions::TARGET_HEAL : BattleMenuOptions::TARGET_ENEMY;
-    if (loadedOption == targetLoadedOption)
-        return;
 
     battleOptions.clear();
     loadedOption = targetLoadedOption;
@@ -120,6 +118,9 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant *> *ta
 
     for (int i = 0; i < count; i++)
     {
+        if (targets->at(i)->hp <= 0)
+            continue;
+
         MenuOption option =
             {
                 targets->at(i)->name.c_str(),
@@ -129,7 +130,7 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant *> *ta
     }
 
     options = battleOptions.data();
-    optionCount = count;
+    optionCount = battleOptions.size();
 }
 
 void BattleMenuComponent::loadAlertOptions(const std::string &text)

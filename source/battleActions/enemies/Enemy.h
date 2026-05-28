@@ -4,7 +4,6 @@
 #include "../skills/AttackSkill.h"
 #include "../BattleParticipant.h"
 #include "../BattleResult.h"
-#include "../DeductAttackCost.h"
 
 struct Enemy : BattleParticipant
 {

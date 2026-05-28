@@ -14,6 +14,7 @@ struct BattleParticipant
     AttackSkill *baseAttackAction;
     ParticipantType participantType;
 
+    float currentTurnOrderAgility;
     bool oneMore = false;
     // knocked will be needed in the future, no use yet
     bool knockedDown = false;

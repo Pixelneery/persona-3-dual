@@ -22,6 +22,7 @@ protected:
     int startIndex = 0;
 
     virtual void loadBg(int bgIndex) = 0;
+
 private:
     // sfx
     mm_sfxhand sfxMenuHandle;
@@ -32,10 +33,11 @@ private:
     int visibleOptions = 23;
     std::stack<MenuState> prevOptions;
     ViewState nextViewState = ViewState::KEEP_CURRENT;
+
 public:
     virtual void init(int iBgSlot, bool *isActive, const std::string &iPauseMessage = "Pause");
     virtual ViewState update(int keys);
     void cancelSFX();
-    ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
+    ViewState changeMenu(MenuOption *newOptions, int newOptionCount);
     void prevOption();
 };

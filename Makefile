@@ -28,7 +28,7 @@ endif
 #---------------------------------------------------------------------------------
 TARGET      :=  persona-3-dual
 BUILD       :=  build
-SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions
+SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/helpers
 INCLUDES    :=  include source
 
 # Add environment subdirectories directly to the GRAPHICS build pipeline

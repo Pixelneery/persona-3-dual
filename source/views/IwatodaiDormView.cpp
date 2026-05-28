@@ -48,7 +48,7 @@
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView() : battleParticipants(new std::vector<BattleParticipant *>({&merciless_Maya, &cowardly_Maya})),
-                                       battleController(battleParticipants, &characterProfiles) {}
+                                       battleController(battleParticipants, &characterProfiles, battleStartCondition) {}
 
 void IwatodaiDormView::init()
 {
@@ -163,6 +163,9 @@ void IwatodaiDormView::init()
     // use the same shared background slot as the demo dialogue
     pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 
+    // setup battle menu
+    battleMenuCmpt.init(-1, &isBattleMenuActive);
+
     // setup character profiles
     characterProfiles.InitializeProfiles();
 }
@@ -198,7 +201,6 @@ ViewState IwatodaiDormView::update()
     {
         menuHUDCmpt.drawHUD(&bgMenuHUD);
         bgShow(bgMenuHUD);
-
     }
     // hide menuHUD if dialogue, battle, or pauseMenu is active
     else

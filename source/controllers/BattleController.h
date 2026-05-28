@@ -4,6 +4,7 @@
 #include <array>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "./battleActions/actions/AttackAction.h"
 #include "./battleActions/actions/Guard.h"
@@ -15,6 +16,7 @@
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/CharacterProfiles.h"
+#include "./battleActions/BattleStartCondition.h"
 
 enum class BattlePhase
 {
@@ -40,6 +42,7 @@ private:
 
     BattlePhase phase;
     BattleParticipant *currentParticipantTurn = nullptr;
+    u32 currentParticipantIndex = 0;
 
     u32 actionIndex = 0;
     u32 skillIndex = 0;
@@ -55,6 +58,7 @@ private:
     std::vector<BattleParticipant *> partyMembers;
 
     CharacterProfiles *characterProfiles;
+    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
     AttackAction attack;
     Guard guard;
@@ -70,16 +74,26 @@ private:
     bool actorCanUse(PartyMember *actor, u32 idx);
     void applyResult(const BattleResult &r, BattleParticipant *target = nullptr);
     void advanceTurn();
-    void removeDeadParticipants();
+    void setNextPhase(BattlePhase nextPhase);
+    void calculateTurnOrder();
+    void handleDeadParticipants();
 
 public:
-    bool isActive() const { return active; }
-    BattlePhase getPhase() const { return phase; }
+    bool isActive() const
+    {
+        return active;
+    }
+    BattlePhase getPhase() const
+    {
+        return phase;
+    }
 
     void execute();
     void update(u32 keys);
     void exit();
 
-    BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles);
+    // TODO: battle start condizion in constructor
+
+    BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles, BattleStartCondition iBattleStartCondition);
     ~BattleController() {}
 };

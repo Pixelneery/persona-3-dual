@@ -14,10 +14,9 @@
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
-
 // TODO: dont forget to clear in future
 DebugView::DebugView() : battleParticipants(new std::vector<BattleParticipant *>({&merciless_Maya, &cowardly_Maya})),
-                                       battleController(battleParticipants, &characterProfiles) {}
+                         battleController(battleParticipants, &characterProfiles, battleStartCondition) {}
 
 void DebugView::init()
 {
@@ -131,7 +130,6 @@ ViewState DebugView::update()
     {
         menuHUDCmpt.drawHUD(&bgMenuHUD);
         bgShow(bgMenuHUD);
-
     }
     // hide menuHUD if dialogue, battle, or pauseMenu is active
     else

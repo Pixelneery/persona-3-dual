@@ -42,6 +42,7 @@ u32 AttackSkill::calculateDamageEnemySkill(BattleStats *attackerStats, BattleSta
 
     damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
     // todo: level diffrence never goes under 0 for either party during boss fights
+
     return (u32)floor((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) * affinityMtp);
 }
 
@@ -64,6 +65,7 @@ void AttackSkill::damageSetup(BattleStats *attackerStats, BattleStats *defenderS
     else
         Atk = attackerStats->ma;
 
+    // TODO: std clamp
     diff = *attackerLevel - *defenderLevel;
     if (diff < -13)
         diff = -13;
