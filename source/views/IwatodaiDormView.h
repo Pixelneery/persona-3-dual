@@ -65,4 +65,5 @@ private:
     DialogueController dialogueCtrl;
     int bgSharedSlot;
     int totalPolyCount = 0;
+    bool isBattleMenuActive = false;
 };

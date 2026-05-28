@@ -10,7 +10,7 @@
 #define STATS_OPTIONS 9
 #define S_LINK_OPTIONS 3
 #define SYSTEM_OPTIONS 6
-#define DEBUG_OPTIONS 15
+#define DEBUG_OPTIONS 16
 #define CHARACTER_ANIM_OPTIONS 25
 #define SKILLS 2
 
@@ -41,6 +41,7 @@ private:
         {"IwatodaiStreetView",        -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"StationView",               -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"SignContractView",          -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"PaulowniaMallView",         -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"DebugView",                 -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"IntroVideo",                -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"Cutscene1",                 -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},

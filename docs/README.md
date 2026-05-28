@@ -52,15 +52,9 @@ The name is a nod to the online joke about a DS version of Persona 3 called "Per
 
 ## Developer Setup
 
-Two paths are available. **Docker (recommended)** works identically on Windows, macOS, and Linux and requires no manual toolchain installation. The **manual path** is still documented below if you prefer a native setup.
+The team has opted to use **Docker** as the official dev solution, as it wraps the entire toolchain into a single image so you get an identical build environment regardless of your OS.
 
----
-
-### Option A — Docker (Recommended)
-
-Docker wraps the entire toolchain into a single image, so you get an identical build environment regardless of your OS.
-
-#### 1. Install Docker
+### 1. Install Docker
 
 | Platform | Download |
 |----------|----------|
@@ -72,14 +66,14 @@ Verify the install:
 docker --version
 ```
 
-#### 2. Clone the Repo
+### 2. Clone the Repo
 
 ```bash
 git clone https://github.com/p3d-project/persona-3-dual.git
 cd persona-3-dual
 ```
 
-#### 3. Build the Docker Image
+### 3. Build the Docker Image
 
 Run this **once** (or again whenever `Dockerfile` or `tools/requirements.txt` changes). It downloads and caches all dependencies:
 
@@ -89,7 +83,7 @@ docker build -t p3d-dev .
 
 > First build takes a few minutes while devkitARM downloads. Subsequent builds use the Docker layer cache and much quicker.
 
-#### 4. Compile the ROM
+### 4. Compile the ROM
 
 ```bash
 # Linux / macOS
@@ -102,9 +96,9 @@ docker run --rm -v "%cd%":/project p3d-dev make
 docker run --rm -v "${PWD}:/project" p3d-dev make
 ```
 
-This produces `persona-3-dual.nds` and `sdcard.img` in your repo folder, the same as a native build.
+This produces `persona-3-dual.nds` and `sdcard.img` in your repo folder!
 
-#### 5. Interactive Shell (optional)
+### 5. Interactive Shell (optional)
 
 If you want to poke around, run commands manually, or debug the build:
 
@@ -118,7 +112,7 @@ docker run --rm -it -v "${PWD}:/project" p3d-dev
 
 You're now inside the container at `/project` (your repo). Type `exit` to leave.
 
-#### Useful Docker Commands
+### Useful Docker Commands
 
 | Command | What it does |
 |---------|--------------|
@@ -126,41 +120,6 @@ You're now inside the container at `/project` (your repo). Type `exit` to leave.
 | `docker images` | List images on your machine |
 | `docker rmi p3d-dev` | Delete the image (frees disk space) |
 | `docker ps` | List running containers |
-
-### Option B — Manual Setup (Legacy)
-> This install path is no longer supported, but is kept here for documentation/legacy purposes. This section will be removed by Milestone #1.
-
-#### 1. Install System Dependencies
-
-**Windows:**
-1. Install [devkitPro](https://devkitpro.org/wiki/Getting_Started) using the official graphical installer (ensure `nds-dev` is checked).
-2. Install Python 3 from the [official website](https://www.python.org/downloads/) (check "Add Python to PATH" during install).
-3. Install FFmpeg: open Command Prompt or PowerShell and run `winget install ffmpeg`.
-4. Install mtools: `winget install mtools`
-5. Install [melonDS](https://melonds.kuribo64.net/downloads.php) (and optionally add melonDS to PATH for debugger setup).
-
-**macOS:**
-1. Install [devkitPro](https://devkitpro.org/wiki/Getting_Started) via the official pacman pkg.
-2. Install Python, FFmpeg, and mtools using Homebrew:
-   `brew install python ffmpeg mtools`
-3. Install [melonDS](https://melonds.kuribo64.net/downloads.php).
-
-**Linux (Ubuntu/Debian):**
-1. Install devkitPro by following the [Unix-like platforms guide](https://devkitpro.org/wiki/Getting_Started#Unix-like_platforms).
-2. Install Python, FFmpeg, and mtools:
-   `sudo apt update && sudo apt install python3 python3-venv ffmpeg mtools`
-3. Install [melonDS](https://melonds.kuribo64.net/downloads.php).
-
-#### 2. Setup the Project
-Once the system tools are installed, open your terminal, clone the repo, navigate to the project folder, and set up the Python environment:
-
-```
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r tools/requirements.txt
-```
-
-You can then build by running `make clean && make` in the project folder. This will compile the ROM **and** automatically generate a `sdcard.img` FAT32 SD card image containing all required game data.
 
 ---
 

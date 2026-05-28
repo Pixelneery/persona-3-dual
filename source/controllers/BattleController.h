@@ -2,6 +2,7 @@
 
 #include <nds.h>
 #include <array>
+#include <string>
 #include <vector>
 #include <algorithm>
 
@@ -15,7 +16,6 @@
 #include "./battleActions/enemies/Enemy.h"
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/CharacterProfiles.h"
-#include "./battleActions/UpdateIndex.h"
 #include "./battleActions/BattleStartCondition.h"
 
 enum class BattlePhase
@@ -24,6 +24,7 @@ enum class BattlePhase
     ChooseSkill,
     ChoosePersona,
     ChooseTarget,
+    ShowAlert,
     EnemyTurn,
     Done
 };
@@ -49,7 +50,8 @@ private:
     u32 targetIndex = 0;
     Skill *selectedSkill = nullptr;
 
-    UpdateIndex updateIndex;
+    std::string pendingAlert;
+    BattlePhase alertReturnPhase = BattlePhase::Done;
 
     std::vector<BattleParticipant *> *battleParticipants;
     std::vector<BattleParticipant *> enemies;
@@ -72,6 +74,7 @@ private:
     bool actorCanUse(PartyMember *actor, u32 idx);
     void applyResult(const BattleResult &r, BattleParticipant *target = nullptr);
     void advanceTurn();
+    void setNextPhase(BattlePhase nextPhase);
     void calculateTurnOrder();
     void handleDeadParticipants();
 

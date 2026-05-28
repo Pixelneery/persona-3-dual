@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <filesystem.h>
-#include <string>
 #include <maxmod9.h>
-#include "core/enums.h"
 #include <dirent.h>
+#include <fat.h>
+
+#include "core/enums.h"
 
 // states
 #include "core/BaseView.h"
@@ -18,6 +19,7 @@
 #include "views/SignContractView.h"
 #include "views/StationView.h"
 #include "views/DebugView.h"
+#include "views/PaulowniaMallView.h"
 
 // controllers
 #include "controllers/MusicController.h"
@@ -27,6 +29,7 @@
 // components
 #include "components/PauseMenuComponent.h"
 #include "components/MenuHUDComponent.h"
+#include "components/BattleMenuComponent.h"
 
 // sfx
 #include "soundbank_bin.h"
@@ -38,7 +41,6 @@
 #include "character_texture_2.h"
 #include "character_texture_3.h"
 #include "character_texture_4.h"
-#include <fat.h>
 
 // variables
 volatile int frame = 0;
@@ -63,6 +65,7 @@ bool enableCharacterAnim = true;
 bool enableDebugPrint = false;
 bool isPauseMenuActive = false;
 MenuHUDComponent menuHUDCmpt;
+BattleMenuComponent battleMenuCmpt;
 
 BaseView *currentView = nullptr;
 
@@ -191,6 +194,10 @@ int main(int argc, char *argv[])
             else if (nextState == ViewState::DEBUG_VIEW)
             {
                 SwitchView(new DebugView());
+            }
+            else if (nextState == ViewState::PAULOWNIA_MALL)
+            {
+                SwitchView(new PaulowniaMallView());
             }
         }
 

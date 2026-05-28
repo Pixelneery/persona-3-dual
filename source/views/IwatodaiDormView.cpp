@@ -163,6 +163,9 @@ void IwatodaiDormView::init()
     // use the same shared background slot as the demo dialogue
     pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
 
+    // setup battle menu
+    battleMenuCmpt.init(-1, &isBattleMenuActive);
+
     // setup character profiles
     characterProfiles.InitializeProfiles();
 }
