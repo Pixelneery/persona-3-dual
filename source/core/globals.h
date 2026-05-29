@@ -1,12 +1,12 @@
 #pragma once
-#include "controllers/MusicController.h"
-#include "controllers/VideoController.h"
-#include "controllers/AnimationController.h"
-#include "models/character.h"
-#include "controllers/SpriteController.h"
-#include "components/PauseMenuComponent.h"
-#include "components/MenuHUDComponent.h"
 #include "components/BattleMenuComponent.h"
+#include "components/MenuHUDComponent.h"
+#include "components/PauseMenuComponent.h"
+#include "controllers/AnimationController.h"
+#include "controllers/MusicController.h"
+#include "controllers/SpriteController.h"
+#include "controllers/VideoController.h"
+#include "models/character.h"
 
 class MenuHUDComponent;
 class PauseMenuComponent;
@@ -23,7 +23,7 @@ extern Save saveData;
 extern MusicController musicCtrl;
 extern VideoController videoCtrl;
 extern AnimationController characterAnimationCtrl;
-extern const unsigned int *bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+extern const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 extern SpriteController spriteCtrl;
 
 // components

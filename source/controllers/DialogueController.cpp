@@ -1,17 +1,19 @@
+#include "DialogueController.h"
 #include <nds.h>
 #include <stdio.h>
-#include "DialogueController.h"
 
-DialogueController::DialogueController() {}
+DialogueController::DialogueController()
+{
+}
 
 // transition to a new dialogue node and reset animation state
-void DialogueController::advanceTo(dialogue *next)
+void DialogueController::advanceTo(dialogue* next)
 {
-    current      = next;
-    animIndex    = 0;
-    animDone     = false;
+    current = next;
+    animIndex = 0;
+    animDone = false;
     doRenderOptions = false;
-    optionCount  = 0;
+    optionCount = 0;
     selectedOption = 0;
     consoleClear();
 }
@@ -19,9 +21,7 @@ void DialogueController::advanceTo(dialogue *next)
 // print the text up to animIndex using a precision field
 void DialogueController::renderAnimFrame()
 {
-    iprintf("\x1b[12;0H%.*s \n",
-            animIndex,
-            current->text.c_str());
+    iprintf("\x1b[12;0H%.*s \n", animIndex, current->text.c_str());
 }
 
 void DialogueController::renderOptions()
@@ -31,16 +31,14 @@ void DialogueController::renderOptions()
     iprintf("\x1b[12;0H%s\n", current->text.c_str());
     for (int i = 0; i < optionCount; i++)
     {
-        iprintf("%c %s\n",
-                i == selectedOption ? '>' : ' ',
-                current->selections[i].text.c_str());
+        iprintf("%c %s\n", i == selectedOption ? '>' : ' ', current->selections[i].text.c_str());
     }
 }
 
-void DialogueController::start(dialogue *firstLine)
+void DialogueController::start(dialogue* firstLine)
 {
     loadedImageId = -1; // force a bg load for the very first line
-    prevKeys      = 0;
+    prevKeys = 0;
     advanceTo(firstLine);
     active = true;
 }
@@ -77,7 +75,7 @@ void DialogueController::update(u32 keys)
         }
         else
         {
-            animDone    = true;
+            animDone = true;
             optionCount = (int)current->selections.size();
 
             if (optionCount > 0)
@@ -98,7 +96,7 @@ void DialogueController::update(u32 keys)
 
     // input
     u32 pressed = keys & ~prevKeys;
-    prevKeys    = keys;
+    prevKeys = keys;
 
     if (pressed & KEY_START)
     {
@@ -121,8 +119,12 @@ void DialogueController::update(u32 keys)
         }
         else if (pressed & KEY_A)
         {
-            dialogue *next = current->selections[selectedOption].next;
-            if (next == nullptr) { exit(); return; }
+            dialogue* next = current->selections[selectedOption].next;
+            if (next == nullptr)
+            {
+                exit();
+                return;
+            }
             advanceTo(next);
         }
     }
@@ -131,14 +133,22 @@ void DialogueController::update(u32 keys)
         // linear dialogue
         if (pressed & KEY_A)
         {
-            dialogue *next = current->next;
-            if (next == nullptr) { exit(); return; }
+            dialogue* next = current->next;
+            if (next == nullptr)
+            {
+                exit();
+                return;
+            }
             advanceTo(next);
         }
         else if (pressed & KEY_B)
         {
-            dialogue *next = current->prev;
-            if (next == nullptr) { exit(); return; }
+            dialogue* next = current->prev;
+            if (next == nullptr)
+            {
+                exit();
+                return;
+            }
             advanceTo(next);
         }
     }

@@ -1,9 +1,9 @@
-#include <nds.h>
-#include <stdio.h>
-#include <malloc.h>
+#include "DebugView.h"
 #include "core/globals.h"
 #include "math.h"
-#include "DebugView.h"
+#include <malloc.h>
+#include <nds.h>
+#include <stdio.h>
 
 // model
 #include "models/character.h"
@@ -15,8 +15,11 @@
 #include "dialogue/demo_dialogue.h"
 
 // TODO: dont forget to clear in future
-DebugView::DebugView() : battleParticipants(new std::vector<BattleParticipant *>({&merciless_Maya, &cowardly_Maya})),
-                         battleController(battleParticipants, &characterProfiles, battleStartCondition) {}
+DebugView::DebugView()
+    : battleParticipants(new std::vector<BattleParticipant*>({&merciless_Maya, &cowardly_Maya})),
+      battleController(battleParticipants, &characterProfiles, battleStartCondition)
+{
+}
 
 void DebugView::init()
 {
@@ -71,7 +74,21 @@ void DebugView::init()
     menuHUDCmpt.loadHUD();
 
     // setup player controller
-    playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH, IWATODAI_DORM_MAP_WIDTH, &iwatodai_dorm_map[0][0], tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, height, characterTranslate, characterFacingAngle);
+    playerCtrl = new CharacterController(IWATODAI_DORM_MAP_WIDTH,
+                                         IWATODAI_DORM_MAP_WIDTH,
+                                         &iwatodai_dorm_map[0][0],
+                                         tileSize,
+                                         worldOffsetX,
+                                         worldOffsetZ,
+                                         characterSize,
+                                         speed,
+                                         angleIncrement,
+                                         distance,
+                                         lookAhead,
+                                         angle,
+                                         height,
+                                         characterTranslate,
+                                         characterFacingAngle);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
@@ -81,7 +98,7 @@ void DebugView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int *bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = {textureBitmap};
+    const unsigned int* bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = {textureBitmap};
     iwatodaiDormEnv.load((fatBasePath + "environments/iwatodai_dorm.bin").c_str(), bitmapsEnv);
     totalPolyCount = iwatodaiDormEnv.getPolyCount();
 
@@ -185,16 +202,23 @@ ViewState DebugView::update()
         }
 
         // update camera position
-        gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
-                  camPos.targetX, camPos.targetY, camPos.targetZ,
-                  camPos.upX, camPos.upY, camPos.upZ);
+        gluLookAt(camPos.cameraX,
+                  camPos.cameraY,
+                  camPos.cameraZ,
+                  camPos.targetX,
+                  camPos.targetY,
+                  camPos.targetZ,
+                  camPos.upX,
+                  camPos.upY,
+                  camPos.upZ);
 
         // draw environment
         glPushMatrix();
         iwatodaiDormEnv.draw();
-        iwatodaiDormEnv.drawBillboards(
-            enableBillboards, // billboards face camera
-            camPos.cameraX, camPos.cameraY, camPos.cameraZ);
+        iwatodaiDormEnv.drawBillboards(enableBillboards, // billboards face camera
+                                       camPos.cameraX,
+                                       camPos.cameraY,
+                                       camPos.cameraZ);
         glPopMatrix(1);
 
         // draw character
@@ -218,10 +242,9 @@ ViewState DebugView::update()
             iprintf("\x1b[21;0H\033[31mtile(x,z): %d, %d",
                     (int)((charPos.x + worldOffsetX) / tileSize),
                     (int)((charPos.z + worldOffsetZ) / tileSize));
-            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d",
-                    (int)(charPos.x * 100),
-                    (int)(charPos.z * 100));
-            iprintf("\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
+            iprintf(
+                "\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
     }
 

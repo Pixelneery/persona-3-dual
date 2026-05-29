@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
-import sys, os, json, importlib, argparse
+import sys
+import os
+import json
+import importlib
+import argparse
 from typing import Optional
+
 
 def load_config(input_file: str) -> dict:
     """Load configuration from a sidecar JSON file next to the input file."""
@@ -9,7 +14,7 @@ def load_config(input_file: str) -> dict:
     # 1. Check exactly next to the file (e.g., assets/models/akihiko/akihiko.build.json)
     config_path = base + ".build.json"
     if os.path.exists(config_path):
-        with open(config_path, 'r') as f:
+        with open(config_path, "r") as f:
             return json.load(f)
 
     # 2. Check the parent directory (e.g., assets/models/akihiko.build.json)
@@ -17,25 +22,32 @@ def load_config(input_file: str) -> dict:
     file_name = os.path.basename(base)
     parent_config_path = os.path.join(parent_dir, file_name + ".build.json")
     if os.path.exists(parent_config_path):
-        with open(parent_config_path, 'r') as f:
+        with open(parent_config_path, "r") as f:
             return json.load(f)
 
     return {}
 
+
 def guess_asset_type(input_file: str) -> Optional[str]:
     """Guess the asset type based on file extension."""
     ext = os.path.splitext(input_file)[1].lower()
-    if ext == '.dlg': return 'dlg2dialogue'
-    if ext == '.mp4': return 'video2vid'
-    if ext == '.jmap': return 'jmap2map'
-    if ext == '.obj': return 'build_environment'
-    if ext == '.json': return 'build_model'
+    if ext == ".dlg":
+        return "dlg2dialogue"
+    if ext == ".mp4":
+        return "video2vid"
+    if ext == ".jmap":
+        return "jmap2map"
+    if ext == ".obj":
+        return "build_environment"
+    if ext == ".json":
+        return "build_model"
     return None
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="P3 Dual Asset Compiler")
-    parser.add_argument('input', help="Input file")
-    parser.add_argument('output', help="Output file or directory")
+    parser.add_argument("input", help="Input file")
+    parser.add_argument("output", help="Output file or directory")
     args, unknown = parser.parse_known_args()
 
     # Load JSON Sidecar
@@ -50,14 +62,16 @@ def main() -> None:
     # Inject unknown CLI flags into the config dynamically (Overrides JSON)
     i = 0
     while i < len(unknown):
-        if unknown[i].startswith('--'):
-            key = unknown[i][2:].replace('-', '_')
+        if unknown[i].startswith("--"):
+            key = unknown[i][2:].replace("-", "_")
             vals = []
             i += 1
-            while i < len(unknown) and not unknown[i].startswith('--'):
+            while i < len(unknown) and not unknown[i].startswith("--"):
                 val = unknown[i]
-                try: val = float(val) if '.' in val else int(val)
-                except ValueError: pass
+                try:
+                    val = float(val) if "." in val else int(val)
+                except ValueError:
+                    pass
                 vals.append(val)
                 i += 1
 
@@ -78,6 +92,7 @@ def main() -> None:
         sys.exit(1)
 
     converter.convert(args.input, args.output, config)
+
 
 if __name__ == "__main__":
     main()

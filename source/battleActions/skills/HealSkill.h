@@ -1,9 +1,9 @@
 #pragma once
-#include <nds.h>
-#include "Skill.h"
 #include "../BattleParticipant.h"
-#include "../party/PartyMember.h"
 #include "../enemies/Enemy.h"
+#include "../party/PartyMember.h"
+#include "Skill.h"
+#include <nds.h>
 
 struct HealSkill : Skill
 {
@@ -13,9 +13,9 @@ struct HealSkill : Skill
         skillType = SkillType::Heal;
     }
 
-    u32 calculateHealing(BattleParticipant &user);
+    u32 calculateHealing(BattleParticipant& user);
 
-private:
+  private:
     static const float magicBoostTable[20];
-    u32 getMagicBoost(u32 &magic);
+    u32 getMagicBoost(u32& magic);
 };

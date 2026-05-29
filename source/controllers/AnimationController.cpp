@@ -3,7 +3,9 @@
 #include <string.h>
 
 // Lifecycle
-AnimationController::AnimationController() {}
+AnimationController::AnimationController()
+{
+}
 
 AnimationController::~AnimationController()
 {
@@ -45,9 +47,9 @@ int AnimationController::textureSizeToEnum(int px)
 //   animCount x { char[32] name | u32 duration |
 //                 nodeCount x { u32 kfCount | Keyframe[kfCount] } }
 
-bool AnimationController::loadModel(const char *filepath)
+bool AnimationController::loadModel(const char* filepath)
 {
-    FILE *file = fopen(filepath, "rb");
+    FILE* file = fopen(filepath, "rb");
     if (!file)
         return false;
 
@@ -82,7 +84,7 @@ bool AnimationController::loadModel(const char *filepath)
 
     for (u32 i = 0; i < numNodes; i++)
     {
-        AnimNode &node = modelNodes[i];
+        AnimNode& node = modelNodes[i];
         node.id = i;
         node.children.clear();
         node.subLists.clear();
@@ -106,7 +108,7 @@ bool AnimationController::loadModel(const char *filepath)
 
             for (u32 s = 0; s < subListCount; s++)
             {
-                SubList &sl = node.subLists[s];
+                SubList& sl = node.subLists[s];
                 s32 texSlot;
                 u32 dlSize;
                 fread(&texSlot, sizeof(s32), 1, file);
@@ -153,14 +155,14 @@ bool AnimationController::loadModel(const char *filepath)
     animations.resize(numAnims);
     for (u32 i = 0; i < numAnims; i++)
     {
-        Animation &anim = animations[i];
+        Animation& anim = animations[i];
         fseek(file, 32, SEEK_CUR); // skip the 32-byte name string
         fread(&anim.duration, sizeof(u32), 1, file);
 
         anim.nodeTracks.resize(numNodes);
         for (u32 n = 0; n < numNodes; n++)
         {
-            AnimTrack &track = anim.nodeTracks[n];
+            AnimTrack& track = anim.nodeTracks[n];
             u32 numFrames;
             fread(&numFrames, sizeof(u32), 1, file);
             track.frames.resize(numFrames);
@@ -177,11 +179,8 @@ bool AnimationController::loadModel(const char *filepath)
 }
 
 // loadTextures
-bool AnimationController::loadTextures(int count,
-                                       const unsigned int **bitmaps,
-                                       const int *widths,
-                                       const int *heights,
-                                       const bool *isRGBA)
+bool AnimationController::loadTextures(
+    int count, const unsigned int** bitmaps, const int* widths, const int* heights, const bool* isRGBA)
 {
     if (!textureIDs.empty())
     {
@@ -201,7 +200,9 @@ bool AnimationController::loadTextures(int count,
 
         GL_TEXTURE_TYPE_ENUM fmt = isRGBA[i] ? GL_RGBA : GL_RGB;
 
-        glTexImage2D(GL_TEXTURE_2D, 0, fmt,
+        glTexImage2D(GL_TEXTURE_2D,
+                     0,
+                     fmt,
                      textureSizeToEnum(widths[i]),
                      textureSizeToEnum(heights[i]),
                      0,
@@ -282,22 +283,20 @@ void AnimationController::update()
 }
 
 // Interpolation
-Keyframe AnimationController::getInterpolatedFrame(const AnimTrack &track,
-                                                   int time, int nodeId)
+Keyframe AnimationController::getInterpolatedFrame(const AnimTrack& track, int time, int nodeId)
 {
     if (track.frames.empty())
         return {0, 0, 0, 0, 0, 0, 0};
     if (track.frames.size() == 1)
         return track.frames[0];
 
-    int &cacheIdx = trackIndices[nodeId];
+    int& cacheIdx = trackIndices[nodeId];
 
     if (cacheIdx >= (int)track.frames.size() - 1 || time < track.frames[cacheIdx].time)
     {
         cacheIdx = 0;
     }
-    while (cacheIdx < (int)track.frames.size() - 1 &&
-           time >= track.frames[cacheIdx + 1].time)
+    while (cacheIdx < (int)track.frames.size() - 1 && time >= track.frames[cacheIdx + 1].time)
     {
         cacheIdx++;
     }
@@ -346,18 +345,16 @@ void AnimationController::render()
 
 void AnimationController::renderNode(int nodeId)
 {
-    AnimNode &node = modelNodes[nodeId];
+    AnimNode& node = modelNodes[nodeId];
     glPushMatrix();
 
     // Apply animation transform around the node's pivot
     if (currentAnimIndex != -1)
     {
-        AnimTrack &track = animations[currentAnimIndex].nodeTracks[nodeId];
+        AnimTrack& track = animations[currentAnimIndex].nodeTracks[nodeId];
         Keyframe current = getInterpolatedFrame(track, currentFrame, nodeId);
 
-        glTranslatef32(node.pivotX + current.posX,
-                       node.pivotY + current.posY,
-                       node.pivotZ + current.posZ);
+        glTranslatef32(node.pivotX + current.posX, node.pivotY + current.posY, node.pivotZ + current.posZ);
         glRotateZi(current.rotZ);
         glRotateYi(current.rotY);
         glRotateXi(current.rotX);
@@ -367,7 +364,7 @@ void AnimationController::renderNode(int nodeId)
     // Draw each texture group
     int currentTexSlot = -2; // -2 == "nothing bound yet this node"
 
-    for (SubList &sl : node.subLists)
+    for (SubList& sl : node.subLists)
     {
         if (sl.displayListSize == 0)
             continue;

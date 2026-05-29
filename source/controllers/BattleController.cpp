@@ -1,11 +1,16 @@
 #include "BattleController.h"
-#include <cstdlib>
-#include <ctime>
 #include "./helpers/random.h"
 #include "core/globals.h"
+#include <cstdlib>
+#include <ctime>
 
-BattleController::BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles, BattleStartCondition iBattleStartCondition)
-    : battleParticipants(iBattleParticipants), characterProfiles(iCharacterProfiles), battleStartCondition(iBattleStartCondition) {}
+BattleController::BattleController(std::vector<BattleParticipant*>* iBattleParticipants,
+                                   CharacterProfiles* iCharacterProfiles,
+                                   BattleStartCondition iBattleStartCondition)
+    : battleParticipants(iBattleParticipants), characterProfiles(iCharacterProfiles),
+      battleStartCondition(iBattleStartCondition)
+{
+}
 
 void BattleController::execute()
 {
@@ -19,7 +24,7 @@ void BattleController::execute()
     battleParticipants->push_back(yukari);
     battleParticipants->push_back(junpei);
 
-    for (BattleParticipant *p : *battleParticipants)
+    for (BattleParticipant* p : *battleParticipants)
     {
         if (p->participantType == ParticipantType::Enemy)
             enemies.push_back(p);
@@ -46,10 +51,9 @@ void BattleController::update(u32 keys)
 
     switch (phase)
     {
-
     case BattlePhase::ChooseAction:
     {
-        PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
+        PartyMember* actor = static_cast<PartyMember*>(currentParticipantTurn);
 
         // render battleMenu
         battleMenuCmpt.loadActionOptions(&actions, actor->name);
@@ -87,7 +91,7 @@ void BattleController::update(u32 keys)
 
     case BattlePhase::ChooseSkill:
     {
-        PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
+        PartyMember* actor = static_cast<PartyMember*>(currentParticipantTurn);
 
         // render battleMenu
         battleMenuCmpt.loadSkillOptions(actor->curPersona);
@@ -96,9 +100,9 @@ void BattleController::update(u32 keys)
 
         if (((int)skillIndex != -1) && (keys & KEY_A))
         {
-            Skill *s = actor->curPersona->skills[skillIndex];
+            Skill* s = actor->curPersona->skills[skillIndex];
 
-            s32 *resource;
+            s32* resource;
             if (s->skillRace == SkillRace::mag)
                 resource = &actor->sp;
             else
@@ -128,7 +132,7 @@ void BattleController::update(u32 keys)
 
     case BattlePhase::ChoosePersona:
     {
-        PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
+        PartyMember* actor = static_cast<PartyMember*>(currentParticipantTurn);
 
         battleMenuCmpt.loadPersonaOptions(&actor->personas);
         personaIndex = -1;
@@ -158,20 +162,18 @@ void BattleController::update(u32 keys)
 
     case BattlePhase::ChooseTarget:
     {
-        PartyMember *actor = static_cast<PartyMember *>(currentParticipantTurn);
+        PartyMember* actor = static_cast<PartyMember*>(currentParticipantTurn);
 
         bool healTarget = selectedSkill && selectedSkill->skillType == SkillType::Heal;
 
-        std::vector<BattleParticipant *> targets;
+        std::vector<BattleParticipant*> targets;
         if (healTarget)
             targets = partyMembers;
         else
             targets = enemies;
 
-        targets.erase(
-            std::remove_if(targets.begin(), targets.end(), [](BattleParticipant *t)
-                           { return t->hp <= 0; }),
-            targets.end());
+        targets.erase(std::remove_if(targets.begin(), targets.end(), [](BattleParticipant* t) { return t->hp <= 0; }),
+                      targets.end());
 
         battleMenuCmpt.loadTargetOptions(&targets, healTarget);
         targetIndex = -1;
@@ -179,13 +181,12 @@ void BattleController::update(u32 keys)
 
         if ((int)targetIndex != -1 && (keys & KEY_A))
         {
-            BattleParticipant *target = targets[targetIndex];
+            BattleParticipant* target = targets[targetIndex];
             // Check so you cant heal target that has max hp
             if (selectedSkill && selectedSkill->skillType == SkillType::Heal && target->hp >= target->maxHp)
                 return;
-            BattleResult battleResult = (actionIndex == ACTION_ATTACK)
-                                            ? attack.resolve(actor, target)
-                                            : persona.resolve(actor, target, selectedSkill);
+            BattleResult battleResult = (actionIndex == ACTION_ATTACK) ? attack.resolve(actor, target)
+                                                                       : persona.resolve(actor, target, selectedSkill);
             applyResult(battleResult, target);
             advanceTurn();
         }
@@ -213,9 +214,9 @@ void BattleController::update(u32 keys)
 
     case BattlePhase::EnemyTurn:
     {
-        Enemy *enemy = static_cast<Enemy *>(currentParticipantTurn);
-        AttackSkill *skill = enemy->pickSkill();
-        BattleParticipant *target = enemy->pickTarget(partyMembers);
+        Enemy* enemy = static_cast<Enemy*>(currentParticipantTurn);
+        AttackSkill* skill = enemy->pickSkill();
+        BattleParticipant* target = enemy->pickTarget(partyMembers);
         BattleResult battleResult = enemy->resolve(target, skill);
         applyResult(battleResult, target);
         advanceTurn();
@@ -234,14 +235,14 @@ void BattleController::exit()
     phase = BattlePhase::Done;
 }
 
-bool BattleController::actorCanUse(PartyMember *actor, u32 actionIndex)
+bool BattleController::actorCanUse(PartyMember* actor, u32 actionIndex)
 {
     if (actor->participantType == ParticipantType::Player)
         return true;
     return actions[actionIndex]->possibleUsers == ParticipantType::Party;
 }
 
-void BattleController::applyResult(const BattleResult &battleResult, BattleParticipant *target)
+void BattleController::applyResult(const BattleResult& battleResult, BattleParticipant* target)
 {
     if (!battleResult.log.empty())
         pendingAlert += battleResult.log + "\n";
@@ -339,42 +340,53 @@ void BattleController::calculateTurnOrder()
     // random boost from 1.2 to 1.4 that priorizes party
     float boost = 1.2f + (randf() * 0.2f);
 
-    for (BattleParticipant *battleParticipant : *battleParticipants)
+    for (BattleParticipant* battleParticipant : *battleParticipants)
     {
-        battleParticipant->currentTurnOrderAgility = battleParticipant->participantType == ParticipantType::Enemy
-                                                         ? static_cast<Enemy *>(battleParticipant)->battleStats.ag
-                                                         : static_cast<PartyMember *>(battleParticipant)->curPersona->battleStats.ag * boost;
+        battleParticipant->currentTurnOrderAgility =
+            battleParticipant->participantType == ParticipantType::Enemy
+                ? static_cast<Enemy*>(battleParticipant)->battleStats.ag
+                : static_cast<PartyMember*>(battleParticipant)->curPersona->battleStats.ag * boost;
     }
 
     if (battleStartCondition == BattleStartCondition::PartyAdvantage)
     {
-        std::sort(battleParticipants->begin(), battleParticipants->end(), [](BattleParticipant *a, BattleParticipant *b)
+        std::sort(battleParticipants->begin(),
+                  battleParticipants->end(),
+                  [](BattleParticipant* a, BattleParticipant* b)
                   {
-                          bool aIsParty = a->participantType == ParticipantType::Party || a->participantType == ParticipantType::Player;
-                          bool bIsParty = b->participantType == ParticipantType::Party || b->participantType == ParticipantType::Player;
+                      bool aIsParty =
+                          a->participantType == ParticipantType::Party || a->participantType == ParticipantType::Player;
+                      bool bIsParty =
+                          b->participantType == ParticipantType::Party || b->participantType == ParticipantType::Player;
 
-                        //prioritize by type
-                          if (aIsParty != bIsParty)
-                              return aIsParty > bIsParty;
-                        //decided by agility when same group
-                          return a->currentTurnOrderAgility > b->currentTurnOrderAgility; });
+                      //prioritize by type
+                      if (aIsParty != bIsParty)
+                          return aIsParty > bIsParty;
+                      //decided by agility when same group
+                      return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
+                  });
     }
     else if (battleStartCondition == BattleStartCondition::EnemyAdvantage)
     {
-        std::sort(battleParticipants->begin(), battleParticipants->end(), [](BattleParticipant *a, BattleParticipant *b)
+        std::sort(battleParticipants->begin(),
+                  battleParticipants->end(),
+                  [](BattleParticipant* a, BattleParticipant* b)
                   {
-                          bool aIsEnemy = a->participantType == ParticipantType::Enemy;
-                          bool bIsEnemy = b->participantType == ParticipantType::Enemy;
+                      bool aIsEnemy = a->participantType == ParticipantType::Enemy;
+                      bool bIsEnemy = b->participantType == ParticipantType::Enemy;
 
-                        //prioritize by type
-                          if (aIsEnemy != bIsEnemy)
-                              return aIsEnemy > bIsEnemy;
-                        //decided by agility when same group
-                          return a->currentTurnOrderAgility > b->currentTurnOrderAgility; });
+                      //prioritize by type
+                      if (aIsEnemy != bIsEnemy)
+                          return aIsEnemy > bIsEnemy;
+                      //decided by agility when same group
+                      return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
+                  });
     }
     else
     {
-        std::sort(battleParticipants->begin(), battleParticipants->end(), [](BattleParticipant *a, BattleParticipant *b)
+        std::sort(battleParticipants->begin(),
+                  battleParticipants->end(),
+                  [](BattleParticipant* a, BattleParticipant* b)
                   { return a->currentTurnOrderAgility > b->currentTurnOrderAgility; });
     }
 }
@@ -388,7 +400,7 @@ void BattleController::handleDeadParticipants()
             continue;
         }
 
-        BattleParticipant *dead = battleParticipants->at(i);
+        BattleParticipant* dead = battleParticipants->at(i);
 
         if (dead->participantType == ParticipantType::Player)
         {
@@ -397,7 +409,7 @@ void BattleController::handleDeadParticipants()
         }
 
         bool enemiesAlive = false;
-        for (BattleParticipant *enemy : enemies)
+        for (BattleParticipant* enemy : enemies)
         {
             if (enemy->hp > 0)
             {

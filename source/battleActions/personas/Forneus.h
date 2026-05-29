@@ -9,7 +9,7 @@ struct Forneus : PersonaBase
 {
     Bash bash;
     Bufu bufu;
-    Skill *mySkills[2];
+    Skill* mySkills[2];
 
     Forneus()
     {

@@ -1,8 +1,8 @@
+#include "SignContractView.h"
+#include "core/enums.h"
+#include "core/globals.h"
 #include <nds.h>
 #include <stdio.h>
-#include "core/globals.h"
-#include "core/enums.h"
-#include "SignContractView.h"
 
 // assets
 #include "contract.h"

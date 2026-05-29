@@ -1,10 +1,10 @@
 #include "AttackAction.h"
 #include <stdlib.h>
 
-BattleResult AttackAction::resolve(PartyMember *user, BattleParticipant *target, Skill * /*skill*/)
+BattleResult AttackAction::resolve(PartyMember* user, BattleParticipant* target, Skill* /*skill*/)
 {
-    AttackSkill *atk = user->baseAttackAction;
-    Enemy *enemy = static_cast<Enemy *>(target);
+    AttackSkill* atk = user->baseAttackAction;
+    Enemy* enemy = static_cast<Enemy*>(target);
 
     u32 accuracy = atk->calculateHitratePlayer(&user->curPersona->battleStats, &enemy->battleStats);
     bool hit = accuracy > u32(rand() % 100);
@@ -12,7 +12,8 @@ BattleResult AttackAction::resolve(PartyMember *user, BattleParticipant *target,
     if (!hit)
         return {false, 0, false, "Miss"};
 
-    u32 damage = atk->calculateDamagePlayer(&user->curPersona->battleStats, &enemy->battleStats, &user->lv, &target->lv);
+    u32 damage =
+        atk->calculateDamagePlayer(&user->curPersona->battleStats, &enemy->battleStats, &user->lv, &target->lv);
     bool oneMore = false;
 
     u32 affinity = enemy->battleStats.affinities[atk->element];

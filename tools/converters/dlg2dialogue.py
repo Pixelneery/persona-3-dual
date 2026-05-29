@@ -195,7 +195,7 @@ class DialogueParser:
         for i, dl in enumerate(lines):
             if i > 0:
                 dl.prev_index = i - 1
-            if dialogue_ends.get(i) == True:
+            if dialogue_ends.get(i):
                 dl.next_index = None
             elif not dl.selections and dl.next_index is None:
                 if i + 1 < len(lines):
@@ -312,7 +312,7 @@ class CodeGenerator:
         out = []
         s = self.scene
         out += [
-            f"#include <nds.h>",
+            "#include <nds.h>",
             f'#include "{s}_dialogue.h"',
             "",
             f"int {s}_dialogue_bg_slot = 0;",
@@ -335,7 +335,7 @@ class CodeGenerator:
             out.append(f"const char* {vp}_bg_names[{nb}] = {{ {bg_name_entries} }};")
             out.append(f"void (*{vp}_bg_loaders[{nb}])() = {{")
             for i, bg in enumerate(ia.bg_order):
-                out.append(f"    nullptr,")
+                out.append("    nullptr,")
             out.append("};")
             out.append("")
 
@@ -343,7 +343,7 @@ class CodeGenerator:
                 f"void {vp}_load_bg(int bgIndex) {{",
                 f"    if (bgIndex >= 0 && bgIndex < {nb} && {vp}_bg_loaders[bgIndex])",
                 f"        {vp}_bg_loaders[bgIndex]();",
-                f"}}",
+                "}",
                 "",
                 f"void {vp}_load() {{",
             ]
@@ -354,15 +354,15 @@ class CodeGenerator:
                     f"    {vp}_bg_loaders[{i}] = [](){{",
                     f"        dmaCopy({nm}Tiles, bgGetGfxPtr({s}_dialogue_bg_slot), {nm}TilesLen);",
                     f"        dmaCopy({nm}Map, bgGetMapPtr({s}_dialogue_bg_slot), {nm}MapLen);",
-                    f"        vramSetBankH(VRAM_H_LCD);",
+                    "        vramSetBankH(VRAM_H_LCD);",
                     f"        dmaCopy({nm}Pal, &VRAM_H_EXT_PALETTE[0][0], {nm}PalLen);",
-                    f"        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);",
+                    "        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);",
                     f"        bgShow({s}_dialogue_bg_slot);",
-                    f"    }};",
+                    "    };",
                 ]
             out += [
                 f"    {vp}_init();",
-                f"}}",
+                "}",
                 "",
                 f"dialogue {vp}_lines[{n}];",
                 "",

@@ -2,15 +2,15 @@
 #include "../party/PartyMember.h"
 #include <stdlib.h>
 
-AttackSkill *Enemy::pickSkill()
+AttackSkill* Enemy::pickSkill()
 {
     u32 roll = rand() % (attackCount + 1);
     return (roll == 0) ? baseAttackAction : attackSkill[roll - 1];
 }
 
-BattleParticipant *Enemy::pickTarget(std::vector<BattleParticipant *> &partyMembers)
+BattleParticipant* Enemy::pickTarget(std::vector<BattleParticipant*>& partyMembers)
 {
-    BattleParticipant *target = nullptr;
+    BattleParticipant* target = nullptr;
     do
     {
         target = partyMembers[rand() % partyMembers.size()];
@@ -19,11 +19,11 @@ BattleParticipant *Enemy::pickTarget(std::vector<BattleParticipant *> &partyMemb
     return target;
 }
 
-BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)
+BattleResult Enemy::resolve(BattleParticipant* target, AttackSkill* skill)
 {
-    PartyMember *party = static_cast<PartyMember *>(target);
+    PartyMember* party = static_cast<PartyMember*>(target);
 
-    s32 *resource;
+    s32* resource;
     if (skill->skillRace == SkillRace::mag)
         resource = &sp;
     else
@@ -43,8 +43,10 @@ BattleResult Enemy::resolve(BattleParticipant *target, AttackSkill *skill)
         return {false, 0, false, targetLog + "Miss"};
 
     u32 damage = (skill == baseAttackAction)
-                     ? skill->calculateDamageEnemyRegular(&battleStats, &party->curPersona->battleStats, &lv, &target->lv, party->armour)
-                     : skill->calculateDamageEnemySkill(&battleStats, &party->curPersona->battleStats, &lv, &target->lv, party->armour);
+                     ? skill->calculateDamageEnemyRegular(
+                           &battleStats, &party->curPersona->battleStats, &lv, &target->lv, party->armour)
+                     : skill->calculateDamageEnemySkill(
+                           &battleStats, &party->curPersona->battleStats, &lv, &target->lv, party->armour);
 
     if (party->guarding)
         damage = (u32)(damage * 0.4f);

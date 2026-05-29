@@ -90,7 +90,7 @@ def to_header(rows, height, width, stem):
         lines.append(f"    {{{values}}}{comma}")
     lines.append("};")
     lines.append("")
-    lines.append(f"#endif")
+    lines.append("#endif")
     return "\n".join(lines) + "\n"
 
 

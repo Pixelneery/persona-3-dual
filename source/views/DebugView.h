@@ -1,27 +1,27 @@
 #include "core/BaseView.h"
 #include <nds/arm9/console.h>
 // controllers
-#include "controllers/DialogueController.h"
 #include "controllers/CharacterController.h"
+#include "controllers/DialogueController.h"
 // environments
 #include "environments/iwatodai_dorm.h"
 // battle-related
-#include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/enemies/Cowardly_Maya.h"
-#include "./battleActions/enemies/Merciless_Maya.h"
 #include "./battleActions/BattleParticipant.h"
 #include "./battleActions/BattleStartCondition.h"
+#include "./battleActions/enemies/Cowardly_Maya.h"
+#include "./battleActions/enemies/Enemy.h"
+#include "./battleActions/enemies/Merciless_Maya.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
 class DebugView : public BaseView
 {
-public:
+  public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
     DebugView();
 
-private:
+  private:
     touchPosition touch;
 
     // sub screen
@@ -37,13 +37,13 @@ private:
     // Battle participants
     Cowardly_Maya cowardly_Maya;
     Merciless_Maya merciless_Maya;
-    std::vector<BattleParticipant *> *battleParticipants;
+    std::vector<BattleParticipant*>* battleParticipants;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
     // controllers
     BattleController battleController;
-    CharacterController *playerCtrl;
+    CharacterController* playerCtrl;
     // camera pos
     cameraPosition camPos;
     // world

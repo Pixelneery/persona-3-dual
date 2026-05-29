@@ -1,6 +1,6 @@
 #pragma once
-#include <nds.h>
 #include <maxmod9.h>
+#include <nds.h>
 #include <stdio.h>
 
 #define AUDIO_SAMPLE_RATE 32000
@@ -10,18 +10,18 @@
 
 class MusicController
 {
-public:
+  public:
     MusicController();
 
     // audio
-    void init(const char *filePath, float loopStartSeconds = 0.0f, float loopEndSeconds = -1.0f);
+    void init(const char* filePath, float loopStartSeconds = 0.0f, float loopEndSeconds = -1.0f);
     void update();
     void pause();
     void resume();
 
     // audio for video streams
     void initVideoAudio();
-    void pushVideoAudio(const u8 *data, size_t size);
+    void pushVideoAudio(const u8* data, size_t size);
     float getVideoTime();
 
     // sfx
@@ -31,6 +31,6 @@ public:
 
     void cleanup();
 
-private:
-    long getAudioStartOffset(FILE *file);
+  private:
+    long getAudioStartOffset(FILE* file);
 };

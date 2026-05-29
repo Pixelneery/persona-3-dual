@@ -16,120 +16,109 @@
 
 class PauseMenuComponent : public BaseMenu
 {
-protected:
+  protected:
     void loadBg(int bgIndex) override;
 
-private:
-    MenuOption menuOptions[MENU_OPTIONS] =
-    {
-        {"Debug",   -1, MENU_BIND(PauseMenuComponent, openDebugMenu)},
-        {"Skill",   -1, MENU_BIND(PauseMenuComponent, openSkillMenu)},
-        {"Item",    -1, MENU_BIND(PauseMenuComponent, openItemMenu)},
+  private:
+    MenuOption menuOptions[MENU_OPTIONS] = {
+        {"Debug", -1, MENU_BIND(PauseMenuComponent, openDebugMenu)},
+        {"Skill", -1, MENU_BIND(PauseMenuComponent, openSkillMenu)},
+        {"Item", -1, MENU_BIND(PauseMenuComponent, openItemMenu)},
         {"Persona", -1, MENU_BIND(PauseMenuComponent, openPersonaMenu)},
-        {"Equip",   -1, MENU_BIND(PauseMenuComponent, openEquipMenu)},
-        {"Status",  -1, MENU_BIND(PauseMenuComponent, openStatusMenu)},
-        {"S.Link",  -1, MENU_BIND(PauseMenuComponent, openSLinkMenu)},
-        {"System",  -1, MENU_BIND(PauseMenuComponent, openSystemMenu)},
+        {"Equip", -1, MENU_BIND(PauseMenuComponent, openEquipMenu)},
+        {"Status", -1, MENU_BIND(PauseMenuComponent, openStatusMenu)},
+        {"S.Link", -1, MENU_BIND(PauseMenuComponent, openSLinkMenu)},
+        {"System", -1, MENU_BIND(PauseMenuComponent, openSystemMenu)},
     };
 
-    MenuOption debugOptions[DEBUG_OPTIONS] =
-    {
-        {"DisclaimerView",            -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"IntroView",                 -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"MainMenuView",              -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"IwatodaiDormView",          -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"IwatodaiStreetView",        -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"StationView",               -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"SignContractView",          -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"PaulowniaMallView",         -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"DebugView",                 -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"IntroVideo",                -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"Cutscene1",                 -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"Cutscene2",                 -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"Debug Dialogue",            -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"Toggle Billboards",         -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"Toggle Debug Print",        -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+    MenuOption debugOptions[DEBUG_OPTIONS] = {
+        {"DisclaimerView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"IntroView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"MainMenuView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"IwatodaiDormView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"IwatodaiStreetView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"StationView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"SignContractView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"PaulowniaMallView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"DebugView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"IntroVideo", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"Cutscene1", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"Cutscene2", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"Debug Dialogue", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"Toggle Billboards", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
+        {"Toggle Debug Print", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"Play Character Animations", -1, MENU_BIND(PauseMenuComponent, openCharacterAnimMenu)},
     };
 
-    MenuOption skillOptions[SKILL_OPTIONS] =
-    {
-        {"Makoto",   0, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
-        {"Yukari",   1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
-        {"Junpei",   3, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
-        {"Akihiko",  2, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+    MenuOption skillOptions[SKILL_OPTIONS] = {
+        {"Makoto", 0, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+        {"Yukari", 1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+        {"Junpei", 3, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+        {"Akihiko", 2, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
         {"Mitsuru", -1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
-        {"Aigis",   -1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
-        {"Ken",     -1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
-        {"Koromaru",-1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
-        {"Shinjiro",-1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+        {"Aigis", -1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+        {"Ken", -1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+        {"Koromaru", -1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
+        {"Shinjiro", -1, MENU_BIND(PauseMenuComponent, skillOptionSelected)},
     };
 
-    MenuOption itemOptions[ITEM_OPTIONS] =
-    {
+    MenuOption itemOptions[ITEM_OPTIONS] = {
         {"Life Stone", -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
-        {"Medicine",   -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
-        {"Bead",       -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
+        {"Medicine", -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
+        {"Bead", -1, MENU_BIND(PauseMenuComponent, itemOptionSelected)},
     };
 
-    MenuOption equipOptions[EQUIP_OPTIONS] =
-    {
-        {"Makoto",   -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
-        {"Yukari",   -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
-        {"Junpei",   -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
-        {"Akihiko",  -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
-        {"Mitsuru",  -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
-        {"Aigis",    -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
-        {"Ken",      -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
+    MenuOption equipOptions[EQUIP_OPTIONS] = {
+        {"Makoto", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
+        {"Yukari", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
+        {"Junpei", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
+        {"Akihiko", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
+        {"Mitsuru", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
+        {"Aigis", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
+        {"Ken", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
         {"Koromaru", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
         {"Shinjiro", -1, MENU_BIND(PauseMenuComponent, equipOptionSelected)},
     };
 
-    MenuOption personaOptions[PERSONA_OPTIONS] =
-    {
-        {"Jack Frost",  -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
+    MenuOption personaOptions[PERSONA_OPTIONS] = {
+        {"Jack Frost", -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
         {"Black Frost", -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
-        {"King Frost",  -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
+        {"King Frost", -1, MENU_BIND(PauseMenuComponent, personaOptionSelected)},
     };
 
-    MenuOption statsOptions[STATS_OPTIONS] =
-    {
-        {"Makoto",   -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
-        {"Yukari",   -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
-        {"Junpei",   -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
-        {"Akihiko",  -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
-        {"Mitsuru",  -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
-        {"Aigis",    -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
-        {"Ken",      -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
+    MenuOption statsOptions[STATS_OPTIONS] = {
+        {"Makoto", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
+        {"Yukari", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
+        {"Junpei", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
+        {"Akihiko", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
+        {"Mitsuru", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
+        {"Aigis", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
+        {"Ken", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
         {"Koromaru", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
         {"Shinjiro", -1, MENU_BIND(PauseMenuComponent, statsOptionSelected)},
     };
 
-    MenuOption sLinkOptions[S_LINK_OPTIONS] =
-    {
-        {"Fool",     -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
+    MenuOption sLinkOptions[S_LINK_OPTIONS] = {
+        {"Fool", -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
         {"Magician", -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
-        {"Emperor",  -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
+        {"Emperor", -1, MENU_BIND(PauseMenuComponent, sLinkOptionSelected)},
     };
 
-    MenuOption systemOptions[SYSTEM_OPTIONS] =
-    {
-        {"Tutorial",        -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
-        {"Config",          -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
-        {"Dictionary",      -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
-        {"Load Data",       -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
-        {"Save Data",       -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
+    MenuOption systemOptions[SYSTEM_OPTIONS] = {
+        {"Tutorial", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
+        {"Config", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
+        {"Dictionary", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
+        {"Load Data", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
+        {"Save Data", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
         {"Return to Title", -1, MENU_BIND(PauseMenuComponent, systemOptionSelected)},
     };
 
-    MenuOption skills[SKILLS] =
-    {
+    MenuOption skills[SKILLS] = {
         {"Skill 1", -1, nullptr},
         {"Skill 2", -1, nullptr},
     };
 
-    MenuOption characterAnimOptions[CHARACTER_ANIM_OPTIONS] =
-    {
+    MenuOption characterAnimOptions[CHARACTER_ANIM_OPTIONS] = {
         {"Toggle Auto Animations", -1, MENU_BIND(PauseMenuComponent, characterAnimOptionSelected)},
         {"0000", -1, MENU_BIND(PauseMenuComponent, characterAnimOptionSelected)},
         {"0001", -1, MENU_BIND(PauseMenuComponent, characterAnimOptionSelected)},
@@ -179,7 +168,7 @@ private:
     ViewState systemOptionSelected();
     ViewState characterAnimOptionSelected();
 
-public:
-    void init(int iBgSlot, bool *isActive, const std::string &iPauseMessage = "Pause") override;
+  public:
+    void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "Pause") override;
     ViewState update(int keys) override;
 };

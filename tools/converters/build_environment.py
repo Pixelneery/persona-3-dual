@@ -1,4 +1,6 @@
-import os, re, argparse
+import os
+import re
+import argparse
 from . import obj2environment
 
 
@@ -19,7 +21,11 @@ def convert(input_file, output_dir, config):
         return
 
     grit_flags = config.get("grit_flags", "-gb -gB16 -p!")
-    pngs = [l.strip() for l in open(tex_list) if l.strip() and not l.startswith("#")]
+    pngs = [
+        line.strip()
+        for line in open(tex_list)
+        if line.strip() and not line.startswith("#")
+    ]
 
     for png in pngs:
         if not os.path.exists(png):

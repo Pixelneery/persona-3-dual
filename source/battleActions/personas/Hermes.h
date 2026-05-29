@@ -7,7 +7,7 @@
 struct Hermes : PersonaBase
 {
     Power_Slash power_Slash;
-    Skill *mySkills[1];
+    Skill* mySkills[1];
 
     Hermes()
     {

@@ -1,7 +1,7 @@
 #pragma once
-#include <nds.h>
 #include "Element.h"
 #include "armours/Armour.h"
+#include <nds.h>
 
 struct BattleStats
 {
@@ -34,7 +34,7 @@ struct BattleStats
         Neutral // almighty
     };
 
-    BattleStats *getBattleStats()
+    BattleStats* getBattleStats()
     {
         return this;
     };

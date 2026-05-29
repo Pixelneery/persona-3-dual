@@ -1,25 +1,25 @@
 #pragma once
-#include <nds.h>
-#include "../personas/PersonaBase.h"
-#include "../armours/Armour.h"
-#include "../shoes/Shoe.h"
 #include "../BattleParticipant.h"
 #include "../ParticipantType.h"
+#include "../armours/Armour.h"
+#include "../personas/PersonaBase.h"
+#include "../shoes/Shoe.h"
 #include "CharacterProfile.h"
+#include <nds.h>
 
 struct PartyMember : BattleParticipant
 {
-    ArmourType *armourType;
-    Armour *armour;
-    Shoe *shoe;
-    std::vector<PersonaBase *> personas;
-    PersonaBase *curPersona;
+    ArmourType* armourType;
+    Armour* armour;
+    Shoe* shoe;
+    std::vector<PersonaBase*> personas;
+    PersonaBase* curPersona;
 
     bool guarding = false;
 
-    CharacterProfile *characterProfile;
+    CharacterProfile* characterProfile;
 
-    PartyMember(CharacterProfile *iCharacterProfile) : characterProfile(iCharacterProfile)
+    PartyMember(CharacterProfile* iCharacterProfile) : characterProfile(iCharacterProfile)
     {
         name = characterProfile->name;
         maxHp = characterProfile->maxHp;
@@ -37,5 +37,7 @@ struct PartyMember : BattleParticipant
         personas = characterProfile->personas;
         curPersona = characterProfile->curPersona;
     }
-    ~PartyMember() {}
+    ~PartyMember()
+    {
+    }
 };

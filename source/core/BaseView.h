@@ -3,7 +3,7 @@
 
 class BaseView
 {
-public:
+  public:
     // the destructor (runs when we delete a view)
     // viritual is used for overriding functions (polymorphism)
     // in this case, it allows child classes instances (ex. IntroView) to be properly cleaned up when referred throguh the parent (View) class

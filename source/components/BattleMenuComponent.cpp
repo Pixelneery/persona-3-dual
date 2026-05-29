@@ -13,7 +13,7 @@ void BattleMenuComponent::loadBg(int bgIndex)
     return;
 }
 
-void BattleMenuComponent::init(int iBgSlot, bool *isActive, const std::string &iPauseMessage)
+void BattleMenuComponent::init(int iBgSlot, bool* isActive, const std::string& iPauseMessage)
 {
     BaseMenu::init(iBgSlot, isActive, iPauseMessage);
 
@@ -23,7 +23,7 @@ void BattleMenuComponent::init(int iBgSlot, bool *isActive, const std::string &i
 }
 
 // option loaders
-void BattleMenuComponent::loadActionOptions(std::array<ActionBase *, 4> *actions, std::string name)
+void BattleMenuComponent::loadActionOptions(std::array<ActionBase*, 4>* actions, std::string name)
 {
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::ACTION)
@@ -41,11 +41,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase *, 4> *actions
 
     for (int i = 0; i < count; i++)
     {
-        MenuOption option =
-            {
-                actions->at(i)->name.c_str(),
-                -1,
-                MENU_BIND(BattleMenuComponent, battleOptionSelected)};
+        MenuOption option = {actions->at(i)->name.c_str(), -1, MENU_BIND(BattleMenuComponent, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
@@ -53,7 +49,7 @@ void BattleMenuComponent::loadActionOptions(std::array<ActionBase *, 4> *actions
     optionCount = count;
 }
 
-void BattleMenuComponent::loadSkillOptions(PersonaBase *persona)
+void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
 {
     // skip if action options have already been loaded
     if (loadedOption == BattleMenuOptions::SKILL)
@@ -71,11 +67,8 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase *persona)
 
     for (int i = 0; i < count; i++)
     {
-        MenuOption option =
-            {
-                persona->skills[i]->name.c_str(),
-                -1,
-                MENU_BIND(BattleMenuComponent, battleOptionSelected)};
+        MenuOption option = {
+            persona->skills[i]->name.c_str(), -1, MENU_BIND(BattleMenuComponent, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
@@ -83,7 +76,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase *persona)
     optionCount = count;
 }
 
-void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase *> *personas)
+void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase*>* personas)
 {
     if (loadedOption == BattleMenuOptions::PERSONA)
         return;
@@ -95,11 +88,7 @@ void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase *> *persona
 
     for (int i = 0; i < count; i++)
     {
-        MenuOption option =
-            {
-                personas->at(i)->name.c_str(),
-                -1,
-                MENU_BIND(BattleMenuComponent, battleOptionSelected)};
+        MenuOption option = {personas->at(i)->name.c_str(), -1, MENU_BIND(BattleMenuComponent, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
@@ -107,9 +96,10 @@ void BattleMenuComponent::loadPersonaOptions(std::vector<PersonaBase *> *persona
     optionCount = count;
 }
 
-void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant *> *targets, bool healTarget)
+void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant*>* targets, bool healTarget)
 {
-    BattleMenuOptions targetLoadedOption = healTarget ? BattleMenuOptions::TARGET_HEAL : BattleMenuOptions::TARGET_ENEMY;
+    BattleMenuOptions targetLoadedOption =
+        healTarget ? BattleMenuOptions::TARGET_HEAL : BattleMenuOptions::TARGET_ENEMY;
 
     battleOptions.clear();
     loadedOption = targetLoadedOption;
@@ -121,11 +111,7 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant *> *ta
         if (targets->at(i)->hp <= 0)
             continue;
 
-        MenuOption option =
-            {
-                targets->at(i)->name.c_str(),
-                -1,
-                MENU_BIND(BattleMenuComponent, battleOptionSelected)};
+        MenuOption option = {targets->at(i)->name.c_str(), -1, MENU_BIND(BattleMenuComponent, battleOptionSelected)};
         battleOptions.push_back(option);
     }
 
@@ -133,7 +119,7 @@ void BattleMenuComponent::loadTargetOptions(std::vector<BattleParticipant *> *ta
     optionCount = battleOptions.size();
 }
 
-void BattleMenuComponent::loadAlertOptions(const std::string &text)
+void BattleMenuComponent::loadAlertOptions(const std::string& text)
 {
     if (loadedOption == BattleMenuOptions::ALERT)
     {

@@ -1,15 +1,16 @@
-#include <nds.h>
-#include <stdio.h>
-#include <malloc.h>
+#include "PaulowniaMallView.h"
 #include "core/globals.h"
 #include "math.h"
-#include "PaulowniaMallView.h"
+#include <malloc.h>
+#include <nds.h>
+#include <stdio.h>
 
 // model
 #include "models/character.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 // environment textures
+#include "f008_001_acyane.h"
 #include "f008_001_cd.h"
 #include "f008_001_chair.h"
 #include "f008_001_enter01.h"
@@ -45,11 +46,13 @@
 #include "f008_001_sky.h"
 #include "f008_001_wl01.h"
 #include "f008_001_wl02.h"
-#include "f008_001_acyane.h"
 
 // TODO: dont forget to clear in future
-PaulowniaMallView::PaulowniaMallView() : battleParticipants(new std::vector<BattleParticipant *>({&merciless_Maya, &cowardly_Maya})),
-                                         battleController(battleParticipants, &characterProfiles, battleStartCondition) {}
+PaulowniaMallView::PaulowniaMallView()
+    : battleParticipants(new std::vector<BattleParticipant*>({&merciless_Maya, &cowardly_Maya})),
+      battleController(battleParticipants, &characterProfiles, battleStartCondition)
+{
+}
 
 void PaulowniaMallView::init()
 {
@@ -105,7 +108,21 @@ void PaulowniaMallView::init()
 
     // setup player controller
     // TODO: add mapping
-    playerCtrl = new CharacterController(0, 0, nullptr, tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, height, characterTranslate, characterFacingAngle);
+    playerCtrl = new CharacterController(0,
+                                         0,
+                                         nullptr,
+                                         tileSize,
+                                         worldOffsetX,
+                                         worldOffsetZ,
+                                         characterSize,
+                                         speed,
+                                         angleIncrement,
+                                         distance,
+                                         lookAhead,
+                                         angle,
+                                         height,
+                                         characterTranslate,
+                                         characterFacingAngle);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/color_your_night.pcm").c_str(), 0.0f, 920.973f);
@@ -115,45 +132,17 @@ void PaulowniaMallView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int *bitmapsEnv[PAULOWNIA_MALL_TEX_COUNT] =
-        {
-            f008_001_fl02Bitmap,
-            f008_001_fl03Bitmap,
-            f008_001_gsflBitmap,
-            f008_001_hasiraBitmap,
-            f008_001_kaidanBitmap,
-            f008_001_skyBitmap,
-            f008_001_wl01Bitmap,
-            f008_001_wl02Bitmap,
-            f008_001_komono01Bitmap,
-            f008_001_fun03Bitmap,
-            f008_001_glowBitmap,
-            f008_001_komono02Bitmap,
-            f008_001_ligflaBitmap,
-            f008_001_shadowBitmap,
-            f008_001_enter02Bitmap,
-            f008_001_redrectBitmap,
-            f008_001_plantABitmap,
-            f008_001_keimarkBitmap,
-            f008_001_jyutanBitmap,
-            f008_001_fl01Bitmap,
-            f008_001_gra02Bitmap,
-            f008_001_graBitmap,
-            f008_001_hihoBitmap,
-            f008_001_kanban03Bitmap,
-            f008_001_kanbanBitmap,
-            f008_001_fun01Bitmap,
-            f008_001_fun02Bitmap,
-            f008_001_acyaneBitmap,
-            f008_001_enter01Bitmap,
-            f008_001_karBitmap,
-            f008_001_glassBitmap,
-            f008_001_chairBitmap,
-            f008_001_gaflBitmap,
-            f008_001_cdBitmap,
-            f008_001_kanban02Bitmap,
-            f008_001_jitensyaBitmap,
-        };
+    const unsigned int* bitmapsEnv[PAULOWNIA_MALL_TEX_COUNT] = {
+        f008_001_fl02Bitmap,     f008_001_fl03Bitmap,    f008_001_gsflBitmap,     f008_001_hasiraBitmap,
+        f008_001_kaidanBitmap,   f008_001_skyBitmap,     f008_001_wl01Bitmap,     f008_001_wl02Bitmap,
+        f008_001_komono01Bitmap, f008_001_fun03Bitmap,   f008_001_glowBitmap,     f008_001_komono02Bitmap,
+        f008_001_ligflaBitmap,   f008_001_shadowBitmap,  f008_001_enter02Bitmap,  f008_001_redrectBitmap,
+        f008_001_plantABitmap,   f008_001_keimarkBitmap, f008_001_jyutanBitmap,   f008_001_fl01Bitmap,
+        f008_001_gra02Bitmap,    f008_001_graBitmap,     f008_001_hihoBitmap,     f008_001_kanban03Bitmap,
+        f008_001_kanbanBitmap,   f008_001_fun01Bitmap,   f008_001_fun02Bitmap,    f008_001_acyaneBitmap,
+        f008_001_enter01Bitmap,  f008_001_karBitmap,     f008_001_glassBitmap,    f008_001_chairBitmap,
+        f008_001_gaflBitmap,     f008_001_cdBitmap,      f008_001_kanban02Bitmap, f008_001_jitensyaBitmap,
+    };
 
     paulowniaMallEnv.load((fatBasePath + "environments/paulownia_mall.bin").c_str(), bitmapsEnv);
     totalPolyCount = paulowniaMallEnv.getPolyCount();
@@ -258,16 +247,23 @@ ViewState PaulowniaMallView::update()
         }
 
         // update camera position
-        gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
-                  camPos.targetX, camPos.targetY, camPos.targetZ,
-                  camPos.upX, camPos.upY, camPos.upZ);
+        gluLookAt(camPos.cameraX,
+                  camPos.cameraY,
+                  camPos.cameraZ,
+                  camPos.targetX,
+                  camPos.targetY,
+                  camPos.targetZ,
+                  camPos.upX,
+                  camPos.upY,
+                  camPos.upZ);
 
         // draw environment
         glPushMatrix();
         paulowniaMallEnv.draw();
-        paulowniaMallEnv.drawBillboards(
-            enableBillboards, // billboards face camera
-            camPos.cameraX, camPos.cameraY, camPos.cameraZ);
+        paulowniaMallEnv.drawBillboards(enableBillboards, // billboards face camera
+                                        camPos.cameraX,
+                                        camPos.cameraY,
+                                        camPos.cameraZ);
         glPopMatrix(1);
 
         // draw character
@@ -291,10 +287,9 @@ ViewState PaulowniaMallView::update()
             iprintf("\x1b[21;0H\033[31mtile(x,z): %d, %d",
                     (int)((charPos.x + worldOffsetX) / tileSize),
                     (int)((charPos.z + worldOffsetZ) / tileSize));
-            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d",
-                    (int)(charPos.x * 100),
-                    (int)(charPos.z * 100));
-            iprintf("\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
+            iprintf(
+                "\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
     }
 

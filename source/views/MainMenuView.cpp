@@ -1,12 +1,12 @@
+#include "MainMenuView.h"
+#include "core/globals.h"
 #include <nds.h>
 #include <stdio.h>
-#include "core/globals.h"
-#include "MainMenuView.h"
 
 // assets
-#include "menuSilhouetteBackground.h"
 #include "doorBackground.h"
 #include "fogBackground.h"
+#include "menuSilhouetteBackground.h"
 
 void MainMenuView::init()
 {

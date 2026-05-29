@@ -4,7 +4,7 @@
 
 class IntroView : public BaseView
 {
-private:
+  private:
     Sprite logoSprite[2];
     int bg[4];
     touchPosition touchXY;
@@ -38,7 +38,7 @@ private:
     int baseSpeed = 20;
     int fluctuation = 50;
 
-public:
+  public:
     void init() override;
     ViewState update() override;
     void cleanup() override;

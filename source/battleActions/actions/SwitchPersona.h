@@ -9,5 +9,5 @@ struct SwitchPersona : ActionBase
         possibleUsers = ParticipantType::Player;
     }
 
-    BattleResult resolve(PartyMember *user, BattleParticipant *target, Skill *skill = nullptr) override;
+    BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) override;
 };

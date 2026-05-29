@@ -1,6 +1,6 @@
 #pragma once
-#include <nds.h>
 #include "../ArmourType.h"
+#include <nds.h>
 
 // TODO: we need some kind of selection and matching armourType validation outside of battle
 // in the future

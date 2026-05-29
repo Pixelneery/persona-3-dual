@@ -1,45 +1,47 @@
 #ifndef Geometry_h
 #define Geometry_h
 
-template <typename T>
-struct Point2D
+template <typename T> struct Point2D
 {
     T x;
     T z;
 
-    Point2D() : x(0), z(0) {}
-    Point2D(T x, T z) : x(x), z(z) {}
+    Point2D() : x(0), z(0)
+    {
+    }
+    Point2D(T x, T z) : x(x), z(z)
+    {
+    }
 
-    Point2D<T> operator+(const Point2D<T> &other) const
+    Point2D<T> operator+(const Point2D<T>& other) const
     {
         return Point2D<T>(x + other.x, z + other.z);
     }
 
-    Point2D<T> operator-(const Point2D<T> &other) const
+    Point2D<T> operator-(const Point2D<T>& other) const
     {
         return Point2D<T>(x - other.x, z - other.z);
     }
 
-    Point2D<T> &operator=(const Point2D<T> &other)
+    Point2D<T>& operator=(const Point2D<T>& other)
     {
         x = other.x;
         z = other.z;
         return *this;
     }
 
-    bool operator==(const Point2D<T> &other) const
+    bool operator==(const Point2D<T>& other) const
     {
         return other.x == x && other.z == z;
     }
 
-    bool operator!=(const Point2D<T> &other) const
+    bool operator!=(const Point2D<T>& other) const
     {
         return !(*this == other);
     }
 };
 
-template <typename T>
-struct Rectangle
+template <typename T> struct Rectangle
 {
     Point2D<T> position;
     Point2D<T> size;
@@ -94,7 +96,7 @@ struct Rectangle
         return size.z;
     }
 
-    bool checkCollision(const Rectangle<T> &other, bool ignoreTouching = true) const
+    bool checkCollision(const Rectangle<T>& other, bool ignoreTouching = true) const
     {
         if (ignoreTouching)
         {
@@ -106,12 +108,12 @@ struct Rectangle
                (top() <= other.bottom() && bottom() >= other.top());
     }
 
-    bool operator==(const Rectangle<T> &other) const
+    bool operator==(const Rectangle<T>& other) const
     {
         return position == other.position && size == other.size;
     }
 
-    bool operator!=(const Rectangle<T> &other) const
+    bool operator!=(const Rectangle<T>& other) const
     {
         return !(*this == other);
     }

@@ -1,25 +1,24 @@
 #pragma once
-#include "core/BaseView.h"
 #include "controllers/CharacterController.h"
+#include "core/BaseView.h"
 #include "environments/station.h"
 #include <nds/arm9/console.h>
 
 class StationView : public BaseView
 {
-public:
+  public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
 
-
-private:
+  private:
     touchPosition touch;
 
     int bgMenuHUD;
     int bgSharedSlot;
     PrintConsole console;
 
-    CharacterController *playerCtrl;
+    CharacterController* playerCtrl;
     cameraPosition camPos;
     const float tileSize = 0.062500f;
     const float worldOffsetX = STATION_WORLD_OFFSET_X;

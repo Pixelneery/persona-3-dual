@@ -9,7 +9,7 @@ void BaseMenu::cancelSFX()
     musicCtrl.stopSFX(sfxCancelHandle);
 }
 
-void BaseMenu::init(int iBgSlot, bool *isActive, const std::string &iPauseMessage)
+void BaseMenu::init(int iBgSlot, bool* isActive, const std::string& iPauseMessage)
 {
     // point to music
     musicCtrl.loadSFX(SFX_MENU);
@@ -129,7 +129,7 @@ ViewState BaseMenu::update(int keys)
     return viewState;
 }
 
-ViewState BaseMenu::changeMenu(MenuOption *newOptions, int newOptionCount)
+ViewState BaseMenu::changeMenu(MenuOption* newOptions, int newOptionCount)
 {
     selectedOption = 0;
     startIndex = 0;

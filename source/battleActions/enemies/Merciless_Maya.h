@@ -1,14 +1,14 @@
 #pragma once
-#include "Enemy.h"
+#include "../skills/Agi.h"
 #include "../skills/AttackSkill.h"
 #include "../skills/Strike_Attack.h"
-#include "../skills/Agi.h"
+#include "Enemy.h"
 
 struct Merciless_Maya : Enemy
 {
     Strike_Attack strike_Attack;
     Agi agi;
-    AttackSkill *myAttackSkill[1];
+    AttackSkill* myAttackSkill[1];
 
     Merciless_Maya()
     {

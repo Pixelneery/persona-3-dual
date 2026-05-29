@@ -1,4 +1,6 @@
-import os, re, argparse
+import os
+import re
+import argparse
 from . import obj2model
 
 

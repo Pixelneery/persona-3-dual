@@ -1,8 +1,8 @@
-#include <nds.h>
-#include <stdio.h>
+#include "CharacterController.h"
 #include "core/globals.h"
 #include "math.h"
-#include "CharacterController.h"
+#include <nds.h>
+#include <stdio.h>
 
 // check collision
 TileType CharacterController::isTileAt(int tileX, int tileZ)
@@ -114,9 +114,11 @@ cameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f && deltaZ != 0.0f)
     {
         // set walking animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER))
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() !=
+                                    MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER))
         {
-            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER, true);
+            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER,
+                                       true);
         }
 
         // normalize diagonal movement to prevent faster speed
@@ -127,9 +129,11 @@ cameraPosition CharacterController::update(u32 keys)
     else
     {
         // set idle animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER))
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() !=
+                                    MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER))
         {
-            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER, true);
+            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER,
+                                       true);
         }
     }
     characterAnimationCtrl.play();

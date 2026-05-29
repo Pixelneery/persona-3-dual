@@ -1,4 +1,9 @@
-import argparse, os, struct, subprocess, sys, tempfile
+import argparse
+import os
+import struct
+import subprocess
+import sys
+import tempfile
 
 
 def check_ffmpeg():

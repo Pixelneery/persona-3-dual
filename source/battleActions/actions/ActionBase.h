@@ -1,8 +1,8 @@
 #pragma once
-#include <nds.h>
-#include <string>
 #include "../BattleResult.h"
 #include "../ParticipantType.h"
+#include <nds.h>
+#include <string>
 
 // Forward declarations
 struct BattleParticipant;
@@ -14,7 +14,7 @@ struct ActionBase
     std::string name;
     ParticipantType possibleUsers;
 
-    virtual BattleResult resolve(PartyMember *user, BattleParticipant *target, Skill *skill = nullptr) = 0;
+    virtual BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) = 0;
 
     virtual ~ActionBase() = default;
 };

@@ -1,9 +1,9 @@
 #pragma once
-#include "ActionBase.h"
-#include "../party/PartyMember.h"
 #include "../enemies/Enemy.h"
+#include "../party/PartyMember.h"
 #include "../skills/AttackSkill.h"
 #include "../skills/HealSkill.h"
+#include "ActionBase.h"
 
 struct PersonaAction : ActionBase
 {
@@ -13,5 +13,5 @@ struct PersonaAction : ActionBase
         possibleUsers = ParticipantType::Party;
     }
 
-    BattleResult resolve(PartyMember *user, BattleParticipant *target, Skill *skill) override;
+    BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill) override;
 };

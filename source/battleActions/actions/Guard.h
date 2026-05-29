@@ -1,6 +1,6 @@
 #pragma once
-#include "ActionBase.h"
 #include "../party/PartyMember.h"
+#include "ActionBase.h"
 
 struct Guard : ActionBase
 {
@@ -10,5 +10,5 @@ struct Guard : ActionBase
         possibleUsers = ParticipantType::Party;
     }
 
-    BattleResult resolve(PartyMember *user, BattleParticipant *target, Skill *skill = nullptr) override;
+    BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) override;
 };

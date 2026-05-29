@@ -1,14 +1,14 @@
 #pragma once
-#include <nds.h>
-#include "core/globals.h"
 #include "core/enums.h"
+#include "core/globals.h"
 #include "core/structs.h"
+#include <nds.h>
 // menuHUD bg
 #include "menuHUD.h"
 
 class MenuHUDComponent
 {
-private:
+  private:
     // NOTE: we can have max:
     // 1 moon
     // 1 day of the week
@@ -25,9 +25,10 @@ private:
     SpriteRegister skillSprites[18];
     SpriteRegister slashSprite;
 
-    void loadBg(int *bgId);
-public:
+    void loadBg(int* bgId);
+
+  public:
     void loadHUD();
-    void drawHUD(int *bgId);
-    bool isMenuTouchArea(touchPosition *touch);
+    void drawHUD(int* bgId);
+    bool isMenuTouchArea(touchPosition* touch);
 };

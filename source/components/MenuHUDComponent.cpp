@@ -4,7 +4,7 @@ void MenuHUDComponent::loadHUD()
 {
     // setup sprites
     // moon
-	sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, -15};
+    sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, -15};
     // day of the week
     sprites[1] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 1, 134, 143};
     // numbers
@@ -22,12 +22,12 @@ void MenuHUDComponent::loadHUD()
     // slash
     sprites[11] = {0, SpriteSize_16x16, SpriteColorFormat_256Color, 0, 2, 52, 157};
 
-	// initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
-	oamInit(&oamSub, SpriteMapping_1D_128, true);
+    // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
+    oamInit(&oamSub, SpriteMapping_1D_128, true);
 
-	// allocating space for sprite graphics
+    // allocating space for sprite graphics
     //moon
-	sprites[0].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
+    sprites[0].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
     // day of the week
     sprites[1].gfx = oamAllocateGfx(&oamSub, SpriteSize_32x32, SpriteColorFormat_256Color);
     // numbers
@@ -70,7 +70,7 @@ void MenuHUDComponent::loadHUD()
 
     // copy sprites
     // moon
-	dmaCopy(moonSprite.tiles, sprites[0].gfx, moonSprite.tilesLen);
+    dmaCopy(moonSprite.tiles, sprites[0].gfx, moonSprite.tilesLen);
     // day of the week
     dmaCopy(dayOfWeekSprite.tiles, sprites[1].gfx, dayOfWeekSprite.tilesLen);
     // numbers
@@ -90,18 +90,18 @@ void MenuHUDComponent::loadHUD()
 
     // NOTE: we are currently assuming that the sprite extended palette will be set on VRAM bank I
     vramSetBankI(VRAM_I_LCD);
-    dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);              // moon
-    dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);    // day of the week
-    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen);  // numbers & slash
-    dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);      // time (0)
-    dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);      // time (1)
-    dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);      // time (2)
-    dmaCopy(timeSprites[3].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], timeSprites[3].palLen);      // time (3)
-    dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[7][0], skillSprites[0].palLen);    // skill level
+    dmaCopy(moonSprite.pal, &VRAM_I_EXT_SPR_PALETTE[0][0], moonSprite.palLen);             // moon
+    dmaCopy(dayOfWeekSprite.pal, &VRAM_I_EXT_SPR_PALETTE[1][0], dayOfWeekSprite.palLen);   // day of the week
+    dmaCopy(numberSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[2][0], numberSprites[0].palLen); // numbers & slash
+    dmaCopy(timeSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[3][0], timeSprites[0].palLen);     // time (0)
+    dmaCopy(timeSprites[1].pal, &VRAM_I_EXT_SPR_PALETTE[4][0], timeSprites[1].palLen);     // time (1)
+    dmaCopy(timeSprites[2].pal, &VRAM_I_EXT_SPR_PALETTE[5][0], timeSprites[2].palLen);     // time (2)
+    dmaCopy(timeSprites[3].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], timeSprites[3].palLen);     // time (3)
+    dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[7][0], skillSprites[0].palLen);   // skill level
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
 };
 
-void MenuHUDComponent::loadBg(int *bgId)
+void MenuHUDComponent::loadBg(int* bgId)
 {
     dmaCopy(menuHUDTiles, bgGetGfxPtr(*bgId), menuHUDTilesLen);
     dmaCopy(menuHUDMap, bgGetMapPtr(*bgId), menuHUDMapLen);
@@ -110,7 +110,7 @@ void MenuHUDComponent::loadBg(int *bgId)
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 }
 
-void MenuHUDComponent::drawHUD(int *bgId)
+void MenuHUDComponent::drawHUD(int* bgId)
 {
     // draw bg
     loadBg(bgId);
@@ -118,20 +118,21 @@ void MenuHUDComponent::drawHUD(int *bgId)
     // draw sprites
     for (int i = 0; i < 12; i++)
     {
-        oamSet(
-            &oamSub,                    // sub display (OamState)
-            i,                          // oam entry to set (id)
-            sprites[i].x, sprites[i].y, // position
-            1,                          // priority
-            sprites[i].paletteAlpha,    // palette for 16 color sprite or alpha for bmp sprite
-            sprites[i].size,
-            sprites[i].format,
-            sprites[i].gfx,
-            sprites[i].rotationIndex,
-            true,         // double the size of rotated sprites
-            false,        // don't hide the sprite
-            false, false, // vflip, hflip
-            false         // apply mosaic
+        oamSet(&oamSub, // sub display (OamState)
+               i,       // oam entry to set (id)
+               sprites[i].x,
+               sprites[i].y,            // position
+               1,                       // priority
+               sprites[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+               sprites[i].size,
+               sprites[i].format,
+               sprites[i].gfx,
+               sprites[i].rotationIndex,
+               true,  // double the size of rotated sprites
+               false, // don't hide the sprite
+               false,
+               false, // vflip, hflip
+               false  // apply mosaic
         );
     }
 
@@ -157,13 +158,12 @@ void MenuHUDComponent::drawHUD(int *bgId)
     // }
 }
 
-bool MenuHUDComponent::isMenuTouchArea(touchPosition *touch)
+bool MenuHUDComponent::isMenuTouchArea(touchPosition* touch)
 {
-    if (touch->px >= 193 && touch->px <= 250 &&
-        touch->py >= 166 && touch->py <= 184)
+    if (touch->px >= 193 && touch->px <= 250 && touch->py >= 166 && touch->py <= 184)
     {
         return true;
     }
-    
+
     return false;
 }

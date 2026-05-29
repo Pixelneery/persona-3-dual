@@ -2,14 +2,14 @@
 #include "PersonaBase.h"
 
 #include "../skills/AttackSkill.h"
-#include "../skills/Garu.h"
 #include "../skills/Dia.h"
+#include "../skills/Garu.h"
 
 struct Io : PersonaBase
 {
     Garu garu;
     Dia dia;
-    Skill *mySkills[2];
+    Skill* mySkills[2];
 
     Io()
     {

@@ -1,9 +1,12 @@
 #pragma once
 #include "core/BaseView.h"
+#include <maxmod9.h>
+#include <nds/arm9/console.h>
+#include <nds/arm9/keyboard.h>
 
 class SignContractView : public BaseView
 {
-private:
+  private:
     int bg[3];
     bool isLastName = true;
     bool isNameConfirmed = false;
@@ -25,7 +28,8 @@ private:
     mm_sfxhand sfxCancelHandle;
 
     void cancelSFX();
-public:
+
+  public:
     void init() override;
     ViewState update() override;
     void cleanup() override;

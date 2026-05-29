@@ -8,5 +8,4 @@ protected by compiler-specific feature flags.
 #define _ATTRIBUTE(attrs)
 #endif
 
-int iprintf(const char *, ...)
-    _ATTRIBUTE((__format__(__printf__, 1, 2)));
+int iprintf(const char*, ...) _ATTRIBUTE((__format__(__printf__, 1, 2)));

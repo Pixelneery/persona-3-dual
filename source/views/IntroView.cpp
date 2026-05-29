@@ -1,16 +1,16 @@
+#include "IntroView.h"
+#include "core/globals.h"
+#include <maxmod9.h>
 #include <nds.h>
 #include <stdio.h>
-#include <maxmod9.h>
-#include "core/globals.h"
-#include "IntroView.h"
 
 // assets
-#include "skyBackground.h"
-#include "roomBackground.h"
-#include "silhouetteBackground.h"
-#include "overlayBackground.h"
 #include "logoSpriteLeft.h"
 #include "logoSpriteRight.h"
+#include "overlayBackground.h"
+#include "roomBackground.h"
+#include "silhouetteBackground.h"
+#include "skyBackground.h"
 // sub screen
 #include "attributionBackground.h"
 #include "skyBackgroundSub.h"
@@ -96,10 +96,12 @@ void IntroView::init()
     vramSetBankH(VRAM_H_LCD); // for subv engine
 
     // copy palettes to extended palette area
-    dmaCopy(silhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], silhouetteBackgroundPalLen); // bg 0, slot 0 (slot can be specified slot in .grit file)
-    dmaCopy(roomBackgroundPal, &VRAM_E_EXT_PALETTE[1][0], roomBackgroundPalLen);             // bg 1, slot 0
-    dmaCopy(skyBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], skyBackgroundPalLen);               // bg 2, slot 0
-    dmaCopy(overlayBackgroundPal, &VRAM_E_EXT_PALETTE[3][0], overlayBackgroundPalLen);       // bg 3, slot 0
+    dmaCopy(silhouetteBackgroundPal,
+            &VRAM_E_EXT_PALETTE[0][0],
+            silhouetteBackgroundPalLen); // bg 0, slot 0 (slot can be specified slot in .grit file)
+    dmaCopy(roomBackgroundPal, &VRAM_E_EXT_PALETTE[1][0], roomBackgroundPalLen);       // bg 1, slot 0
+    dmaCopy(skyBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], skyBackgroundPalLen);         // bg 2, slot 0
+    dmaCopy(overlayBackgroundPal, &VRAM_E_EXT_PALETTE[3][0], overlayBackgroundPalLen); // bg 3, slot 0
     dmaCopy(attributionBackgroundPal, &VRAM_H_EXT_PALETTE[0][0], attributionBackgroundPalLen);
     dmaCopy(skyBackgroundSubPal, &VRAM_H_EXT_PALETTE[1][0], skyBackgroundSubPalLen);
 
@@ -266,33 +268,32 @@ ViewState IntroView::update()
 
         for (int i = 0; i < 2; i++)
         {
-            oamSet(
-                &oamMain,                         // main display (OamState)
-                i,                                // oam entry to set (id)
-                logoSprite[i].x, logoSprite[i].y, // position
-                0,                                // priority
-                logoSprite[i].paletteAlpha,       // palette for 16 color sprite or alpha for bmp sprite
-                logoSprite[i].size,
-                logoSprite[i].format,
-                logoSprite[i].gfx,
-                logoSprite[i].rotationIndex,
-                true,         // double the size of rotated sprites
-                false,        // don't hide the sprite
-                false, false, // vflip, hflip
-                false         // apply mosaic
+            oamSet(&oamMain, // main display (OamState)
+                   i,        // oam entry to set (id)
+                   logoSprite[i].x,
+                   logoSprite[i].y,            // position
+                   0,                          // priority
+                   logoSprite[i].paletteAlpha, // palette for 16 color sprite or alpha for bmp sprite
+                   logoSprite[i].size,
+                   logoSprite[i].format,
+                   logoSprite[i].gfx,
+                   logoSprite[i].rotationIndex,
+                   true,  // double the size of rotated sprites
+                   false, // don't hide the sprite
+                   false,
+                   false, // vflip, hflip
+                   false  // apply mosaic
             );
 
             oamMain.oamMemory[i].attribute[0] |= ATTR0_TYPE_BLENDED;
         }
 
         // setup fade for main screen sprites
-        REG_BLDCNT = BLEND_ALPHA | BLEND_SRC_SPRITE |
-                     BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BG2;
+        REG_BLDCNT = BLEND_ALPHA | BLEND_SRC_SPRITE | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BG2;
         REG_BLDALPHA = 0 | (16 << 8);
 
         // setup fade for sub screen attribution text layer
-        REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG0 |
-                         BLEND_DST_BG1 | BLEND_DST_BACKDROP;
+        REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
         REG_BLDALPHA_SUB = 0 | (16 << 8);
     }
 

@@ -52,7 +52,7 @@ void MainMenuComponent::loadBg(int bgIndex)
     }
 }
 
-void MainMenuComponent::init(int iBgSlot, bool *isActive, const std::string &iPauseMessage)
+void MainMenuComponent::init(int iBgSlot, bool* isActive, const std::string& iPauseMessage)
 {
     BaseMenu::init(iBgSlot, isActive, iPauseMessage);
     options = mainMenuOptions;

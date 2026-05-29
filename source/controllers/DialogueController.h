@@ -1,37 +1,43 @@
 #pragma once
+#include "core/structs.h"
 #include <nds.h>
 #include <string>
 #include <vector>
-#include "core/structs.h"
 
 class DialogueController
 {
-public:
+  public:
     DialogueController();
-    void start(dialogue *firstLine);
+    void start(dialogue* firstLine);
     void update(u32 keys);
     void exit();
-    bool isActive() const { return active; }
+    bool isActive() const
+    {
+        return active;
+    }
 
-    void setLoader(void (*loader)(int bgIndex)) { bgLoader = loader; }
+    void setLoader(void (*loader)(int bgIndex))
+    {
+        bgLoader = loader;
+    }
 
-private:
-    void advanceTo(dialogue *next);
+  private:
+    void advanceTo(dialogue* next);
     void renderAnimFrame();
     void renderOptions();
 
-    dialogue *current   = nullptr;
-    int  optionCount    = 0;
-    int  selectedOption = 0;
-    bool active         = false;
-    bool animDone       = false;
+    dialogue* current = nullptr;
+    int optionCount = 0;
+    int selectedOption = 0;
+    bool active = false;
+    bool animDone = false;
     bool doRenderOptions = false;
 
     // track currently loaded imageId
-    int  loadedImageId  = -1;
+    int loadedImageId = -1;
 
     void (*bgLoader)(int bgIndex) = nullptr;
 
-    int  animIndex = 0;
-    u32  prevKeys  = 0;
+    int animIndex = 0;
+    u32 prevKeys = 0;
 };

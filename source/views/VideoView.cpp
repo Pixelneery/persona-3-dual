@@ -1,7 +1,7 @@
+#include "VideoView.h"
+#include "core/globals.h"
 #include <nds.h>
 #include <stdio.h>
-#include "core/globals.h"
-#include "VideoView.h"
 
 void VideoView::init()
 {

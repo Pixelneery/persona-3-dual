@@ -1,27 +1,27 @@
 #include "core/BaseView.h"
 #include <nds/arm9/console.h>
 // controllers
-#include "controllers/DialogueController.h"
 #include "controllers/CharacterController.h"
+#include "controllers/DialogueController.h"
 // environments
 #include "environments/paulownia_mall.h"
 // battle-related
-#include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/enemies/Cowardly_Maya.h"
-#include "./battleActions/enemies/Merciless_Maya.h"
 #include "./battleActions/BattleParticipant.h"
 #include "./battleActions/BattleStartCondition.h"
+#include "./battleActions/enemies/Cowardly_Maya.h"
+#include "./battleActions/enemies/Enemy.h"
+#include "./battleActions/enemies/Merciless_Maya.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
 class PaulowniaMallView : public BaseView
 {
-public:
+  public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
     PaulowniaMallView();
 
-private:
+  private:
     touchPosition touch;
 
     // sub screen
@@ -37,14 +37,14 @@ private:
     // Battle participants
     Cowardly_Maya cowardly_Maya;
     Merciless_Maya merciless_Maya;
-    std::vector<BattleParticipant *> *battleParticipants;
+    std::vector<BattleParticipant*>* battleParticipants;
 
     // hardcoded for now, we will have to build a battle creater for tartarus anyways
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
     // controllers
     BattleController battleController;
-    CharacterController *playerCtrl;
+    CharacterController* playerCtrl;
 
     // camera pos
     cameraPosition camPos;

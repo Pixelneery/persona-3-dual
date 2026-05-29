@@ -1,9 +1,9 @@
 #pragma once
-#include <nds.h>
-#include <string>
+#include "SkillRace.h"
 #include "SkillTarget.h"
 #include "SkillType.h"
-#include "SkillRace.h"
+#include <nds.h>
+#include <string>
 
 struct Skill
 {

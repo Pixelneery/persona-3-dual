@@ -1,30 +1,29 @@
 #pragma once
+#include "core/enums.h"
 #include <nds.h>
 #include <string>
-#include "core/globals.h"
-#include "core/enums.h"
 
 #define FRAMES_TO_BUFFER 15
 #define READS_PER_UPDATE 3
 
 class VideoController
 {
-public:
+  public:
     VideoController() {};
     void init(std::string iFileName, float iFps, ViewState iNextState);
     ViewState update();
     void cleanup();
 
-private:
+  private:
     ViewState nextState;
     float fps;
 
-    FILE *videoFile;
+    FILE* videoFile;
     bool fileEOF;
     int currentFrame;
     int bg;
 
-    u8 *ramBuffer;
+    u8* ramBuffer;
     int readIndex;
     int writeIndex;
     int framesAvailable;

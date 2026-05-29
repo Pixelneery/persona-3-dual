@@ -1,12 +1,11 @@
+#include "VideoController.h"
+#include "core/globals.h"
+#include <malloc.h>
 #include <nds.h>
 #include <stdio.h>
-#include <malloc.h>
 #include <string.h> // for memcmp
-#include "core/globals.h"
-#include "VideoController.h"
 
-void VideoController::init(std::string iFileName, float iFps,
-                           ViewState iNextState)
+void VideoController::init(std::string iFileName, float iFps, ViewState iNextState)
 {
     nextState = iNextState;
     fps = iFps; // default fallback if no header exists
@@ -43,13 +42,16 @@ void VideoController::init(std::string iFileName, float iFps,
     size_t hRead = fread(header, 1, 16, videoFile);
 
     // validate if the new magic "VID\0" Header is present
-    if (hRead == 16 && memcmp(header, "VID\0", 4) == 0) {
+    if (hRead == 16 && memcmp(header, "VID\0", 4) == 0)
+    {
         // bit-shifts safeguard against unaligned memory access crashes on the ARM9
         fps = (float)(header[4] | (header[5] << 8));
         bpp = header[6];
         frameW = header[8] | (header[9] << 8);
         frameH = header[10] | (header[11] << 8);
-    } else {
+    }
+    else
+    {
         // fallback for older files without header (Assuming 16-bit, 256x192)
         fseek(videoFile, 0, SEEK_SET);
         bpp = 2;
@@ -61,21 +63,27 @@ void VideoController::init(std::string iFileName, float iFps,
     bufferSize = frameSize * FRAMES_TO_BUFFER;
 
     // configure DS backgrounds dynamically depending on parsed BPP
-    if (bpp == 1) {
+    if (bpp == 1)
+    {
         bg = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
 
         u16 palette[256];
         size_t palRead = fread(palette, 2, 256, videoFile);
-        if (palRead != 256) {
+        if (palRead != 256)
+        {
             consoleDemoInit();
             iprintf("ERR: palette read failed");
-            while (1) swiWaitForVBlank();
+            while (1)
+                swiWaitForVBlank();
         }
 
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 256; i++)
+        {
             BG_PALETTE[i] = palette[i];
         }
-    } else {
+    }
+    else
+    {
         bgExtPaletteEnable();
         bg = bgInit(3, BgType_Bmp16, BgSize_B16_256x256, 0, 0);
     }
@@ -83,7 +91,7 @@ void VideoController::init(std::string iFileName, float iFps,
     // clear memory
     dmaFillWords(0, bgGetGfxPtr(bg), frameSize);
 
-    ramBuffer = (u8 *)memalign(32, bufferSize);
+    ramBuffer = (u8*)memalign(32, bufferSize);
     if (!ramBuffer)
     {
         consoleDemoInit();
@@ -116,11 +124,12 @@ void VideoController::refillBuffer()
         u32 safeSize = (audioSize > sizeof(audioBuf)) ? sizeof(audioBuf) : audioSize;
         fread(audioBuf, 1, safeSize, videoFile);
         musicCtrl.pushVideoAudio(audioBuf, safeSize);
-        if (audioSize > safeSize) fseek(videoFile, audioSize - safeSize, SEEK_CUR); // Skip overflowing remainder
+        if (audioSize > safeSize)
+            fseek(videoFile, audioSize - safeSize, SEEK_CUR); // Skip overflowing remainder
     }
 
     // read video frame utilizing dynamic frameSize
-    u8 *dest = &ramBuffer[writeIndex * frameSize];
+    u8* dest = &ramBuffer[writeIndex * frameSize];
     size_t bytes = fread(dest, 1, frameSize, videoFile);
 
     if (bytes == frameSize)
@@ -168,10 +177,7 @@ ViewState VideoController::update()
     if (framesAvailable > 0)
     {
         swiWaitForVBlank();
-        dmaCopy(
-            &ramBuffer[readIndex * frameSize],
-            bgGetGfxPtr(bg),
-            frameSize);
+        dmaCopy(&ramBuffer[readIndex * frameSize], bgGetGfxPtr(bg), frameSize);
         readIndex = (readIndex + 1) % FRAMES_TO_BUFFER;
         framesAvailable--;
         currentFrame++;

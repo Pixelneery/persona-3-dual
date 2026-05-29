@@ -1,8 +1,8 @@
 #pragma once
+#include "ParticipantType.h"
+#include "skills/AttackSkill.h"
 #include <nds.h>
 #include <vector>
-#include "skills/AttackSkill.h"
-#include "ParticipantType.h"
 
 struct BattleParticipant
 {
@@ -13,7 +13,7 @@ struct BattleParticipant
     s32 sp;
     u32 lv;
     // TODO: dont think so that all bosses have a basattack, possibly move in the future
-    AttackSkill *baseAttackAction;
+    AttackSkill* baseAttackAction;
     ParticipantType participantType;
 
     float currentTurnOrderAgility;

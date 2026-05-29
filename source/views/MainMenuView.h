@@ -1,10 +1,10 @@
 #pragma once
-#include "core/BaseView.h"
 #include "components/MainMenuComponent.h"
+#include "core/BaseView.h"
 
 class MainMenuView : public BaseView
 {
-private:
+  private:
     PrintConsole console;
     MainMenuComponent mainMenuCmpt;
     bool isMainMenuCmptActive;
@@ -26,7 +26,7 @@ private:
     int baseSpeed = 20;
     int fluctuation = 50;
 
-public:
+  public:
     void init() override;
     ViewState update() override;
     void cleanup() override;

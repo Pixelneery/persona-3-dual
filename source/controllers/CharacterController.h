@@ -1,16 +1,16 @@
 #pragma once
-#include <stdint.h>
-#include "core/geometry.h"
 #include "core/enums.h"
+#include "core/geometry.h"
 #include "core/structs.h"
+#include <stdint.h>
 
 class CharacterController
 {
-public:
+  public:
     // 3D environment
     const int mapWidth;
     const int mapHeight;
-    const uint8_t *collisionMap;
+    const uint8_t* collisionMap;
 
     // world
     const float tileSize;
@@ -32,21 +32,24 @@ public:
     // float translateZ = 0.0;
     float characterFacingAngle = 0.0f;
 
-    CharacterController(
-        int iMapWidth, int iMapHeight, const uint8_t *iCollisionMap,
-        float iTileSize, float iWorldOffsetX, float iWorldOffsetZ, Point2D<float> iCharacterSize,
-        float iSpeed, float iAngleIncrement, float iDistance, float iLookAhead,
-        float iAngle, float iHeight, Point2D<float> iCharacterTranslate, float iCharacterFacingAngle) : mapWidth(iMapWidth),
-                                                                                         mapHeight(iMapHeight),
-                                                                                         collisionMap(iCollisionMap),
-                                                                                         tileSize(iTileSize),
-                                                                                         worldOffsetX(iWorldOffsetX),
-                                                                                         worldOffsetZ(iWorldOffsetZ),
-                                                                                         characterSize(iCharacterSize),
-                                                                                         speed(iSpeed),
-                                                                                         angleIncrement(iAngleIncrement),
-                                                                                         distance(iDistance),
-                                                                                         lookAhead(iLookAhead)
+    CharacterController(int iMapWidth,
+                        int iMapHeight,
+                        const uint8_t* iCollisionMap,
+                        float iTileSize,
+                        float iWorldOffsetX,
+                        float iWorldOffsetZ,
+                        Point2D<float> iCharacterSize,
+                        float iSpeed,
+                        float iAngleIncrement,
+                        float iDistance,
+                        float iLookAhead,
+                        float iAngle,
+                        float iHeight,
+                        Point2D<float> iCharacterTranslate,
+                        float iCharacterFacingAngle)
+        : mapWidth(iMapWidth), mapHeight(iMapHeight), collisionMap(iCollisionMap), tileSize(iTileSize),
+          worldOffsetX(iWorldOffsetX), worldOffsetZ(iWorldOffsetZ), characterSize(iCharacterSize), speed(iSpeed),
+          angleIncrement(iAngleIncrement), distance(iDistance), lookAhead(iLookAhead)
     {
         // set inital position
         angle = iAngle;
@@ -59,7 +62,7 @@ public:
     characterPosition isCharacterAt();
     TileType isTileAt();
 
-private:
+  private:
     TileType isTileAt(int tileX, int TileY);
     bool isTileWalkable(float worldX, float worldZ);
 };

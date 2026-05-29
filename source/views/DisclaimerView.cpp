@@ -1,7 +1,7 @@
+#include "DisclaimerView.h"
+#include "core/globals.h"
 #include <nds.h>
 #include <stdio.h>
-#include "core/globals.h"
-#include "DisclaimerView.h"
 
 // assets
 #include "cautionBackground.h"

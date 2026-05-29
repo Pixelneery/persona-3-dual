@@ -1,16 +1,16 @@
 #pragma once
 #include "core/enums.h"
 #include <nds.h>
-#include <vector>
 #include <string>
+#include <vector>
 class BaseMenu;
 
 struct SpriteRegister
 {
     int id;
-    const unsigned int *tiles;
+    const unsigned int* tiles;
     unsigned int tilesLen;
-    const unsigned short *pal;
+    const unsigned short* pal;
     unsigned int palLen;
 };
 
@@ -18,34 +18,34 @@ struct SpriteDBEntry
 {
     SpriteType type;
     int id;
-    const unsigned int *tiles;
+    const unsigned int* tiles;
     unsigned int tilesLen;
-    const unsigned short *pal;
+    const unsigned short* pal;
     unsigned int palLen;
 };
 
 //a simple sprite structure
 struct Sprite
 {
-   u16* gfx;
-   SpriteSize size;
-   SpriteColorFormat format;
-   int rotationIndex;
-   int paletteAlpha;
-   int x;
-   int y;
+    u16* gfx;
+    SpriteSize size;
+    SpriteColorFormat format;
+    int rotationIndex;
+    int paletteAlpha;
+    int x;
+    int y;
 };
 
 struct MenuOption
 {
-    const char *name;
+    const char* name;
     int bgIndex;
     ViewState (BaseMenu::*onSelect)();
 };
 
 struct MenuState
 {
-    MenuOption *options;
+    MenuOption* options;
     int optionCount;
     int selectedOption;
     int startIndex;
@@ -104,7 +104,7 @@ struct characterPosition
 {
     float x;
     float z;
-    float y;    // height
+    float y; // height
     float angle;
     float facingAngle;
 };
@@ -115,15 +115,15 @@ struct dialogueSelection
 {
     std::string text;
     bool isSelected;
-    dialogue *next;
+    dialogue* next;
 };
 struct dialogue
 {
     std::string characterName;
     std::string text;
     int imageId;
-    dialogue *prev;
-    dialogue *next;
+    dialogue* prev;
+    dialogue* next;
     std::vector<dialogueSelection> selections;
 };
 

@@ -1,9 +1,9 @@
+#include "MusicController.h"
+#include <malloc.h>
 #include <nds.h>
 #include <string.h>
-#include <malloc.h>
-#include "MusicController.h"
 
-static FILE *s_audioFile = nullptr;
+static FILE* s_audioFile = nullptr;
 static bool s_isPaused = false;
 static bool s_streamOpen = false;
 static u32 s_elapsedSamples = 0;
@@ -13,7 +13,7 @@ static long s_loopStartOffset = 0;
 static bool s_loopAtEOF = false;
 
 static bool s_isVideoAudio = false;
-static u8 *s_ringBuffer = nullptr;
+static u8* s_ringBuffer = nullptr;
 static u32 s_ringBufferSize = 128 * 1024; // 128KB buffer (~1 second of audio)
 static u32 s_ringReadPos = 0;
 static u32 s_ringWritePos = 0;
@@ -37,7 +37,7 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
             bytesToRead = s_ringAvailable;
         }
 
-        u8 *out = (u8 *)dest;
+        u8* out = (u8*)dest;
         size_t firstPart = s_ringBufferSize - s_ringReadPos;
 
         if (bytesToRead <= firstPart)
@@ -87,26 +87,28 @@ static mm_word audio_stream_callback(mm_word length, mm_addr dest, mm_stream_for
         size_t remaining = bytesReq - bytesRead;
         if (remaining > 0)
         {
-            size_t read2 = fread((u8 *)dest + bytesRead, 1, remaining, s_audioFile);
+            size_t read2 = fread((u8*)dest + bytesRead, 1, remaining, s_audioFile);
             s_elapsedSamples += (read2 / BYTES_PER_FRAME);
 
             if (read2 < remaining)
             {
-                memset((u8 *)dest + bytesRead + read2, 0, remaining - read2);
+                memset((u8*)dest + bytesRead + read2, 0, remaining - read2);
             }
         }
     }
     else if (hitEOF && !s_loopAtEOF)
     {
-        memset((u8 *)dest + bytesRead, 0, bytesReq - bytesRead);
+        memset((u8*)dest + bytesRead, 0, bytesReq - bytesRead);
     }
 
     return length;
 }
 
-MusicController::MusicController() {}
+MusicController::MusicController()
+{
+}
 
-void MusicController::init(const char *filePath, float loopStartSeconds, float loopEndSeconds)
+void MusicController::init(const char* filePath, float loopStartSeconds, float loopEndSeconds)
 {
     cleanup();
 
@@ -157,7 +159,7 @@ void MusicController::initVideoAudio()
 
     if (!s_ringBuffer)
     {
-        s_ringBuffer = (u8 *)malloc(s_ringBufferSize);
+        s_ringBuffer = (u8*)malloc(s_ringBufferSize);
     }
 
     s_ringReadPos = 0;
@@ -180,7 +182,7 @@ void MusicController::initVideoAudio()
     mmStreamUpdate();
 }
 
-void MusicController::pushVideoAudio(const u8 *data, size_t size)
+void MusicController::pushVideoAudio(const u8* data, size_t size)
 {
     if (!s_ringBuffer || !s_isVideoAudio)
         return;
@@ -219,11 +221,20 @@ void MusicController::update()
         mmStreamUpdate();
 }
 
-void MusicController::pause() { s_isPaused = true; }
+void MusicController::pause()
+{
+    s_isPaused = true;
+}
 
-void MusicController::resume() { s_isPaused = false; }
+void MusicController::resume()
+{
+    s_isPaused = false;
+}
 
-void MusicController::loadSFX(mm_word effectID) { mmLoadEffect(effectID); }
+void MusicController::loadSFX(mm_word effectID)
+{
+    mmLoadEffect(effectID);
+}
 
 mm_sfxhand MusicController::playSFX(mm_word effectID, int volume, int panning)
 {

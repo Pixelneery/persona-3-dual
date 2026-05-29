@@ -1,62 +1,58 @@
+#include <dirent.h>
+#include <fat.h>
+#include <filesystem.h>
+#include <maxmod9.h>
 #include <nds.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <filesystem.h>
-#include <maxmod9.h>
-#include <dirent.h>
-#include <fat.h>
 
 #include "core/enums.h"
 
 // states
 #include "core/BaseView.h"
+#include "views/DebugView.h"
 #include "views/DisclaimerView.h"
-#include "views/VideoView.h"
 #include "views/IntroView.h"
-#include "views/MainMenuView.h"
 #include "views/IwatodaiDormView.h"
 #include "views/IwatodaiStreetsView.h"
+#include "views/MainMenuView.h"
+#include "views/PaulowniaMallView.h"
 #include "views/SignContractView.h"
 #include "views/StationView.h"
-#include "views/DebugView.h"
-#include "views/PaulowniaMallView.h"
+#include "views/VideoView.h"
 
 // controllers
+#include "controllers/AnimationController.h"
 #include "controllers/MusicController.h"
 #include "controllers/VideoController.h"
-#include "controllers/AnimationController.h"
 
 // components
-#include "components/PauseMenuComponent.h"
-#include "components/MenuHUDComponent.h"
 #include "components/BattleMenuComponent.h"
+#include "components/MenuHUDComponent.h"
+#include "components/PauseMenuComponent.h"
 
 // sfx
 #include "soundbank_bin.h"
 
 // character model
-#include "models/character.h"
 #include "character_texture_0.h"
 #include "character_texture_1.h"
 #include "character_texture_2.h"
 #include "character_texture_3.h"
 #include "character_texture_4.h"
+#include "models/character.h"
 
 // variables
 volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
-Save saveData = {
-    "reload.vid",
-    "",
-    ""
-};
+Save saveData = {"reload.vid", "", ""};
 // controllers
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
-const unsigned int *bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 SpriteController spriteCtrl;
 // components
 PauseMenuComponent pauseMenuCmpt;
@@ -67,9 +63,9 @@ bool isPauseMenuActive = false;
 MenuHUDComponent menuHUDCmpt;
 BattleMenuComponent battleMenuCmpt;
 
-BaseView *currentView = nullptr;
+BaseView* currentView = nullptr;
 
-void SwitchView(BaseView *newView)
+void SwitchView(BaseView* newView)
 {
     // cleanup any existing view
     if (currentView != nullptr)
@@ -94,7 +90,7 @@ void Vblank()
     frame++;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     irqSet(IRQ_VBLANK, Vblank);
 

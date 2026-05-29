@@ -1,6 +1,6 @@
 #include "HealSkill.h"
-#include <algorithm>
 #include "../BattleParticipant.h"
+#include <algorithm>
 
 const float HealSkill::magicBoostTable[20] = {
     0,   // 1-5
@@ -25,20 +25,20 @@ const float HealSkill::magicBoostTable[20] = {
     130  // 96-99
 };
 
-u32 HealSkill::calculateHealing(BattleParticipant &user)
+u32 HealSkill::calculateHealing(BattleParticipant& user)
 {
     float teamMultiplier;
-    BattleStats *battleStats;
+    BattleStats* battleStats;
     if (user.participantType == ParticipantType::Party || user.participantType == ParticipantType::Player)
     {
         teamMultiplier = 1.0f;
-        PartyMember &partyMember = static_cast<PartyMember &>(user);
+        PartyMember& partyMember = static_cast<PartyMember&>(user);
         battleStats = &partyMember.curPersona->battleStats;
     }
     else
     {
         teamMultiplier = 0.6f;
-        Enemy &enemy = static_cast<Enemy &>(user);
+        Enemy& enemy = static_cast<Enemy&>(user);
         battleStats = &enemy.battleStats;
     }
 
@@ -48,7 +48,7 @@ u32 HealSkill::calculateHealing(BattleParticipant &user)
     return (u32)floor(base * range / 100.0f);
 }
 
-u32 HealSkill::getMagicBoost(u32 &magic)
+u32 HealSkill::getMagicBoost(u32& magic)
 {
     u32 index = (magic - 1) / 5;
     index = std::clamp(index, (u32)0, (u32)19);

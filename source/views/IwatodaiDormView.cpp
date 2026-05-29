@@ -1,15 +1,17 @@
-#include <nds.h>
-#include <stdio.h>
-#include <malloc.h>
+#include "IwatodaiDormView.h"
 #include "core/globals.h"
 #include "math.h"
-#include "IwatodaiDormView.h"
+#include <malloc.h>
+#include <nds.h>
+#include <stdio.h>
 
 // model
 #include "models/character.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 // environment textures
+#include "f007_002bolt01.h"
+#include "f007_002bolt02.h"
 #include "f007_002bolt03.h"
 #include "f007_002door01.h"
 #include "f007_002door02.h"
@@ -43,12 +45,13 @@
 #include "f007_002wall04.h"
 #include "f007_002wall05.h"
 #include "f007_002wall06.h"
-#include "f007_002bolt02.h"
-#include "f007_002bolt01.h"
 
 // TODO: dont forget to clear in future
-IwatodaiDormView::IwatodaiDormView() : battleParticipants(new std::vector<BattleParticipant *>({&merciless_Maya, &cowardly_Maya})),
-                                       battleController(battleParticipants, &characterProfiles, battleStartCondition) {}
+IwatodaiDormView::IwatodaiDormView()
+    : battleParticipants(new std::vector<BattleParticipant*>({&merciless_Maya, &cowardly_Maya})),
+      battleController(battleParticipants, &characterProfiles, battleStartCondition)
+{
+}
 
 void IwatodaiDormView::init()
 {
@@ -104,7 +107,21 @@ void IwatodaiDormView::init()
 
     // setup player controller
     // TODO: add mapping
-    playerCtrl = new CharacterController(0, 0, nullptr, tileSize, worldOffsetX, worldOffsetZ, characterSize, speed, angleIncrement, distance, lookAhead, angle, height, characterTranslate, characterFacingAngle);
+    playerCtrl = new CharacterController(0,
+                                         0,
+                                         nullptr,
+                                         tileSize,
+                                         worldOffsetX,
+                                         worldOffsetZ,
+                                         characterSize,
+                                         speed,
+                                         angleIncrement,
+                                         distance,
+                                         lookAhead,
+                                         angle,
+                                         height,
+                                         characterTranslate,
+                                         characterFacingAngle);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
@@ -114,44 +131,17 @@ void IwatodaiDormView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int *bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_COUNT] =
-        {
-            f007_002wall01Bitmap,
-            f007_002wall02Bitmap,
-            f007_002wall03Bitmap,
-            f007_002door02Bitmap,
-            f007_002kzr01Bitmap,
-            f007_002kzr02Bitmap,
-            f007_002obj01Bitmap,
-            f007_002obj04Bitmap,
-            f007_002obj07Bitmap,
-            f007_002obj11Bitmap,
-            f007_002wall04Bitmap,
-            f007_002wall05Bitmap,
-            f007_002wall06Bitmap,
-            f007_002obj10Bitmap,
-            f007_002step01Bitmap,
-            f007_002step02Bitmap,
-            f007_002kzr03Bitmap,
-            f007_002kzr04Bitmap,
-            f007_002door01Bitmap,
-            f007_002obj03Bitmap,
-            f007_002shadow01Bitmap,
-            f007_002obj09Bitmap,
-            f007_002bolt01Bitmap,
-            f007_002glow02Bitmap,
-            f007_002floor01Bitmap,
-            f007_002floor02Bitmap,
-            f007_002floor03Bitmap,
-            f007_002obj02Bitmap,
-            f007_002obj05Bitmap,
-            f007_002obj14Bitmap,
-            f007_002obj15Bitmap,
-            f007_002bolt02Bitmap,
-            f007_002bolt03Bitmap,
-            f007_002obj12Bitmap,
-            f007_002obj13Bitmap,
-        };
+    const unsigned int* bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {
+        f007_002wall01Bitmap,   f007_002wall02Bitmap,  f007_002wall03Bitmap,  f007_002door02Bitmap,
+        f007_002kzr01Bitmap,    f007_002kzr02Bitmap,   f007_002obj01Bitmap,   f007_002obj04Bitmap,
+        f007_002obj07Bitmap,    f007_002obj11Bitmap,   f007_002wall04Bitmap,  f007_002wall05Bitmap,
+        f007_002wall06Bitmap,   f007_002obj10Bitmap,   f007_002step01Bitmap,  f007_002step02Bitmap,
+        f007_002kzr03Bitmap,    f007_002kzr04Bitmap,   f007_002door01Bitmap,  f007_002obj03Bitmap,
+        f007_002shadow01Bitmap, f007_002obj09Bitmap,   f007_002bolt01Bitmap,  f007_002glow02Bitmap,
+        f007_002floor01Bitmap,  f007_002floor02Bitmap, f007_002floor03Bitmap, f007_002obj02Bitmap,
+        f007_002obj05Bitmap,    f007_002obj14Bitmap,   f007_002obj15Bitmap,   f007_002bolt02Bitmap,
+        f007_002bolt03Bitmap,   f007_002obj12Bitmap,   f007_002obj13Bitmap,
+    };
 
     iwatodaiDormFloor1Env.load((fatBasePath + "environments/iwatodai_dorm_floor_1.bin").c_str(), bitmapsEnv);
     totalPolyCount = iwatodaiDormFloor1Env.getPolyCount();
@@ -256,16 +246,23 @@ ViewState IwatodaiDormView::update()
         }
 
         // update camera position
-        gluLookAt(camPos.cameraX, camPos.cameraY, camPos.cameraZ,
-                  camPos.targetX, camPos.targetY, camPos.targetZ,
-                  camPos.upX, camPos.upY, camPos.upZ);
+        gluLookAt(camPos.cameraX,
+                  camPos.cameraY,
+                  camPos.cameraZ,
+                  camPos.targetX,
+                  camPos.targetY,
+                  camPos.targetZ,
+                  camPos.upX,
+                  camPos.upY,
+                  camPos.upZ);
 
         // draw environment
         glPushMatrix();
         iwatodaiDormFloor1Env.draw();
-        iwatodaiDormFloor1Env.drawBillboards(
-            enableBillboards, // billboards face camera
-            camPos.cameraX, camPos.cameraY, camPos.cameraZ);
+        iwatodaiDormFloor1Env.drawBillboards(enableBillboards, // billboards face camera
+                                             camPos.cameraX,
+                                             camPos.cameraY,
+                                             camPos.cameraZ);
         glPopMatrix(1);
 
         // draw character
@@ -289,10 +286,9 @@ ViewState IwatodaiDormView::update()
             iprintf("\x1b[21;0H\033[31mtile(x,z): %d, %d",
                     (int)((charPos.x + worldOffsetX) / tileSize),
                     (int)((charPos.z + worldOffsetZ) / tileSize));
-            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d",
-                    (int)(charPos.x * 100),
-                    (int)(charPos.z * 100));
-            iprintf("\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
+            iprintf(
+                "\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
     }
 

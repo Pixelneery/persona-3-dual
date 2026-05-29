@@ -2,7 +2,6 @@
 
 void CharacterProfiles::InitializeProfiles()
 {
-
     RashGuard rashGuard;
     RubberSole rubberSole;
 

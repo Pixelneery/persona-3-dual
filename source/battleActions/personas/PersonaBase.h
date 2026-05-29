@@ -1,8 +1,8 @@
 #pragma once
+#include "../BattleStats.h"
+#include "../skills/AttackSkill.h"
 #include <nds.h>
 #include <string>
-#include "../skills/AttackSkill.h"
-#include "../BattleStats.h"
 
 /*
 St	Represents strength and physical damage.
@@ -15,10 +15,12 @@ struct PersonaBase
 {
     std::string name;
     u32 lv;
-    Skill **skills;
+    Skill** skills;
     u32 attackCount;
     BattleStats battleStats;
 
-    PersonaBase() {}
+    PersonaBase()
+    {
+    }
     ~PersonaBase() {};
 };

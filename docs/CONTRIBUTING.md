@@ -2,6 +2,38 @@
 ### Want to help? Join the [Discord!](https://discord.gg/CQnkc5gS6a) Any help, big or small, would be greatly appreciated!
 Check the [Project Board](https://github.com/orgs/p3d-project/projects/1) for open tasks, then jump into [Discord](https://discord.gg/CQnkc5gS6a) to coordinate with the team.
 
+### Code Formatting
+
+This project uses [pre-commit](https://pre-commit.com) to auto-format all source files before every commit. It handles C/C++ (clang-format), Python (black + ruff), and web files (prettier).
+
+**One-time setup after cloning:**
+
+```bash
+# macOS
+brew install pre-commit
+
+# Windows / Linux
+pip install pre-commit
+```
+
+```bash
+pre-commit install
+```
+
+That's it. From now on, hooks run automatically every time you run `git commit`.
+
+**What happens during a commit:**
+
+The hooks reformat your staged files in-place. If any file is changed, the commit is **aborted** so you can review the diff. Just re-stage and commit again.
+
+**Run hooks manually (e.g. before opening a PR):**
+
+```bash
+pre-commit run --all-files
+```
+
+> **Windows note:** prettier requires Node.js to be installed. pre-commit downloads a local copy automatically the first time you run `pre-commit install` or `pre-commit run`.
+
 ### Pull Requests
 
 - **Keep PRs focused** — try to keep one feature or fix per PR. Mixed concerns make review hard.

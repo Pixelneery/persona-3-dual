@@ -1,10 +1,10 @@
 #pragma once
+#include "../ParticipantType.h"
+#include "../personas/PersonaBase.h"
+#include "../shoes/Shoe.h"
+#include "../skills/AttackSkill.h"
 #include <nds.h>
 #include <vector>
-#include "../skills/AttackSkill.h"
-#include "../ParticipantType.h"
-#include "../shoes/Shoe.h"
-#include "../personas/PersonaBase.h"
 
 struct CharacterProfile
 {
@@ -20,8 +20,8 @@ struct CharacterProfile
     Armour armour;
     Shoe shoe;
 
-    AttackSkill *baseAttackAction;
-    std::vector<PersonaBase *> personas;
+    AttackSkill* baseAttackAction;
+    std::vector<PersonaBase*> personas;
 
-    PersonaBase *curPersona;
+    PersonaBase* curPersona;
 };

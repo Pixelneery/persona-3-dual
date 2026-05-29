@@ -86,7 +86,7 @@ def convert_obj(
 
     if has_uvs:
         if tex_width not in VALID_SIZES or tex_height not in VALID_SIZES:
-            print(f"Error: texture dimensions must be powers of 2 between 8 and 1024.")
+            print("Error: texture dimensions must be powers of 2 between 8 and 1024.")
             print(f"Valid sizes: {sorted(VALID_SIZES)}")
             sys.exit(1)
 

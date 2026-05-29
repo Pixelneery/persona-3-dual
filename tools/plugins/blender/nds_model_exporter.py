@@ -5,6 +5,20 @@ Version: 2.1.3 (Bake World Space Geometry + Texture Name Sync + Axis Fix)
 Blender: 3.x / 4.x
 """
 
+import bpy
+import bmesh
+import io
+import json
+import os
+import re
+import tempfile
+import zipfile
+import math
+import mathutils
+from collections import defaultdict
+from bpy.props import StringProperty, BoolProperty
+from bpy_extras.io_utils import ExportHelper
+
 bl_info = {
     "name": "NDS Model Exporter",
     "author": "P3D Team",
@@ -14,11 +28,6 @@ bl_info = {
     "description": "Exports armature + mesh baked into Blender World Space",
     "category": "Import-Export",
 }
-
-import bpy, bmesh, io, json, os, re, tempfile, zipfile, math, mathutils
-from collections import defaultdict
-from bpy.props import StringProperty, BoolProperty
-from bpy_extras.io_utils import ExportHelper
 
 
 def sanitize(name: str) -> str:

@@ -1,0 +1,34 @@
+repos:
+  # C/C++ - clang-format via the clang-format-wheel Python package.
+  # pre-commit installs this into an isolated env, so no system clang-format needed.
+  # --style=file tells clang-format to walk up and find .clang-format at the repo root.
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v19.1.7
+    hooks:
+      - id: clang-format
+        types_or: [c, c++]
+        args: [--style=file]
+
+  # Python formatter - enforces a consistent style, no config needed.
+  - repo: https://github.com/psf/black
+    rev: 26.3.0
+    hooks:
+      - id: black
+
+  # Python linter + auto-fixer - runs after black so ruff only fixes what black leaves.
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.7
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  # HTML / CSS / JS - rbubley/mirrors-prettier is the active maintained fork;
+  # the official pre-commit/mirrors-prettier repo is archived and stopped
+  # publishing stable releases after v3.1.0.
+  # Requires Node.js on the host; pre-commit downloads it automatically via
+  # the 'node' language environment when you run `pre-commit install`.
+  - repo: https://github.com/rbubley/mirrors-prettier
+    rev: v3.4.2
+    hooks:
+      - id: prettier
+        types_or: [html, css, javascript]
