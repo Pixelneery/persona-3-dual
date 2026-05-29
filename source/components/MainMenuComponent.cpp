@@ -124,11 +124,31 @@ ViewState MainMenuComponent::settingOptionSelected()
     case SettingOptions::CHANGE_INTRO_VIDEO:
         changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
         selectedView = ViewState::KEEP_CURRENT;
+        break;
+    case SettingOptions::FEMC_MODE:
+        changeMenu(settingFemcOptions, SETTING_FEMC_OPTIONS);
+        selectedView = ViewState::KEEP_CURRENT;
+        break;
     default:
         selectedView = ViewState::KEEP_CURRENT;
     }
 
     return selectedView;
+}
+
+ViewState MainMenuComponent::settingFemcOptionSelected()
+{
+    switch (static_cast<SettingFemcOptions>(selectedOption))
+    {
+    case SettingFemcOptions::ON:
+        saveData.femcMode = true;
+        break;
+    case SettingFemcOptions::OFF:
+    default:
+        saveData.femcMode = false;
+        break;
+    }
+    return ViewState::KEEP_CURRENT;
 }
 
 ViewState MainMenuComponent::settingIntroOptionSelected()

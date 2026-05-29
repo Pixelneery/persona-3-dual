@@ -1,23 +1,15 @@
 #pragma once
-#include "core/enums.h"
-#include "core/globals.h"
-#include "core/structs.h"
 #include <nds.h>
-// menuHUD bg
+#include "core/globals.h"
+#include "core/enums.h"
+#include "core/structs.h"
 #include "menuHUD.h"
+#include "menuHUDFEMC.h"
 
 class MenuHUDComponent
 {
   private:
-    // NOTE: we can have max:
-    // 1 moon
-    // 1 day of the week
-    // 4 numbers
-    // 4 times
-    // 18 skill progress items (all same sprite)
-
-    // sprites
-    Sprite sprites[28]; // enough entries for moon, day, digits, times, and repeated skill markers
+    Sprite sprites[28];
     SpriteRegister moonSprite;
     SpriteRegister dayOfWeekSprite;
     SpriteRegister numberSprites[4];

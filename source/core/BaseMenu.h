@@ -15,7 +15,6 @@ class BaseMenu
     int bgSlot = 0;
     std::string pauseMessage = "Pause";
 
-    // options
     MenuOption* options;
     int optionCount = 0;
     int selectedOption = 0;
@@ -24,12 +23,10 @@ class BaseMenu
     virtual void loadBg(int bgIndex) = 0;
 
   private:
-    // sfx
     mm_sfxhand sfxMenuHandle;
     mm_sfxhand sfxSelectHandle;
     mm_sfxhand sfxCancelHandle;
 
-    // options
     int visibleOptions = 23;
     std::stack<MenuState> prevOptions;
     ViewState nextViewState = ViewState::KEEP_CURRENT;

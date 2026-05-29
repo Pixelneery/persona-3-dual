@@ -1,24 +1,25 @@
 #pragma once
-#include "controllers/CharacterController.h"
 #include "core/BaseView.h"
+#include "controllers/CharacterController.h"
 #include "environments/iwatodai_streets.h"
 #include <nds/arm9/console.h>
 
 class IwatodaiStreetsView : public BaseView
 {
-  public:
+public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
 
-  private:
+
+private:
     touchPosition touch;
 
     int bgMenuHUD;
     int bgSharedSlot;
     PrintConsole console;
 
-    CharacterController* playerCtrl;
+    CharacterController *playerCtrl;
     cameraPosition camPos;
     const float tileSize = 0.062500f;
     const float worldOffsetX = IWATODAI_STREETS_WORLD_OFFSET_X;
@@ -30,7 +31,6 @@ class IwatodaiStreetsView : public BaseView
     const float lookAhead = 0.3f;
     // spawn in the middle of the street, facing along it (X axis)
     const Point2D<float> characterTranslate = Point2D<float>(0.0f, 0.0f);
-    const float height = 0.05f;
     const float angle = 1.5708f; // 90 degrees in radians — faces along X
     const float characterFacingAngle = 90.0f;
     int totalPolyCount = 0;

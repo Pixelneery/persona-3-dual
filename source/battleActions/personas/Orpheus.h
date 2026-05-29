@@ -1,15 +1,15 @@
 #pragma once
 #include "PersonaBase.h"
 
-#include "../skills/Agi.h"
 #include "../skills/AttackSkill.h"
+#include "../skills/Agi.h"
 #include "../skills/Bash.h"
 
 struct Orpheus : PersonaBase
 {
     Agi agi;
     Bash bash;
-    Skill* mySkills[2];
+    Skill *mySkills[2];
 
     Orpheus()
     {
@@ -18,7 +18,7 @@ struct Orpheus : PersonaBase
         battleStats.st = 2;
         battleStats.ma = 2;
         battleStats.en = 2;
-        battleStats.ag = 3;
+        battleStats.ag = 2;
         battleStats.lu = 2;
 
         mySkills[0] = &agi;

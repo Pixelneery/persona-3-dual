@@ -155,7 +155,14 @@ enum class SettingIntroOptions
 
 enum class SettingOptions
 {
-    CHANGE_INTRO_VIDEO = 0
+    CHANGE_INTRO_VIDEO = 0,
+    FEMC_MODE
+};
+
+enum class SettingFemcOptions
+{
+    OFF = 0,
+    ON
 };
 
 enum class BattleMenuOptions

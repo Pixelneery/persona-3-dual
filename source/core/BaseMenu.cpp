@@ -54,7 +54,8 @@ ViewState BaseMenu::update(int keys)
     {
         startIndex = selectedOption - visibleOptions + 1;
     }
-    else if (keys & KEY_A)
+
+    if (keys & KEY_A)
     {
         cancelSFX();
         sfxSelectHandle = musicCtrl.playSFX(SFX_SELECT, 255, 128);

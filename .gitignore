@@ -4,11 +4,13 @@ persona-3-dual.lst
 
 # no auto-generated files should be committed
 /build
-/source/dialogue
-/source/environments
-/source/maps
-/source/models
-/data
+# /source/dialogue
+# /source/environments
+# /source/maps
+# /source/models
+/data/music
+/data/video
+/data/models
 
 /tools/converters/__pycache__
 *.pyc

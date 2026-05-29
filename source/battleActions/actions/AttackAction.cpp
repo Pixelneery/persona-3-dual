@@ -1,28 +1,28 @@
 #include "AttackAction.h"
-#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
-BattleResult AttackAction::resolve(PartyMember* user, BattleParticipant* target, Skill* /*skill*/)
+void AttackAction::execute()
 {
-    AttackSkill* atk = user->baseAttackAction;
-    Enemy* enemy = static_cast<Enemy*>(target);
+    inProgress = true;
+    targetIndex = 0;
+}
 
-    u32 accuracy = atk->calculateHitratePlayer(&user->curPersona->battleStats, &enemy->battleStats);
-    bool hit = accuracy > u32(rand() % 100);
+bool AttackAction::update(u32 *keys, PartyMember *user)
+{
+    updateIndex.update(*keys, targetIndex, enemies->size());
 
-    if (!hit)
-        return {false, 0, false, "Miss"};
-
-    u32 damage =
-        atk->calculateDamagePlayer(&user->curPersona->battleStats, &enemy->battleStats, &user->lv, &target->lv);
-    bool oneMore = false;
-
-    u32 affinity = enemy->battleStats.affinities[atk->element];
-    if (affinity == BattleStats::Affinity::Weak && !enemy->knockedDown)
+    bool madeAction = targetAndExecute->update(keys, user->baseAttackAction, user, enemies);
+    if (madeAction)
     {
-        oneMore = true;
-        enemy->knockedDown = true;
+        targetIndex = 0;
+        inProgress = false;
     }
 
-    target->hp -= (s32)damage;
-    return {true, -(s32)damage, oneMore, atk->name};
+    if (*keys & KEY_B)
+    {
+        inProgress = false;
+    }
+
+    return madeAction;
 }

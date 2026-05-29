@@ -1,9 +1,9 @@
-#include "StationView.h"
-#include "core/globals.h"
-#include "math.h"
-#include <malloc.h>
 #include <nds.h>
 #include <stdio.h>
+#include <malloc.h>
+#include "core/globals.h"
+#include "math.h"
+#include "StationView.h"
 
 // map
 #include "maps/station.h"
@@ -22,8 +22,8 @@
 #include "f008_005wall01.h"
 #include "lightmap_white.h"
 // model
-#include "character.h"
 #include "models/character.h"
+#include "character.h"
 
 int policeStationCharacterTextureId;
 station_Environment stationEnv;
@@ -74,41 +74,33 @@ void StationView::init()
     // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
     menuHUDCmpt.loadHUD();
 
-    playerCtrl = new CharacterController(STATION_MAP_WIDTH,
-                                         STATION_MAP_HEIGHT,
-                                         &station_map[0][0],
-                                         tileSize,
-                                         worldOffsetX,
-                                         worldOffsetZ,
-                                         characterSize,
-                                         speed,
-                                         angleIncrement,
-                                         distance,
-                                         lookAhead,
-                                         angle,
-                                         height,
-                                         characterTranslate,
-                                         characterFacingAngle);
+    playerCtrl = new CharacterController(
+        STATION_MAP_WIDTH, STATION_MAP_HEIGHT, &station_map[0][0],
+        tileSize, worldOffsetX, worldOffsetZ, characterSize,
+        speed, angleIncrement, distance, lookAhead,
+        angle, characterTranslate, characterFacingAngle);
 
     // setup music
-    musicCtrl.init((fatBasePath + "/music/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
+    musicCtrl.init((fatBasePath + "/music/changing_seasons.pcm").c_str(), 0.0f, -1.0f);
 
     // setup character model
     characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int* bitmaps[STATION_TEX_COUNT] = {f008_005obj04Bitmap,
-                                                      f008_005obj02Bitmap,
-                                                      f008_005obj07Bitmap,
-                                                      f008_005obj06Bitmap,
-                                                      f008_005obj08Bitmap,
-                                                      lightmap_whiteBitmap,
-                                                      f008_005wall01Bitmap,
-                                                      f008_005obj01Bitmap,
-                                                      f008_005obj03Bitmap,
-                                                      f008_005floor01Bitmap,
-                                                      f008_005bolt01Bitmap};
+    const unsigned int *bitmaps[STATION_TEX_COUNT] = {
+        f008_005obj04Bitmap,
+        f008_005obj02Bitmap,
+        f008_005obj07Bitmap,
+        f008_005obj06Bitmap,
+        f008_005obj08Bitmap,
+        lightmap_whiteBitmap,
+        f008_005wall01Bitmap,
+        f008_005obj01Bitmap,
+        f008_005obj03Bitmap,
+        f008_005floor01Bitmap,
+        f008_005bolt01Bitmap
+    };
     stationEnv.load((fatBasePath + "environments/station.bin").c_str(), bitmaps);
     totalPolyCount = stationEnv.getPolyCount();
 
@@ -174,18 +166,13 @@ ViewState StationView::update()
         if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
         {
             musicCtrl.pause();
-            return ViewState::PAULOWNIA_MALL;
+            return ViewState::IWATODAI_DORM;
         }
 
-        gluLookAt(camPos.cameraX,
-                  camPos.cameraY,
-                  camPos.cameraZ,
-                  camPos.targetX,
-                  camPos.targetY,
-                  camPos.targetZ,
-                  camPos.upX,
-                  camPos.upY,
-                  camPos.upZ);
+        gluLookAt(
+            camPos.cameraX, camPos.cameraY, camPos.cameraZ,
+            camPos.targetX, camPos.targetY, camPos.targetZ,
+            camPos.upX, camPos.upY, camPos.upZ);
 
         glPushMatrix();
         stationEnv.draw();
@@ -193,7 +180,7 @@ ViewState StationView::update()
 
         glPushMatrix();
         characterPosition charPos = playerCtrl->isCharacterAt();
-        glTranslatef(charPos.x, charPos.y, charPos.z);
+        glTranslatef(charPos.x, 0.0, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         characterAnimationCtrl.render();
         glPopMatrix(1);
@@ -208,9 +195,10 @@ ViewState StationView::update()
             iprintf("\x1b[21;0H\033[31mtile(x,z): %d, %d",
                     (int)((charPos.x + worldOffsetX) / tileSize),
                     (int)((charPos.z + worldOffsetZ) / tileSize));
-            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
-            iprintf(
-                "\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+            iprintf("\x1b[22;0H\033[31mtranslate(x,z): %d, %d",
+                    (int)(charPos.x * 100),
+                    (int)(charPos.z * 100));
+            iprintf("\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
     }
 

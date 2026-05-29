@@ -1,7 +1,15 @@
 #include "Guard.h"
+#include <stdio.h>
 
-BattleResult Guard::resolve(PartyMember* user, BattleParticipant* /*target*/, Skill* /*skill*/)
+void Guard::execute()
+{
+    inProgress = true;
+    iprintf("Guarding\n");
+}
+
+bool Guard::update(u32 *keys, PartyMember *user)
 {
     user->guarding = true;
-    return {true, 0, false, "Guard"};
+    inProgress = false;
+    return true;
 }

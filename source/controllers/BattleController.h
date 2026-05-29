@@ -1,9 +1,8 @@
 #pragma once
 
-#include <algorithm>
-#include <array>
+#include <stdio.h>
 #include <nds.h>
-#include <string>
+#include <stdio.h>
 #include <vector>
 
 #include "./battleActions/actions/AttackAction.h"
@@ -12,92 +11,42 @@
 #include "./battleActions/actions/SwitchPersona.h"
 
 #include "./battleActions/BattleParticipant.h"
-#include "./battleActions/BattleResult.h"
-#include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/party/CharacterProfiles.h"
 #include "./battleActions/party/PartyMember.h"
 
-enum class BattlePhase
-{
-    ChooseAction,
-    ChooseSkill,
-    ChoosePersona,
-    ChooseTarget,
-    ShowAlert,
-    EnemyTurn,
-    Done
-};
+#include "./battleActions/party/CharacterProfiles.h"
 
 class BattleController
 {
-  private:
-    static constexpr u32 ACTION_ATTACK = 0;
-    static constexpr u32 ACTION_GUARD = 1;
-    static constexpr u32 ACTION_PERSONA = 2;
-    static constexpr u32 ACTION_SWITCH = 3;
-
-    bool active = false;
+private:
     u32 turnsTaken = 0;
+    BattleParticipant *currentParticipantTurn;
+    bool active = false;
+    bool isEnemyTurn = false;
 
-    BattlePhase phase;
-    BattleParticipant* currentParticipantTurn = nullptr;
-    u32 currentParticipantIndex = 0;
+    std::vector<BattleParticipant *> *battleParticipants;
+    std::vector<BattleParticipant *> enemies;
+    std::vector<BattleParticipant *> partyMembers;
 
-    u32 actionIndex = 0;
-    u32 skillIndex = 0;
-    u32 personaIndex = 0;
-    u32 targetIndex = 0;
-    Skill* selectedSkill = nullptr;
-
-    std::string pendingAlert;
-    BattlePhase alertReturnPhase = BattlePhase::Done;
-
-    std::vector<BattleParticipant*>* battleParticipants;
-    std::vector<BattleParticipant*> enemies;
-    std::vector<BattleParticipant*> partyMembers;
-
-    CharacterProfiles* characterProfiles;
-    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
+    CharacterProfiles *characterProfiles;
 
     AttackAction attack;
     Guard guard;
     PersonaAction persona;
     SwitchPersona switchPersona;
 
-    std::array<ActionBase*, 4> actions = {&attack, &guard, &persona, &switchPersona};
+    std::array<ActionBase *, 4> actions = {&attack, &guard, &persona, &switchPersona};
 
-    PartyMember* player = nullptr;
-    PartyMember* yukari = nullptr;
-    PartyMember* junpei = nullptr;
+    // TODO: method for selecting party members in the future
+    PartyMember *player = nullptr;
+    PartyMember *yukari = nullptr;
+    PartyMember *junpei = nullptr;
 
-    bool actorCanUse(PartyMember* actor, u32 idx);
-    void applyResult(const BattleResult& r, BattleParticipant* target = nullptr);
-    void advanceTurn();
-    void setNextPhase(BattlePhase nextPhase);
-    void calculateTurnOrder();
-    void handleDeadParticipants();
-
-  public:
-    bool isActive() const
-    {
-        return active;
-    }
-    BattlePhase getPhase() const
-    {
-        return phase;
-    }
-
+public:
+    bool isActive() { return active; };
     void execute();
     void update(u32 keys);
     void exit();
-
-    // TODO: battle start condizion in constructor
-
-    BattleController(std::vector<BattleParticipant*>* iBattleParticipants,
-                     CharacterProfiles* iCharacterProfiles,
-                     BattleStartCondition iBattleStartCondition);
-    ~BattleController()
-    {
-    }
+    BattleController(std::vector<BattleParticipant *> *iBattleParticipants, CharacterProfiles *iCharacterProfiles);
+    ~BattleController() {}
 };

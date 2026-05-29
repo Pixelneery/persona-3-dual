@@ -1,17 +1,34 @@
 #pragma once
-#include "../enemies/Enemy.h"
-#include "../party/PartyMember.h"
-#include "../skills/AttackSkill.h"
-#include "../skills/HealSkill.h"
+#include <stdio.h>
+#include <vector>
+
 #include "ActionBase.h"
+#include "../party/PartyMember.h"
+#include "../TargetAndExecute.h"
+#include "../UpdateIndex.h"
 
 struct PersonaAction : ActionBase
 {
-    PersonaAction()
+    UpdateIndex updateIndex;
+    Skill *selectedSkill;
+    TargetAndExecute *targetAndExecute;
+
+    PersonaAction(std::vector<BattleParticipant *> *iAllParticipants, std::vector<BattleParticipant *> *iParty, std::vector<BattleParticipant *> *iEnemies) : ActionBase(iAllParticipants, iParty, iEnemies)
     {
         name = "Persona";
         possibleUsers = ParticipantType::Party;
+
+        // TODO: dont forget to clear in the future
+        targetAndExecute = new TargetAndExecute(&targetIndex);
     }
 
-    BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill) override;
+    enum MenuState
+    {
+        SelectSkill,
+        SelectTarget,
+    };
+    MenuState menuState;
+
+    void execute() override;
+    bool update(u32 *keys, PartyMember *user) override;
 };
