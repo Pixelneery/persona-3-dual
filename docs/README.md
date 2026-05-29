@@ -73,7 +73,25 @@ git clone https://github.com/p3d-project/persona-3-dual.git
 cd persona-3-dual
 ```
 
-### 3. Build the Docker Image
+### 3. Set Up Code Formatting Hooks
+
+Install [pre-commit](https://pre-commit.com) and register the hooks once:
+
+```bash
+# macOS
+brew install pre-commit
+
+# Windows / Linux
+pip install pre-commit
+```
+
+```bash
+pre-commit install
+```
+
+The hooks run automatically on every `git commit` and keep C/C++, Python, and web files consistently formatted. See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+### 4. Build the Docker Image
 
 Run this **once** (or again whenever `Dockerfile` or `tools/requirements.txt` changes). It downloads and caches all dependencies:
 
@@ -83,7 +101,7 @@ docker build -t p3d-dev .
 
 > First build takes a few minutes while devkitARM downloads. Subsequent builds use the Docker layer cache and much quicker.
 
-### 4. Compile the ROM
+### 5. Compile the ROM
 
 ```bash
 # Linux / macOS
@@ -98,7 +116,7 @@ docker run --rm -v "${PWD}:/project" p3d-dev make
 
 This produces `persona-3-dual.nds` and `sdcard.img` in your repo folder!
 
-### 5. Interactive Shell (optional)
+### 6. Interactive Shell (optional)
 
 If you want to poke around, run commands manually, or debug the build:
 
