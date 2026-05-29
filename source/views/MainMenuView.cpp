@@ -7,7 +7,7 @@
 #include "doorBackground.h"
 #include "fogBackground.h"
 #include "menuSilhouetteBackground.h"
-#include "silhouetteBackgroundFEMC.h"
+#include "menuSilhouetteBackgroundFEMC.h"
 
 void MainMenuView::init()
 {
@@ -74,12 +74,12 @@ void MainMenuView::init()
 
     // select silhouette asset based on FEMC mode
     bool femc = saveData.femcMode;
-    const void* silTiles = femc ? (const void*)silhouetteBackgroundFEMCTiles    : (const void*)menuSilhouetteBackgroundTiles;
-    u32          silTilesLen = femc ? silhouetteBackgroundFEMCTilesLen           : menuSilhouetteBackgroundTilesLen;
-    const void* silMap   = femc ? (const void*)silhouetteBackgroundFEMCMap      : (const void*)menuSilhouetteBackgroundMap;
-    u32          silMapLen   = femc ? silhouetteBackgroundFEMCMapLen             : menuSilhouetteBackgroundMapLen;
-    const void* silPal   = femc ? (const void*)silhouetteBackgroundFEMCPal      : (const void*)menuSilhouetteBackgroundPal;
-    u32          silPalLen   = femc ? silhouetteBackgroundFEMCPalLen             : menuSilhouetteBackgroundPalLen;
+    const void* silTiles   = femc ? (const void*)menuSilhouetteBackgroundFEMCTiles   : (const void*)menuSilhouetteBackgroundTiles;
+    u32         silTilesLen = femc ? menuSilhouetteBackgroundFEMCTilesLen             : menuSilhouetteBackgroundTilesLen;
+    const void* silMap     = femc ? (const void*)menuSilhouetteBackgroundFEMCMap      : (const void*)menuSilhouetteBackgroundMap;
+    u32         silMapLen   = femc ? menuSilhouetteBackgroundFEMCMapLen               : menuSilhouetteBackgroundMapLen;
+    const void* silPal     = femc ? (const void*)menuSilhouetteBackgroundFEMCPal      : (const void*)menuSilhouetteBackgroundPal;
+    u32         silPalLen   = femc ? menuSilhouetteBackgroundFEMCPalLen               : menuSilhouetteBackgroundPalLen;
 
     // copy graphics to vram
     dmaCopy(silTiles, bgGetGfxPtr(bg[0]), silTilesLen);
