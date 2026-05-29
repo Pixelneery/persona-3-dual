@@ -329,7 +329,7 @@ jobs:
             echo "| File | Use for |"
             echo "|------|---------|"
             echo "| \`persona-3-dual.nds\` | ROM - required for both emulator and hardware |"
-            echo "| \`sdcard.img.gz\` | melonDS emulator - decompress with \`gzip -d sdcard.img.gz\`, then mount via DLDI settings |"
+            echo "| \`sdcard.img.gz\` | melonDS emulator - decompress & mount via DLDI settings |"
             echo "| \`data.zip\` | Real hardware - extract and place \`data/\` next to the ROM on your SD card |"
             echo ""
             echo "## Checksums"
