@@ -7,6 +7,7 @@
 #include "doorBackground.h"
 #include "fogBackground.h"
 #include "menuSilhouetteBackground.h"
+#include "silhouetteBackgroundFEMC.h"
 
 void MainMenuView::init()
 {
@@ -71,20 +72,29 @@ void MainMenuView::init()
     dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
 
+    // select silhouette asset based on FEMC mode
+    bool femc = saveData.femcMode;
+    const void* silTiles = femc ? (const void*)silhouetteBackgroundFEMCTiles    : (const void*)menuSilhouetteBackgroundTiles;
+    u32          silTilesLen = femc ? silhouetteBackgroundFEMCTilesLen           : menuSilhouetteBackgroundTilesLen;
+    const void* silMap   = femc ? (const void*)silhouetteBackgroundFEMCMap      : (const void*)menuSilhouetteBackgroundMap;
+    u32          silMapLen   = femc ? silhouetteBackgroundFEMCMapLen             : menuSilhouetteBackgroundMapLen;
+    const void* silPal   = femc ? (const void*)silhouetteBackgroundFEMCPal      : (const void*)menuSilhouetteBackgroundPal;
+    u32          silPalLen   = femc ? silhouetteBackgroundFEMCPalLen             : menuSilhouetteBackgroundPalLen;
+
     // copy graphics to vram
-    dmaCopy(menuSilhouetteBackgroundTiles, bgGetGfxPtr(bg[0]), menuSilhouetteBackgroundTilesLen);
+    dmaCopy(silTiles, bgGetGfxPtr(bg[0]), silTilesLen);
     dmaCopy(doorBackgroundTiles, bgGetGfxPtr(bg[1]), doorBackgroundTilesLen);
     dmaCopy(fogBackgroundTiles, bgGetGfxPtr(bg[2]), fogBackgroundTilesLen);
 
     // copy maps to vram
-    dmaCopy(menuSilhouetteBackgroundMap, bgGetMapPtr(bg[0]), menuSilhouetteBackgroundMapLen);
+    dmaCopy(silMap, bgGetMapPtr(bg[0]), silMapLen);
     dmaCopy(doorBackgroundMap, bgGetMapPtr(bg[1]), doorBackgroundMapLen);
     dmaCopy(fogBackgroundMap, bgGetMapPtr(bg[2]), fogBackgroundMapLen);
 
     vramSetBankE(VRAM_E_LCD); // for main engine
 
     // copy palettes to extended palette area
-    dmaCopy(menuSilhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], menuSilhouetteBackgroundPalLen);
+    dmaCopy(silPal, &VRAM_E_EXT_PALETTE[0][0], silPalLen);
     dmaCopy(doorBackgroundPal, &VRAM_E_EXT_PALETTE[1][0], doorBackgroundPalLen);
     dmaCopy(fogBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], fogBackgroundPalLen);
 
