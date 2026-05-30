@@ -11,7 +11,9 @@ u32 AttackSkill::calculateDamagePlayer(BattleStats* attackerStats,
 {
     damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
     // todo: level diffrence never goes under 0 for either party during boss fights
-    return (u32)floor(sqrt((float)(movePower * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
+    float base = floor(sqrt((float)(movePower * 15 * Atk) / defenderStats->en) * 2 * levelDifference * affinityMtp);
+    float range = 95 + (u32)(rand() % 11);
+    return (u32)floor(base * range / 100.0f);
 }
 
 // TODO: hopefully correct, should be looked at by someone that knows some  math
@@ -33,9 +35,11 @@ u32 AttackSkill::calculateDamageEnemyRegular(
 
     damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
     // todo: level diffrence never goes under 0 for either party during boss fights
-    return (u32)floor(
-        (sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) *
-        affinityMtp);
+
+    float base = (sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference) *
+                 affinityMtp;
+    float range = 95 + (u32)(rand() % 11);
+    return (u32)floor(base * range / 100.0f);
 }
 
 u32 AttackSkill::calculateDamageEnemySkill(
@@ -47,9 +51,11 @@ u32 AttackSkill::calculateDamageEnemySkill(
     damageSetup(attackerStats, defenderStats, attackerLevel, defenderLevel);
     // todo: level diffrence never goes under 0 for either party during boss fights
 
-    return (u32)floor(
-        (sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) *
-        affinityMtp);
+    float base =
+        ((sqrt((float)(movePower * 6 * Atk) / (8 * defenderStats->en + armourValue)) * 9 * levelDifference - 10) *
+         affinityMtp);
+    float range = 95 + (u32)(rand() % 11);
+    return (u32)floor(base * range / 100.0f);
 }
 
 // TODO: hopefully correct, should be looked at by someone that knows some  math
