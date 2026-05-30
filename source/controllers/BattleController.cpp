@@ -108,7 +108,7 @@ void BattleController::update(u32 keys)
             else
                 resource = &actor->hp;
 
-            bool canAfford = *resource > s->cost;
+            bool canAfford = *resource >= s->cost;
             if (canAfford)
             {
                 *resource -= s->cost;

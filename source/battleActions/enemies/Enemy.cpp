@@ -29,7 +29,7 @@ BattleResult Enemy::resolve(BattleParticipant* target, AttackSkill* skill)
     else
         resource = &hp;
 
-    bool canAfford = *resource > skill->cost;
+    bool canAfford = *resource >= skill->cost;
     if (!canAfford)
         return {false, 0, false, skill->name};
 
