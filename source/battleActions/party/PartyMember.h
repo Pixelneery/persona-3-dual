@@ -32,7 +32,9 @@ struct PartyMember : BattleParticipant
     PartyMember(CharacterProfile *iCharacterProfile) : characterProfile(iCharacterProfile)
     {
         name = characterProfile->name;
+        maxHp = characterProfile->maxHp;
         hp = characterProfile->hp;
+        maxSp = characterProfile->maxSp;
         sp = characterProfile->sp;
         lv = characterProfile->lv;
 

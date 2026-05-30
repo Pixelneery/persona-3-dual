@@ -8,7 +8,9 @@ void CharacterProfiles::InitializeProfiles()
     /*--------------MC-----------------*/
 
     player.name = "Player";
+    player.maxHp = 72;
     player.hp = 72;
+    player.maxSp = 50;
     player.sp = 50;
     player.lv = 2;
 
@@ -28,7 +30,9 @@ void CharacterProfiles::InitializeProfiles()
     /*--------------YUKARI-------------*/
 
     yukari.name = "Yukari";
+    yukari.maxHp = 51;
     yukari.hp = 51;
+    yukari.maxSp = 45;
     yukari.sp = 45;
     yukari.lv = 1;
 
@@ -45,7 +49,9 @@ void CharacterProfiles::InitializeProfiles()
 
     /*--------------JUNPEI-------------*/
     junpei.name = "Junpei";
+    junpei.maxHp = 70;
     junpei.hp = 70;
+    junpei.maxSp = 36;
     junpei.sp = 36;
     junpei.lv = 1;
 

@@ -9,7 +9,9 @@
 struct CharacterProfile
 {
     std::string name;
+    s32 maxHp;
     s32 hp;
+    s32 maxSp;
     s32 sp;
     u32 lv;
     ParticipantType participantType;

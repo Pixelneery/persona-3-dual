@@ -16,7 +16,10 @@ struct Cowardly_Maya : Enemy
         myAttackSkill[0] = &bufu;
 
         name = "Cowardly Maya";
+
+        maxHp = 83;
         hp = 83;
+        maxSp = 20;
         sp = 20;
         lv = 2;
         battleStats.st = 2;
