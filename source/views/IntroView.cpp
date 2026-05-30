@@ -19,6 +19,7 @@
 #include "logoSpriteLeftFEMC.h"
 // sub screen
 #include "attributionBackground.h"
+#include "attributionBackgroundFEMC.h"
 #include "skyBackgroundSub.h"
 #include "skyBackgroundSubFEMC.h"
 // sfx
@@ -88,7 +89,7 @@ void IntroView::init()
     dmaCopy(femc ? roomBackgroundFEMCTiles       : roomBackgroundTiles,       bgGetGfxPtr(bg[1]), femc ? roomBackgroundFEMCTilesLen       : roomBackgroundTilesLen);
     dmaCopy(femc ? skyBackgroundFEMCTiles        : skyBackgroundTiles,        bgGetGfxPtr(bg[2]), femc ? skyBackgroundFEMCTilesLen        : skyBackgroundTilesLen);
     dmaCopy(femc ? overlayBackgroundFEMCTiles    : overlayBackgroundTiles,    bgGetGfxPtr(bg[3]), femc ? overlayBackgroundFEMCTilesLen    : overlayBackgroundTilesLen);
-    dmaCopy(attributionBackgroundTiles, bgGetGfxPtr(bgSubLogo), attributionBackgroundTilesLen);
+    dmaCopy(femc ? attributionBackgroundFEMCTiles : attributionBackgroundTiles, bgGetGfxPtr(bgSubLogo), femc ? attributionBackgroundFEMCTilesLen : attributionBackgroundTilesLen);
     dmaCopy(femc ? skyBackgroundSubFEMCTiles     : skyBackgroundSubTiles,     bgGetGfxPtr(bgSubSky), femc ? skyBackgroundSubFEMCTilesLen     : skyBackgroundSubTilesLen);
 
     // copy maps to vram
@@ -96,7 +97,7 @@ void IntroView::init()
     dmaCopy(femc ? roomBackgroundFEMCMap        : roomBackgroundMap,        bgGetMapPtr(bg[1]), femc ? roomBackgroundFEMCMapLen        : roomBackgroundMapLen);
     dmaCopy(femc ? skyBackgroundFEMCMap         : skyBackgroundMap,         bgGetMapPtr(bg[2]), femc ? skyBackgroundFEMCMapLen         : skyBackgroundMapLen);
     dmaCopy(femc ? overlayBackgroundFEMCMap     : overlayBackgroundMap,     bgGetMapPtr(bg[3]), femc ? overlayBackgroundFEMCMapLen     : overlayBackgroundMapLen);
-    dmaCopy(attributionBackgroundMap, bgGetMapPtr(bgSubLogo), attributionBackgroundMapLen);
+    dmaCopy(femc ? attributionBackgroundFEMCMap : attributionBackgroundMap, bgGetMapPtr(bgSubLogo), femc ? attributionBackgroundFEMCMapLen : attributionBackgroundMapLen);
     dmaCopy(femc ? skyBackgroundSubFEMCMap      : skyBackgroundSubMap,      bgGetMapPtr(bgSubSky), femc ? skyBackgroundSubFEMCMapLen      : skyBackgroundSubMapLen);
 
     // can only write to extended palettes in LCD mode
@@ -108,7 +109,7 @@ void IntroView::init()
     dmaCopy(femc ? roomBackgroundFEMCPal        : roomBackgroundPal,        &VRAM_E_EXT_PALETTE[1][0], femc ? roomBackgroundFEMCPalLen        : roomBackgroundPalLen);       // bg 1, slot 0
     dmaCopy(femc ? skyBackgroundFEMCPal         : skyBackgroundPal,         &VRAM_E_EXT_PALETTE[2][0], femc ? skyBackgroundFEMCPalLen         : skyBackgroundPalLen);         // bg 2, slot 0
     dmaCopy(femc ? overlayBackgroundFEMCPal     : overlayBackgroundPal,     &VRAM_E_EXT_PALETTE[3][0], femc ? overlayBackgroundFEMCPalLen     : overlayBackgroundPalLen);     // bg 3, slot 0
-    dmaCopy(attributionBackgroundPal, &VRAM_H_EXT_PALETTE[0][0], attributionBackgroundPalLen);
+    dmaCopy(femc ? attributionBackgroundFEMCPal : attributionBackgroundPal, &VRAM_H_EXT_PALETTE[0][0], femc ? attributionBackgroundFEMCPalLen : attributionBackgroundPalLen);
     dmaCopy(femc ? skyBackgroundSubFEMCPal      : skyBackgroundSubPal,      &VRAM_H_EXT_PALETTE[1][0], femc ? skyBackgroundSubFEMCPalLen      : skyBackgroundSubPalLen);
 
     // map vram to extended palette
