@@ -9,6 +9,25 @@
 #include "menuSilhouetteBackground.h"
 #include "menuSilhouetteBackgroundFEMC.h"
 
+void MainMenuView::loadSilhouette()
+{
+    bool femc = saveData.femcMode;
+    const void* silTiles    = femc ? (const void*)menuSilhouetteBackgroundFEMCTiles : (const void*)menuSilhouetteBackgroundTiles;
+    u32         silTilesLen = femc ? menuSilhouetteBackgroundFEMCTilesLen           : menuSilhouetteBackgroundTilesLen;
+    const void* silMap      = femc ? (const void*)menuSilhouetteBackgroundFEMCMap   : (const void*)menuSilhouetteBackgroundMap;
+    u32         silMapLen   = femc ? menuSilhouetteBackgroundFEMCMapLen             : menuSilhouetteBackgroundMapLen;
+    const void* silPal      = femc ? (const void*)menuSilhouetteBackgroundFEMCPal   : (const void*)menuSilhouetteBackgroundPal;
+    u32         silPalLen   = femc ? menuSilhouetteBackgroundFEMCPalLen             : menuSilhouetteBackgroundPalLen;
+
+    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
+    dmaCopy(silTiles, bgGetGfxPtr(bg[0]), silTilesLen);
+    dmaCopy(silMap,   bgGetMapPtr(bg[0]), silMapLen);
+
+    vramSetBankE(VRAM_E_LCD);
+    dmaCopy(silPal, &VRAM_E_EXT_PALETTE[0][0], silPalLen);
+    vramSetBankE(VRAM_E_BG_EXT_PALETTE);
+}
+
 void MainMenuView::init()
 {
     // setup music
@@ -72,33 +91,21 @@ void MainMenuView::init()
     dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
 
-    // select silhouette asset based on FEMC mode
-    bool femc = saveData.femcMode;
-    const void* silTiles   = femc ? (const void*)menuSilhouetteBackgroundFEMCTiles   : (const void*)menuSilhouetteBackgroundTiles;
-    u32         silTilesLen = femc ? menuSilhouetteBackgroundFEMCTilesLen             : menuSilhouetteBackgroundTilesLen;
-    const void* silMap     = femc ? (const void*)menuSilhouetteBackgroundFEMCMap      : (const void*)menuSilhouetteBackgroundMap;
-    u32         silMapLen   = femc ? menuSilhouetteBackgroundFEMCMapLen               : menuSilhouetteBackgroundMapLen;
-    const void* silPal     = femc ? (const void*)menuSilhouetteBackgroundFEMCPal      : (const void*)menuSilhouetteBackgroundPal;
-    u32         silPalLen   = femc ? menuSilhouetteBackgroundFEMCPalLen               : menuSilhouetteBackgroundPalLen;
+    // load silhouette (FEMC-aware)
+    loadSilhouette();
+    lastFemcMode = saveData.femcMode;
 
-    // copy graphics to vram
-    dmaCopy(silTiles, bgGetGfxPtr(bg[0]), silTilesLen);
+    // copy door and fog graphics to vram
     dmaCopy(doorBackgroundTiles, bgGetGfxPtr(bg[1]), doorBackgroundTilesLen);
-    dmaCopy(fogBackgroundTiles, bgGetGfxPtr(bg[2]), fogBackgroundTilesLen);
+    dmaCopy(fogBackgroundTiles,  bgGetGfxPtr(bg[2]), fogBackgroundTilesLen);
 
-    // copy maps to vram
-    dmaCopy(silMap, bgGetMapPtr(bg[0]), silMapLen);
+    // copy door and fog maps to vram
     dmaCopy(doorBackgroundMap, bgGetMapPtr(bg[1]), doorBackgroundMapLen);
-    dmaCopy(fogBackgroundMap, bgGetMapPtr(bg[2]), fogBackgroundMapLen);
+    dmaCopy(fogBackgroundMap,  bgGetMapPtr(bg[2]), fogBackgroundMapLen);
 
-    vramSetBankE(VRAM_E_LCD); // for main engine
-
-    // copy palettes to extended palette area
-    dmaCopy(silPal, &VRAM_E_EXT_PALETTE[0][0], silPalLen);
+    vramSetBankE(VRAM_E_LCD);
     dmaCopy(doorBackgroundPal, &VRAM_E_EXT_PALETTE[1][0], doorBackgroundPalLen);
-    dmaCopy(fogBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], fogBackgroundPalLen);
-
-    // map vram to extended palette
+    dmaCopy(fogBackgroundPal,  &VRAM_E_EXT_PALETTE[2][0], fogBackgroundPalLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
     bgHide(bg[2]);
@@ -137,6 +144,13 @@ ViewState MainMenuView::update()
         return result;
     }
     musicCtrl.update();
+
+    // reload silhouette if FEMC mode was toggled in settings
+    if (saveData.femcMode != lastFemcMode)
+    {
+        lastFemcMode = saveData.femcMode;
+        loadSilhouette();
+    }
 
     // scroll silhouette background
     // animate X (moving right towards 0)

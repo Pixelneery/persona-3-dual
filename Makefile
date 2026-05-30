@@ -165,8 +165,18 @@ export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 $(BUILD):
 	@$(MAKE) --no-print-directory assets
 	@[ -d $@ ] || mkdir -p $@
+	@$(MAKE) --no-print-directory grit_headers
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 	@$(MAKE) --no-print-directory sdcard.img
+
+grit_headers:
+	@for png in $(foreach dir,$(GRAPHICS),$(wildcard $(CURDIR)/$(dir)/*.png)); do \
+		grit=${png%.png}.grit; \
+		base=$(basename ${png%.png}); \
+		if [ -f "$grit" ]; then \
+			grit $png -fts -o$(CURDIR)/$(BUILD)/$base 2>/dev/null || true; \
+		fi; \
+	done
 
 help:
 	@echo "  make              Build everything"

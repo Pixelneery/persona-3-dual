@@ -10,6 +10,7 @@
 #include "roomBackground.h"
 #include "roomBackgroundFEMC.h"
 #include "silhouetteBackground.h"
+#include "silhouetteBackgroundFEMC.h"
 #include "overlayBackground.h"
 #include "overlayBackgroundFEMC.h"
 #include "logoSpriteLeft.h"
@@ -81,8 +82,8 @@ void IntroView::init()
     dmaFillHalfWords(0, bgGetMapPtr(bgSubSky), 2048);
 
     // copy graphics to vram
-    dmaCopy(silhouetteBackgroundTiles, bgGetGfxPtr(bg[0]), silhouetteBackgroundTilesLen);
     bool femc = saveData.femcMode;
+    dmaCopy(femc ? silhouetteBackgroundFEMCTiles : silhouetteBackgroundTiles, bgGetGfxPtr(bg[0]), femc ? silhouetteBackgroundFEMCTilesLen : silhouetteBackgroundTilesLen);
     dmaCopy(femc ? roomBackgroundFEMCTiles       : roomBackgroundTiles,       bgGetGfxPtr(bg[1]), femc ? roomBackgroundFEMCTilesLen       : roomBackgroundTilesLen);
     dmaCopy(femc ? skyBackgroundFEMCTiles        : skyBackgroundTiles,        bgGetGfxPtr(bg[2]), femc ? skyBackgroundFEMCTilesLen        : skyBackgroundTilesLen);
     dmaCopy(femc ? overlayBackgroundFEMCTiles    : overlayBackgroundTiles,    bgGetGfxPtr(bg[3]), femc ? overlayBackgroundFEMCTilesLen    : overlayBackgroundTilesLen);
@@ -90,7 +91,7 @@ void IntroView::init()
     dmaCopy(femc ? skyBackgroundSubFEMCTiles     : skyBackgroundSubTiles,     bgGetGfxPtr(bgSubSky), femc ? skyBackgroundSubFEMCTilesLen     : skyBackgroundSubTilesLen);
 
     // copy maps to vram
-    dmaCopy(silhouetteBackgroundMap, bgGetMapPtr(bg[0]), silhouetteBackgroundMapLen);
+    dmaCopy(femc ? silhouetteBackgroundFEMCMap : silhouetteBackgroundMap, bgGetMapPtr(bg[0]), femc ? silhouetteBackgroundFEMCMapLen : silhouetteBackgroundMapLen);
     dmaCopy(femc ? roomBackgroundFEMCMap        : roomBackgroundMap,        bgGetMapPtr(bg[1]), femc ? roomBackgroundFEMCMapLen        : roomBackgroundMapLen);
     dmaCopy(femc ? skyBackgroundFEMCMap         : skyBackgroundMap,         bgGetMapPtr(bg[2]), femc ? skyBackgroundFEMCMapLen         : skyBackgroundMapLen);
     dmaCopy(femc ? overlayBackgroundFEMCMap     : overlayBackgroundMap,     bgGetMapPtr(bg[3]), femc ? overlayBackgroundFEMCMapLen     : overlayBackgroundMapLen);
@@ -102,7 +103,7 @@ void IntroView::init()
     vramSetBankH(VRAM_H_LCD); // for subv engine
 
     // copy palettes to extended palette area
-    dmaCopy(silhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], silhouetteBackgroundPalLen); // bg 0, slot 0 (slot can be specified slot in .grit file)
+    dmaCopy(femc ? silhouetteBackgroundFEMCPal : silhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], femc ? silhouetteBackgroundFEMCPalLen : silhouetteBackgroundPalLen); // bg 0, slot 0 (slot can be specified slot in .grit file)
     dmaCopy(femc ? roomBackgroundFEMCPal        : roomBackgroundPal,        &VRAM_E_EXT_PALETTE[1][0], femc ? roomBackgroundFEMCPalLen        : roomBackgroundPalLen);       // bg 1, slot 0
     dmaCopy(femc ? skyBackgroundFEMCPal         : skyBackgroundPal,         &VRAM_E_EXT_PALETTE[2][0], femc ? skyBackgroundFEMCPalLen         : skyBackgroundPalLen);         // bg 2, slot 0
     dmaCopy(femc ? overlayBackgroundFEMCPal     : overlayBackgroundPal,     &VRAM_E_EXT_PALETTE[3][0], femc ? overlayBackgroundFEMCPalLen     : overlayBackgroundPalLen);     // bg 3, slot 0
