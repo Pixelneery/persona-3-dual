@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
     srand(TIMER0_DATA);
 
     // start with DisclaimerView
-    SwitchView(new DisclaimerView());
+    SwitchView(new IwatodaiDormView());
 
     while (pmMainLoop())
     {

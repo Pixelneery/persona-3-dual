@@ -5,8 +5,7 @@
 
 #include "controllers/AnimationController.h"
 
-enum Model_character
-{
+enum Model_character {
     MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0000_ROOT_MODEL_MOTION_0000_LAYER = 0,
     MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0001_ROOT_MODEL_MOTION_0001_LAYER = 1,
     MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER = 2,
@@ -33,8 +32,7 @@ enum Model_character
     MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_ROOT_MODEL_MOTION_LAYER = 23,
 };
 
-enum Model_character_TexSlot
-{
+enum Model_character_TexSlot {
     MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0 = 0,
     MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1 = 1,
     MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2 = 2,
@@ -45,10 +43,13 @@ enum Model_character_TexSlot
 
 // Call after AnimationController::loadModel() to upload textures.
 // Pass bitmaps in the same order as Model_character_TexSlot.
-inline void character_loadTextures(AnimationController& ctrl, const unsigned int* bitmaps[MODEL_CHARACTER_TEX_COUNT])
+inline void character_loadTextures(
+    AnimationController& ctrl,
+    const unsigned int* bitmaps[MODEL_CHARACTER_TEX_COUNT])
 {
-    static const int widths[5] = {64, 64, 64, 64, 64};
-    static const int heights[5] = {64, 32, 64, 64, 64};
-    static const bool isRGBA[5] = {false, false, false, false, false};
-    ctrl.loadTextures(MODEL_CHARACTER_TEX_COUNT, bitmaps, widths, heights, isRGBA);
+    static const int  widths [5] = { 64, 64, 64, 64, 64 };
+    static const int  heights[5] = { 64, 32, 64, 64, 64 };
+    static const bool isRGBA [5] = { false, false, false, false, false };
+    ctrl.loadTextures(MODEL_CHARACTER_TEX_COUNT,
+                      bitmaps, widths, heights, isRGBA);
 }
