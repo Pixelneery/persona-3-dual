@@ -2,7 +2,7 @@
     "asset_type": "build_environment",
     "target_size": 10.0,
     "center": true,
-    "source_blender": false,
+    "source_blender": true,
     "skip_grit": false,
     "grit_flags": "-gTT -gB16 -gb -ftb",
     "rgba": true,
