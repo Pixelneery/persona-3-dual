@@ -50,21 +50,24 @@ jobs:
           fetch-depth: 0   # Full history required so git tag --list sees all tags
           lfs: false       # Don't auto-download LFS files; we restore them from cache below
 
-      # Cache LFS objects keyed to the LFS pointer files.
-      # On a cache hit the actual binaries are restored without hitting the LFS server.
-      # On a miss we do a real lfs pull and save the result for next time.
+      # Cache LFS objects keyed to the LFS pointer files themselves.
       - name: Cache Git LFS objects
         id: cache-lfs
         uses: actions/cache@v5
         with:
           path: .git/lfs
-          key: lfs-${{ runner.os }}-${{ hashFiles('.gitattributes') }}-${{ github.sha }}
+          key: lfs-${{ runner.os }}-${{ hashFiles('assets/video/**') }}
           restore-keys: |
-            lfs-${{ runner.os }}-${{ hashFiles('.gitattributes') }}-
             lfs-${{ runner.os }}-
 
-      - name: Pull LFS files
+      # Only contact the LFS server when we don't have a cache hit.
+      - name: Pull LFS files (cache miss)
+        if: steps.cache-lfs.outputs.cache-hit != 'true'
         run: git lfs pull
+
+      - name: Checkout LFS files from cache (cache hit)
+        if: steps.cache-lfs.outputs.cache-hit == 'true'
+        run: git lfs checkout
 
       # Version tag (push / workflow_dispatch only)
       # Format: YYwWWn  ->  e.g. "26w18a"

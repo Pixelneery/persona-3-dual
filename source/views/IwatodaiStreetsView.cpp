@@ -102,7 +102,8 @@ void IwatodaiStreetsView::init()
                                          angle,
                                          height,
                                          characterTranslate,
-                                         characterFacingAngle);
+                                         characterFacingAngle,
+                                        true);
 
     // setup music
     musicCtrl.init((fatBasePath + "/music/changing_seasons.pcm").c_str(), 0.0f, -1.0f);
@@ -188,7 +189,7 @@ ViewState IwatodaiStreetsView::update()
         }
 
         gluLookAt(camPos.cameraX,
-                  camPos.cameraY,
+                  camPos.cameraY + 0.3f,
                   camPos.cameraZ,
                   camPos.targetX,
                   camPos.targetY,

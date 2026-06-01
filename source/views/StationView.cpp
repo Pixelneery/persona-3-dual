@@ -88,7 +88,8 @@ void StationView::init()
                                          angle,
                                          height,
                                          characterTranslate,
-                                         characterFacingAngle);
+                                         characterFacingAngle,
+                                        false);
 
     // setup music
     musicCtrl.init((fatBasePath + "/music/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);

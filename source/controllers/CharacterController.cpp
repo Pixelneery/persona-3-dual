@@ -82,9 +82,9 @@ cameraPosition CharacterController::update(u32 keys)
     rightX = cos(angle) * speed;
     rightZ = sin(angle) * speed;
 
-    if (keys & KEY_L)
+    if (!fixedCamera && (keys & KEY_L))
         angle -= angleIncrement;
-    if (keys & KEY_R)
+    if (!fixedCamera && (keys & KEY_R))
         angle += angleIncrement;
 
     if (keys & KEY_UP)

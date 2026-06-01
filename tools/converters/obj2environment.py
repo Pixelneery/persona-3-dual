@@ -3,6 +3,9 @@ import re
 import json
 import struct
 import argparse
+import subprocess
+import shutil
+import sys
 from collections import defaultdict
 
 FIFO_COLOR = 0x20
@@ -18,6 +21,19 @@ VALID_TEX_SIZES = {8, 16, 32, 64, 128, 256, 512, 1024}
 # NDS VRAM budget for textures.
 # Banks A+B+D = 3 * 128KB = 384KB (C is reserved for sub-BG)
 NDS_VRAM_BUDGET = 384 * 1024
+
+
+def _format_cpp_h_files(paths: list[str]) -> None:
+    clang_format = shutil.which("clang-format")
+    if clang_format is None:
+        return
+    inputs = [p for p in paths if os.path.exists(p)]
+    if not inputs:
+        return
+    try:
+        subprocess.run([clang_format, "--style=file", "-i", *inputs], check=True)
+    except subprocess.CalledProcessError:
+        print("Warning: clang-format failed on generated files.", file=sys.stderr)
 
 
 def sanitize(name):
@@ -683,6 +699,7 @@ def convert(obj_path, output_dir, config):
             h.write(f"        glDeleteTextures({n}, textureIDs);\n")
         h.write("    }\n};\n")
 
+    _format_cpp_h_files([header_path])
     print(f"Written: {base_name}.h")
 
     with open(tex_list_path, "w") as t:

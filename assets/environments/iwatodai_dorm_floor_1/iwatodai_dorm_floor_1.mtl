@@ -1,4 +1,4 @@
-# Blender 3.6.23 MTL File: 'halfdone.blend'
+# Blender 5.1.1 MTL File: 'halfdone.blend'
 # www.blender.org
 
 newmtl Material__110.001
@@ -430,16 +430,6 @@ Ni 1.450000
 d 1.000000
 illum 1
 map_Kd f007_002obj15.png
-
-newmtl shadow01_0_3.001
-Ns 250.000000
-Ka 1.000000 1.000000 1.000000
-Ks 0.000000 0.000000 0.000000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd f007_002shadow01.png
 
 newmtl shadow01_0_5.002
 Ns 250.000000

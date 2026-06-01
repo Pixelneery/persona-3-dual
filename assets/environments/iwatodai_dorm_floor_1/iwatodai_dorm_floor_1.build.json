@@ -1,6 +1,6 @@
 {
     "asset_type": "build_environment",
-    "target_size": 5.5,
+    "target_size": 7.0,
     "center": true,
     "source_blender": true,
     "skip_grit": false,
