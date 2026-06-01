@@ -181,6 +181,11 @@ void BattleController::update(u32 keys)
 
         if ((int)targetIndex != -1 && (keys & KEY_A))
         {
+            if ((selectedSkill->skillType == SkillType::Attack || selectedSkill->skillType == SkillType::Heal ||
+                 selectedSkill->skillType == SkillType::Buff || selectedSkill->skillType == SkillType::Debuff))
+            {
+                targets = {targets.at(targetIndex)};
+            }
             BattleParticipant* target = targets[targetIndex];
             // Check so you cant heal target that has max hp
             if (selectedSkill && selectedSkill->skillType == SkillType::Heal && target->hp >= target->maxHp)
