@@ -9,6 +9,8 @@
 #include "models/character.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
+// maps
+#include "maps/iwatodai_dorm_floor_1.h"
 // environment textures
 #include "f007_002bolt01.h"
 #include "f007_002bolt02.h"
@@ -106,9 +108,9 @@ void IwatodaiDormView::init()
 
     // setup player controller
     // TODO: add mapping
-    playerCtrl = new CharacterController(0,
-                                         0,
-                                         nullptr,
+    playerCtrl = new CharacterController(IWATODAI_DORM_FLOOR_1_MAP_WIDTH,
+                                         IWATODAI_DORM_FLOOR_1_MAP_HEIGHT,
+                                         &iwatodai_dorm_floor_1_map[0][0],
                                          tileSize,
                                          worldOffsetX,
                                          worldOffsetZ,
@@ -257,17 +259,12 @@ ViewState IwatodaiDormView::update()
             if (playerCtrl->isTileAt() == TileType::NEXT_SCENE)
             {
                 musicCtrl.pause();
-                return ViewState::IWATODAI_STREETS;
+                return ViewState::DEBUG_VIEW;
             }
-            else if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko)
+            else if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
             {
-                iprintf("\x1b[0;0HPress A to talk");
-                if (pressed & KEY_A)
-                {
-                    demo_yukari_kenji_argument_load();
-                    dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-                    dialogueCtrl.start(demo_yukari_kenji_argument_first());
-                }
+                musicCtrl.pause();
+                return ViewState::IWATODAI_STREETS;
             }
         }
 
