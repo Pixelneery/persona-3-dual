@@ -50,37 +50,21 @@ jobs:
           fetch-depth: 0   # Full history required so git tag --list sees all tags
           lfs: false       # Don't auto-download LFS files; we restore them from cache below
 
-      # Generate a stable hash of ALL active LFS pointers in the current commit
-      - name: Generate LFS cache key
-        id: lfs-key
-        run: |
-          LFS_HASH=$(git lfs ls-files -l | cut -d' ' -f1 | sort | sha256sum | cut -d' ' -f1)
-          echo "hash=${LFS_HASH}" >> $GITHUB_OUTPUT
-
-      # Cache LFS objects keyed to the robust hash generated above.
+      # Cache LFS objects keyed to the LFS pointer files.
+      # On a cache hit the actual binaries are restored without hitting the LFS server.
+      # On a miss we do a real lfs pull and save the result for next time.
       - name: Cache Git LFS objects
         id: cache-lfs
         uses: actions/cache@v5
         with:
           path: .git/lfs
-          key: lfs-${{ runner.os }}-${{ steps.lfs-key.outputs.hash }}
+          key: lfs-${{ runner.os }}-${{ hashFiles('.gitattributes') }}-${{ github.sha }}
           restore-keys: |
+            lfs-${{ runner.os }}-${{ hashFiles('.gitattributes') }}-
             lfs-${{ runner.os }}-
 
-      # Only contact the LFS server when we don't have an exact cache hit.
-      - name: Pull LFS files (cache miss)
-        if: steps.cache-lfs.outputs.cache-hit != 'true'
+      - name: Pull LFS files
         run: git lfs pull
-
-      # Restore files from the local .git/lfs directory on a direct hit.
-      - name: Checkout LFS files from cache (cache hit)
-        if: steps.cache-lfs.outputs.cache-hit == 'true'
-        run: git lfs checkout
-
-      # Prune old LFS files to stop the cache from endlessly snowballing in size
-      # before the post-action saves it to GitHub.
-      - name: Prune LFS cache
-        run: git lfs prune
 
       # Version tag (push / workflow_dispatch only)
       # Format: YYwWWn  ->  e.g. "26w18a"
@@ -163,7 +147,7 @@ jobs:
           echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
           echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
 
-      # System tools (ffmpeg + mtools)
+      # System tools (ffmpeg + mtools + xdelta3)
       # Both are cached via awalsh128 - subsequent runs restore in ~2s.
       #
       # libblas3 / liblapack3 are intentionally NOT included in the awalsh128
@@ -177,10 +161,12 @@ jobs:
       # The fix is to install those two packages directly with apt every run.
       # They are small (~200 KB combined) and the install completes in ~1s,
       # ensuring update-alternatives always fires and the symlink is always live.
-      - name: Cache and install ffmpeg and mtools
+      #
+      # xdelta3 is included here for delta patch generation between releases.
+      - name: Cache and install ffmpeg, mtools, and xdelta3
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
-          packages: ffmpeg mtools
+          packages: ffmpeg mtools xdelta3
           version: 1.0
 
       - name: Install BLAS dependencies
@@ -315,6 +301,84 @@ jobs:
           echo "SHA-256 : ${SHA256}"
           echo "MD5     : ${MD5}"
 
+      # Delta patch generation
+      # Generates patches from each of the last 5 release tags to the current
+      # build, so users up to 5 versions behind can patch on-device without
+      # downloading the full ROM.
+      #
+      # Each patch is named: persona-3-dual-patch-FROM-to-TO.xdelta3
+      # All are uploaded as release assets. UU picks the right one based on the
+      # version string it recorded when the user last installed/patched.
+      #
+      # Skipped on PRs. Gracefully skipped if this is the very first release.
+      #
+      # xdelta3 flags:
+      #   -e          encode (create patch)
+      #   -9          maximum compression
+      #   -s <old>    source file (old ROM)
+      #   <new>       input file (new ROM)
+      #   <patch>     output patch file
+      - name: Generate delta patches (last 5 versions)
+        id: delta
+        if: github.event_name != 'pull_request'
+        run: |
+          NEW_TAG="${{ steps.version.outputs.tag }}"
+
+          # Get the last 5 tags (most recent first).
+          # The new tag hasn't been pushed yet so these are all prior releases.
+          PREV_TAGS=$(git tag --sort=-creatordate | head -n5)
+
+          if [ -z "$PREV_TAGS" ]; then
+            echo "No previous release tags found - skipping delta patches (first release)"
+            echo "patches_generated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          PATCH_TABLE=""
+
+          for PREV_TAG in $PREV_TAGS; do
+            PREV_ROM_URL="https://github.com/p3d-project/persona-3-dual/releases/download/${PREV_TAG}/persona-3-dual.nds"
+            echo "Downloading ROM for tag: ${PREV_TAG}"
+
+            HTTP_STATUS=$(curl -L --silent --output "persona-3-dual-${PREV_TAG}.nds" \
+              --write-out "%{http_code}" "${PREV_ROM_URL}")
+
+            if [ "$HTTP_STATUS" != "200" ]; then
+              echo "::warning::Could not download ROM for ${PREV_TAG} (HTTP ${HTTP_STATUS}) - skipping"
+              rm -f "persona-3-dual-${PREV_TAG}.nds"
+              continue
+            fi
+
+            PATCH_FILE="persona-3-dual-patch-${PREV_TAG}-to-${NEW_TAG}.xdelta3"
+            xdelta3 -e -9 -s "persona-3-dual-${PREV_TAG}.nds" persona-3-dual.nds "${PATCH_FILE}"
+            PATCH_SIZE=$(du -sh "${PATCH_FILE}" | cut -f1)
+            echo "Generated: ${PATCH_FILE} (${PATCH_SIZE})"
+
+            PATCH_TABLE="${PATCH_TABLE}\n| \`${PATCH_FILE}\` | ${PATCH_SIZE} | Patch from ${PREV_TAG} |"
+
+            rm -f "persona-3-dual-${PREV_TAG}.nds"
+          done
+
+          # Check at least one patch was produced
+          if ! ls persona-3-dual-patch-*.xdelta3 1>/dev/null 2>&1; then
+            echo "::warning::No patches could be generated"
+            echo "patches_generated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Write patch-info.json listing all supported source versions.
+          # UU and tooling can read this to know what's patchable before downloading.
+          cat > patch-info.json <<EOF
+          {
+            "to_version":    "${NEW_TAG}",
+            "from_versions": [$(echo "$PREV_TAGS" | tr '\n' ',' | sed 's/,$//' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')],
+            "target_sha256": "$(sha256sum persona-3-dual.nds | cut -d' ' -f1)"
+          }
+          EOF
+
+          echo "patches_generated=true"     >> $GITHUB_OUTPUT
+          echo "patch_table=${PATCH_TABLE}" >> $GITHUB_OUTPUT
+
       # Release notes
       # Written to a file rather than GITHUB_OUTPUT to safely handle multi-line
       # strings. Commit messages can contain characters that break YAML strings.
@@ -335,6 +399,24 @@ jobs:
 
           [ -z "$CHANGES" ] && CHANGES="- No new commits since last build"
 
+          PATCH_NOTE=""
+          if [ "${{ steps.delta.outputs.patches_generated }}" = "true" ]; then
+            PATCH_NOTE=$(printf '%s' "
+## Updating from a Previous Version
+
+If you already have Persona 3 Dual installed, download only the patch for your version:
+
+| File | Size | Use for |
+|------|------|---------|
+${{ steps.delta.outputs.patch_table }}
+| \`patch-info.json\` | tiny | Machine-readable patch metadata |
+
+Apply with: \`xdelta3 -d -s persona-3-dual.nds <patch-file> persona-3-dual-new.nds\`
+
+Or use the **Patch Update** option in Universal Updater — it picks the right patch automatically.
+")
+          fi
+
           {
             echo "Automated build from commit \`${{ github.sha }}\` on \`${{ github.ref_name }}\`"
             echo ""
@@ -347,6 +429,7 @@ jobs:
             echo "| \`persona-3-dual.nds\` | ROM - required for both emulator and hardware |"
             echo "| \`sdcard.img.gz\` | melonDS emulator - decompress & mount via DLDI settings |"
             echo "| \`data.zip\` | Real hardware - extract and place \`data/\` next to the ROM on your SD card |"
+            echo "${PATCH_NOTE}"
             echo ""
             echo "## Checksums"
             echo "| Algorithm | Hash |"
@@ -378,6 +461,59 @@ jobs:
           echo "--- Release notes preview ---"
           cat release-notes.md
 
+      # Update unistore version and revision so Universal Updater knows what
+      # version the user is on after installing or patching.
+      #
+      # - "version" is set to the new tag (e.g. "26w18b") so UU can compare it
+      #   against its locally stored version string and know if an update is available.
+      # - "revision" is auto-incremented so UU re-fetches the unistore file itself.
+      #
+      # The updated unistore is committed back to main with [skip ci] so it does
+      # not trigger another build run.
+      - name: Update unistore version
+        if: github.event_name != 'pull_request'
+        run: |
+          NEW_TAG="${{ steps.version.outputs.tag }}"
+          UNISTORE="unistore/p3d.unistore"
+
+          CURRENT_REVISION=$(python3 -c "import json; d=json.load(open('${UNISTORE}')); print(d['storeInfo']['revision'])")
+          NEW_REVISION=$((CURRENT_REVISION + 1))
+
+          python3 - <<PYEOF
+          import json
+
+          with open("${UNISTORE}", "r") as f:
+              data = json.load(f)
+
+          data["storeInfo"]["revision"] = ${NEW_REVISION}
+
+          for entry in data["storeContent"]:
+              if "info" in entry:
+                  entry["info"]["version"] = "${NEW_TAG}"
+
+          with open("${UNISTORE}", "w") as f:
+              json.dump(data, f, indent=2)
+              f.write("\n")
+          PYEOF
+
+          echo "Updated unistore: version=${NEW_TAG}, revision=${NEW_REVISION}"
+
+      - name: Commit updated unistore
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add unistore/p3d.unistore
+
+          if git diff --cached --quiet; then
+            echo "No unistore changes to commit"
+          else
+            git commit -m "chore: update unistore to ${{ steps.version.outputs.tag }} [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+            echo "Unistore committed and pushed"
+          fi
+
       # Upload artifact
       # Release builds: 30-day retention, clean name.
       # PR builds:      7-day retention, named with PR number for traceability.
@@ -404,10 +540,25 @@ jobs:
           retention-days: 7
 
       # Create release
-      # Skipped on PRs. Uses body_path so multi-line markdown in the changelog
-      # is passed safely without any YAML quoting concerns.
-      - name: Create release
-        if: github.event_name != 'pull_request'
+      # Skipped on PRs. softprops supports glob patterns so persona-3-dual-patch-*.xdelta3
+      # picks up all generated patch files without needing an explicit list.
+      - name: Create release (with patches)
+        if: github.event_name != 'pull_request' && steps.delta.outputs.patches_generated == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name:   ${{ steps.version.outputs.tag }}
+          name:       ${{ steps.version.outputs.release_name }}
+          prerelease: false
+          files: |
+            persona-3-dual.nds
+            sdcard.img.gz
+            data.zip
+            patch-info.json
+            persona-3-dual-patch-*.xdelta3
+          body_path:  release-notes.md
+
+      - name: Create release (no patches - first release)
+        if: github.event_name != 'pull_request' && steps.delta.outputs.patches_generated != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name:   ${{ steps.version.outputs.tag }}
@@ -422,10 +573,6 @@ jobs:
       # Job summary
       # Visible in the Actions UI under the "Summary" tab of each run.
       # Runs with always() so a partial summary appears even on failure.
-      #
-      # Each conditional echo uses || true so that a false condition (e.g. empty
-      # SHA256 when an earlier step failed) returns 0 instead of 1. Without this,
-      # the { } group command exits 1 on its last statement and the step fails.
       - name: Write job summary
         if: always()
         run: |
@@ -436,6 +583,7 @@ jobs:
           SHA256="${{ steps.checksums.outputs.sha256 }}"
           MD5="${{ steps.checksums.outputs.md5 }}"
           TAG="${{ steps.version.outputs.tag }}"
+          PATCHES_GENERATED="${{ steps.delta.outputs.patches_generated }}"
 
           {
             echo "## Build Summary"
@@ -454,4 +602,13 @@ jobs:
             echo "| Data (zip) | ${DATA_SIZE} |"
             [ -n "$SHA256" ] && echo "| SHA-256    | \`${SHA256}\` |" || true
             [ -n "$MD5"    ] && echo "| MD5        | \`${MD5}\` |"    || true
+            if [ "$PATCHES_GENERATED" = "true" ]; then
+              echo ""
+              echo "## Delta Patches"
+              echo "| Patch file | Size |"
+              echo "|------------|------|"
+              for pf in persona-3-dual-patch-*.xdelta3; do
+                [ -f "$pf" ] && echo "| \`${pf}\` | $(du -sh "$pf" | cut -f1) |" || true
+              done
+            fi
           } >> $GITHUB_STEP_SUMMARY
