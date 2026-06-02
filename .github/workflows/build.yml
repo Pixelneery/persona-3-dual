@@ -50,21 +50,37 @@ jobs:
           fetch-depth: 0   # Full history required so git tag --list sees all tags
           lfs: false       # Don't auto-download LFS files; we restore them from cache below
 
-      # Cache LFS objects keyed to the LFS pointer files.
-      # On a cache hit the actual binaries are restored without hitting the LFS server.
-      # On a miss we do a real lfs pull and save the result for next time.
+      # Generate a stable hash of ALL active LFS pointers in the current commit
+      - name: Generate LFS cache key
+        id: lfs-key
+        run: |
+          LFS_HASH=$(git lfs ls-files -l | cut -d' ' -f1 | sort | sha256sum | cut -d' ' -f1)
+          echo "hash=${LFS_HASH}" >> $GITHUB_OUTPUT
+
+      # Cache LFS objects keyed to the robust hash generated above.
       - name: Cache Git LFS objects
         id: cache-lfs
         uses: actions/cache@v5
         with:
           path: .git/lfs
-          key: lfs-${{ runner.os }}-${{ hashFiles('.gitattributes') }}-${{ github.sha }}
+          key: lfs-${{ runner.os }}-${{ steps.lfs-key.outputs.hash }}
           restore-keys: |
-            lfs-${{ runner.os }}-${{ hashFiles('.gitattributes') }}-
             lfs-${{ runner.os }}-
 
-      - name: Pull LFS files
+      # Only contact the LFS server when we don't have an exact cache hit.
+      - name: Pull LFS files (cache miss)
+        if: steps.cache-lfs.outputs.cache-hit != 'true'
         run: git lfs pull
+
+      # Restore files from the local .git/lfs directory on a direct hit.
+      - name: Checkout LFS files from cache (cache hit)
+        if: steps.cache-lfs.outputs.cache-hit == 'true'
+        run: git lfs checkout
+
+      # Prune old LFS files to stop the cache from endlessly snowballing in size
+      # before the post-action saves it to GitHub.
+      - name: Prune LFS cache
+        run: git lfs prune
 
       # Version tag (push / workflow_dispatch only)
       # Format: YYwWWn  ->  e.g. "26w18a"

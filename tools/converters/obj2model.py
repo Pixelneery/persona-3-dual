@@ -3,6 +3,9 @@ import argparse
 import json
 import os
 import re
+import subprocess
+import shutil
+import sys
 from collections import defaultdict
 
 FIFO_COLOR = 0x20
@@ -478,6 +481,7 @@ def convert_model_json(
             h.write("                      bitmaps, widths, heights, isRGBA);\n")
         h.write("}\n")
 
+    _format_cpp_h_files([header_out])
     print(f"Written: {header_out}")
 
     # Generate texture list for grit
@@ -493,6 +497,19 @@ def convert_model_json(
 
 
 # Dispatcher (single .obj path kept for non-animated models)
+def _format_cpp_h_files(paths: list[str]) -> None:
+    clang_format = shutil.which("clang-format")
+    if clang_format is None:
+        return
+    inputs = [p for p in paths if os.path.exists(p)]
+    if not inputs:
+        return
+    try:
+        subprocess.run([clang_format, "--style=file", "-i", *inputs], check=True)
+    except subprocess.CalledProcessError:
+        print("Warning: clang-format failed on generated files.", file=sys.stderr)
+
+
 def convert(input_file, output_file, config):
     vertex_color = config.get("color")
     if isinstance(vertex_color, list) and len(vertex_color) == 3:

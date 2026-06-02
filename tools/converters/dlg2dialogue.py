@@ -2,6 +2,8 @@ import re
 import sys
 import os
 import argparse
+import subprocess
+import shutil
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -401,6 +403,19 @@ class CodeGenerator:
         return "\n".join(out)
 
 
+def _format_cpp_h_files(paths: list[str]) -> None:
+    clang_format = shutil.which("clang-format")
+    if clang_format is None:
+        return
+    inputs = [p for p in paths if os.path.exists(p)]
+    if not inputs:
+        return
+    try:
+        subprocess.run([clang_format, "--style=file", "-i", *inputs], check=True)
+    except subprocess.CalledProcessError:
+        print("Warning: clang-format failed on generated files.", file=sys.stderr)
+
+
 def convert(input_file, output_base, config):
     try:
         with open(input_file, "r", encoding="utf-8") as f:
@@ -439,6 +454,7 @@ def convert(input_file, output_base, config):
             f.write(h)
         with open(cpp_path, "w", encoding="utf-8") as f:
             f.write(cpp)
+        _format_cpp_h_files([h_path, cpp_path])
         print(f"Written: {h_path} / {cpp_path}")
 
 

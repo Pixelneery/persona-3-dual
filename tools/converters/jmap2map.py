@@ -12,8 +12,12 @@ See tile_map.json for mapping values.
 """
 
 import json
+import os
 import re
 import argparse
+import subprocess
+import shutil
+import sys
 from pathlib import Path
 
 
@@ -97,6 +101,19 @@ def to_header(rows, height, width, stem):
 # Entry point for build_asset.py dispatch
 
 
+def _format_cpp_h_files(paths: list[str]) -> None:
+    clang_format = shutil.which("clang-format")
+    if clang_format is None:
+        return
+    inputs = [p for p in paths if os.path.exists(p)]
+    if not inputs:
+        return
+    try:
+        subprocess.run([clang_format, "--style=file", "-i", *inputs], check=True)
+    except subprocess.CalledProcessError:
+        print("Warning: clang-format failed on generated files.", file=sys.stderr)
+
+
 def convert(input_file: str, output_file: str, config: dict) -> None:
     """build_asset.py-compatible entry point."""
     tile_map = _load_tile_map()
@@ -116,6 +133,7 @@ def convert(input_file: str, output_file: str, config: dict) -> None:
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(header)
+    _format_cpp_h_files([str(out_path)])
 
     print(f"Written: {out_path.name} / ({width}x{height})")
 

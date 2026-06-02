@@ -56,8 +56,8 @@ class PaulowniaMallView : public BaseView
     // movement and viewpoint
     const float speed = 0.05f;
     const float angleIncrement = 0.10f;
-    const float distance = 0.7f;
-    const float lookAhead = 0.3f;
+    const float distance = 1.0f;
+    const float lookAhead = 0.2f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0, 0);
     const float height = 1.9f;

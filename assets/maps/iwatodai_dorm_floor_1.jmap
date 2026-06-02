@@ -1,0 +1,125 @@
+# iwatodai_dorm_floor_1 collision map  72x112
+#
+#
+# Tile key:
+#   a = reserved (RESERVED)
+#   c = collision (COLLISION)
+#   c_a = character_akihiko (CHARACTER AKIHIKO)
+#   e = next_scene (NEXT SCENE)
+#   p = prev_scene (PREV SCENE)
+#   s = save (SAVE)
+#   w = no_collision (NO COLLISION)
+#   x = debug (DEBUG)
+
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, c, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, e, e, e, e, e, e, e, e, e, e, e, e, e, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, c, c, e, e, e, e, e, e, e, e, e, e, e, e, e, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, w, w, w, w, w, w, c, e, e, e, e, e, e, e, e, e, e, e, e, e, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, w, w, w, w, w, w, c, e, e, e, e, e, e, e, e, e, e, e, e, e, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, c, w, w, c, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, p, p, p, p, p, p, p, p, p, p, p, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, p, p, p, p, p, p, p, p, p, p, p, w, w, c, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, p, p, p, p, p, p, p, p, p, p, p, w, w, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, p, p, p, p, p, p, p, p, p, p, p, w, w, c, c, c, c, c, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c
+w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c, c
