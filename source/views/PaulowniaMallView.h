@@ -39,6 +39,10 @@ class PaulowniaMallView : public BaseView
     Merciless_Maya merciless_Maya;
     std::vector<BattleParticipant*>* battleParticipants;
 
+    // hardcoded for now, we will have to build a battle creater for tartarus anyways
+    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
+
+    // controllers
     BattleController battleController;
     CharacterController* playerCtrl;
 
@@ -56,6 +60,7 @@ class PaulowniaMallView : public BaseView
     const float lookAhead = 0.2f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0, 0);
+    const float height = 1.9f;
     const float angle = -1.6;
     const float characterFacingAngle = 91.67;
     DialogueController dialogueCtrl;
