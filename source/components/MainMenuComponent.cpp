@@ -124,6 +124,12 @@ ViewState MainMenuComponent::settingOptionSelected()
     case SettingOptions::CHANGE_INTRO_VIDEO:
         changeMenu(settingIntroOptions, SETTING_INTRO_OPTIONS);
         selectedView = ViewState::KEEP_CURRENT;
+        break;
+    case SettingOptions::FEMC_MODE:
+        saveData.femcMode = !saveData.femcMode;
+        updateSave();
+        selectedView = ViewState::KEEP_CURRENT;
+        break;
     default:
         selectedView = ViewState::KEEP_CURRENT;
     }
@@ -136,20 +142,34 @@ ViewState MainMenuComponent::settingIntroOptionSelected()
     switch (static_cast<SettingIntroOptions>(selectedOption))
     {
     case SettingIntroOptions::ORIGINAL:
-        saveData.introVideoPath = "base.vid";
+        strncpy(saveData.introVideoPath, "base.vid", sizeof(saveData.introVideoPath));
         break;
     case SettingIntroOptions::FES:
-        saveData.introVideoPath = "fes.vid";
+        strncpy(saveData.introVideoPath, "fes.vid", sizeof(saveData.introVideoPath));
         break;
     case SettingIntroOptions::PORTABLE:
-        saveData.introVideoPath = "portable.vid";
+        strncpy(saveData.introVideoPath, "portable.vid", sizeof(saveData.introVideoPath));
         break;
     case SettingIntroOptions::RELOAD:
-        saveData.introVideoPath = "reload.vid";
+        strncpy(saveData.introVideoPath, "reload.vid", sizeof(saveData.introVideoPath));
         break;
     default:
-        saveData.introVideoPath = "reload.vid";
+        strncpy(saveData.introVideoPath, "reload.vid", sizeof(saveData.introVideoPath));
     }
 
+    updateSave();
     return ViewState::KEEP_CURRENT;
+}
+
+void MainMenuComponent::updateSave()
+{
+    if (!saveCtrl.write())
+    {
+        consoleDemoInit();
+        iprintf("Failed to write save data!\n");
+        while (1)
+        {
+            swiWaitForVBlank();
+        }
+    }
 }

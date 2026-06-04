@@ -8,7 +8,12 @@ persona-3-dual.lst
 /source/environments
 /source/maps
 /source/models
-/data
+
+/data/environments
+/data/models
+/data/music
+/data/save
+/data/video
 
 /tools/converters/__pycache__
 *.pyc

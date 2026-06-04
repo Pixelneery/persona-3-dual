@@ -4,6 +4,7 @@
 #include "components/PauseMenuComponent.h"
 #include "controllers/AnimationController.h"
 #include "controllers/MusicController.h"
+#include "controllers/SaveController.h"
 #include "controllers/SpriteController.h"
 #include "controllers/VideoController.h"
 #include "models/character.h"
@@ -20,6 +21,7 @@ extern std::string fatBasePath;
 extern Save saveData;
 
 // controllers
+extern SaveController saveCtrl;
 extern MusicController musicCtrl;
 extern VideoController videoCtrl;
 extern AnimationController characterAnimationCtrl;

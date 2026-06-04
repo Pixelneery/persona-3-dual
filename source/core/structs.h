@@ -127,10 +127,10 @@ struct dialogue
     std::vector<dialogueSelection> selections;
 };
 
-// Saves
 struct Save
 {
-    std::string introVideoPath;
-    std::string lastName;
-    std::string firstName;
-};
+    char introVideoPath[128];
+    char lastName[32];
+    char firstName[32];
+    bool femcMode;
+} __attribute__((packed));
