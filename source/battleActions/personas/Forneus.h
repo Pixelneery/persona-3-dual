@@ -23,7 +23,7 @@ struct Forneus : PersonaBase
 
         mySkills[0] = &bash;
         mySkills[1] = &bufu;
-        attackCount = 2;
+        skillCount = 2;
         skills = mySkills;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;

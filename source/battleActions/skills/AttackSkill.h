@@ -29,11 +29,6 @@ struct AttackSkill : Skill
                                     u32* defenderLevel,
                                     Armour* armour = nullptr);
 
-    AttackSkill()
-    {
-        skillType = SkillType::Attack;
-    }
-
   private:
     static const float levelMultipliers[24];
     u32 Atk;

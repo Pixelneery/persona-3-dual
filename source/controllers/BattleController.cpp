@@ -185,15 +185,34 @@ void BattleController::update(u32 keys)
             if ((selectedSkill->skillType == SkillType::Attack || selectedSkill->skillType == SkillType::Heal ||
                  selectedSkill->skillType == SkillType::Buff || selectedSkill->skillType == SkillType::Debuff))
             {
-                targets = {targets.at(targetIndex)};
+                targets = {targets[targetIndex]};
             }
-            BattleParticipant* target = targets[targetIndex];
+
             // Check so you cant heal target that has max hp
-            if (selectedSkill && selectedSkill->skillType == SkillType::Heal && target->hp >= target->maxHp)
-                return;
-            BattleResult battleResult = (actionIndex == ACTION_ATTACK) ? attack.resolve(actor, target)
-                                                                       : persona.resolve(actor, target, selectedSkill);
-            applyResult(battleResult, target);
+            if (selectedSkill &&
+                (selectedSkill->skillType == SkillType::Heal || selectedSkill->skillType == SkillType::MultiHeal))
+            {
+                bool canHealAnyTarget = false;
+                for (BattleParticipant* target : targets)
+                {
+                    if (target->hp < target->maxHp && target->hp > 0)
+                    {
+                        canHealAnyTarget = true;
+                        break;
+                    }
+                }
+                if (!canHealAnyTarget)
+                    return;
+            }
+
+            for (BattleParticipant* target : targets)
+            {
+                BattleResult battleResult = (actionIndex == ACTION_ATTACK)
+                                                ? attack.resolve(actor, target)
+                                                : persona.resolve(actor, target, selectedSkill);
+                applyResult(battleResult, target);
+            }
+
             advanceTurn();
         }
 

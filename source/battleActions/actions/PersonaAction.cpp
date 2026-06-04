@@ -3,7 +3,7 @@
 
 BattleResult PersonaAction::resolve(PartyMember* user, BattleParticipant* target, Skill* skill)
 {
-    if (skill->skillType == SkillType::Attack)
+    if (skill->skillType == SkillType::Attack || skill->skillType == SkillType::MultiAttack)
     {
         AttackSkill* atk = static_cast<AttackSkill*>(skill);
         Enemy* enemy = static_cast<Enemy*>(target);
@@ -27,7 +27,7 @@ BattleResult PersonaAction::resolve(PartyMember* user, BattleParticipant* target
 
         return {true, -(s32)damage, oneMore, atk->name};
     }
-    else if (skill->skillType == SkillType::Heal)
+    else if (skill->skillType == SkillType::Heal || skill->skillType == SkillType::MultiHeal)
     {
         HealSkill* heal = static_cast<HealSkill*>(skill);
         u32 healed = heal->calculateHealing(*user);

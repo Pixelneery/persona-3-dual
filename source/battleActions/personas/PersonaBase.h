@@ -16,7 +16,7 @@ struct PersonaBase
     std::string name;
     u32 lv;
     Skill** skills;
-    u32 attackCount;
+    u32 skillCount;
     BattleStats battleStats;
 
     PersonaBase()

@@ -12,5 +12,6 @@ struct Agi : AttackSkill
         hitRate = 99;
         skillRace = SkillRace::mag;
         skillTarget = SkillTarget::OppositionTeam;
+        skillType = SkillType::Attack;
     }
 };

@@ -8,7 +8,7 @@
 struct Enemy : BattleParticipant
 {
     AttackSkill** attackSkill;
-    u32 attackCount;
+    u32 skillCount;
     BattleStats battleStats;
 
     Enemy()

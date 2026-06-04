@@ -1,17 +1,17 @@
 #pragma once
 #include "AttackSkill.h"
 
-struct Garu : AttackSkill
+struct Magaru : AttackSkill
 {
-    Garu()
+    Magaru()
     {
         movePower = 40;
         element = Wind;
-        cost = 3;
-        name = "Garu";
-        hitRate = 99;
+        cost = 8;
+        name = "Magaru";
+        hitRate = 95;
         skillRace = SkillRace::mag;
         skillTarget = SkillTarget::OppositionTeam;
-        skillType = SkillType::Attack;
+        skillType = SkillType::MultiAttack;
     }
 };

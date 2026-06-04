@@ -4,7 +4,7 @@
 
 AttackSkill* Enemy::pickSkill()
 {
-    u32 roll = rand() % (attackCount + 1);
+    u32 roll = rand() % (skillCount + 1);
     return (roll == 0) ? baseAttackAction : attackSkill[roll - 1];
 }
 

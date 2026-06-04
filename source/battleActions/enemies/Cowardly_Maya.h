@@ -28,7 +28,7 @@ struct Cowardly_Maya : Enemy
         battleStats.ag = 2;
         battleStats.lu = 2;
         attackSkill = myAttackSkill;
-        attackCount = 1;
+        skillCount = 1;
 
         battleStats.affinities[Element::Slash] = BattleStats::Weak;
         battleStats.affinities[Element::Strike] = BattleStats::Neutral;

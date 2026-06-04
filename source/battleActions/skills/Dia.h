@@ -11,5 +11,6 @@ struct Dia : HealSkill
         hitRate = 100;
         skillRace = SkillRace::mag;
         skillTarget = SkillTarget::OwnTeam;
+        skillType = SkillType::Heal;
     }
 };

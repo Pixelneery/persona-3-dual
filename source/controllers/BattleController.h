@@ -92,8 +92,6 @@ class BattleController
     void update(u32 keys);
     void exit();
 
-    // TODO: battle start condizion in constructor
-
     BattleController(std::vector<BattleParticipant*>* iBattleParticipants,
                      CharacterProfiles* iCharacterProfiles,
                      BattleStartCondition iBattleStartCondition);

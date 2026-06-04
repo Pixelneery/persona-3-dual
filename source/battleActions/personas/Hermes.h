@@ -20,7 +20,7 @@ struct Hermes : PersonaBase
         battleStats.lu = 1;
 
         mySkills[0] = &power_Slash;
-        attackCount = 1;
+        skillCount = 1;
         skills = mySkills;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;
