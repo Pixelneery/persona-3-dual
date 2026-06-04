@@ -24,6 +24,7 @@
 // controllers
 #include "controllers/AnimationController.h"
 #include "controllers/MusicController.h"
+#include "controllers/SaveController.h"
 #include "controllers/VideoController.h"
 
 // components
@@ -47,13 +48,17 @@ volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
-Save saveData = {"reload.vid", "", "", false};
+// Save saveData = {"reload.vid", "", "", false};
+Save saveData;
+
 // controllers
+SaveController saveCtrl;
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
 const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 SpriteController spriteCtrl;
+
 // components
 PauseMenuComponent pauseMenuCmpt;
 bool enableBillboards = true;
@@ -125,6 +130,17 @@ int main(int argc, char* argv[])
     // initialize maxmod (for sfx)
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
+    // load save data
+    if (!saveCtrl.read())
+    {
+        consoleDemoInit();
+        iprintf("Failed to read save data!\n");
+        while (1)
+        {
+            swiWaitForVBlank();
+        }
+    }
+
     // setup character model
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] = character_texture_0Bitmap;
     bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] = character_texture_1Bitmap;
@@ -169,7 +185,7 @@ int main(int argc, char* argv[])
             }
             else if (nextState == ViewState::INTRO_VIDEO)
             {
-                SwitchView(new VideoView(saveData.introVideoPath.c_str(), ViewState::INTRO));
+                SwitchView(new VideoView(saveData.introVideoPath, ViewState::INTRO));
             }
             else if (nextState == ViewState::CUTSCENE_1)
             {

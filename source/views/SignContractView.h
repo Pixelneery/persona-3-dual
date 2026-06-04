@@ -10,6 +10,8 @@ class SignContractView : public BaseView
     int bg[3];
     bool isLastName = true;
     bool isNameConfirmed = false;
+    int lastNameIndex = 0;
+    int firstNameIndex = 0;
 
     // console
     PrintConsole console;

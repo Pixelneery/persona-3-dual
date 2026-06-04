@@ -46,6 +46,9 @@ class MainMenuComponent : public BaseMenu
     ViewState settingOptionSelected();
     ViewState settingIntroOptionSelected();
 
+    // helper
+    void updateSave();
+
   public:
     void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "") override;
 };
