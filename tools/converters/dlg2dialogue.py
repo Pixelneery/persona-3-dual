@@ -291,10 +291,10 @@ class CodeGenerator:
                 f"extern const char* {vp}_bg_names[{nb}];",
                 f"extern void (*{vp}_bg_loaders[{nb}])();",
                 f"void {vp}_load_bg(int bgIndex);",
-                f"extern dialogue {vp}_lines[{n}];",
+                f"extern Dialogue {vp}_lines[{n}];",
                 f"void {vp}_init();",
                 f"void {vp}_load();",
-                f"inline dialogue* {vp}_first()",
+                f"inline Dialogue* {vp}_first()",
                 "{",
                 f"    return &{vp}_lines[0];",
                 "}",
@@ -302,7 +302,7 @@ class CodeGenerator:
             for dl in ia.lines:
                 if not dl.label.startswith("line_"):
                     out += [
-                        f"inline dialogue* {vp}_{dl.label}()",
+                        f"inline Dialogue* {vp}_{dl.label}()",
                         "{",
                         f"    return &{vp}_lines[{dl.index}];",
                         "}",
@@ -359,7 +359,7 @@ class CodeGenerator:
                 out += [
                     f"    {vp}_bg_loaders[{i}] = []()",
                     "    {",
-                    f'        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/{nm}");',
+                    f'        GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/{nm}");',
                     "        if (bg.tiles)",
                     "        {",
                     f"            dmaCopy(bg.tiles, bgGetGfxPtr({s}_dialogue_bg_slot), bg.tilesLen);",
@@ -376,7 +376,7 @@ class CodeGenerator:
                 f"    {vp}_init();",
                 "}",
                 "",
-                f"dialogue {vp}_lines[{n}];",
+                f"Dialogue {vp}_lines[{n}];",
                 "",
                 f"void {vp}_init()",
                 "{",
@@ -390,7 +390,7 @@ class CodeGenerator:
                     sel_var_map[(dl.index, si)] = var
                     target_idx = ia.label_map[sel.target]
                     out.append(
-                        f'    dialogueSelection {var} = {{ "{self._esc(sel.label)}", false, {self._ptr(ia, target_idx)} }};'
+                        f'    DialogueSelection {var} = {{ "{self._esc(sel.label)}", false, {self._ptr(ia, target_idx)} }};'
                     )
                     any_sel = True
             if any_sel:
