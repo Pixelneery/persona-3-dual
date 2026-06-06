@@ -8,11 +8,9 @@ A Nintendo DS demake of **Persona 3**, developed in C++ using devkitPro. Based o
 ![License](https://img.shields.io/github/license/p3d-project/persona-3-dual?style=flat-square)
 
 [![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
+[![Python](https://img.shields.io/badge/python-3670A0?logo=python&logoColor=white)](#)
 ![Platform](https://img.shields.io/badge/platform-Nintendo%20DS-red?style=flat-square)
-![Toolchain](https://img.shields.io/badge/toolchain-devkitPro-orange?style=flat-square)
-![Emulator](https://img.shields.io/badge/emulator-melonDS-purple?style=flat-square)
-[![Blender](https://img.shields.io/badge/Blender-%23F5792A.svg?logo=blender&logoColor=white)](#)
-[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](#)
+![Architecture](https://img.shields.io/badge/architecture-ARM9/ARM7-blue)
 
 [![Discord](https://img.shields.io/discord/1498850477545357482?label=Discord&logo=discord&style=flat-square&color=5865F2)](https://discord.gg/Xtmu76PveV)
 
@@ -33,18 +31,6 @@ A Nintendo DS demake of **Persona 3**, developed in C++ using devkitPro. Based o
 
 ### Videos
 [![IMAGE ALT TEXT](http://img.youtube.com/vi/4RW8ppcPK6o/0.jpg)](http://www.youtube.com/watch?v=4RW8ppcPK6o "Persona 3 Dual (First Look)")
-
----
-
-## Technical Details
-
-| | |
-|---|---|
-| **Platform** | Nintendo DS |
-| **CPU** | ARM9 (main) / ARM7 (sound/system) |
-| **Toolchain** | devkitPro (devkitARM + libnds) |
-| **Language** | C++, Python |
-| **Emulator** | melonDS |
 
 ---
 
