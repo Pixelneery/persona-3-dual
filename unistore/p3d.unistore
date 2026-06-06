@@ -5,7 +5,7 @@
     "author": "P3D Team",
     "description": "A Nintendo DS demake of Persona 3, developed in C++ using devkitPro.",
     "version": 3,
-    "revision": 3,
+    "revision": 1,
     "url": "https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/unistore/p3d.unistore",
     "file": "p3d.unistore"
   },
@@ -21,37 +21,12 @@
         "icon_index": 0,
         "icon": "https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/icon.bmp"
       },
-      "Install (full)": [
-          {
-            "type": "downloadFile",
-            "file": "https://github.com/p3d-project/persona-3-dual/releases/latest/download/persona-3-dual.nds",
-            "output": "sdmc:/roms/nds/persona-3-dual.nds",
-            "message": "Downloading Persona 3 Dual ROM (~500 MB, full install)..."
-          },
-          {
-            "type": "downloadFile",
-            "file": "https://github.com/p3d-project/persona-3-dual/releases/latest/download/data.zip",
-            "output": "sdmc:/roms/nds/data.zip",
-            "message": "Downloading game data..."
-          },
-          {
-            "type": "extractFile",
-            "file": "sdmc:/roms/nds/data.zip",
-            "output": "sdmc:/roms/nds/",
-            "message": "Extracting game data..."
-          },
-          {
-            "type": "deleteFile",
-            "file": "sdmc:/roms/nds/data.zip",
-            "message": "Cleaning up..."
-          }
-      ],
       "Install/Update": [
           {
             "type": "downloadFile",
             "file": "https://github.com/p3d-project/persona-3-dual/releases/latest/download/persona-3-dual.nds",
             "output": "sdmc:/roms/nds/persona-3-dual.nds",
-            "message": "Downloading Persona 3 Dual ROM (~500 MB, full install)..."
+            "message": "Downloading Persona 3 Dual ROM..."
           },
           {
             "type": "downloadFile",
@@ -69,50 +44,6 @@
             "type": "deleteFile",
             "file": "sdmc:/roms/nds/data.zip",
             "message": "Cleaning up..."
-          }
-      ],
-      "Patch Update": [
-          {
-            "type": "promptMessage",
-            "message": "This will download the xdelta3 patch from the latest release and apply it to your existing persona-3-dual.nds.\n\nMake sure you already have the ROM installed before continuing.\n\nThe patch file will be deleted after applying.",
-            "name": "patch-update-confirm"
-          },
-          {
-            "type": "downloadRelease",
-            "repo": "p3d-project/persona-3-dual",
-            "file": "persona-3-dual-patch-.*\\.xdelta3",
-            "output": "sdmc:/roms/nds/persona-3-dual-update.xdelta3",
-            "message": "Downloading patch..."
-          },
-          {
-            "type": "applyXdeltaPatch",
-            "source": "sdmc:/roms/nds/persona-3-dual.nds",
-            "patch": "sdmc:/roms/nds/persona-3-dual-update.xdelta3",
-            "output": "sdmc:/roms/nds/persona-3-dual.nds"
-          },
-          {
-            "type": "deleteFile",
-            "file": "sdmc:/roms/nds/persona-3-dual-update.xdelta3"
-          }
-      ]
-    },
-    {
-      "info": {
-        "title": "Persona 3 Dual (patch-info)",
-        "author": "P3D Team",
-        "description": "Downloads patch-info.json so you can see what patch is available before committing to a patch update. Check the latest patch version and size.",
-        "version": "latest",
-        "category": ["Games"],
-        "console": ["NDS"],
-        "icon_index": 0,
-        "icon": "https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/icon.bmp"
-      },
-      "Check patch info": [
-          {
-            "type": "downloadFile",
-            "file": "https://github.com/p3d-project/persona-3-dual/releases/latest/download/patch-info.json",
-            "output": "sdmc:/roms/nds/p3d-patch-info.json",
-            "message": "Downloading patch metadata..."
           }
       ]
     }
