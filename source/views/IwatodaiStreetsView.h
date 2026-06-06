@@ -19,7 +19,7 @@ class IwatodaiStreetsView : public BaseView
     PrintConsole console;
 
     CharacterController* playerCtrl;
-    cameraPosition camPos;
+    CameraPosition camPos;
     const float tileSize = 0.062500f;
     const float worldOffsetX = IWATODAI_STREETS_WORLD_OFFSET_X;
     const float worldOffsetZ = IWATODAI_STREETS_WORLD_OFFSET_Z;

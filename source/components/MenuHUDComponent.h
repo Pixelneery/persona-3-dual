@@ -3,8 +3,6 @@
 #include "core/globals.h"
 #include "core/structs.h"
 #include <nds.h>
-// menuHUD bg
-#include "menuHUD.h"
 
 class MenuHUDComponent
 {
@@ -24,6 +22,7 @@ class MenuHUDComponent
     SpriteRegister timeSprites[4];
     SpriteRegister skillSprites[18];
     SpriteRegister slashSprite;
+    bool bgLoaded;
 
     void loadBg(int* bgId);
 

@@ -2,7 +2,7 @@
 #include "core/globals.h"
 
 #define MAIN_MENU_OPTIONS 3
-#define LEVEL_OPTIONS 7
+#define LEVEL_OPTIONS 6
 #define SETTING_OPTIONS 2
 #define SETTING_INTRO_OPTIONS 4
 
@@ -20,7 +20,6 @@ class MainMenuComponent : public BaseMenu
 
     MenuOption levelOptions[LEVEL_OPTIONS] = {
         {"Start Game", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
-        {"Debug", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Dorm", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Streets", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Station", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},

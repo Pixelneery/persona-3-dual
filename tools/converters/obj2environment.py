@@ -499,7 +499,7 @@ def convert(obj_path, output_dir, config):
         )
         h.write("// DO NOT EDIT - regenerate from source.\n\n")
         h.write(
-            "#include <nds.h>\n#include <stdio.h>\n#include <stdlib.h>\n#include <math.h>\n\n"
+            "#include <math.h>\n#include <nds.h>\n#include <stdio.h>\n#include <stdlib.h>\n\n"
         )
 
         h.write("// World bounds\n")
@@ -510,21 +510,21 @@ def convert(obj_path, output_dir, config):
             f"#define {base_name.upper()}_WORLD_DEPTH    {world_depth:.6f}f\n\n"
         )
 
-        h.write(f"enum {base_name}_TexSlot {{\n")
+        h.write(f"enum {base_name}_TexSlot\n{{\n")
         for i, (tex_key, _, _, _) in enumerate(dl_groups):
             h.write(
                 f"    {base_name.upper()}_TEX_{sanitize(os.path.splitext(tex_key)[0]).upper()} = {i},\n"
             )
         h.write(f"    {base_name.upper()}_TEX_COUNT = {n}\n}};\n\n")
 
-        h.write(f"struct {base_name}_BillboardData {{\n")
+        h.write(f"struct {base_name}_BillboardData\n{{\n")
         h.write("    v16 x, y, z;\n    v16 halfWidth, halfHeight;\n")
         h.write("    int texSlot;\n    short u0, v0, u1, v1;\n};\n\n")
 
-        h.write(f"class {base_name}_Environment {{\npublic:\n")
+        h.write(f"class {base_name}_Environment\n{{\npublic:\n")
         h.write(f"    u32* displayLists[{safe_n}];\n")
-        h.write(f"    u32  dlSizes[{safe_n}];\n")
-        h.write(f"    int  textureIDs[{safe_n}];\n\n")
+        h.write(f"    u32 dlSizes[{safe_n}];\n")
+        h.write(f"    int textureIDs[{safe_n}];\n\n")
         h.write(f"    static const int BILLBOARD_COUNT = {len(billboards)};\n")
 
         if billboards:

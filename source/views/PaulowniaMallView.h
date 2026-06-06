@@ -47,7 +47,7 @@ class PaulowniaMallView : public BaseView
     CharacterController* playerCtrl;
 
     // camera pos
-    cameraPosition camPos;
+    CameraPosition camPos;
     // world
     const float tileSize = 0.062500f;
     const float worldOffsetX = PAULOWNIA_MALL_WORLD_OFFSET_X;

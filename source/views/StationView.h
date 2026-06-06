@@ -19,7 +19,7 @@ class StationView : public BaseView
     PrintConsole console;
 
     CharacterController* playerCtrl;
-    cameraPosition camPos;
+    CameraPosition camPos;
     const float tileSize = 0.062500f;
     const float worldOffsetX = STATION_WORLD_OFFSET_X;
     const float worldOffsetZ = STATION_WORLD_OFFSET_Z;

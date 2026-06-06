@@ -9,21 +9,16 @@
 #include "maps/station.h"
 // environment
 #include "environments/station.h"
-// textures
-#include "f008_005bolt01.h"
-#include "f008_005floor01.h"
-#include "f008_005obj01.h"
-#include "f008_005obj02.h"
-#include "f008_005obj03.h"
-#include "f008_005obj04.h"
-#include "f008_005obj06.h"
-#include "f008_005obj07.h"
-#include "f008_005obj08.h"
-#include "f008_005wall01.h"
-#include "lightmap_white.h"
+#include <string>
+
 // model
-#include "character.h"
 #include "models/character.h"
+
+static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
+{
+    asset = graphicsCtrl.loadGrit(path);
+    return reinterpret_cast<const unsigned int*>(asset.tiles);
+}
 
 int policeStationCharacterTextureId;
 station_Environment stationEnv;
@@ -92,25 +87,44 @@ void StationView::init()
                                          false);
 
     // setup music
-    musicCtrl.init((fatBasePath + "/music/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
+    musicCtrl.init((fatBasePath + "music/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
 
     // setup character model
-    characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());
+    characterAnimationCtrl.loadModel((fatBasePath + "models/character/character.bin").c_str());
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int* bitmaps[STATION_TEX_COUNT] = {f008_005obj04Bitmap,
-                                                      f008_005obj02Bitmap,
-                                                      f008_005obj07Bitmap,
-                                                      f008_005obj06Bitmap,
-                                                      f008_005obj08Bitmap,
-                                                      lightmap_whiteBitmap,
-                                                      f008_005wall01Bitmap,
-                                                      f008_005obj01Bitmap,
-                                                      f008_005obj03Bitmap,
-                                                      f008_005floor01Bitmap,
-                                                      f008_005bolt01Bitmap};
-    stationEnv.load((fatBasePath + "environments/station.bin").c_str(), bitmaps);
+    GraphicAsset envTextures[STATION_TEX_COUNT] = {};
+    const unsigned int* bitmaps[STATION_TEX_COUNT] = {nullptr};
+
+    bitmaps[STATION_TEX_F008_005OBJ04] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj04",
+                                                               envTextures[STATION_TEX_F008_005OBJ04]);
+    bitmaps[STATION_TEX_F008_005OBJ02] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj02",
+                                                               envTextures[STATION_TEX_F008_005OBJ02]);
+    bitmaps[STATION_TEX_F008_005OBJ07] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj07",
+                                                               envTextures[STATION_TEX_F008_005OBJ07]);
+    bitmaps[STATION_TEX_F008_005OBJ06] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj06",
+                                                               envTextures[STATION_TEX_F008_005OBJ06]);
+    bitmaps[STATION_TEX_F008_005OBJ08] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj08",
+                                                               envTextures[STATION_TEX_F008_005OBJ08]);
+    bitmaps[STATION_TEX_LIGHTMAP_WHITE] = loadEnvironmentBitmap(fatBasePath + "environments/station/lightmap_white",
+                                                                envTextures[STATION_TEX_LIGHTMAP_WHITE]);
+    bitmaps[STATION_TEX_F008_005WALL01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005wall01",
+                                                                envTextures[STATION_TEX_F008_005WALL01]);
+    bitmaps[STATION_TEX_F008_005OBJ01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj01",
+                                                               envTextures[STATION_TEX_F008_005OBJ01]);
+    bitmaps[STATION_TEX_F008_005OBJ03] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj03",
+                                                               envTextures[STATION_TEX_F008_005OBJ03]);
+    bitmaps[STATION_TEX_F008_005FLOOR01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005floor01",
+                                                                 envTextures[STATION_TEX_F008_005FLOOR01]);
+    bitmaps[STATION_TEX_F008_005BOLT01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005bolt01",
+                                                                envTextures[STATION_TEX_F008_005BOLT01]);
+
+    stationEnv.load((fatBasePath + "environments/station/station.bin").c_str(), bitmaps);
+    for (int i = 0; i < STATION_TEX_COUNT; ++i)
+    {
+        graphicsCtrl.unloadGrit(envTextures[i]);
+    }
     totalPolyCount = stationEnv.getPolyCount();
 
     // pause menu
@@ -193,7 +207,7 @@ ViewState StationView::update()
         glPopMatrix(1);
 
         glPushMatrix();
-        characterPosition charPos = playerCtrl->isCharacterAt();
+        CharacterPosition charPos = playerCtrl->isCharacterAt();
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         characterAnimationCtrl.render();

@@ -3,6 +3,7 @@
 #include "components/MenuHUDComponent.h"
 #include "components/PauseMenuComponent.h"
 #include "controllers/AnimationController.h"
+#include "controllers/GraphicsController.h"
 #include "controllers/MusicController.h"
 #include "controllers/SaveController.h"
 #include "controllers/SpriteController.h"
@@ -27,6 +28,7 @@ extern VideoController videoCtrl;
 extern AnimationController characterAnimationCtrl;
 extern const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 extern SpriteController spriteCtrl;
+extern GraphicsController graphicsCtrl;
 
 // components
 extern PauseMenuComponent pauseMenuCmpt;

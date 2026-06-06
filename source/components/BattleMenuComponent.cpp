@@ -1,12 +1,6 @@
 #include "BattleMenuComponent.h"
 #include "core/globals.h"
 
-// dummy backgrounds
-#include "bgAkihiko.h"
-#include "bgKenji.h"
-#include "bgYukari.h"
-#include "bgYukariClose.h"
-
 void BattleMenuComponent::loadBg(int bgIndex)
 {
     // no background support yet

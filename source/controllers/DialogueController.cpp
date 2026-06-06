@@ -6,8 +6,8 @@ DialogueController::DialogueController()
 {
 }
 
-// transition to a new dialogue node and reset animation state
-void DialogueController::advanceTo(dialogue* next)
+// transition to a new Dialogue node and reset animation state
+void DialogueController::advanceTo(Dialogue* next)
 {
     current = next;
     animIndex = 0;
@@ -35,7 +35,7 @@ void DialogueController::renderOptions()
     }
 }
 
-void DialogueController::start(dialogue* firstLine)
+void DialogueController::start(Dialogue* firstLine)
 {
     loadedImageId = -1; // force a bg load for the very first line
     prevKeys = 0;
@@ -119,7 +119,7 @@ void DialogueController::update(u32 keys)
         }
         else if (pressed & KEY_A)
         {
-            dialogue* next = current->selections[selectedOption].next;
+            Dialogue* next = current->selections[selectedOption].next;
             if (next == nullptr)
             {
                 exit();
@@ -133,7 +133,7 @@ void DialogueController::update(u32 keys)
         // linear dialogue
         if (pressed & KEY_A)
         {
-            dialogue* next = current->next;
+            Dialogue* next = current->next;
             if (next == nullptr)
             {
                 exit();
@@ -143,7 +143,7 @@ void DialogueController::update(u32 keys)
         }
         else if (pressed & KEY_B)
         {
-            dialogue* next = current->prev;
+            Dialogue* next = current->prev;
             if (next == nullptr)
             {
                 exit();

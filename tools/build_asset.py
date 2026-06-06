@@ -45,7 +45,7 @@ def guess_asset_type(input_file: str) -> Optional[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="P3 Dual Asset Compiler")
+    parser = argparse.ArgumentParser(description="P3 Dual Project Asset Compiler")
     parser.add_argument("input", help="Input file")
     parser.add_argument("output", help="Output file or directory")
     args, unknown = parser.parse_known_args()

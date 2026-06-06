@@ -442,14 +442,14 @@ def convert_model_json(
         h.write('#include "controllers/AnimationController.h"\n\n')
 
         # Animation enum
-        h.write(f"enum Model_{safe_name} {{\n")
+        h.write(f"enum Model_{safe_name}\n{{\n")
         for i, anim_name in enumerate(data["animations"].keys()):
             safe_anim = anim_name.upper().replace(".", "_").replace("-", "_")
             h.write(f"    MODEL_{safe_name.upper()}_{safe_anim} = {i},\n")
         h.write("};\n\n")
 
         # Texture slot enum
-        h.write(f"enum Model_{safe_name}_TexSlot {{\n")
+        h.write(f"enum Model_{safe_name}_TexSlot\n{{\n")
         for i, (tex_key, _, w, h_px, is_rgba) in enumerate(tex_info):
             safe_tex = sanitize(os.path.splitext(tex_key)[0]).upper()
             h.write(f"    MODEL_{safe_name.upper()}_TEX_{safe_tex} = {i},\n")
@@ -460,25 +460,22 @@ def convert_model_json(
         # sizes baked in from the build
         h.write("// Call after AnimationController::loadModel() to upload textures.\n")
         h.write(f"// Pass bitmaps in the same order as Model_{safe_name}_TexSlot.\n")
-        h.write(f"inline void {safe_name}_loadTextures(\n")
-        h.write("    AnimationController& ctrl,\n")
         h.write(
-            f"    const unsigned int* bitmaps[MODEL_{safe_name.upper()}_TEX_COUNT])\n"
+            f"inline void {safe_name}_loadTextures(AnimationController& ctrl, const unsigned int* bitmaps[MODEL_{safe_name.upper()}_TEX_COUNT])\n"
         )
         h.write("{\n")
         if tex_count > 0:
             widths_str = ", ".join(str(t[2]) for t in tex_info)
             heights_str = ", ".join(str(t[3]) for t in tex_info)
             rgba_str = ", ".join("true" if t[4] else "false" for t in tex_info)
+            h.write(f"    static const int widths[{tex_count}] = {{ {widths_str} }};\n")
             h.write(
-                f"    static const int  widths [{tex_count}] = {{ {widths_str} }};\n"
+                f"    static const int heights[{tex_count}] = {{ {heights_str} }};\n"
             )
+            h.write(f"    static const bool isRGBA[{tex_count}] = {{ {rgba_str} }};\n")
             h.write(
-                f"    static const int  heights[{tex_count}] = {{ {heights_str} }};\n"
+                f"    ctrl.loadTextures(MODEL_{safe_name.upper()}_TEX_COUNT, bitmaps, widths, heights, isRGBA);\n"
             )
-            h.write(f"    static const bool isRGBA [{tex_count}] = {{ {rgba_str} }};\n")
-            h.write(f"    ctrl.loadTextures(MODEL_{safe_name.upper()}_TEX_COUNT,\n")
-            h.write("                      bitmaps, widths, heights, isRGBA);\n")
         h.write("}\n")
 
     _format_cpp_h_files([header_out])

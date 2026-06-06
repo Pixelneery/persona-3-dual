@@ -8,7 +8,7 @@ class DialogueController
 {
   public:
     DialogueController();
-    void start(dialogue* firstLine);
+    void start(Dialogue* firstLine);
     void update(u32 keys);
     void exit();
     bool isActive() const
@@ -22,11 +22,11 @@ class DialogueController
     }
 
   private:
-    void advanceTo(dialogue* next);
+    void advanceTo(Dialogue* next);
     void renderAnimFrame();
     void renderOptions();
 
-    dialogue* current = nullptr;
+    Dialogue* current = nullptr;
     int optionCount = 0;
     int selectedOption = 0;
     bool active = false;
