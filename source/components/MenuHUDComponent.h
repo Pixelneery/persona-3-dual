@@ -22,6 +22,7 @@ class MenuHUDComponent
     SpriteRegister timeSprites[4];
     SpriteRegister skillSprites[18];
     SpriteRegister slashSprite;
+    bool bgLoaded;
 
     void loadBg(int* bgId);
 

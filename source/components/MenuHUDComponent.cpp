@@ -2,6 +2,8 @@
 
 void MenuHUDComponent::loadHUD()
 {
+    bgLoaded = false;
+
     // setup sprites
     // moon
     sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, -15};
@@ -103,6 +105,9 @@ void MenuHUDComponent::loadHUD()
 
 void MenuHUDComponent::loadBg(int* bgId)
 {
+    if (bgLoaded)
+        return;
+
     std::string bgPath = fatBasePath + "graphics/MenuHUD/backgrounds/" +
                          (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD");
     GritAsset bgHUD = graphicsCtrl.loadGrit(bgPath);
@@ -114,6 +119,7 @@ void MenuHUDComponent::loadBg(int* bgId)
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
     graphicsCtrl.unloadGrit(bgHUD);
+    bgLoaded = true;
 }
 
 void MenuHUDComponent::drawHUD(int* bgId)
