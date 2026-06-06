@@ -1,14 +1,8 @@
 #include "demo_dialogue.h"
 #include "core/globals.h"
 #include <nds.h>
-#include <string>
 
 int demo_dialogue_bg_slot = 0;
-
-static GritAsset loadDialogueBackground(const std::string& name)
-{
-    return graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + name + "/" + name);
-}
 
 const char* demo_yukari_kenji_argument_bg_names[4] = {"bgAkihiko", "bgKenji", "bgYukari", "bgYukariClose"};
 void (*demo_yukari_kenji_argument_bg_loaders[4])() = {
@@ -28,59 +22,59 @@ void demo_yukari_kenji_argument_load()
 {
     demo_yukari_kenji_argument_bg_loaders[0] = []()
     {
-        GritAsset bg = loadDialogueBackground("bgAkihiko");
+        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgAkihiko");
         if (bg.tiles)
+        {
             dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
-        if (bg.map)
             dmaCopy(bg.map, bgGetMapPtr(demo_dialogue_bg_slot), bg.mapLen);
-        vramSetBankH(VRAM_H_LCD);
-        if (bg.pal)
+            vramSetBankH(VRAM_H_LCD);
             dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        graphicsCtrl.unloadGrit(bg);
-        bgShow(demo_dialogue_bg_slot);
+            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+            bgShow(demo_dialogue_bg_slot);
+            graphicsCtrl.unloadGrit(bg);
+        }
     };
     demo_yukari_kenji_argument_bg_loaders[1] = []()
     {
-        GritAsset bg = loadDialogueBackground("bgKenji");
+        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgKenji");
         if (bg.tiles)
+        {
             dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
-        if (bg.map)
             dmaCopy(bg.map, bgGetMapPtr(demo_dialogue_bg_slot), bg.mapLen);
-        vramSetBankH(VRAM_H_LCD);
-        if (bg.pal)
+            vramSetBankH(VRAM_H_LCD);
             dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        graphicsCtrl.unloadGrit(bg);
-        bgShow(demo_dialogue_bg_slot);
+            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+            bgShow(demo_dialogue_bg_slot);
+            graphicsCtrl.unloadGrit(bg);
+        }
     };
     demo_yukari_kenji_argument_bg_loaders[2] = []()
     {
-        GritAsset bg = loadDialogueBackground("bgYukari");
+        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgYukari");
         if (bg.tiles)
+        {
             dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
-        if (bg.map)
             dmaCopy(bg.map, bgGetMapPtr(demo_dialogue_bg_slot), bg.mapLen);
-        vramSetBankH(VRAM_H_LCD);
-        if (bg.pal)
+            vramSetBankH(VRAM_H_LCD);
             dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        graphicsCtrl.unloadGrit(bg);
-        bgShow(demo_dialogue_bg_slot);
+            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+            bgShow(demo_dialogue_bg_slot);
+            graphicsCtrl.unloadGrit(bg);
+        }
     };
     demo_yukari_kenji_argument_bg_loaders[3] = []()
     {
-        GritAsset bg = loadDialogueBackground("bgYukariClose");
+        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/bgYukariClose");
         if (bg.tiles)
+        {
             dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
-        if (bg.map)
             dmaCopy(bg.map, bgGetMapPtr(demo_dialogue_bg_slot), bg.mapLen);
-        vramSetBankH(VRAM_H_LCD);
-        if (bg.pal)
+            vramSetBankH(VRAM_H_LCD);
             dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        graphicsCtrl.unloadGrit(bg);
-        bgShow(demo_dialogue_bg_slot);
+            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+            bgShow(demo_dialogue_bg_slot);
+            graphicsCtrl.unloadGrit(bg);
+        }
     };
     demo_yukari_kenji_argument_init();
 }

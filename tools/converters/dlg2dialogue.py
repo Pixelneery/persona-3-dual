@@ -316,17 +316,11 @@ class CodeGenerator:
         out += [
             "#include <nds.h>",
             f'#include "{s}_dialogue.h"',
+            '#include "core/globals.h"',
             "",
             f"int {s}_dialogue_bg_slot = 0;",
             "",
-            "// background import",
         ]
-        bgSet = set()
-        for ia in self.interactions:
-            for i, bg in enumerate(ia.bg_order):
-                bgSet.add(f'#include "{ia.bg_order[i] if ia.bg_order else "myBg"}.h"')
-        out.extend(sorted(bgSet))
-        out.append("")
 
         for ia in self.interactions:
             vp = self._vp(ia)
@@ -354,12 +348,16 @@ class CodeGenerator:
                 nm = ia.bg_order[i] if ia.bg_order else "myBg"
                 out += [
                     f"    {vp}_bg_loaders[{i}] = [](){{",
-                    f"        dmaCopy({nm}Tiles, bgGetGfxPtr({s}_dialogue_bg_slot), {nm}TilesLen);",
-                    f"        dmaCopy({nm}Map, bgGetMapPtr({s}_dialogue_bg_slot), {nm}MapLen);",
-                    "        vramSetBankH(VRAM_H_LCD);",
-                    f"        dmaCopy({nm}Pal, &VRAM_H_EXT_PALETTE[0][0], {nm}PalLen);",
-                    "        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);",
-                    f"        bgShow({s}_dialogue_bg_slot);",
+                    f'        GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/dialogue/backgrounds/{nm}");',
+                    "        if (bg.tiles) {",
+                    f"            dmaCopy(bg.tiles, bgGetGfxPtr({s}_dialogue_bg_slot), bg.tilesLen);",
+                    f"            dmaCopy(bg.map, bgGetMapPtr({s}_dialogue_bg_slot), bg.mapLen);",
+                    "            vramSetBankH(VRAM_H_LCD);",
+                    "            dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);",
+                    "            vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);",
+                    f"            bgShow({s}_dialogue_bg_slot);",
+                    "            graphicsCtrl.unloadGrit(bg);",
+                    "        }",
                     "    };",
                 ]
             out += [
