@@ -1,13 +1,14 @@
 #include "demo_dialogue.h"
+#include "core/globals.h"
 #include <nds.h>
+#include <string>
 
 int demo_dialogue_bg_slot = 0;
 
-// background import
-#include "bgAkihiko.h"
-#include "bgKenji.h"
-#include "bgYukari.h"
-#include "bgYukariClose.h"
+static GritAsset loadDialogueBackground(const std::string& name)
+{
+    return graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + name + "/" + name);
+}
 
 const char* demo_yukari_kenji_argument_bg_names[4] = {"bgAkihiko", "bgKenji", "bgYukari", "bgYukariClose"};
 void (*demo_yukari_kenji_argument_bg_loaders[4])() = {
@@ -27,38 +28,58 @@ void demo_yukari_kenji_argument_load()
 {
     demo_yukari_kenji_argument_bg_loaders[0] = []()
     {
-        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(demo_dialogue_bg_slot), bgAkihikoTilesLen);
-        dmaCopy(bgAkihikoMap, bgGetMapPtr(demo_dialogue_bg_slot), bgAkihikoMapLen);
+        GritAsset bg = loadDialogueBackground("bgAkihiko");
+        if (bg.tiles)
+            dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
+        if (bg.map)
+            dmaCopy(bg.map, bgGetMapPtr(demo_dialogue_bg_slot), bg.mapLen);
         vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
+        if (bg.pal)
+            dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        graphicsCtrl.unloadGrit(bg);
         bgShow(demo_dialogue_bg_slot);
     };
     demo_yukari_kenji_argument_bg_loaders[1] = []()
     {
-        dmaCopy(bgKenjiTiles, bgGetGfxPtr(demo_dialogue_bg_slot), bgKenjiTilesLen);
-        dmaCopy(bgKenjiMap, bgGetMapPtr(demo_dialogue_bg_slot), bgKenjiMapLen);
+        GritAsset bg = loadDialogueBackground("bgKenji");
+        if (bg.tiles)
+            dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
+        if (bg.map)
+            dmaCopy(bg.map, bgGetMapPtr(demo_dialogue_bg_slot), bg.mapLen);
         vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgKenjiPal, &VRAM_H_EXT_PALETTE[0][0], bgKenjiPalLen);
+        if (bg.pal)
+            dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        graphicsCtrl.unloadGrit(bg);
         bgShow(demo_dialogue_bg_slot);
     };
     demo_yukari_kenji_argument_bg_loaders[2] = []()
     {
-        dmaCopy(bgYukariTiles, bgGetGfxPtr(demo_dialogue_bg_slot), bgYukariTilesLen);
-        dmaCopy(bgYukariMap, bgGetMapPtr(demo_dialogue_bg_slot), bgYukariMapLen);
+        GritAsset bg = loadDialogueBackground("bgYukari");
+        if (bg.tiles)
+            dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
+        if (bg.map)
+            dmaCopy(bg.map, bgGetMapPtr(demo_dialogue_bg_slot), bg.mapLen);
         vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukariPal, &VRAM_H_EXT_PALETTE[0][0], bgYukariPalLen);
+        if (bg.pal)
+            dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        graphicsCtrl.unloadGrit(bg);
         bgShow(demo_dialogue_bg_slot);
     };
     demo_yukari_kenji_argument_bg_loaders[3] = []()
     {
-        dmaCopy(bgYukariCloseTiles, bgGetGfxPtr(demo_dialogue_bg_slot), bgYukariCloseTilesLen);
-        dmaCopy(bgYukariCloseMap, bgGetMapPtr(demo_dialogue_bg_slot), bgYukariCloseMapLen);
+        GritAsset bg = loadDialogueBackground("bgYukariClose");
+        if (bg.tiles)
+            dmaCopy(bg.tiles, bgGetGfxPtr(demo_dialogue_bg_slot), bg.tilesLen);
+        if (bg.map)
+            dmaCopy(bg.map, bgGetMapPtr(demo_dialogue_bg_slot), bg.mapLen);
         vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukariClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukariClosePalLen);
+        if (bg.pal)
+            dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
         vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        graphicsCtrl.unloadGrit(bg);
         bgShow(demo_dialogue_bg_slot);
     };
     demo_yukari_kenji_argument_init();

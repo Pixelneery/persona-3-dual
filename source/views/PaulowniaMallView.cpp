@@ -9,43 +9,13 @@
 #include "models/character.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
-// environment textures
-#include "f008_001_acyane.h"
-#include "f008_001_cd.h"
-#include "f008_001_chair.h"
-#include "f008_001_enter01.h"
-#include "f008_001_enter02.h"
-#include "f008_001_fl01.h"
-#include "f008_001_fl02.h"
-#include "f008_001_fl03.h"
-#include "f008_001_fun01.h"
-#include "f008_001_fun02.h"
-#include "f008_001_fun03.h"
-#include "f008_001_gafl.h"
-#include "f008_001_glass.h"
-#include "f008_001_glow.h"
-#include "f008_001_gra.h"
-#include "f008_001_gra02.h"
-#include "f008_001_gsfl.h"
-#include "f008_001_hasira.h"
-#include "f008_001_hiho.h"
-#include "f008_001_jitensya.h"
-#include "f008_001_jyutan.h"
-#include "f008_001_kaidan.h"
-#include "f008_001_kanban.h"
-#include "f008_001_kanban02.h"
-#include "f008_001_kanban03.h"
-#include "f008_001_kar.h"
-#include "f008_001_keimark.h"
-#include "f008_001_komono01.h"
-#include "f008_001_komono02.h"
-#include "f008_001_ligfla.h"
-#include "f008_001_plantA.h"
-#include "f008_001_redrect.h"
-#include "f008_001_shadow.h"
-#include "f008_001_sky.h"
-#include "f008_001_wl01.h"
-#include "f008_001_wl02.h"
+#include <string>
+
+static const unsigned int* loadEnvironmentBitmap(const std::string& path, GritAsset& asset)
+{
+    asset = graphicsCtrl.loadGrit(path);
+    return reinterpret_cast<const unsigned int*>(asset.tiles);
+}
 
 // TODO: dont forget to clear in future
 PaulowniaMallView::PaulowniaMallView()
@@ -129,23 +99,55 @@ void PaulowniaMallView::init()
     musicCtrl.init((fatBasePath + "music/color_your_night.pcm").c_str(), 0.0f, 920.973f);
 
     // setup character model
-    characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());
+    characterAnimationCtrl.loadModel((fatBasePath + "models/character/character.bin").c_str());
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
+    GritAsset envTextures[PAULOWNIA_MALL_TEX_COUNT];
     const unsigned int* bitmapsEnv[PAULOWNIA_MALL_TEX_COUNT] = {
-        f008_001_fl02Bitmap,     f008_001_fl03Bitmap,    f008_001_gsflBitmap,     f008_001_hasiraBitmap,
-        f008_001_kaidanBitmap,   f008_001_skyBitmap,     f008_001_wl01Bitmap,     f008_001_wl02Bitmap,
-        f008_001_komono01Bitmap, f008_001_fun03Bitmap,   f008_001_glowBitmap,     f008_001_komono02Bitmap,
-        f008_001_ligflaBitmap,   f008_001_shadowBitmap,  f008_001_enter02Bitmap,  f008_001_redrectBitmap,
-        f008_001_plantABitmap,   f008_001_keimarkBitmap, f008_001_jyutanBitmap,   f008_001_fl01Bitmap,
-        f008_001_gra02Bitmap,    f008_001_graBitmap,     f008_001_hihoBitmap,     f008_001_kanban03Bitmap,
-        f008_001_kanbanBitmap,   f008_001_fun01Bitmap,   f008_001_fun02Bitmap,    f008_001_acyaneBitmap,
-        f008_001_enter01Bitmap,  f008_001_karBitmap,     f008_001_glassBitmap,    f008_001_chairBitmap,
-        f008_001_gaflBitmap,     f008_001_cdBitmap,      f008_001_kanban02Bitmap, f008_001_jitensyaBitmap,
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_fl02", envTextures[0]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_fl03", envTextures[1]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_gsfl", envTextures[2]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_hasira", envTextures[3]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_kaidan", envTextures[4]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_sky", envTextures[5]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_wl01", envTextures[6]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_wl02", envTextures[7]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_komono01", envTextures[8]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_fun03", envTextures[9]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_glow", envTextures[10]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_komono02", envTextures[11]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_ligfla", envTextures[12]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_shadow", envTextures[13]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_enter02", envTextures[14]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_redrect", envTextures[15]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_plantA", envTextures[16]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_keimark", envTextures[17]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_jyutan", envTextures[18]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_fl01", envTextures[19]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_gra02", envTextures[20]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_gra", envTextures[21]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_hiho", envTextures[22]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_kanban03", envTextures[23]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_kanban", envTextures[24]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_fun01", envTextures[25]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_fun02", envTextures[26]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_acyane", envTextures[27]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_enter01", envTextures[28]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_kar", envTextures[29]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_glass", envTextures[30]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_chair", envTextures[31]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_gafl", envTextures[32]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_cd", envTextures[33]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_kanban02", envTextures[34]),
+        loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_jitensya", envTextures[35]),
     };
 
-    paulowniaMallEnv.load((fatBasePath + "environments/paulownia_mall.bin").c_str(), bitmapsEnv);
+    paulowniaMallEnv.load((fatBasePath + "environments/paulownia_mall/paulownia_mall.bin").c_str(), bitmapsEnv);
+    for (int i = 0; i < PAULOWNIA_MALL_TEX_COUNT; ++i)
+    {
+        graphicsCtrl.unloadGrit(envTextures[i]);
+    }
     totalPolyCount = paulowniaMallEnv.getPolyCount();
 
     // setup dialogue

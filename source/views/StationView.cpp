@@ -9,21 +9,16 @@
 #include "maps/station.h"
 // environment
 #include "environments/station.h"
-// textures
-#include "f008_005bolt01.h"
-#include "f008_005floor01.h"
-#include "f008_005obj01.h"
-#include "f008_005obj02.h"
-#include "f008_005obj03.h"
-#include "f008_005obj04.h"
-#include "f008_005obj06.h"
-#include "f008_005obj07.h"
-#include "f008_005obj08.h"
-#include "f008_005wall01.h"
-#include "lightmap_white.h"
+#include <string>
+
 // model
-#include "character.h"
 #include "models/character.h"
+
+static const unsigned int* loadEnvironmentBitmap(const std::string& path, GritAsset& asset)
+{
+    asset = graphicsCtrl.loadGrit(path);
+    return reinterpret_cast<const unsigned int*>(asset.tiles);
+}
 
 int policeStationCharacterTextureId;
 station_Environment stationEnv;
@@ -92,25 +87,32 @@ void StationView::init()
                                          false);
 
     // setup music
-    musicCtrl.init((fatBasePath + "/music/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
+    musicCtrl.init((fatBasePath + "music/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
 
     // setup character model
-    characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());
+    characterAnimationCtrl.loadModel((fatBasePath + "models/character/character.bin").c_str());
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int* bitmaps[STATION_TEX_COUNT] = {f008_005obj04Bitmap,
-                                                      f008_005obj02Bitmap,
-                                                      f008_005obj07Bitmap,
-                                                      f008_005obj06Bitmap,
-                                                      f008_005obj08Bitmap,
-                                                      lightmap_whiteBitmap,
-                                                      f008_005wall01Bitmap,
-                                                      f008_005obj01Bitmap,
-                                                      f008_005obj03Bitmap,
-                                                      f008_005floor01Bitmap,
-                                                      f008_005bolt01Bitmap};
-    stationEnv.load((fatBasePath + "environments/station.bin").c_str(), bitmaps);
+    GritAsset envTextures[STATION_TEX_COUNT];
+    const unsigned int* bitmaps[STATION_TEX_COUNT] = {
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj04", envTextures[0]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj02", envTextures[1]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj07", envTextures[2]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj06", envTextures[3]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj08", envTextures[4]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/lightmap_white", envTextures[5]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005wall01", envTextures[6]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj01", envTextures[7]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj03", envTextures[8]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005floor01", envTextures[9]),
+        loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005bolt01", envTextures[10]),
+    };
+    stationEnv.load((fatBasePath + "environments/station/station.bin").c_str(), bitmaps);
+    for (int i = 0; i < STATION_TEX_COUNT; ++i)
+    {
+        graphicsCtrl.unloadGrit(envTextures[i]);
+    }
     totalPolyCount = stationEnv.getPolyCount();
 
     // pause menu

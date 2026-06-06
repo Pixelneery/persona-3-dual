@@ -7,8 +7,6 @@
 
 // model
 #include "models/character.h"
-// environment textures
-#include "texture.h"
 // maps
 #include "maps/iwatodai_dorm.h"
 // dialogue
@@ -95,12 +93,15 @@ void DebugView::init()
     musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
 
     // setup character model
-    characterAnimationCtrl.loadModel((fatBasePath + "models/character.bin").c_str());
+    characterAnimationCtrl.loadModel((fatBasePath + "models/character/character.bin").c_str());
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int* bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = {textureBitmap};
-    iwatodaiDormEnv.load((fatBasePath + "environments/iwatodai_dorm.bin").c_str(), bitmapsEnv);
+    const unsigned int* bitmapsEnv[IWATODAI_DORM_TEX_COUNT] = {nullptr};
+    GritAsset environmentTexture = graphicsCtrl.loadGrit(fatBasePath + "graphics/DebugView/environment");
+    bitmapsEnv[IWATODAI_DORM_TEX_TEXTURE] = reinterpret_cast<const unsigned int*>(environmentTexture.tiles);
+    iwatodaiDormEnv.load((fatBasePath + "environments/iwatodai_dorm/iwatodai_dorm.bin").c_str(), bitmapsEnv);
+    graphicsCtrl.unloadGrit(environmentTexture);
     totalPolyCount = iwatodaiDormEnv.getPolyCount();
 
     // setup dialogue

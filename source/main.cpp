@@ -5,6 +5,7 @@
 #include <nds.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 
 #include "core/enums.h"
 
@@ -36,12 +37,7 @@
 // sfx
 #include "soundbank_bin.h"
 
-// character model
-#include "character_texture_0.h"
-#include "character_texture_1.h"
-#include "character_texture_2.h"
-#include "character_texture_3.h"
-#include "character_texture_4.h"
+#include "data/sprite_db.h"
 #include "models/character.h"
 
 // variables
@@ -57,8 +53,15 @@ MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
 const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
+static GritAsset characterTextureAssets[MODEL_CHARACTER_TEX_COUNT];
 SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;
+
+static const unsigned int* loadCharacterTexture(const std::string& name, GritAsset& asset)
+{
+    asset = graphicsCtrl.loadGrit(fatBasePath + "models/character/" + name);
+    return reinterpret_cast<const unsigned int*>(asset.tiles);
+}
 
 // components
 PauseMenuComponent pauseMenuCmpt;
@@ -143,11 +146,19 @@ int main(int argc, char* argv[])
     }
 
     // setup character model
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] = character_texture_0Bitmap;
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] = character_texture_1Bitmap;
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] = character_texture_2Bitmap;
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = character_texture_3Bitmap;
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = character_texture_4Bitmap;
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] =
+        loadCharacterTexture("character_texture_0", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0]);
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] =
+        loadCharacterTexture("character_texture_1", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1]);
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] =
+        loadCharacterTexture("character_texture_2", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2]);
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] =
+        loadCharacterTexture("character_texture_3", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3]);
+    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] =
+        loadCharacterTexture("character_texture_4", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4]);
+
+    // initialize sprite database at runtime
+    initializeSpriteDatabase();
 
     // use DS hardware timer for reliable randomness (time() can return 0 on DS)
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;

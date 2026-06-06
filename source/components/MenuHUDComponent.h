@@ -3,8 +3,6 @@
 #include "core/globals.h"
 #include "core/structs.h"
 #include <nds.h>
-// menuHUD bg
-#include "menuHUD.h"
 
 class MenuHUDComponent
 {

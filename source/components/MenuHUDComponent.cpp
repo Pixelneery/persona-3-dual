@@ -103,11 +103,17 @@ void MenuHUDComponent::loadHUD()
 
 void MenuHUDComponent::loadBg(int* bgId)
 {
-    dmaCopy(menuHUDTiles, bgGetGfxPtr(*bgId), menuHUDTilesLen);
-    dmaCopy(menuHUDMap, bgGetMapPtr(*bgId), menuHUDMapLen);
+    std::string bgPath = fatBasePath + "graphics/MenuHUD/backgrounds/" +
+                         (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD");
+    GritAsset bgHUD = graphicsCtrl.loadGrit(bgPath);
+
+    dmaCopy(bgHUD.tiles, bgGetGfxPtr(*bgId), bgHUD.tilesLen);
+    dmaCopy(bgHUD.map, bgGetMapPtr(*bgId), bgHUD.mapLen);
     vramSetBankH(VRAM_H_LCD);
-    dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
+    dmaCopy(bgHUD.pal, &VRAM_H_EXT_PALETTE[2][0], bgHUD.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+
+    graphicsCtrl.unloadGrit(bgHUD);
 }
 
 void MenuHUDComponent::drawHUD(int* bgId)

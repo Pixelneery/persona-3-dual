@@ -3,7 +3,7 @@
 
 bool SpriteController::switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out) const
 {
-    for (int i = 0; i < SPRITE_DB_LEN; ++i)
+    for (int i = 0; i < static_cast<int>(SPRITE_DB.size()); ++i)
     {
         const SpriteDBEntry& e = SPRITE_DB[i];
         if (e.type == type && e.id == spriteId)

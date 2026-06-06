@@ -1,54 +1,58 @@
 #include "MainMenuComponent.h"
+#include <string>
 
-// dummy backgrounds
-#include "bgAkihiko.h"
-#include "bgKenji.h"
-#include "bgYukari.h"
-#include "bgYukariClose.h"
+static GritAsset loadDialogueBackground(const std::string& name)
+{
+    return graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + name + "/" + name);
+}
 
 void MainMenuComponent::loadBg(int bgIndex)
 {
     if (bgIndex < 0)
         return;
 
+    std::string bgName;
+    bool showBg = false;
     switch (bgIndex)
     {
     case 0: // Akihiko
-        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(bgSlot), bgAkihikoTilesLen);
-        dmaCopy(bgAkihikoMap, bgGetMapPtr(bgSlot), bgAkihikoMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgName = "bgAkihiko";
         break;
 
     case 1: // Kenji
-        dmaCopy(bgKenjiTiles, bgGetGfxPtr(bgSlot), bgKenjiTilesLen);
-        dmaCopy(bgKenjiMap, bgGetMapPtr(bgSlot), bgKenjiMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgKenjiPal, &VRAM_H_EXT_PALETTE[0][0], bgKenjiPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgName = "bgKenji";
         break;
 
     case 2: // Yukari
-        dmaCopy(bgYukariTiles, bgGetGfxPtr(bgSlot), bgYukariTilesLen);
-        dmaCopy(bgYukariMap, bgGetMapPtr(bgSlot), bgYukariMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukariPal, &VRAM_H_EXT_PALETTE[0][0], bgYukariPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(bgSlot);
+        bgName = "bgYukari";
+        showBg = true;
         break;
 
     case 3: // YukariClose
-        dmaCopy(bgYukariCloseTiles, bgGetGfxPtr(bgSlot), bgYukariCloseTilesLen);
-        dmaCopy(bgYukariCloseMap, bgGetMapPtr(bgSlot), bgYukariCloseMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukariClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukariClosePalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-        bgShow(bgSlot);
+        bgName = "bgYukariClose";
+        showBg = true;
         break;
 
     default:
-        break;
+        return;
+    }
+
+    GritAsset bg = loadDialogueBackground(bgName);
+    if (bg.tiles)
+        dmaCopy(bg.tiles, bgGetGfxPtr(bgSlot), bg.tilesLen);
+    if (bg.map)
+        dmaCopy(bg.map, bgGetMapPtr(bgSlot), bg.mapLen);
+
+    vramSetBankH(VRAM_H_LCD);
+    if (bg.pal)
+        dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
+    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+
+    graphicsCtrl.unloadGrit(bg);
+
+    if (showBg)
+    {
+        bgShow(bgSlot);
     }
 }
 

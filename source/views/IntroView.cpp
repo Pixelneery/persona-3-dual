@@ -3,29 +3,10 @@
 #include <maxmod9.h>
 #include <nds.h>
 #include <stdio.h>
+#include <string>
 
-// assets
-#include "logoSpriteLeft.h"
-#include "logoSpriteLeftFEMC.h"
-#include "logoSpriteRight.h"
-#include "logoSpriteRightFEMC.h"
-#include "overlayBackground.h"
-#include "overlayBackgroundFEMC.h"
-// #include "roomBackground.h"
-#include "roomBackgroundFEMC.h"
-#include "silhouetteBackground.h"
-#include "silhouetteBackgroundFEMC.h"
-#include "skyBackground.h"
-#include "skyBackgroundFEMC.h"
-// sub screen
-#include "attributionBackground.h"
-#include "attributionBackgroundFEMC.h"
-#include "skyBackgroundSub.h"
-#include "skyBackgroundSubFEMC.h"
 // sfx
 #include "soundbank.h"
-
-#include "controllers/GraphicsController.h"
 
 void IntroView::init()
 {
@@ -85,78 +66,89 @@ void IntroView::init()
     dmaFillHalfWords(0, bgGetMapPtr(bgSubLogo), 2048);
     dmaFillHalfWords(0, bgGetMapPtr(bgSubSky), 2048);
 
-    // DEBUG: new grit test
-    std::string bgPath = fatBasePath + "graphics/";
-    GritAsset roomBg = graphicsCtrl.loadGrit(bgPath + "roomBackground");
+    bool femc = saveData.femcMode;
+    std::string bgPath = fatBasePath + "graphics/IntroView/backgrounds/";
+
+    GritAsset silhouetteBg = graphicsCtrl.loadGrit(bgPath + "silhouetteBackground/silhouetteBackground");
+    GritAsset silhouetteFemcBg = graphicsCtrl.loadGrit(bgPath + "silhouetteBackgroundFEMC/silhouetteBackgroundFEMC");
+
+    GritAsset roomBg = graphicsCtrl.loadGrit(bgPath + "roomBackground/roomBackground");
+    GritAsset roomFemcBg = graphicsCtrl.loadGrit(bgPath + "roomBackgroundFEMC/roomBackgroundFEMC");
+
+    GritAsset skyBg = graphicsCtrl.loadGrit(bgPath + "skyBackground/skyBackground");
+    GritAsset skyFemcBg = graphicsCtrl.loadGrit(bgPath + "skyBackgroundFEMC/skyBackgroundFEMC");
+
+    GritAsset overlayBg = graphicsCtrl.loadGrit(bgPath + "overlayBackground/overlayBackground");
+    GritAsset overlayFemcBg = graphicsCtrl.loadGrit(bgPath + "overlayBackgroundFEMC/overlayBackgroundFEMC");
+
+    GritAsset attributionBg = graphicsCtrl.loadGrit(bgPath + "attributionBackground/attributionBackground");
+    GritAsset attributionFemcBg = graphicsCtrl.loadGrit(bgPath + "attributionBackgroundFEMC/attributionBackgroundFEMC");
+
+    GritAsset skySubBg = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSub/skyBackgroundSub");
+    GritAsset skySubFemcBg = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSubFEMC/skyBackgroundSubFEMC");
+
+    std::string spritePath = fatBasePath + "graphics/IntroView/sprites/";
+    GritAsset logoLeft = graphicsCtrl.loadGrit(
+        spritePath + (femc ? "logoSpriteLeftFEMC/logoSpriteLeftFEMC" : "logoSpriteLeft/logoSpriteLeft"));
+    GritAsset logoRight = graphicsCtrl.loadGrit(
+        spritePath + (femc ? "logoSpriteRightFEMC/logoSpriteRightFEMC" : "logoSpriteRight/logoSpriteRight"));
+
+    // Helper to select between normal and FEMC versions
+    auto selectAsset = [femc](const GritAsset& normal, const GritAsset& femcVersion) -> const GritAsset&
+    { return femc ? femcVersion : normal; };
+
+    const GritAsset& silhouette = selectAsset(silhouetteBg, silhouetteFemcBg);
+    const GritAsset& room = selectAsset(roomBg, roomFemcBg);
+    const GritAsset& sky = selectAsset(skyBg, skyFemcBg);
+    const GritAsset& overlay = selectAsset(overlayBg, overlayFemcBg);
+    const GritAsset& attribution = selectAsset(attributionBg, attributionFemcBg);
+    const GritAsset& skySub = selectAsset(skySubBg, skySubFemcBg);
 
     // copy graphics to vram
-    bool femc = saveData.femcMode;
-    dmaCopy(femc ? silhouetteBackgroundFEMCTiles : silhouetteBackgroundTiles,
-            bgGetGfxPtr(bg[0]),
-            femc ? silhouetteBackgroundFEMCTilesLen : silhouetteBackgroundTilesLen);
-    dmaCopy(roomBg.tiles, bgGetGfxPtr(bg[1]), roomBg.tilesLen);
-    // dmaCopy(femc ? roomBackgroundFEMCTiles : roomBackgroundTiles,
-    //         bgGetGfxPtr(bg[1]),
-    //         femc ? roomBackgroundFEMCTilesLen : roomBackgroundTilesLen);
-    dmaCopy(femc ? skyBackgroundFEMCTiles : skyBackgroundTiles,
-            bgGetGfxPtr(bg[2]),
-            femc ? skyBackgroundFEMCTilesLen : skyBackgroundTilesLen);
-    dmaCopy(femc ? overlayBackgroundFEMCTiles : overlayBackgroundTiles,
-            bgGetGfxPtr(bg[3]),
-            femc ? overlayBackgroundFEMCTilesLen : overlayBackgroundTilesLen);
-    dmaCopy(femc ? attributionBackgroundFEMCTiles : attributionBackgroundTiles,
-            bgGetGfxPtr(bgSubLogo),
-            femc ? attributionBackgroundFEMCTilesLen : attributionBackgroundTilesLen);
-    dmaCopy(femc ? skyBackgroundSubFEMCTiles : skyBackgroundSubTiles,
-            bgGetGfxPtr(bgSubSky),
-            femc ? skyBackgroundSubFEMCTilesLen : skyBackgroundSubTilesLen);
+    if (silhouette.tiles)
+        dmaCopy(silhouette.tiles, bgGetGfxPtr(bg[0]), silhouette.tilesLen);
+    if (room.tiles)
+        dmaCopy(room.tiles, bgGetGfxPtr(bg[1]), room.tilesLen);
+    if (sky.tiles)
+        dmaCopy(sky.tiles, bgGetGfxPtr(bg[2]), sky.tilesLen);
+    if (overlay.tiles)
+        dmaCopy(overlay.tiles, bgGetGfxPtr(bg[3]), overlay.tilesLen);
+    if (attribution.tiles)
+        dmaCopy(attribution.tiles, bgGetGfxPtr(bgSubLogo), attribution.tilesLen);
+    if (skySub.tiles)
+        dmaCopy(skySub.tiles, bgGetGfxPtr(bgSubSky), skySub.tilesLen);
 
     // copy maps to vram
-    dmaCopy(femc ? silhouetteBackgroundFEMCMap : silhouetteBackgroundMap,
-            bgGetMapPtr(bg[0]),
-            femc ? silhouetteBackgroundFEMCMapLen : silhouetteBackgroundMapLen);
-    dmaCopy(roomBg.map, bgGetMapPtr(bg[1]), roomBg.mapLen);
-    // dmaCopy(femc ? roomBackgroundFEMCMap : roomBackgroundMap,
-    //         bgGetMapPtr(bg[1]),
-    //         femc ? roomBackgroundFEMCMapLen : roomBackgroundMapLen);
-    dmaCopy(femc ? skyBackgroundFEMCMap : skyBackgroundMap,
-            bgGetMapPtr(bg[2]),
-            femc ? skyBackgroundFEMCMapLen : skyBackgroundMapLen);
-    dmaCopy(femc ? overlayBackgroundFEMCMap : overlayBackgroundMap,
-            bgGetMapPtr(bg[3]),
-            femc ? overlayBackgroundFEMCMapLen : overlayBackgroundMapLen);
-    dmaCopy(femc ? attributionBackgroundFEMCMap : attributionBackgroundMap,
-            bgGetMapPtr(bgSubLogo),
-            femc ? attributionBackgroundFEMCMapLen : attributionBackgroundMapLen);
-    dmaCopy(femc ? skyBackgroundSubFEMCMap : skyBackgroundSubMap,
-            bgGetMapPtr(bgSubSky),
-            femc ? skyBackgroundSubFEMCMapLen : skyBackgroundSubMapLen);
+    if (silhouette.map)
+        dmaCopy(silhouette.map, bgGetMapPtr(bg[0]), silhouette.mapLen);
+    if (room.map)
+        dmaCopy(room.map, bgGetMapPtr(bg[1]), room.mapLen);
+    if (sky.map)
+        dmaCopy(sky.map, bgGetMapPtr(bg[2]), sky.mapLen);
+    if (overlay.map)
+        dmaCopy(overlay.map, bgGetMapPtr(bg[3]), overlay.mapLen);
+    if (attribution.map)
+        dmaCopy(attribution.map, bgGetMapPtr(bgSubLogo), attribution.mapLen);
+    if (skySub.map)
+        dmaCopy(skySub.map, bgGetMapPtr(bgSubSky), skySub.mapLen);
 
     // can only write to extended palettes in LCD mode
     vramSetBankE(VRAM_E_LCD); // for main engine
     vramSetBankH(VRAM_H_LCD); // for subv engine
 
     // copy palettes to extended palette area
-    dmaCopy(femc ? silhouetteBackgroundFEMCPal : silhouetteBackgroundPal,
-            &VRAM_E_EXT_PALETTE[0][0],
-            femc ? silhouetteBackgroundFEMCPalLen
-                 : silhouetteBackgroundPalLen); // bg 0, slot 0 (slot can be specified slot in .grit file)
-    dmaCopy(roomBg.pal, &VRAM_E_EXT_PALETTE[1][0], roomBg.palLen);
-    // dmaCopy(femc ? roomBackgroundFEMCPal : roomBackgroundPal,
-    //         &VRAM_E_EXT_PALETTE[1][0],
-    //         femc ? roomBackgroundFEMCPalLen : roomBackgroundPalLen); // bg 1, slot 0
-    dmaCopy(femc ? skyBackgroundFEMCPal : skyBackgroundPal,
-            &VRAM_E_EXT_PALETTE[2][0],
-            femc ? skyBackgroundFEMCPalLen : skyBackgroundPalLen); // bg 2, slot 0
-    dmaCopy(femc ? overlayBackgroundFEMCPal : overlayBackgroundPal,
-            &VRAM_E_EXT_PALETTE[3][0],
-            femc ? overlayBackgroundFEMCPalLen : overlayBackgroundPalLen); // bg 3, slot 0
-    dmaCopy(femc ? attributionBackgroundFEMCPal : attributionBackgroundPal,
-            &VRAM_H_EXT_PALETTE[0][0],
-            femc ? attributionBackgroundFEMCPalLen : attributionBackgroundPalLen);
-    dmaCopy(femc ? skyBackgroundSubFEMCPal : skyBackgroundSubPal,
-            &VRAM_H_EXT_PALETTE[1][0],
-            femc ? skyBackgroundSubFEMCPalLen : skyBackgroundSubPalLen);
+    if (silhouette.pal)
+        dmaCopy(silhouette.pal, &VRAM_E_EXT_PALETTE[0][0], silhouette.palLen);
+    if (room.pal)
+        dmaCopy(room.pal, &VRAM_E_EXT_PALETTE[1][0], room.palLen);
+    if (sky.pal)
+        dmaCopy(sky.pal, &VRAM_E_EXT_PALETTE[2][0], sky.palLen);
+    if (overlay.pal)
+        dmaCopy(overlay.pal, &VRAM_E_EXT_PALETTE[3][0], overlay.palLen);
+    if (attribution.pal)
+        dmaCopy(attribution.pal, &VRAM_H_EXT_PALETTE[0][0], attribution.palLen);
+    if (skySub.pal)
+        dmaCopy(skySub.pal, &VRAM_H_EXT_PALETTE[1][0], skySub.palLen);
 
     // map vram to extended palette
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
@@ -177,18 +169,15 @@ void IntroView::init()
     logoSprite[0].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
     logoSprite[1].gfx = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_256Color);
 
-    dmaCopy(femc ? logoSpriteLeftFEMCTiles : logoSpriteLeftTiles,
-            logoSprite[0].gfx,
-            femc ? logoSpriteLeftFEMCTilesLen : logoSpriteLeftTilesLen);
-    dmaCopy(femc ? logoSpriteRightFEMCTiles : logoSpriteRightTiles,
-            logoSprite[1].gfx,
-            femc ? logoSpriteRightFEMCTilesLen : logoSpriteRightTilesLen);
+    if (logoLeft.tiles)
+        dmaCopy(logoLeft.tiles, logoSprite[0].gfx, logoLeft.tilesLen);
+    if (logoRight.tiles)
+        dmaCopy(logoRight.tiles, logoSprite[1].gfx, logoRight.tilesLen);
 
     // NOTE: left and right will use the same palette. Just ensure that the order of colours when indexed
     // is THE SAME for both images!
-    dmaCopy(femc ? logoSpriteRightFEMCPal : logoSpriteRightPal,
-            SPRITE_PALETTE,
-            femc ? logoSpriteRightFEMCPalLen : logoSpriteRightPalLen);
+    if (logoRight.pal)
+        dmaCopy(logoRight.pal, SPRITE_PALETTE, logoRight.palLen);
 
     // for slide in animation
     // move camera to the empty right half of the 512px wide background
@@ -196,7 +185,20 @@ void IntroView::init()
     bgUpdate();
 
     // unload all graphics now that it's copied to vram
+    graphicsCtrl.unloadGrit(silhouetteBg);
+    graphicsCtrl.unloadGrit(silhouetteFemcBg);
     graphicsCtrl.unloadGrit(roomBg);
+    graphicsCtrl.unloadGrit(roomFemcBg);
+    graphicsCtrl.unloadGrit(skyBg);
+    graphicsCtrl.unloadGrit(skyFemcBg);
+    graphicsCtrl.unloadGrit(overlayBg);
+    graphicsCtrl.unloadGrit(overlayFemcBg);
+    graphicsCtrl.unloadGrit(attributionBg);
+    graphicsCtrl.unloadGrit(attributionFemcBg);
+    graphicsCtrl.unloadGrit(skySubBg);
+    graphicsCtrl.unloadGrit(skySubFemcBg);
+    graphicsCtrl.unloadGrit(logoLeft);
+    graphicsCtrl.unloadGrit(logoRight);
 
     // point to music
     musicCtrl.loadSFX(SFX_SELECT);

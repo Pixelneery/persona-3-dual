@@ -1,11 +1,38 @@
 #include "GraphicsController.h"
 
+static std::string assetFilePath(const std::string& basePath, const char* suffix)
+{
+    std::string directPath = basePath + suffix;
+
+    FILE* file = fopen(directPath.c_str(), "rb");
+    if (file)
+    {
+        fclose(file);
+        return directPath;
+    }
+
+    size_t end = basePath.find_last_not_of('/');
+    if (end == std::string::npos)
+    {
+        return directPath;
+    }
+
+    size_t slash = basePath.find_last_of('/', end);
+    std::string leaf = basePath.substr(slash == std::string::npos ? 0 : slash + 1,
+                                       end - (slash == std::string::npos ? 0 : slash + 1) + 1);
+    return basePath.substr(0, end + 1) + "/" + leaf + suffix;
+}
+
 void* GraphicsController::loadToRAM(const std::string& filepath, u32* outSize)
 {
     // open file
     FILE* file = fopen(filepath.c_str(), "rb");
     if (!file)
     {
+        if (outSize)
+        {
+            *outSize = 0;
+        }
         return NULL;
     }
 
@@ -19,7 +46,12 @@ void* GraphicsController::loadToRAM(const std::string& filepath, u32* outSize)
     void* buffer = malloc(size);
     if (buffer)
     {
-        fread(buffer, 1, size, file);
+        if (fread(buffer, 1, size, file) != size)
+        {
+            free(buffer);
+            buffer = NULL;
+            size = 0;
+        }
     }
 
     fclose(file);
@@ -46,9 +78,9 @@ GritAsset GraphicsController::loadGrit(const std::string& basePath)
 {
     GritAsset asset = {NULL, 0, NULL, 0, NULL, 0};
 
-    asset.tiles = loadToRAM(basePath + ".img.bin", &asset.tilesLen);
-    asset.pal = loadToRAM(basePath + ".pal.bin", &asset.palLen);
-    asset.map = loadToRAM(basePath + ".map.bin", &asset.mapLen);
+    asset.tiles = loadToRAM(assetFilePath(basePath, ".img.bin"), &asset.tilesLen);
+    asset.pal = loadToRAM(assetFilePath(basePath, ".pal.bin"), &asset.palLen);
+    asset.map = loadToRAM(assetFilePath(basePath, ".map.bin"), &asset.mapLen);
 
     return asset;
 }
