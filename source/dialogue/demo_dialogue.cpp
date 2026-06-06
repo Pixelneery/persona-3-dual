@@ -15,7 +15,9 @@ void (*demo_yukari_kenji_argument_bg_loaders[4])() = {
 void demo_yukari_kenji_argument_load_bg(int bgIndex)
 {
     if (bgIndex >= 0 && bgIndex < 4 && demo_yukari_kenji_argument_bg_loaders[bgIndex])
+    {
         demo_yukari_kenji_argument_bg_loaders[bgIndex]();
+    }
 }
 
 void demo_yukari_kenji_argument_load()
