@@ -40,7 +40,6 @@ class PauseMenuComponent : public BaseMenu
         {"StationView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"SignContractView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"PaulowniaMallView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
-        {"DebugView", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"IntroVideo", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"Cutscene1", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},
         {"Cutscene2", -1, MENU_BIND(PauseMenuComponent, debugOptionSelected)},

@@ -11,7 +11,6 @@
 
 // states
 #include "core/BaseView.h"
-#include "views/DebugView.h"
 #include "views/DisclaimerView.h"
 #include "views/IntroView.h"
 #include "views/IwatodaiDormView.h"
@@ -165,7 +164,7 @@ int main(int argc, char* argv[])
     srand(TIMER0_DATA);
 
     // start with DisclaimerView
-    SwitchView(new DisclaimerView());
+    SwitchView(new IwatodaiDormView());
 
     while (pmMainLoop())
     {
@@ -214,10 +213,6 @@ int main(int argc, char* argv[])
             else if (nextState == ViewState::STATION)
             {
                 SwitchView(new StationView());
-            }
-            else if (nextState == ViewState::DEBUG_VIEW)
-            {
-                SwitchView(new DebugView());
             }
             else if (nextState == ViewState::PAULOWNIA_MALL)
             {

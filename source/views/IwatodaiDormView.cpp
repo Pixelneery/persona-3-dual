@@ -106,43 +106,110 @@ void IwatodaiDormView::init()
 
     // setup environment model
     GritAsset envTextures[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {};
-    const unsigned int* bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall01", envTextures[0]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall02", envTextures[1]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall03", envTextures[2]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002door02", envTextures[3]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002kzr01", envTextures[4]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002kzr02", envTextures[5]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj01", envTextures[6]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj04", envTextures[7]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj07", envTextures[8]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj11", envTextures[9]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall04", envTextures[10]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall05", envTextures[11]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall06", envTextures[12]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj10", envTextures[13]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002step01", envTextures[14]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002step02", envTextures[15]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002kzr03", envTextures[16]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002kzr04", envTextures[17]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002door01", envTextures[18]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj03", envTextures[19]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj09", envTextures[20]),
-        nullptr,
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002bolt01", envTextures[22]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002glow02", envTextures[23]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002floor01", envTextures[24]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002floor02", envTextures[25]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002floor03", envTextures[26]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj02", envTextures[27]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj05", envTextures[28]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj14", envTextures[29]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj15", envTextures[30]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002bolt02", envTextures[31]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002bolt03", envTextures[32]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj12", envTextures[33]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj13", envTextures[34]),
-    };
+    const unsigned int* bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {nullptr};
+
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall01",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL01]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL02] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall02",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL02]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL03] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall03",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL03]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002DOOR02] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002door02",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002DOOR02]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002KZR01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002kzr01",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002KZR01]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002KZR02] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002kzr02",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002KZR02]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj01",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ01]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ04] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj04",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ04]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ07] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj07",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ07]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ11] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj11",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ11]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL04] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall04",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL04]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL05] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall05",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL05]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL06] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002wall06",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002WALL06]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ10] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj10",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ10]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002STEP01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002step01",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002STEP01]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002STEP02] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002step02",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002STEP02]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002KZR03] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002kzr03",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002KZR03]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002KZR04] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002kzr04",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002KZR04]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002DOOR01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002door01",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002DOOR01]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ03] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj03",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ03]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ09] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj09",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ09]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002BOLT01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002bolt01",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002BOLT01]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002GLOW02] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002glow02",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002GLOW02]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002FLOOR01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002floor01",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002FLOOR01]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002FLOOR02] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002floor02",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002FLOOR02]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002FLOOR03] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002floor03",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002FLOOR03]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ02] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj02",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ02]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ05] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj05",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ05]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ14] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj14",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ14]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ15] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj15",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ15]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002BOLT02] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002bolt02",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002BOLT02]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002BOLT03] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002bolt03",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002BOLT03]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ12] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj12",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ12]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ13] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj13",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ13]);
 
     iwatodaiDormFloor1Env.load((fatBasePath + "environments/iwatodai_dorm_floor_1/iwatodai_dorm_floor_1.bin").c_str(),
                                bitmapsEnv);
@@ -237,7 +304,7 @@ ViewState IwatodaiDormView::update()
             if (playerCtrl->isTileAt() == TileType::NEXT_SCENE)
             {
                 musicCtrl.pause();
-                return ViewState::DEBUG_VIEW;
+                return ViewState::PAULOWNIA_MALL;
             }
             else if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
             {

@@ -94,34 +94,62 @@ void IwatodaiStreetsView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    GritAsset envTextures[IWATODAI_STREETS_TEX_COUNT];
-    const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_07", envTextures[0]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_16", envTextures[1]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_30", envTextures[2]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_25", envTextures[3]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_08", envTextures[4]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_05", envTextures[5]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_02", envTextures[6]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_04", envTextures[7]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_28", envTextures[8]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_24", envTextures[9]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_infloor", envTextures[10]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_09", envTextures[11]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_11", envTextures[12]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_10", envTextures[13]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_13", envTextures[14]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_12", envTextures[15]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_17", envTextures[16]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_18", envTextures[17]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_32", envTextures[18]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_33", envTextures[19]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_29", envTextures[20]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_27", envTextures[21]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_22", envTextures[22]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_03", envTextures[23]),
-        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_wood01", envTextures[24]),
-    };
+    GritAsset envTextures[IWATODAI_STREETS_TEX_COUNT] = {};
+    const unsigned int* bitmaps[IWATODAI_STREETS_TEX_COUNT] = {nullptr};
+
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_07] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_07", envTextures[IWATODAI_STREETS_TEX_F007_009_07]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_16] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_16", envTextures[IWATODAI_STREETS_TEX_F007_009_16]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_30] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_30", envTextures[IWATODAI_STREETS_TEX_F007_009_30]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_25] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_25", envTextures[IWATODAI_STREETS_TEX_F007_009_25]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_08] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_08", envTextures[IWATODAI_STREETS_TEX_F007_009_08]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_05] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_05", envTextures[IWATODAI_STREETS_TEX_F007_009_05]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_02] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_02", envTextures[IWATODAI_STREETS_TEX_F007_009_02]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_04] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_04", envTextures[IWATODAI_STREETS_TEX_F007_009_04]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_28] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_28", envTextures[IWATODAI_STREETS_TEX_F007_009_28]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_24] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_24", envTextures[IWATODAI_STREETS_TEX_F007_009_24]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_INFLOOR] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_infloor",
+                              envTextures[IWATODAI_STREETS_TEX_F007_009_INFLOOR]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_09] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_09", envTextures[IWATODAI_STREETS_TEX_F007_009_09]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_11] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_11", envTextures[IWATODAI_STREETS_TEX_F007_009_11]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_10] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_10", envTextures[IWATODAI_STREETS_TEX_F007_009_10]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_13] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_13", envTextures[IWATODAI_STREETS_TEX_F007_009_13]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_12] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_12", envTextures[IWATODAI_STREETS_TEX_F007_009_12]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_17] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_17", envTextures[IWATODAI_STREETS_TEX_F007_009_17]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_18] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_18", envTextures[IWATODAI_STREETS_TEX_F007_009_18]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_32] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_32", envTextures[IWATODAI_STREETS_TEX_F007_009_32]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_33] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_33", envTextures[IWATODAI_STREETS_TEX_F007_009_33]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_29] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_29", envTextures[IWATODAI_STREETS_TEX_F007_009_29]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_27] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_27", envTextures[IWATODAI_STREETS_TEX_F007_009_27]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_22] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_22", envTextures[IWATODAI_STREETS_TEX_F007_009_22]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_03] = loadEnvironmentBitmap(
+        fatBasePath + "environments/iwatodai_streets/f007_009_03", envTextures[IWATODAI_STREETS_TEX_F007_009_03]);
+    bitmaps[IWATODAI_STREETS_TEX_F007_009_WOOD01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_streets/f007_009_wood01",
+                              envTextures[IWATODAI_STREETS_TEX_F007_009_WOOD01]);
+
     iwatodaiStreetsEnv.load((fatBasePath + "environments/iwatodai_streets/iwatodai_streets.bin").c_str(), bitmaps);
     for (int i = 0; i < IWATODAI_STREETS_TEX_COUNT; ++i)
     {

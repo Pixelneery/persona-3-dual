@@ -191,9 +191,6 @@ ViewState PauseMenuComponent::debugOptionSelected()
     case DebugOption::PAULOWNIA_MALL_VIEW:
         selectedView = ViewState::PAULOWNIA_MALL;
         break;
-    case DebugOption::DEBUG_VIEW:
-        selectedView = ViewState::DEBUG_VIEW;
-        break;
     case DebugOption::INTRO_VIDEO:
         selectedView = ViewState::INTRO_VIDEO;
         break;

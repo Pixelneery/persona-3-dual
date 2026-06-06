@@ -1,4 +1,6 @@
 #include "GraphicsController.h"
+#include <malloc.h>
+#include <nds.h>
 
 static std::string assetFilePath(const std::string& basePath, const char* suffix)
 {
@@ -42,11 +44,30 @@ void* GraphicsController::loadToRAM(const std::string& filepath, u32* outSize)
     // return to beginning of file
     rewind(file);
 
+    if (size == 0)
+    {
+        fclose(file);
+        if (outSize)
+        {
+            *outSize = 0;
+        }
+        return NULL;
+    }
+
     // allocate memory and read file into buffer
-    void* buffer = malloc(size);
+    // memory must be padded to a multiple of 32 bytes for safe cache invalidation
+    u32 cacheSafeSize = (size + 31) & ~31;
+    void* buffer = memalign(32, cacheSafeSize);
     if (buffer)
     {
-        if (fread(buffer, 1, size, file) != size)
+        DC_InvalidateRange(buffer, cacheSafeSize);
+        size_t bytesRead = fread(buffer, 1, size, file);
+        if (bytesRead > 0)
+        {
+            size = bytesRead;
+            DC_FlushRange(buffer, cacheSafeSize);
+        }
+        else
         {
             free(buffer);
             buffer = NULL;

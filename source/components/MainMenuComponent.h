@@ -20,7 +20,6 @@ class MainMenuComponent : public BaseMenu
 
     MenuOption levelOptions[LEVEL_OPTIONS] = {
         {"Start Game", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
-        {"Debug", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Dorm", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Iwatodai Streets", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},
         {"Station", -1, MENU_BIND(MainMenuComponent, levelOptionSelected)},

@@ -95,9 +95,6 @@ ViewState MainMenuComponent::levelOptionSelected()
     case LevelOptions::START_GAME:
         selectedView = ViewState::CUTSCENE_1;
         break;
-    case LevelOptions::DEBUG:
-        selectedView = ViewState::DEBUG_VIEW;
-        break;
     case LevelOptions::IWATODAI_DORM:
         selectedView = ViewState::IWATODAI_DORM;
         break;

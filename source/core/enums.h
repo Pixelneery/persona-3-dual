@@ -13,7 +13,6 @@ enum class ViewState
     SIGN_CONTRACT,
     CUTSCENE_2,
     STATION,
-    DEBUG_VIEW,
     PAULOWNIA_MALL,
 };
 
@@ -137,7 +136,6 @@ enum class MainMenuOptions
 enum class LevelOptions
 {
     START_GAME = 0,
-    DEBUG,
     IWATODAI_DORM,
     IWATODAI_STREETS,
     STATION,
@@ -235,7 +233,6 @@ enum class DebugOption
     STATION_VIEW,
     SIGN_CONTRACT_VIEW,
     PAULOWNIA_MALL_VIEW,
-    DEBUG_VIEW,
     INTRO_VIDEO,
     CUTSCENE_1,
     CUTSCENE_2,
