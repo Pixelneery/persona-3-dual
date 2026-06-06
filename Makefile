@@ -31,9 +31,9 @@ BUILD       :=  build
 SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/helpers
 INCLUDES    :=  include source
 
-# Add environment subdirectories directly to the GRAPHICS build pipeline
-GRAPHICS    :=  assets/graphics $(wildcard assets/environments/*) $(wildcard assets/models/*)
-SFX       	:=  assets/sfx
+# We remove the graphics directories from the ROM compile pipeline,
+# as they are now strictly FAT assets.
+SFX         :=  assets/sfx
 
 GAME_TITLE     := Persona 3 Dual
 GAME_SUBTITLE1 := A Fan Recreation
@@ -82,6 +82,9 @@ JMAP_FILES      := $(wildcard $(ASSETS_MAPS)/*.jmap)
 
 MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 
+# Recursively find all PNG files in graphics, environments, and models.
+FAT_PNG_FILES   := $(shell find $(CURDIR)/assets/graphics $(CURDIR)/assets/environments $(CURDIR)/assets/models -type f -name '*.png' 2>/dev/null)
+
 #---------------------------------------------------------------------------------
 # Derive output paths & dynamically add environment output dirs to SOURCES
 #---------------------------------------------------------------------------------
@@ -127,7 +130,6 @@ export OUTPUT   :=  $(CURDIR)/$(TARGET)
 
 export VPATH    :=  $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
                     $(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
-                    $(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir)) \
                     $(foreach dir,$(ENV_OUT_DIRS),$(CURDIR)/$(dir))
 
 export DEPSDIR  :=  $(CURDIR)/$(BUILD)
@@ -138,7 +140,6 @@ CPPFILES    +=  $(notdir $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=%_dialogue.cpp))
 CPPFILES    :=  $(sort $(CPPFILES))
 SFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 BINFILES    :=  soundbank.bin
-PNGFILES    :=  $(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.png)))
 
 export SFXFILES :=  $(foreach dir,$(notdir $(wildcard $(SFX)/*.*)),$(CURDIR)/$(SFX)/$(dir))
 
@@ -149,7 +150,6 @@ else
 endif
 
 export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
-                    $(PNGFILES:.png=.o) \
                     $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
 
 export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
@@ -159,7 +159,7 @@ export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models sdcard help
+.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models graphics sdcard help
 
 #---------------------------------------------------------------------------------
 $(BUILD):
@@ -169,13 +169,13 @@ $(BUILD):
 	@$(MAKE) --no-print-directory sdcard.img
 
 help:
-	@echo "  make              Build everything"
-	@echo "  make assets       Run all asset converters"
+	@echo "  make            Build everything"
+	@echo "  make assets     Run all asset converters"
 
-assets: dirs dialogue music video environments jmaps models
+assets: dirs dialogue music video environments jmaps models graphics
 
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments $(CURDIR)/data/graphics
 
 sdcard: sdcard.img
 #---------------------------------------------------------------------------------
@@ -201,27 +201,31 @@ $(DATA_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $$(wildcard $(ASSETS_VIDEO)/$$*.build
 video: $(VIDEO_OUT)
 
 #---------------------------------------------------------------------------------
+# ENVIRONMENTS: Appended /$* to force output into a specific subdirectory
+#---------------------------------------------------------------------------------
 $(CURDIR)/source/environments/%.h: $(ASSETS_ENVIRONMENTS)/%/$$*.obj \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.png) \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.mtl) \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/$$*.build.json) \
 		$$(wildcard $(ASSETS_ENVIRONMENTS)/$$*.build.json)
 	@echo "  ENV   $*"
-	@mkdir -p $(dir $@) $(CURDIR)/data/environments
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/environments"
-	@mv $(CURDIR)/data/environments/$*.h $@
+	@mkdir -p $(dir $@) $(CURDIR)/data/environments/$*
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/environments/$*"
+	@mv $(CURDIR)/data/environments/$*/$*.h $@
 	@touch $@
 
 environments: $(ENVIRONMENT_OUT)
 
 #---------------------------------------------------------------------------------
+# MODELS: Appended /$* to force output into a specific subdirectory
+#---------------------------------------------------------------------------------
 $(CURDIR)/source/models/%.h: $(ASSETS_MODELS)/%/$$*.json \
 		$$(wildcard $(ASSETS_MODELS)/%/$$*.build.json) \
 		$$(wildcard $(ASSETS_MODELS)/$$*.build.json)
 	@echo "  MODEL $*"
-	@mkdir -p $(dir $@) $(CURDIR)/data/models
-	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/models/$*.bin"
-	@mv $(CURDIR)/data/models/$*.h $@
+	@mkdir -p $(dir $@) $(CURDIR)/data/models/$*
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/models/$*/$*.bin"
+	@mv $(CURDIR)/data/models/$*/$*.h $@
 	@touch $@
 
 models: $(MODEL_OUT)
@@ -235,11 +239,31 @@ $(CURDIR)/source/maps/%.h: $(ASSETS_MAPS)/%.jmap
 jmaps: $(JMAP_OUT)
 
 #---------------------------------------------------------------------------------
+# ALL GRAPHICS (Dynamic explicit rules using GNU Make Macros)
+#---------------------------------------------------------------------------------
+# 1. Generate the exact target paths.
+# Example: assets/graphics/ui/btn.png -> data/graphics/ui/btn/btn.img.bin
+FAT_GRAPHICS_OUT := $(foreach file,$(FAT_PNG_FILES),$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
+
+# 2. Define a macro that acts as a blueprint for our build rule
+define GRIT_RULE
+$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
+	@echo "  GRIT  $$(notdir $$<)"
+	@mkdir -p $$(dir $$@)
+	@grit "$$<" -ftb -fh! -o "$$(patsubst %.img.bin,%,$$@)"
+endef
+
+# 3. Evaluate the macro for every single PNG found, dynamically scripting the rules into the Make environment
+$(foreach file,$(FAT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
+
+graphics: $(FAT_GRAPHICS_OUT)
+
+#---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/data/models/* $(CURDIR)/data/environments/*
+	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/*
 	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
@@ -260,9 +284,6 @@ soundbank.bin soundbank.h : $(SFXFILES)
 %.mp3.o :   %.mp3
 	@echo $(notdir $<)
 	@$(bin2o)
-
-%.s %.h : %.png %.grit
-	grit $< -fts -o$*
 
 -include $(DEPENDS)
 endif
