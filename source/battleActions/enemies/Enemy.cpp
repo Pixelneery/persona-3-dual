@@ -4,7 +4,7 @@
 
 AttackSkill* Enemy::pickSkill()
 {
-    u32 roll = rand() % (attackCount + 1);
+    u32 roll = rand() % (skillCount + 1);
     return (roll == 0) ? baseAttackAction : attackSkill[roll - 1];
 }
 
@@ -29,7 +29,7 @@ BattleResult Enemy::resolve(BattleParticipant* target, AttackSkill* skill)
     else
         resource = &hp;
 
-    bool canAfford = *resource > skill->cost;
+    bool canAfford = *resource >= skill->cost;
     if (!canAfford)
         return {false, 0, false, skill->name};
 

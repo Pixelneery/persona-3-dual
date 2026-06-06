@@ -71,24 +71,26 @@ void MainMenuView::init()
     dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
 
-    // copy graphics to vram
+    // load silhouette
+    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
     dmaCopy(menuSilhouetteBackgroundTiles, bgGetGfxPtr(bg[0]), menuSilhouetteBackgroundTilesLen);
+    dmaCopy(menuSilhouetteBackgroundMap, bgGetMapPtr(bg[0]), menuSilhouetteBackgroundMapLen);
+
+    vramSetBankE(VRAM_E_LCD);
+    dmaCopy(menuSilhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], menuSilhouetteBackgroundPalLen);
+    vramSetBankE(VRAM_E_BG_EXT_PALETTE);
+
+    // copy door and fog graphics to vram
     dmaCopy(doorBackgroundTiles, bgGetGfxPtr(bg[1]), doorBackgroundTilesLen);
     dmaCopy(fogBackgroundTiles, bgGetGfxPtr(bg[2]), fogBackgroundTilesLen);
 
-    // copy maps to vram
-    dmaCopy(menuSilhouetteBackgroundMap, bgGetMapPtr(bg[0]), menuSilhouetteBackgroundMapLen);
+    // copy door and fog maps to vram
     dmaCopy(doorBackgroundMap, bgGetMapPtr(bg[1]), doorBackgroundMapLen);
     dmaCopy(fogBackgroundMap, bgGetMapPtr(bg[2]), fogBackgroundMapLen);
 
-    vramSetBankE(VRAM_E_LCD); // for main engine
-
-    // copy palettes to extended palette area
-    dmaCopy(menuSilhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], menuSilhouetteBackgroundPalLen);
+    vramSetBankE(VRAM_E_LCD);
     dmaCopy(doorBackgroundPal, &VRAM_E_EXT_PALETTE[1][0], doorBackgroundPalLen);
     dmaCopy(fogBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], fogBackgroundPalLen);
-
-    // map vram to extended palette
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
     bgHide(bg[2]);

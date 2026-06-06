@@ -23,7 +23,7 @@ struct Orpheus : PersonaBase
 
         mySkills[0] = &agi;
         mySkills[1] = &bash;
-        attackCount = 2;
+        skillCount = 2;
         skills = mySkills;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;

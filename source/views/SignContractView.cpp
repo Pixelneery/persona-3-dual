@@ -65,7 +65,7 @@ void SignContractView::init()
 
     consoleSelect(&animatedConsole);
     iprintf("\x1b[11;6HEnter your last name");
-    iprintf("\x1b[0;0H%s", saveData.lastName.c_str());
+    iprintf("\x1b[0;0H%s", saveData.lastName);
     consoleSelect(&console);
 
     // setup animated text
@@ -101,15 +101,16 @@ ViewState SignContractView::update()
 
         if (isLastName)
         {
-            if (!saveData.lastName.empty())
+            if (saveData.lastName[0] != '\0')
             {
-                saveData.lastName.pop_back();
+                saveData.lastName[lastNameIndex - 1] = '\0';
+                lastNameIndex--;
                 iprintf("%c", key);
             }
         }
         else if (!isLastName && !isNameConfirmed)
         {
-            if (saveData.firstName.empty())
+            if (saveData.firstName[0] == '\0')
             {
                 isLastName = true;
                 consoleSelect(&console);
@@ -120,11 +121,12 @@ ViewState SignContractView::update()
                 iprintf("\x1b[11;6HEnter your last name");
 
                 consoleSelect(&console);
-                iprintf("\x1b[0;0H%s", saveData.lastName.c_str());
+                iprintf("\x1b[0;0H%s", saveData.lastName);
             }
             else
             {
-                saveData.firstName.pop_back();
+                saveData.firstName[firstNameIndex - 1] = '\0';
+                firstNameIndex--;
                 iprintf("%c", key);
             }
         }
@@ -139,7 +141,7 @@ ViewState SignContractView::update()
             iprintf("\x1b[11;6HEnter your first name");
 
             consoleSelect(&console);
-            iprintf("\x1b[0;0H%s", saveData.firstName.c_str());
+            iprintf("\x1b[0;0H%s", saveData.firstName);
         }
     }
     // Return (10) or "A"
@@ -160,7 +162,7 @@ ViewState SignContractView::update()
             iprintf("\x1b[11;5HEnter your first name");
 
             consoleSelect(&console);
-            iprintf("\x1b[0;0H%s", saveData.firstName.c_str());
+            iprintf("\x1b[0;0H%s", saveData.firstName);
         }
         else if (!isNameConfirmed)
         {
@@ -174,12 +176,8 @@ ViewState SignContractView::update()
 
             consoleSelect(&console);
 
-            // center the text
-            int posLastName = 15 - (saveData.lastName.length() / 2);
-            int posFirstName = 15 - (saveData.firstName.length() / 2);
-
-            iprintf("\x1b[8;%iH%s,", posLastName, saveData.lastName.c_str());
-            iprintf("\x1b[9;%iH%s", posFirstName, saveData.firstName.c_str());
+            iprintf("\x1b[0;0H%s,", saveData.lastName);
+            iprintf("\x1b[1;0H%s", saveData.firstName);
         }
         else
         {
@@ -207,13 +205,17 @@ ViewState SignContractView::update()
         cancelSFX();
         sfxMenuHandle = musicCtrl.playSFX(SFX_MENU, 255, 128);
 
-        if (isLastName)
+        if (isLastName && (lastNameIndex < 31))
         {
-            saveData.lastName.push_back(key);
+            saveData.lastName[lastNameIndex] = key;
+            saveData.lastName[lastNameIndex + 1] = '\0';
+            lastNameIndex++;
         }
-        else
+        else if (!isLastName && !isNameConfirmed && (firstNameIndex < 31))
         {
-            saveData.firstName.push_back(key);
+            saveData.firstName[firstNameIndex] = key;
+            saveData.firstName[firstNameIndex + 1] = '\0';
+            firstNameIndex++;
         }
 
         iprintf("%c", key);
@@ -249,5 +251,16 @@ ViewState SignContractView::update()
 
 void SignContractView::cleanup()
 {
+    // update save data (names)
+    if (!saveCtrl.write())
+    {
+        consoleDemoInit();
+        iprintf("Failed to write save data!\n");
+        while (1)
+        {
+            swiWaitForVBlank();
+        }
+    }
+
     BaseView::cleanup();
 }

@@ -123,7 +123,7 @@ void IwatodaiDormView::init()
                                          height,
                                          characterTranslate,
                                          characterFacingAngle,
-                                        true);
+                                         true);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
@@ -133,43 +133,24 @@ void IwatodaiDormView::init()
     character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
 
     // setup environment model
-    const unsigned int* bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {
-        f007_002wall01Bitmap,
-        f007_002wall02Bitmap,
-        f007_002wall03Bitmap,
-        f007_002door02Bitmap,
-        f007_002kzr01Bitmap,
-        f007_002kzr02Bitmap,
-        f007_002obj01Bitmap,
-        f007_002obj04Bitmap,
-        f007_002obj07Bitmap,
-        f007_002obj11Bitmap,
-        f007_002wall04Bitmap,
-        f007_002wall05Bitmap,
-        f007_002wall06Bitmap,
-        f007_002obj10Bitmap,
-        f007_002step01Bitmap,
-        f007_002step02Bitmap,
-        f007_002kzr03Bitmap,
-        f007_002kzr04Bitmap,
-        f007_002door01Bitmap,
-        f007_002obj03Bitmap,
-        f007_002obj09Bitmap,
-        NULL,
-        f007_002bolt01Bitmap,
-        f007_002glow02Bitmap,
-        f007_002floor01Bitmap,
-        f007_002floor02Bitmap,
-        f007_002floor03Bitmap,
-        f007_002obj02Bitmap,
-        f007_002obj05Bitmap,
-        f007_002obj14Bitmap,
-        f007_002obj15Bitmap,
-        f007_002bolt02Bitmap,
-        f007_002bolt03Bitmap,
-        f007_002obj12Bitmap,
-        f007_002obj13Bitmap
-    };
+    const unsigned int* bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {f007_002wall01Bitmap,  f007_002wall02Bitmap,
+                                                                       f007_002wall03Bitmap,  f007_002door02Bitmap,
+                                                                       f007_002kzr01Bitmap,   f007_002kzr02Bitmap,
+                                                                       f007_002obj01Bitmap,   f007_002obj04Bitmap,
+                                                                       f007_002obj07Bitmap,   f007_002obj11Bitmap,
+                                                                       f007_002wall04Bitmap,  f007_002wall05Bitmap,
+                                                                       f007_002wall06Bitmap,  f007_002obj10Bitmap,
+                                                                       f007_002step01Bitmap,  f007_002step02Bitmap,
+                                                                       f007_002kzr03Bitmap,   f007_002kzr04Bitmap,
+                                                                       f007_002door01Bitmap,  f007_002obj03Bitmap,
+                                                                       f007_002obj09Bitmap,   NULL,
+                                                                       f007_002bolt01Bitmap,  f007_002glow02Bitmap,
+                                                                       f007_002floor01Bitmap, f007_002floor02Bitmap,
+                                                                       f007_002floor03Bitmap, f007_002obj02Bitmap,
+                                                                       f007_002obj05Bitmap,   f007_002obj14Bitmap,
+                                                                       f007_002obj15Bitmap,   f007_002bolt02Bitmap,
+                                                                       f007_002bolt03Bitmap,  f007_002obj12Bitmap,
+                                                                       f007_002obj13Bitmap};
 
     iwatodaiDormFloor1Env.load((fatBasePath + "environments/iwatodai_dorm_floor_1.bin").c_str(), bitmapsEnv);
     totalPolyCount = iwatodaiDormFloor1Env.getPolyCount();

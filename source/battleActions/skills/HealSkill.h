@@ -10,7 +10,6 @@ struct HealSkill : Skill
     HealSkill()
     {
         element = Heal;
-        skillType = SkillType::Heal;
     }
 
     u32 calculateHealing(BattleParticipant& user);

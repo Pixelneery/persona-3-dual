@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <nds.h>
 #include <string>
 

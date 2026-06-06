@@ -13,5 +13,6 @@ struct Slash_Attack : AttackSkill
         hitRate = 90;
         skillRace = SkillRace::phys;
         skillTarget = SkillTarget::OppositionTeam;
+        skillType = SkillType::Attack;
     }
 };

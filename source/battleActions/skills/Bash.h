@@ -13,5 +13,6 @@ struct Bash : AttackSkill
         hitRate = 90;
         skillRace = SkillRace::phys;
         skillTarget = SkillTarget::OppositionTeam;
+        skillType = SkillType::Attack;
     }
 };

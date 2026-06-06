@@ -10,7 +10,8 @@ struct Garu : AttackSkill
         cost = 3;
         name = "Garu";
         hitRate = 99;
-        skillRace = SkillRace::phys;
+        skillRace = SkillRace::mag;
         skillTarget = SkillTarget::OppositionTeam;
+        skillType = SkillType::Attack;
     }
 };

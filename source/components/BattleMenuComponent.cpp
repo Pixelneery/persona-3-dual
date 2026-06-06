@@ -63,7 +63,7 @@ void BattleMenuComponent::loadSkillOptions(PersonaBase* persona)
     // indicate we loaded option
     loadedOption = BattleMenuOptions::SKILL;
     pauseMessage = "Skills";
-    int count = persona->attackCount;
+    int count = persona->skillCount;
 
     for (int i = 0; i < count; i++)
     {

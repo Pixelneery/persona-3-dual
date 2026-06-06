@@ -89,7 +89,7 @@ void DebugView::init()
                                          height,
                                          characterTranslate,
                                          characterFacingAngle,
-                                        false);
+                                         false);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);

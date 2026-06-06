@@ -4,11 +4,13 @@
 #include "../skills/AttackSkill.h"
 #include "../skills/Dia.h"
 #include "../skills/Garu.h"
+#include "../skills/Magaru.h"
 
 struct Io : PersonaBase
 {
     Garu garu;
     Dia dia;
+    Magaru magaru;
     Skill* mySkills[2];
 
     Io()
@@ -23,7 +25,8 @@ struct Io : PersonaBase
 
         mySkills[0] = &garu;
         mySkills[1] = &dia;
-        attackCount = 2;
+        mySkills[2] = &magaru;
+        skillCount = 3;
         skills = mySkills;
 
         battleStats.affinities[Element::Slash] = BattleStats::Neutral;

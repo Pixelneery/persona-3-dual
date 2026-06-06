@@ -5,5 +5,9 @@ enum class SkillType
     Attack,
     Heal,
     Buff,
-    Debuff
+    Debuff,
+    MultiAttack,
+    MultiHeal,
+    MultiBuff,
+    MultiDebuff
 };

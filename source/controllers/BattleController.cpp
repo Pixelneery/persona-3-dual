@@ -65,7 +65,7 @@ void BattleController::update(u32 keys)
             consoleClear();
             if (actionIndex == ACTION_ATTACK)
             {
-                selectedSkill = nullptr;
+                selectedSkill = actor->baseAttackAction;
                 targetIndex = -1;
                 phase = BattlePhase::ChooseTarget;
             }
@@ -95,6 +95,7 @@ void BattleController::update(u32 keys)
 
         // render battleMenu
         battleMenuCmpt.loadSkillOptions(actor->curPersona);
+        //TODO: why not just return nullptr if nothing happens instead of setting -1 manually everywhere?
         skillIndex = -1;
         skillIndex = (int)battleMenuCmpt.update(keys);
 
@@ -108,7 +109,7 @@ void BattleController::update(u32 keys)
             else
                 resource = &actor->hp;
 
-            bool canAfford = *resource > s->cost;
+            bool canAfford = *resource >= s->cost;
             if (canAfford)
             {
                 *resource -= s->cost;
@@ -181,13 +182,37 @@ void BattleController::update(u32 keys)
 
         if ((int)targetIndex != -1 && (keys & KEY_A))
         {
-            BattleParticipant* target = targets[targetIndex];
+            if ((selectedSkill->skillType == SkillType::Attack || selectedSkill->skillType == SkillType::Heal ||
+                 selectedSkill->skillType == SkillType::Buff || selectedSkill->skillType == SkillType::Debuff))
+            {
+                targets = {targets[targetIndex]};
+            }
+
             // Check so you cant heal target that has max hp
-            if (selectedSkill && selectedSkill->skillType == SkillType::Heal && target->hp >= target->maxHp)
-                return;
-            BattleResult battleResult = (actionIndex == ACTION_ATTACK) ? attack.resolve(actor, target)
-                                                                       : persona.resolve(actor, target, selectedSkill);
-            applyResult(battleResult, target);
+            if (selectedSkill &&
+                (selectedSkill->skillType == SkillType::Heal || selectedSkill->skillType == SkillType::MultiHeal))
+            {
+                bool canHealAnyTarget = false;
+                for (BattleParticipant* target : targets)
+                {
+                    if (target->hp < target->maxHp)
+                    {
+                        canHealAnyTarget = true;
+                        break;
+                    }
+                }
+                if (!canHealAnyTarget)
+                    return;
+            }
+
+            for (BattleParticipant* target : targets)
+            {
+                BattleResult battleResult = (actionIndex == ACTION_ATTACK)
+                                                ? attack.resolve(actor, target)
+                                                : persona.resolve(actor, target, selectedSkill);
+                applyResult(battleResult, target);
+            }
+
             advanceTurn();
         }
 
