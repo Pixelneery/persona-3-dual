@@ -3,18 +3,41 @@ persona-3-dual.elf
 persona-3-dual.lst
 
 # no auto-generated files should be committed
-/build
-/source/dialogue
-/source/environments
-/source/maps
-/source/models
+# Ignore the contents, but keep the folders structure
+/build/*
+!/build/.gitkeep
 
-/data/environments
-/data/models
-/data/music
-/data/save
-/data/video
-/data/graphics
+# source
+/source/dialogue/*
+!/source/dialogue/.gitkeep
+
+/source/environments/*
+!/source/environments/.gitkeep
+
+/source/maps/*
+!/source/maps/.gitkeep
+
+/source/models/*
+!/source/models/.gitkeep
+
+# data
+/data/environments/*
+!/data/environments/.gitkeep
+
+/data/models/*
+!/data/models/.gitkeep
+
+/data/music/*
+!/data/music/.gitkeep
+
+/data/save/*
+!/data/save/.gitkeep
+
+/data/video/*
+!/data/video/.gitkeep
+
+/data/graphics/*
+!/data/graphics/.gitkeep
 
 /tools/converters/__pycache__
 *.pyc
