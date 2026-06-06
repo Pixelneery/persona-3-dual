@@ -63,12 +63,12 @@ async function loadIndex() {
   app.innerHTML = `
         <div class="page-hero">
             <h1>${escHtml(manifest.title ?? "Documentation")}</h1>
-            <p class="page-desc">${escHtml(manifest.desc ?? "Guides and references for the P3 Dual NDS demake project.")}</p>
+            <p class="page-desc">${escHtml(manifest.desc ?? "Guides and references for The P3 Dual project.")}</p>
         </div>
         ${docs.length > 0 ? sectionsHtml : '<p class="page-desc">No docs found in manifest.json.</p>'}
     `;
 
-  document.title = `${manifest.title ?? "Docs"} — P3 Dual`;
+  document.title = `${manifest.title ?? "Docs"} — The P3 Dual Project`;
 }
 
 function docCard(doc) {

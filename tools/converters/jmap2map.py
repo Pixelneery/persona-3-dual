@@ -85,13 +85,12 @@ def to_header(rows, height, width, stem):
     lines.append(f"#define {define_prefix}_MAP_HEIGHT {height}")
     lines.append("")
     lines.append(
-        f"static const uint8_t {stem}_map"
-        f"[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{"
+        f"static const uint8_t {stem}_map[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{"
     )
     for r, row in enumerate(rows):
         comma = "," if r < height - 1 else ""
         values = ", ".join(str(v) for v in row)
-        lines.append(f"    {{{values}}}{comma}")
+        lines.append(f"    {{ {values} }}{comma}")
     lines.append("};")
     lines.append("")
     lines.append("#endif")

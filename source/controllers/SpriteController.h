@@ -2,15 +2,19 @@
 #include "core/enums.h"
 #include "core/structs.h"
 #include <nds.h>
+#include <vector>
 
 class SpriteController
 {
   public:
-    template <typename SpriteID> bool switchSprite(SpriteType type, SpriteID spriteId, SpriteRegister* out) const
+    template <typename SpriteID> bool switchSprite(SpriteType type, SpriteID spriteId, SpriteRegister* out)
     {
         return switchSpriteImpl(type, static_cast<int>(spriteId), out);
     }
 
+    void unloadAll();
+
   private:
-    bool switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out) const;
+    std::vector<GraphicAsset> loadedAssets;
+    bool switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out);
 };

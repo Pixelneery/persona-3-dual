@@ -2,14 +2,10 @@
 #include "core/globals.h"
 #include "models/character.h"
 #include <nds.h>
+#include <string>
 
 // sfx
 #include "soundbank.h"
-// backgrounds
-#include "bgAkihiko.h"
-#include "bgKenji.h"
-#include "bgYukari.h"
-#include "bgYukariClose.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 
@@ -20,43 +16,39 @@ void PauseMenuComponent::loadBg(int bgIndex)
     if (bgIndex < 0)
         return;
 
+    std::string bgName;
     switch (bgIndex)
     {
     case 0: // Akihiko
-        dmaCopy(bgAkihikoTiles, bgGetGfxPtr(bgSlot), bgAkihikoTilesLen);
-        dmaCopy(bgAkihikoMap, bgGetMapPtr(bgSlot), bgAkihikoMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgAkihikoPal, &VRAM_H_EXT_PALETTE[0][0], bgAkihikoPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgName = "bgAkihiko";
         break;
 
     case 1: // Kenji
-        dmaCopy(bgKenjiTiles, bgGetGfxPtr(bgSlot), bgKenjiTilesLen);
-        dmaCopy(bgKenjiMap, bgGetMapPtr(bgSlot), bgKenjiMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgKenjiPal, &VRAM_H_EXT_PALETTE[0][0], bgKenjiPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgName = "bgKenji";
         break;
 
     case 2: // Yukari
-        dmaCopy(bgYukariTiles, bgGetGfxPtr(bgSlot), bgYukariTilesLen);
-        dmaCopy(bgYukariMap, bgGetMapPtr(bgSlot), bgYukariMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukariPal, &VRAM_H_EXT_PALETTE[0][0], bgYukariPalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgName = "bgYukari";
         break;
 
     case 3: // YukariClose
-        dmaCopy(bgYukariCloseTiles, bgGetGfxPtr(bgSlot), bgYukariCloseTilesLen);
-        dmaCopy(bgYukariCloseMap, bgGetMapPtr(bgSlot), bgYukariCloseMapLen);
-        vramSetBankH(VRAM_H_LCD);
-        dmaCopy(bgYukariClosePal, &VRAM_H_EXT_PALETTE[0][0], bgYukariClosePalLen);
-        vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+        bgName = "bgYukariClose";
         break;
 
     default:
-        break;
+        return;
     }
+
+    GraphicAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
+    ;
+    dmaCopy(bg.tiles, bgGetGfxPtr(bgSlot), bg.tilesLen);
+    dmaCopy(bg.map, bgGetMapPtr(bgSlot), bg.mapLen);
+
+    vramSetBankH(VRAM_H_LCD);
+    dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
+    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+
+    graphicsCtrl.unloadGrit(bg);
 }
 
 void PauseMenuComponent::init(int iBgSlot, bool* isActive, const std::string& iPauseMessage)
@@ -191,9 +183,6 @@ ViewState PauseMenuComponent::debugOptionSelected()
         break;
     case DebugOption::PAULOWNIA_MALL_VIEW:
         selectedView = ViewState::PAULOWNIA_MALL;
-        break;
-    case DebugOption::DEBUG_VIEW:
-        selectedView = ViewState::DEBUG_VIEW;
         break;
     case DebugOption::INTRO_VIDEO:
         selectedView = ViewState::INTRO_VIDEO;

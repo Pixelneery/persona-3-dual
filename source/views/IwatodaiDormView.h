@@ -46,7 +46,7 @@ class IwatodaiDormView : public BaseView
     BattleController battleController;
     CharacterController* playerCtrl;
     // camera pos
-    cameraPosition camPos;
+    CameraPosition camPos;
     // world
     const float tileSize = 0.062500f;
     const float worldOffsetX = IWATODAI_DORM_FLOOR_1_WORLD_OFFSET_X;

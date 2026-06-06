@@ -3,10 +3,6 @@
 #include <nds.h>
 #include <stdio.h>
 
-// assets
-#include "cautionBackground.h"
-#include "cautionBackgroundSub.h"
-
 void DisclaimerView::init()
 {
     // set video mode for 3 text layers and 1 extended rotation layer
@@ -43,26 +39,33 @@ void DisclaimerView::init()
     dmaFillHalfWords(0, bgGetMapPtr(bg[1]), 2048);
 
     // copy graphics to vram
-    dmaCopy(cautionBackgroundTiles, bgGetGfxPtr(bg[0]), cautionBackgroundTilesLen);
-    dmaCopy(cautionBackgroundSubTiles, bgGetGfxPtr(bg[1]), cautionBackgroundSubTilesLen);
+    std::string bgPath = fatBasePath + "graphics/DisclaimerView/backgrounds/";
+    GraphicAsset bgCaution = graphicsCtrl.loadGrit(bgPath + "cautionBackground/cautionBackground");
+    GraphicAsset bgCautionSub = graphicsCtrl.loadGrit(bgPath + "cautionBackgroundSub/cautionBackgroundSub");
+
+    dmaCopy(bgCaution.tiles, bgGetGfxPtr(bg[0]), bgCaution.tilesLen);
+    dmaCopy(bgCautionSub.tiles, bgGetGfxPtr(bg[1]), bgCautionSub.tilesLen);
 
     // copy maps to vram
-    dmaCopy(cautionBackgroundMap, bgGetMapPtr(bg[0]), cautionBackgroundMapLen);
-    dmaCopy(cautionBackgroundSubMap, bgGetMapPtr(bg[1]), cautionBackgroundSubMapLen);
+    dmaCopy(bgCaution.map, bgGetMapPtr(bg[0]), bgCaution.mapLen);
+    dmaCopy(bgCautionSub.map, bgGetMapPtr(bg[1]), bgCautionSub.mapLen);
 
     // can only write to extended palettes in LCD mode
     vramSetBankE(VRAM_E_LCD); // for main engine
     vramSetBankH(VRAM_H_LCD); // for subv engine
 
     // copy palettes to extended palette area
-    dmaCopy(cautionBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], cautionBackgroundPalLen); // bg 2, slot 0
-    dmaCopy(cautionBackgroundSubPal, &VRAM_H_EXT_PALETTE[1][0], cautionBackgroundSubPalLen);
+    dmaCopy(bgCaution.pal, &VRAM_E_EXT_PALETTE[2][0], bgCaution.palLen); // bg 2, slot 0
+    dmaCopy(bgCautionSub.pal, &VRAM_H_EXT_PALETTE[1][0], bgCautionSub.palLen);
 
     // map vram to extended palette
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
     bgUpdate();
+
+    graphicsCtrl.unloadGrit(bgCaution);
+    graphicsCtrl.unloadGrit(bgCautionSub);
 
     // fade caution screens in
     for (int i = 0; i <= 16; i++)

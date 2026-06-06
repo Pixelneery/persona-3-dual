@@ -2,6 +2,8 @@
 
 void MenuHUDComponent::loadHUD()
 {
+    bgLoaded = false;
+
     // setup sprites
     // moon
     sprites[0] = {0, SpriteSize_32x32, SpriteColorFormat_256Color, 0, 0, 202, -15};
@@ -99,15 +101,27 @@ void MenuHUDComponent::loadHUD()
     dmaCopy(timeSprites[3].pal, &VRAM_I_EXT_SPR_PALETTE[6][0], timeSprites[3].palLen);     // time (3)
     dmaCopy(skillSprites[0].pal, &VRAM_I_EXT_SPR_PALETTE[7][0], skillSprites[0].palLen);   // skill level
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+
+    spriteCtrl.unloadAll();
 };
 
 void MenuHUDComponent::loadBg(int* bgId)
 {
-    dmaCopy(menuHUDTiles, bgGetGfxPtr(*bgId), menuHUDTilesLen);
-    dmaCopy(menuHUDMap, bgGetMapPtr(*bgId), menuHUDMapLen);
+    if (bgLoaded)
+        return;
+
+    std::string bgPath = fatBasePath + "graphics/MenuHUD/backgrounds/";
+    GraphicAsset bgHUD =
+        graphicsCtrl.loadGrit(bgPath + (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD"));
+
+    dmaCopy(bgHUD.tiles, bgGetGfxPtr(*bgId), bgHUD.tilesLen);
+    dmaCopy(bgHUD.map, bgGetMapPtr(*bgId), bgHUD.mapLen);
     vramSetBankH(VRAM_H_LCD);
-    dmaCopy(menuHUDPal, &VRAM_H_EXT_PALETTE[2][0], menuHUDPalLen);
+    dmaCopy(bgHUD.pal, &VRAM_H_EXT_PALETTE[2][0], bgHUD.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+
+    graphicsCtrl.unloadGrit(bgHUD);
+    bgLoaded = true;
 }
 
 void MenuHUDComponent::drawHUD(int* bgId)

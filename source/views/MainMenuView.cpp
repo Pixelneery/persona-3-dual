@@ -2,11 +2,7 @@
 #include "core/globals.h"
 #include <nds.h>
 #include <stdio.h>
-
-// assets
-#include "doorBackground.h"
-#include "fogBackground.h"
-#include "menuSilhouetteBackground.h"
+#include <string>
 
 void MainMenuView::init()
 {
@@ -71,27 +67,29 @@ void MainMenuView::init()
     dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
 
-    // load silhouette
-    dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
-    dmaCopy(menuSilhouetteBackgroundTiles, bgGetGfxPtr(bg[0]), menuSilhouetteBackgroundTilesLen);
-    dmaCopy(menuSilhouetteBackgroundMap, bgGetMapPtr(bg[0]), menuSilhouetteBackgroundMapLen);
+    // load graphics
+    std::string bgPath = fatBasePath + "graphics/MainMenuView/backgrounds/";
+    GraphicAsset silhouetteBg = graphicsCtrl.loadGrit(bgPath + "menuSilhouetteBackground/menuSilhouetteBackground");
+    GraphicAsset doorBg = graphicsCtrl.loadGrit(bgPath + "doorBackground/doorBackground");
+    GraphicAsset fogBg = graphicsCtrl.loadGrit(bgPath + "fogBackground/fogBackground");
+
+    dmaCopy(silhouetteBg.tiles, bgGetGfxPtr(bg[0]), silhouetteBg.tilesLen);
+    dmaCopy(doorBg.tiles, bgGetGfxPtr(bg[1]), doorBg.tilesLen);
+    dmaCopy(fogBg.tiles, bgGetGfxPtr(bg[2]), fogBg.tilesLen);
+
+    dmaCopy(silhouetteBg.map, bgGetMapPtr(bg[0]), silhouetteBg.mapLen);
+    dmaCopy(doorBg.map, bgGetMapPtr(bg[1]), doorBg.mapLen);
+    dmaCopy(fogBg.map, bgGetMapPtr(bg[2]), fogBg.mapLen);
 
     vramSetBankE(VRAM_E_LCD);
-    dmaCopy(menuSilhouetteBackgroundPal, &VRAM_E_EXT_PALETTE[0][0], menuSilhouetteBackgroundPalLen);
+    dmaCopy(silhouetteBg.pal, &VRAM_E_EXT_PALETTE[0][0], silhouetteBg.palLen);
+    dmaCopy(doorBg.pal, &VRAM_E_EXT_PALETTE[1][0], doorBg.palLen);
+    dmaCopy(fogBg.pal, &VRAM_E_EXT_PALETTE[2][0], fogBg.palLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
-    // copy door and fog graphics to vram
-    dmaCopy(doorBackgroundTiles, bgGetGfxPtr(bg[1]), doorBackgroundTilesLen);
-    dmaCopy(fogBackgroundTiles, bgGetGfxPtr(bg[2]), fogBackgroundTilesLen);
-
-    // copy door and fog maps to vram
-    dmaCopy(doorBackgroundMap, bgGetMapPtr(bg[1]), doorBackgroundMapLen);
-    dmaCopy(fogBackgroundMap, bgGetMapPtr(bg[2]), fogBackgroundMapLen);
-
-    vramSetBankE(VRAM_E_LCD);
-    dmaCopy(doorBackgroundPal, &VRAM_E_EXT_PALETTE[1][0], doorBackgroundPalLen);
-    dmaCopy(fogBackgroundPal, &VRAM_E_EXT_PALETTE[2][0], fogBackgroundPalLen);
-    vramSetBankE(VRAM_E_BG_EXT_PALETTE);
+    graphicsCtrl.unloadGrit(silhouetteBg);
+    graphicsCtrl.unloadGrit(doorBg);
+    graphicsCtrl.unloadGrit(fogBg);
 
     bgHide(bg[2]);
     bgSetCenter(bg[2], 128, 96); // pivot point on the screen (at the screen's center)

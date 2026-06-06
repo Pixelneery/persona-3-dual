@@ -8,20 +8,17 @@ class BaseMenu;
 struct SpriteRegister
 {
     int id;
-    const unsigned int* tiles;
-    unsigned int tilesLen;
-    const unsigned short* pal;
-    unsigned int palLen;
+    void* tiles;
+    u32 tilesLen;
+    void* pal;
+    u32 palLen;
 };
 
 struct SpriteDBEntry
 {
     SpriteType type;
     int id;
-    const unsigned int* tiles;
-    unsigned int tilesLen;
-    const unsigned short* pal;
-    unsigned int palLen;
+    const char* filename;
 };
 
 //a simple sprite structure
@@ -87,7 +84,7 @@ struct AnimNode
 };
 
 // From CharacterController.h
-struct cameraPosition
+struct CameraPosition
 {
     float cameraX;
     float cameraY;
@@ -100,7 +97,7 @@ struct cameraPosition
     float upZ;
 };
 
-struct characterPosition
+struct CharacterPosition
 {
     float x;
     float z;
@@ -110,21 +107,21 @@ struct characterPosition
 };
 
 // From DialogueController.h
-struct dialogue;
-struct dialogueSelection
+struct Dialogue;
+struct DialogueSelection
 {
     std::string text;
     bool isSelected;
-    dialogue* next;
+    Dialogue* next;
 };
-struct dialogue
+struct Dialogue
 {
     std::string characterName;
     std::string text;
     int imageId;
-    dialogue* prev;
-    dialogue* next;
-    std::vector<dialogueSelection> selections;
+    Dialogue* prev;
+    Dialogue* next;
+    std::vector<DialogueSelection> selections;
 };
 
 struct Save
@@ -134,3 +131,13 @@ struct Save
     char firstName[32];
     bool femcMode;
 } __attribute__((packed));
+
+struct GraphicAsset
+{
+    void* tiles;
+    u32 tilesLen;
+    void* pal;
+    u32 palLen;
+    void* map;
+    u32 mapLen;
+};

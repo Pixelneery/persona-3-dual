@@ -4,8 +4,6 @@
 #include <nds.h>
 #include <stdio.h>
 
-// assets
-#include "contract.h"
 // sfx
 #include "soundbank.h"
 
@@ -43,14 +41,22 @@ void SignContractView::init()
     bg[0] = bgInit(0, BgType_Text8bpp, BgSize_T_256x256, 9, 2);
     bgSetPriority(bg[0], 0);
 
-    // set backgrounds
+    // load contract background from runtime assets
+    GraphicAsset contractBg =
+        graphicsCtrl.loadGrit(fatBasePath + "graphics/SignContractView/backgrounds/contract/contract");
+
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 8192);
-    dmaCopy(contractTiles, bgGetGfxPtr(bg[0]), contractTilesLen);
-    dmaCopy(contractMap, bgGetMapPtr(bg[0]), contractMapLen);
+    if (contractBg.tiles)
+        dmaCopy(contractBg.tiles, bgGetGfxPtr(bg[0]), contractBg.tilesLen);
+    if (contractBg.map)
+        dmaCopy(contractBg.map, bgGetMapPtr(bg[0]), contractBg.mapLen);
 
     vramSetBankE(VRAM_E_LCD);
-    dmaCopy(contractPal, &VRAM_E_EXT_PALETTE[0][0], contractPalLen);
+    if (contractBg.pal)
+        dmaCopy(contractBg.pal, &VRAM_E_EXT_PALETTE[0][0], contractBg.palLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
+
+    graphicsCtrl.unloadGrit(contractBg);
 
     // setup console
     consoleInit(&animatedConsole, 0, BgType_Text4bpp, BgSize_T_256x256, 5, 3, false, true);

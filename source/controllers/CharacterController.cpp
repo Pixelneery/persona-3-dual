@@ -47,9 +47,9 @@ TileType CharacterController::isTileAt()
 }
 
 // get character position
-characterPosition CharacterController::isCharacterAt()
+CharacterPosition CharacterController::isCharacterAt()
 {
-    characterPosition charPos;
+    CharacterPosition charPos;
 
     charPos.x = characterTranslate.x;
     charPos.z = characterTranslate.z;
@@ -60,7 +60,7 @@ characterPosition CharacterController::isCharacterAt()
     return charPos;
 }
 
-cameraPosition CharacterController::update(u32 keys)
+CameraPosition CharacterController::update(u32 keys)
 {
     float forwardX;
     float forwardZ;
@@ -75,7 +75,7 @@ cameraPosition CharacterController::update(u32 keys)
 
     float angleRad;
 
-    cameraPosition camPos;
+    CameraPosition camPos;
 
     forwardX = -sin(angle) * speed;
     forwardZ = cos(angle) * speed;
