@@ -87,7 +87,8 @@ void IwatodaiStreetsView::init()
                                          true);
 
     // setup music
-    musicCtrl.init((fatBasePath + "music/changing_seasons.pcm").c_str(), 0.0f, -1.0f);
+    std::string streetsMusicPath = saveData.femcMode ? "music/sun.pcm" : "music/changing_seasons.pcm";
+    musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), 0.0f, -1.0f);
 
     // setup character model
     characterAnimationCtrl.loadModel((fatBasePath + "models/character/character.bin").c_str());
