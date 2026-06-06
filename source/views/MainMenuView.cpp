@@ -4,11 +4,6 @@
 #include <stdio.h>
 #include <string>
 
-static GritAsset loadMainMenuBackground(const std::string& name)
-{
-    return graphicsCtrl.loadGrit(fatBasePath + "graphics/MainMenuView/backgrounds/" + name + "/" + name);
-}
-
 void MainMenuView::init()
 {
     // setup music
@@ -72,38 +67,24 @@ void MainMenuView::init()
     dmaFillHalfWords(1, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(2, bgGetMapPtr(bg[2]), 2048);
 
-    // load silhouette
-    GritAsset silhouetteBg = loadMainMenuBackground("menuSilhouetteBackground");
-    if (silhouetteBg.tiles)
-        dmaCopy(silhouetteBg.tiles, bgGetGfxPtr(bg[0]), silhouetteBg.tilesLen);
-    if (silhouetteBg.map)
-        dmaCopy(silhouetteBg.map, bgGetMapPtr(bg[0]), silhouetteBg.mapLen);
+    // load graphics
+    std::string bgPath = fatBasePath + "graphics/MainMenuView/backgrounds/";
+    GritAsset silhouetteBg = graphicsCtrl.loadGrit(bgPath + "menuSilhouetteBackground/menuSilhouetteBackground");
+    GritAsset doorBg = graphicsCtrl.loadGrit(bgPath + "doorBackground/doorBackground");
+    GritAsset fogBg = graphicsCtrl.loadGrit(bgPath + "fogBackground/fogBackground");
+
+    dmaCopy(silhouetteBg.tiles, bgGetGfxPtr(bg[0]), silhouetteBg.tilesLen);
+    dmaCopy(doorBg.tiles, bgGetGfxPtr(bg[1]), doorBg.tilesLen);
+    dmaCopy(fogBg.tiles, bgGetGfxPtr(bg[2]), fogBg.tilesLen);
+
+    dmaCopy(silhouetteBg.map, bgGetMapPtr(bg[0]), silhouetteBg.mapLen);
+    dmaCopy(doorBg.map, bgGetMapPtr(bg[1]), doorBg.mapLen);
+    dmaCopy(fogBg.map, bgGetMapPtr(bg[2]), fogBg.mapLen);
 
     vramSetBankE(VRAM_E_LCD);
-    if (silhouetteBg.pal)
-        dmaCopy(silhouetteBg.pal, &VRAM_E_EXT_PALETTE[0][0], silhouetteBg.palLen);
-    vramSetBankE(VRAM_E_BG_EXT_PALETTE);
-
-    // copy door and fog graphics to vram
-    GritAsset doorBg = loadMainMenuBackground("doorBackground");
-    GritAsset fogBg = loadMainMenuBackground("fogBackground");
-
-    if (doorBg.tiles)
-        dmaCopy(doorBg.tiles, bgGetGfxPtr(bg[1]), doorBg.tilesLen);
-    if (fogBg.tiles)
-        dmaCopy(fogBg.tiles, bgGetGfxPtr(bg[2]), fogBg.tilesLen);
-
-    // copy door and fog maps to vram
-    if (doorBg.map)
-        dmaCopy(doorBg.map, bgGetMapPtr(bg[1]), doorBg.mapLen);
-    if (fogBg.map)
-        dmaCopy(fogBg.map, bgGetMapPtr(bg[2]), fogBg.mapLen);
-
-    vramSetBankE(VRAM_E_LCD);
-    if (doorBg.pal)
-        dmaCopy(doorBg.pal, &VRAM_E_EXT_PALETTE[1][0], doorBg.palLen);
-    if (fogBg.pal)
-        dmaCopy(fogBg.pal, &VRAM_E_EXT_PALETTE[2][0], fogBg.palLen);
+    dmaCopy(silhouetteBg.pal, &VRAM_E_EXT_PALETTE[0][0], silhouetteBg.palLen);
+    dmaCopy(doorBg.pal, &VRAM_E_EXT_PALETTE[1][0], doorBg.palLen);
+    dmaCopy(fogBg.pal, &VRAM_E_EXT_PALETTE[2][0], fogBg.palLen);
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);
 
     graphicsCtrl.unloadGrit(silhouetteBg);

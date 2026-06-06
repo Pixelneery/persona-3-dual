@@ -108,9 +108,9 @@ void MenuHUDComponent::loadBg(int* bgId)
     if (bgLoaded)
         return;
 
-    std::string bgPath = fatBasePath + "graphics/MenuHUD/backgrounds/" +
-                         (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD");
-    GritAsset bgHUD = graphicsCtrl.loadGrit(bgPath);
+    std::string bgPath = fatBasePath + "graphics/MenuHUD/backgrounds/";
+    GritAsset bgHUD =
+        graphicsCtrl.loadGrit(bgPath + (saveData.femcMode ? "menuHUDFEMC/menuHUDFEMC" : "menuHUD/menuHUD"));
 
     dmaCopy(bgHUD.tiles, bgGetGfxPtr(*bgId), bgHUD.tilesLen);
     dmaCopy(bgHUD.map, bgGetMapPtr(*bgId), bgHUD.mapLen);

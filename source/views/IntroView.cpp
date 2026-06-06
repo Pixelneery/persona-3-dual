@@ -68,41 +68,19 @@ void IntroView::init()
 
     bool femc = saveData.femcMode;
     std::string bgPath = fatBasePath + "graphics/IntroView/backgrounds/";
-
-    GritAsset silhouetteBg = graphicsCtrl.loadGrit(bgPath + "silhouetteBackground/silhouetteBackground");
-    GritAsset silhouetteFemcBg = graphicsCtrl.loadGrit(bgPath + "silhouetteBackgroundFEMC/silhouetteBackgroundFEMC");
-
-    GritAsset roomBg = graphicsCtrl.loadGrit(bgPath + "roomBackground/roomBackground");
-    GritAsset roomFemcBg = graphicsCtrl.loadGrit(bgPath + "roomBackgroundFEMC/roomBackgroundFEMC");
-
-    GritAsset skyBg = graphicsCtrl.loadGrit(bgPath + "skyBackground/skyBackground");
-    GritAsset skyFemcBg = graphicsCtrl.loadGrit(bgPath + "skyBackgroundFEMC/skyBackgroundFEMC");
-
-    GritAsset overlayBg = graphicsCtrl.loadGrit(bgPath + "overlayBackground/overlayBackground");
-    GritAsset overlayFemcBg = graphicsCtrl.loadGrit(bgPath + "overlayBackgroundFEMC/overlayBackgroundFEMC");
-
-    GritAsset attributionBg = graphicsCtrl.loadGrit(bgPath + "attributionBackground/attributionBackground");
-    GritAsset attributionFemcBg = graphicsCtrl.loadGrit(bgPath + "attributionBackgroundFEMC/attributionBackgroundFEMC");
-
-    GritAsset skySubBg = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSub/skyBackgroundSub");
-    GritAsset skySubFemcBg = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSubFEMC/skyBackgroundSubFEMC");
-
     std::string spritePath = fatBasePath + "graphics/IntroView/sprites/";
-    GritAsset logoLeft = graphicsCtrl.loadGrit(
-        spritePath + (femc ? "logoSpriteLeftFEMC/logoSpriteLeftFEMC" : "logoSpriteLeft/logoSpriteLeft"));
-    GritAsset logoRight = graphicsCtrl.loadGrit(
-        spritePath + (femc ? "logoSpriteRightFEMC/logoSpriteRightFEMC" : "logoSpriteRight/logoSpriteRight"));
+    std::string suffix = femc ? "FEMC" : "";
 
-    // Helper to select between normal and FEMC versions
-    auto selectAsset = [femc](const GritAsset& normal, const GritAsset& femcVersion) -> const GritAsset&
-    { return femc ? femcVersion : normal; };
-
-    const GritAsset& silhouette = selectAsset(silhouetteBg, silhouetteFemcBg);
-    const GritAsset& room = selectAsset(roomBg, roomFemcBg);
-    const GritAsset& sky = selectAsset(skyBg, skyFemcBg);
-    const GritAsset& overlay = selectAsset(overlayBg, overlayFemcBg);
-    const GritAsset& attribution = selectAsset(attributionBg, attributionFemcBg);
-    const GritAsset& skySub = selectAsset(skySubBg, skySubFemcBg);
+    GritAsset silhouette =
+        graphicsCtrl.loadGrit(bgPath + "silhouetteBackground" + suffix + "/silhouetteBackground" + suffix);
+    GritAsset room = graphicsCtrl.loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
+    GritAsset sky = graphicsCtrl.loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
+    GritAsset overlay = graphicsCtrl.loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
+    GritAsset attribution =
+        graphicsCtrl.loadGrit(bgPath + "attributionBackground" + suffix + "/attributionBackground" + suffix);
+    GritAsset skySub = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
+    GritAsset logoLeft = graphicsCtrl.loadGrit(spritePath + "logoSpriteLeft" + suffix + "/logoSpriteLeft" + suffix);
+    GritAsset logoRight = graphicsCtrl.loadGrit(spritePath + "logoSpriteRight" + suffix + "/logoSpriteRight" + suffix);
 
     // copy graphics to vram
     if (silhouette.tiles)
@@ -185,18 +163,12 @@ void IntroView::init()
     bgUpdate();
 
     // unload all graphics now that it's copied to vram
-    graphicsCtrl.unloadGrit(silhouetteBg);
-    graphicsCtrl.unloadGrit(silhouetteFemcBg);
-    graphicsCtrl.unloadGrit(roomBg);
-    graphicsCtrl.unloadGrit(roomFemcBg);
-    graphicsCtrl.unloadGrit(skyBg);
-    graphicsCtrl.unloadGrit(skyFemcBg);
-    graphicsCtrl.unloadGrit(overlayBg);
-    graphicsCtrl.unloadGrit(overlayFemcBg);
-    graphicsCtrl.unloadGrit(attributionBg);
-    graphicsCtrl.unloadGrit(attributionFemcBg);
-    graphicsCtrl.unloadGrit(skySubBg);
-    graphicsCtrl.unloadGrit(skySubFemcBg);
+    graphicsCtrl.unloadGrit(silhouette);
+    graphicsCtrl.unloadGrit(room);
+    graphicsCtrl.unloadGrit(sky);
+    graphicsCtrl.unloadGrit(overlay);
+    graphicsCtrl.unloadGrit(attribution);
+    graphicsCtrl.unloadGrit(skySub);
     graphicsCtrl.unloadGrit(logoLeft);
     graphicsCtrl.unloadGrit(logoRight);
 

@@ -54,30 +54,15 @@ void* GraphicsController::loadToRAM(const std::string& filepath, u32* outSize)
         return NULL;
     }
 
-    // allocate memory and read file into buffer
-    // memory must be padded to a multiple of 32 bytes for safe cache invalidation
-    u32 cacheSafeSize = (size + 31) & ~31;
-    void* buffer = memalign(32, cacheSafeSize);
+    // allocate buffer
+    void* buffer = malloc(size);
     if (buffer)
     {
-        DC_InvalidateRange(buffer, cacheSafeSize);
-        size_t bytesRead = fread(buffer, 1, size, file);
-        if (bytesRead > 0)
-        {
-            size = bytesRead;
-            DC_FlushRange(buffer, cacheSafeSize);
-        }
-        else
-        {
-            free(buffer);
-            buffer = NULL;
-            size = 0;
-        }
+        fread(buffer, 1, size, file);
     }
 
     fclose(file);
 
-    // optionally return size to caller
     if (outSize)
     {
         *outSize = size;

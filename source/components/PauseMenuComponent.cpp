@@ -11,11 +11,6 @@
 
 DialogueController dialogueCtrl;
 
-static GritAsset loadDialogueBackground(const std::string& name)
-{
-    return graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + name + "/" + name);
-}
-
 void PauseMenuComponent::loadBg(int bgIndex)
 {
     if (bgIndex < 0)
@@ -44,15 +39,13 @@ void PauseMenuComponent::loadBg(int bgIndex)
         return;
     }
 
-    GritAsset bg = loadDialogueBackground(bgName);
-    if (bg.tiles)
-        dmaCopy(bg.tiles, bgGetGfxPtr(bgSlot), bg.tilesLen);
-    if (bg.map)
-        dmaCopy(bg.map, bgGetMapPtr(bgSlot), bg.mapLen);
+    GritAsset bg = graphicsCtrl.loadGrit(fatBasePath + "graphics/Dialogue/backgrounds/" + bgName + "/" + bgName);
+    ;
+    dmaCopy(bg.tiles, bgGetGfxPtr(bgSlot), bg.tilesLen);
+    dmaCopy(bg.map, bgGetMapPtr(bgSlot), bg.mapLen);
 
     vramSetBankH(VRAM_H_LCD);
-    if (bg.pal)
-        dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
+    dmaCopy(bg.pal, &VRAM_H_EXT_PALETTE[0][0], bg.palLen);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
 
     graphicsCtrl.unloadGrit(bg);
