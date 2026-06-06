@@ -11,7 +11,7 @@
 #include "logoSpriteRightFEMC.h"
 #include "overlayBackground.h"
 #include "overlayBackgroundFEMC.h"
-#include "roomBackground.h"
+// #include "roomBackground.h"
 #include "roomBackgroundFEMC.h"
 #include "silhouetteBackground.h"
 #include "silhouetteBackgroundFEMC.h"
@@ -24,6 +24,8 @@
 #include "skyBackgroundSubFEMC.h"
 // sfx
 #include "soundbank.h"
+
+#include "controllers/GraphicsController.h"
 
 void IntroView::init()
 {
@@ -83,14 +85,19 @@ void IntroView::init()
     dmaFillHalfWords(0, bgGetMapPtr(bgSubLogo), 2048);
     dmaFillHalfWords(0, bgGetMapPtr(bgSubSky), 2048);
 
+    // DEBUG: new grit test
+    std::string bgPath = fatBasePath + "graphics/";
+    GritAsset roomBg = graphicsCtrl.loadGrit(bgPath + "roomBackground");
+
     // copy graphics to vram
     bool femc = saveData.femcMode;
     dmaCopy(femc ? silhouetteBackgroundFEMCTiles : silhouetteBackgroundTiles,
             bgGetGfxPtr(bg[0]),
             femc ? silhouetteBackgroundFEMCTilesLen : silhouetteBackgroundTilesLen);
-    dmaCopy(femc ? roomBackgroundFEMCTiles : roomBackgroundTiles,
-            bgGetGfxPtr(bg[1]),
-            femc ? roomBackgroundFEMCTilesLen : roomBackgroundTilesLen);
+    dmaCopy(roomBg.tiles, bgGetGfxPtr(bg[1]), roomBg.tilesLen);
+    // dmaCopy(femc ? roomBackgroundFEMCTiles : roomBackgroundTiles,
+    //         bgGetGfxPtr(bg[1]),
+    //         femc ? roomBackgroundFEMCTilesLen : roomBackgroundTilesLen);
     dmaCopy(femc ? skyBackgroundFEMCTiles : skyBackgroundTiles,
             bgGetGfxPtr(bg[2]),
             femc ? skyBackgroundFEMCTilesLen : skyBackgroundTilesLen);
@@ -108,9 +115,10 @@ void IntroView::init()
     dmaCopy(femc ? silhouetteBackgroundFEMCMap : silhouetteBackgroundMap,
             bgGetMapPtr(bg[0]),
             femc ? silhouetteBackgroundFEMCMapLen : silhouetteBackgroundMapLen);
-    dmaCopy(femc ? roomBackgroundFEMCMap : roomBackgroundMap,
-            bgGetMapPtr(bg[1]),
-            femc ? roomBackgroundFEMCMapLen : roomBackgroundMapLen);
+    dmaCopy(roomBg.map, bgGetMapPtr(bg[1]), roomBg.mapLen);
+    // dmaCopy(femc ? roomBackgroundFEMCMap : roomBackgroundMap,
+    //         bgGetMapPtr(bg[1]),
+    //         femc ? roomBackgroundFEMCMapLen : roomBackgroundMapLen);
     dmaCopy(femc ? skyBackgroundFEMCMap : skyBackgroundMap,
             bgGetMapPtr(bg[2]),
             femc ? skyBackgroundFEMCMapLen : skyBackgroundMapLen);
@@ -133,9 +141,10 @@ void IntroView::init()
             &VRAM_E_EXT_PALETTE[0][0],
             femc ? silhouetteBackgroundFEMCPalLen
                  : silhouetteBackgroundPalLen); // bg 0, slot 0 (slot can be specified slot in .grit file)
-    dmaCopy(femc ? roomBackgroundFEMCPal : roomBackgroundPal,
-            &VRAM_E_EXT_PALETTE[1][0],
-            femc ? roomBackgroundFEMCPalLen : roomBackgroundPalLen); // bg 1, slot 0
+    dmaCopy(roomBg.pal, &VRAM_E_EXT_PALETTE[1][0], roomBg.palLen);
+    // dmaCopy(femc ? roomBackgroundFEMCPal : roomBackgroundPal,
+    //         &VRAM_E_EXT_PALETTE[1][0],
+    //         femc ? roomBackgroundFEMCPalLen : roomBackgroundPalLen); // bg 1, slot 0
     dmaCopy(femc ? skyBackgroundFEMCPal : skyBackgroundPal,
             &VRAM_E_EXT_PALETTE[2][0],
             femc ? skyBackgroundFEMCPalLen : skyBackgroundPalLen); // bg 2, slot 0
@@ -185,6 +194,9 @@ void IntroView::init()
     // move camera to the empty right half of the 512px wide background
     bgSetScroll(bg[0], -silhouetteX, -silhouetteY);
     bgUpdate();
+
+    // unload all graphics now that it's copied to vram
+    graphicsCtrl.unloadGrit(roomBg);
 
     // point to music
     musicCtrl.loadSFX(SFX_SELECT);

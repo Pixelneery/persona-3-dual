@@ -134,3 +134,13 @@ struct Save
     char firstName[32];
     bool femcMode;
 } __attribute__((packed));
+
+struct GritAsset
+{
+    void* tiles;
+    u32 tilesLen;
+    void* pal;
+    u32 palLen;
+    void* map;
+    u32 mapLen;
+};

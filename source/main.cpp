@@ -23,6 +23,7 @@
 
 // controllers
 #include "controllers/AnimationController.h"
+#include "controllers/GraphicsController.h"
 #include "controllers/MusicController.h"
 #include "controllers/SaveController.h"
 #include "controllers/VideoController.h"
@@ -48,7 +49,6 @@ volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
-// Save saveData = {"reload.vid", "", "", false};
 Save saveData;
 
 // controllers
@@ -58,6 +58,7 @@ VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
 const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 SpriteController spriteCtrl;
+GraphicsController graphicsCtrl;
 
 // components
 PauseMenuComponent pauseMenuCmpt;
