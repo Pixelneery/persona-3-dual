@@ -171,6 +171,9 @@ void IwatodaiDormView::init()
     bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ09] =
         loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002obj09",
                               envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002OBJ09]);
+    bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002SHADOW01] =
+        loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002shadow01",
+                              envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002SHADOW01]);
     bitmapsEnv[IWATODAI_DORM_FLOOR_1_TEX_F007_002BOLT01] =
         loadEnvironmentBitmap(fatBasePath + "environments/iwatodai_dorm_floor_1/f007_002bolt01",
                               envTextures[IWATODAI_DORM_FLOOR_1_TEX_F007_002BOLT01]);
