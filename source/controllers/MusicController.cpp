@@ -116,7 +116,9 @@ void MusicController::init(const char* filePath, float loopStartSeconds, float l
     if (s_streamOpen && !s_isVideoAudio && s_currentFilePath == filePath)
     {
         if (s_isPaused)
+        {
             resume();
+        }
         return;
     }
 
