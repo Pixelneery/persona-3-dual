@@ -1,12 +1,12 @@
 #pragma once
-#include "AttackSkill.h"
+#include "Skill.h"
 
-struct Bufu : AttackSkill
+struct Bufu : Skill
 {
     Bufu()
     {
         movePower = 40;
-        element = Ice;
+        element = Element::Ice;
         cost = 3;
         name = "Bufu";
         hitRate = 99;

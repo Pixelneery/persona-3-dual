@@ -77,6 +77,7 @@ class BattleController
     void setNextPhase(BattlePhase nextPhase);
     void calculateTurnOrder();
     void handleDeadParticipants();
+    bool isSingleTarget(SkillType type);
 
   public:
     bool isActive() const

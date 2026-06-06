@@ -1,22 +1,23 @@
 #include "AttackAction.h"
+#include "./battleActions/skills/BattleCalcs.h"
 #include <stdlib.h>
 
-BattleResult AttackAction::resolve(PartyMember* user, BattleParticipant* target, Skill* /*skill*/)
+//ignore skill here
+BattleResult AttackAction::resolve(PartyMember* user, BattleParticipant* target, Skill* skill)
 {
-    AttackSkill* atk = user->baseAttackAction;
+    Skill* atk = user->baseAttackAction;
     Enemy* enemy = static_cast<Enemy*>(target);
 
-    u32 accuracy = atk->calculateHitratePlayer(&user->curPersona->battleStats, &enemy->battleStats);
+    u32 accuracy = BattleCalcs::hitrate(*user, *target, *atk);
     bool hit = accuracy > u32(rand() % 100);
 
     if (!hit)
         return {false, 0, false, "Miss"};
 
-    u32 damage =
-        atk->calculateDamagePlayer(&user->curPersona->battleStats, &enemy->battleStats, &user->lv, &target->lv);
+    u32 damage = BattleCalcs::attack(*user, *target, *atk);
     bool oneMore = false;
 
-    u32 affinity = enemy->battleStats.affinities[atk->element];
+    u32 affinity = enemy->battleStats.affinities[(u32)atk->element];
     if (affinity == BattleStats::Affinity::Weak && !enemy->knockedDown)
     {
         oneMore = true;

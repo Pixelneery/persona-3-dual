@@ -1,13 +1,13 @@
 #pragma once
-#include "AttackSkill.h"
+#include "Skill.h"
 
-struct Power_Slash : AttackSkill
+struct Power_Slash : Skill
 {
     Power_Slash()
     {
         // TODO: make cost %S
         movePower = 50;
-        element = Slash;
+        element = Element::Slash;
         cost = 7;
         name = "Power_Slash";
         hitRate = 92;

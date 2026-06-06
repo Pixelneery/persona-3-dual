@@ -1,11 +1,12 @@
 #pragma once
-#include "HealSkill.h"
+#include "Skill.h"
 
-struct Dia : HealSkill
+struct Dia : Skill
 {
     Dia()
     {
         movePower = 50;
+        element = Element::Heal;
         cost = 3;
         name = "Dia";
         hitRate = 100;

@@ -1,5 +1,5 @@
 #pragma once
-enum Element
+enum class Element
 {
     Fire,
     Ice,

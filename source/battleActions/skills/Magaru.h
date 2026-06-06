@@ -1,12 +1,12 @@
 #pragma once
-#include "AttackSkill.h"
+#include "Skill.h"
 
-struct Magaru : AttackSkill
+struct Magaru : Skill
 {
     Magaru()
     {
         movePower = 40;
-        element = Wind;
+        element = Element::Wind;
         cost = 8;
         name = "Magaru";
         hitRate = 95;

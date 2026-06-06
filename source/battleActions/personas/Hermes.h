@@ -1,8 +1,8 @@
 #pragma once
 #include "PersonaBase.h"
 
-#include "../skills/AttackSkill.h"
 #include "../skills/Power_Slash.h"
+#include "../skills/Skill.h"
 
 struct Hermes : PersonaBase
 {
@@ -23,15 +23,15 @@ struct Hermes : PersonaBase
         skillCount = 1;
         skills = mySkills;
 
-        battleStats.affinities[Element::Slash] = BattleStats::Neutral;
-        battleStats.affinities[Element::Strike] = BattleStats::Neutral;
-        battleStats.affinities[Element::Pierce] = BattleStats::Neutral;
-        battleStats.affinities[Element::Fire] = BattleStats::Resist;
-        battleStats.affinities[Element::Ice] = BattleStats::Neutral;
-        battleStats.affinities[Element::Electricity] = BattleStats::Neutral;
-        battleStats.affinities[Element::Wind] = BattleStats::Weak;
-        battleStats.affinities[Element::Light] = BattleStats::Neutral;
-        battleStats.affinities[Element::Dark] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Slash] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Strike] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Pierce] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Fire] = BattleStats::Resist;
+        battleStats.affinities[(u32)Element::Ice] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Electricity] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Wind] = BattleStats::Weak;
+        battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
         // add arcana
     }
 };

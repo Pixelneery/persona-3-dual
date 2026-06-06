@@ -1,11 +1,12 @@
 #include "Enemy.h"
 #include "../party/PartyMember.h"
+#include "../skills/BattleCalcs.h"
 #include <stdlib.h>
 
-AttackSkill* Enemy::pickSkill()
+Skill* Enemy::pickSkill()
 {
     u32 roll = rand() % (skillCount + 1);
-    return (roll == 0) ? baseAttackAction : attackSkill[roll - 1];
+    return (roll == 0) ? baseAttackAction : skill[roll - 1];
 }
 
 BattleParticipant* Enemy::pickTarget(std::vector<BattleParticipant*>& partyMembers)
@@ -19,7 +20,7 @@ BattleParticipant* Enemy::pickTarget(std::vector<BattleParticipant*>& partyMembe
     return target;
 }
 
-BattleResult Enemy::resolve(BattleParticipant* target, AttackSkill* skill)
+BattleResult Enemy::resolve(BattleParticipant* target, Skill* skill)
 {
     PartyMember* party = static_cast<PartyMember*>(target);
 
@@ -36,23 +37,19 @@ BattleResult Enemy::resolve(BattleParticipant* target, AttackSkill* skill)
     std::string targetLog = name + " targets " + target->name + "\n";
 
     *resource -= skill->cost;
-    u32 accuracy = skill->calculateHitrateEnemy(&battleStats, &party->curPersona->battleStats, party->shoe);
+    u32 accuracy = BattleCalcs::hitrate(*this, *target, *skill);
     bool hit = accuracy > u32(rand() % 100);
 
     if (!hit)
         return {false, 0, false, targetLog + "Miss"};
 
-    u32 damage = (skill == baseAttackAction)
-                     ? skill->calculateDamageEnemyRegular(
-                           &battleStats, &party->curPersona->battleStats, &lv, &target->lv, party->armour)
-                     : skill->calculateDamageEnemySkill(
-                           &battleStats, &party->curPersona->battleStats, &lv, &target->lv, party->armour);
+    u32 damage = BattleCalcs::attack(*this, *target, *skill);
 
     if (party->guarding)
         damage = (u32)(damage * 0.4f);
 
     bool oneMoreResult = false;
-    u32 affinity = party->curPersona->battleStats.affinities[skill->element];
+    u32 affinity = party->curPersona->battleStats.affinities[(u32)skill->element];
     if (affinity == BattleStats::Affinity::Weak && !party->knockedDown && !party->guarding)
     {
         oneMoreResult = true;

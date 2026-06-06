@@ -182,8 +182,7 @@ void BattleController::update(u32 keys)
 
         if ((int)targetIndex != -1 && (keys & KEY_A))
         {
-            if ((selectedSkill->skillType == SkillType::Attack || selectedSkill->skillType == SkillType::Heal ||
-                 selectedSkill->skillType == SkillType::Buff || selectedSkill->skillType == SkillType::Debuff))
+            if (isSingleTarget(selectedSkill->skillType))
             {
                 targets = {targets[targetIndex]};
             }
@@ -240,7 +239,7 @@ void BattleController::update(u32 keys)
     case BattlePhase::EnemyTurn:
     {
         Enemy* enemy = static_cast<Enemy*>(currentParticipantTurn);
-        AttackSkill* skill = enemy->pickSkill();
+        Skill* skill = enemy->pickSkill();
         BattleParticipant* target = enemy->pickTarget(partyMembers);
         BattleResult battleResult = enemy->resolve(target, skill);
         applyResult(battleResult, target);
@@ -450,4 +449,21 @@ void BattleController::handleDeadParticipants()
     }
 
     pendingAlert += "Previous attacker: " + currentParticipantTurn->name + "\n";
+}
+
+bool BattleController::isSingleTarget(SkillType type)
+{
+    {
+        switch (type)
+        {
+        case SkillType::RegularAttack:
+        case SkillType::Attack:
+        case SkillType::Heal:
+        case SkillType::Buff:
+        case SkillType::Debuff:
+            return true;
+        default:
+            return false;
+        }
+    }
 }

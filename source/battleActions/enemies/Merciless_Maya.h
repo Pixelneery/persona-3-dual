@@ -1,6 +1,6 @@
 #pragma once
 #include "../skills/Agi.h"
-#include "../skills/AttackSkill.h"
+#include "../skills/Skill.h"
 #include "../skills/Strike_Attack.h"
 #include "Enemy.h"
 
@@ -8,12 +8,12 @@ struct Merciless_Maya : Enemy
 {
     Strike_Attack strike_Attack;
     Agi agi;
-    AttackSkill* myAttackSkill[1];
+    Skill* mySkills[1];
 
     Merciless_Maya()
     {
         baseAttackAction = &strike_Attack;
-        myAttackSkill[0] = &agi;
+        mySkills[0] = &agi;
 
         name = "Merciless Maya";
         maxHp = 83;
@@ -26,17 +26,17 @@ struct Merciless_Maya : Enemy
         battleStats.en = 3;
         battleStats.ag = 2;
         battleStats.lu = 2;
-        attackSkill = myAttackSkill;
+        skill = mySkills;
         skillCount = 1;
 
-        battleStats.affinities[Element::Slash] = BattleStats::Weak;
-        battleStats.affinities[Element::Strike] = BattleStats::Neutral;
-        battleStats.affinities[Element::Pierce] = BattleStats::Neutral;
-        battleStats.affinities[Element::Fire] = BattleStats::Resist;
-        battleStats.affinities[Element::Ice] = BattleStats::Weak;
-        battleStats.affinities[Element::Electricity] = BattleStats::Null;
-        battleStats.affinities[Element::Wind] = BattleStats::Neutral;
-        battleStats.affinities[Element::Light] = BattleStats::Neutral;
-        battleStats.affinities[Element::Dark] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Slash] = BattleStats::Weak;
+        battleStats.affinities[(u32)Element::Strike] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Pierce] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Fire] = BattleStats::Resist;
+        battleStats.affinities[(u32)Element::Ice] = BattleStats::Weak;
+        battleStats.affinities[(u32)Element::Electricity] = BattleStats::Null;
+        battleStats.affinities[(u32)Element::Wind] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
+        battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
     }
 };
