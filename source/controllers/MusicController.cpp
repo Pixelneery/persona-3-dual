@@ -2,10 +2,12 @@
 #include <malloc.h>
 #include <nds.h>
 #include <string.h>
+#include <string>
 
 static FILE* s_audioFile = nullptr;
 static bool s_isPaused = false;
 static bool s_streamOpen = false;
+static std::string s_currentFilePath = "";
 static u32 s_elapsedSamples = 0;
 static u32 s_loopStartSamples = 0;
 static u32 s_loopEndSamples = 0;
@@ -110,6 +112,16 @@ MusicController::MusicController()
 
 void MusicController::init(const char* filePath, float loopStartSeconds, float loopEndSeconds)
 {
+    // if the same track is already playing, don't restart it
+    if (s_streamOpen && !s_isVideoAudio && s_currentFilePath == filePath)
+    {
+        if (s_isPaused)
+        {
+            resume();
+        }
+        return;
+    }
+
     cleanup();
 
     s_audioFile = fopen(filePath, "rb");
@@ -122,6 +134,7 @@ void MusicController::init(const char* filePath, float loopStartSeconds, float l
     s_elapsedSamples = 0;
     s_isPaused = false;
     s_isVideoAudio = false;
+    s_currentFilePath = filePath;
 
     s_loopStartSamples = (u32)(loopStartSeconds * AUDIO_SAMPLE_RATE);
     s_loopStartOffset = s_loopStartSamples * BYTES_PER_FRAME;
@@ -258,8 +271,6 @@ void MusicController::cleanup()
     if (s_streamOpen)
     {
         s_isVideoAudio = false;
-        s_audioFile = nullptr;
-
         mmStreamClose();
         s_streamOpen = false;
     }
@@ -268,6 +279,7 @@ void MusicController::cleanup()
         fclose(s_audioFile);
         s_audioFile = nullptr;
     }
+    s_currentFilePath = "";
     if (s_ringBuffer)
     {
         free(s_ringBuffer);
