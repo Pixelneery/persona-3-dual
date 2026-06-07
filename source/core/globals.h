@@ -8,7 +8,6 @@
 #include "controllers/SaveController.h"
 #include "controllers/SpriteController.h"
 #include "controllers/VideoController.h"
-#include "models/character.h"
 
 class MenuHUDComponent;
 class PauseMenuComponent;

@@ -1,6 +1,5 @@
 #include "PauseMenuComponent.h"
 #include "core/globals.h"
-#include "models/character.h"
 #include <nds.h>
 #include <string>
 
