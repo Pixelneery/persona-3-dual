@@ -1,4 +1,5 @@
 #pragma once
+#include "../Element.h"
 #include "SkillRace.h"
 #include "SkillTarget.h"
 #include "SkillType.h"
@@ -9,7 +10,7 @@ struct Skill
 {
     std::string name;
     s32 cost;
-    u32 element;
+    Element element;
     u32 hitRate;
     u32 movePower;
     SkillType skillType;

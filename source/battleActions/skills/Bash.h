@@ -1,12 +1,12 @@
 #pragma once
-#include "AttackSkill.h"
+#include "Skill.h"
 
-struct Bash : AttackSkill
+struct Bash : Skill
 {
     Bash()
     {
         movePower = 30;
-        element = Strike;
+        element = Element::Strike;
         // TODO: should be 10% of hp, add percantage support later
         cost = 10;
         name = "Bash";

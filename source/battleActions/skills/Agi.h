@@ -1,12 +1,12 @@
 #pragma once
-#include "AttackSkill.h"
+#include "Skill.h"
 
-struct Agi : AttackSkill
+struct Agi : Skill
 {
     Agi()
     {
         movePower = 40;
-        element = Fire;
+        element = Element::Fire;
         cost = 3;
         name = "Agi";
         hitRate = 99;

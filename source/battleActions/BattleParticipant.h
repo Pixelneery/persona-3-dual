@@ -1,6 +1,9 @@
 #pragma once
+#include "BattleStats.h"
 #include "ParticipantType.h"
-#include "skills/AttackSkill.h"
+#include "armours/Armour.h"
+#include "shoes/Shoe.h"
+#include "skills/Skill.h"
 #include <nds.h>
 #include <vector>
 
@@ -13,11 +16,16 @@ struct BattleParticipant
     s32 sp;
     u32 lv;
     // TODO: dont think so that all bosses have a basattack, possibly move in the future
-    AttackSkill* baseAttackAction;
+    Skill* baseAttackAction;
     ParticipantType participantType;
+
+    //Enemies have default values
+    Armour* armour;
+    Shoe* shoe;
 
     float currentTurnOrderAgility;
     bool oneMore = false;
-    // knocked will be needed in the future, no use yet
     bool knockedDown = false;
+
+    virtual BattleStats* getBattleStats();
 };

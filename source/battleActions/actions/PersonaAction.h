@@ -1,8 +1,6 @@
 #pragma once
 #include "../enemies/Enemy.h"
 #include "../party/PartyMember.h"
-#include "../skills/AttackSkill.h"
-#include "../skills/HealSkill.h"
 #include "ActionBase.h"
 
 struct PersonaAction : ActionBase
