@@ -7,4 +7,5 @@ enum class ArmourType
     Unisex = Male | Female,
     Robot = 4,
     Dog = 8,
+    Enemy = 16
 };

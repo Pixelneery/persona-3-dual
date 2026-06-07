@@ -10,8 +10,6 @@
 struct PartyMember : BattleParticipant
 {
     ArmourType* armourType;
-    Armour* armour;
-    Shoe* shoe;
     std::vector<PersonaBase*> personas;
     PersonaBase* curPersona;
 
@@ -37,6 +35,12 @@ struct PartyMember : BattleParticipant
         personas = characterProfile->personas;
         curPersona = characterProfile->curPersona;
     }
+
+    BattleStats* getBattleStats() override
+    {
+        return &curPersona->battleStats;
+    }
+
     ~PartyMember()
     {
     }

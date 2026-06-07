@@ -2,7 +2,7 @@
 #include "../ParticipantType.h"
 #include "../personas/PersonaBase.h"
 #include "../shoes/Shoe.h"
-#include "../skills/AttackSkill.h"
+#include "../skills/Skill.h"
 #include <nds.h>
 #include <vector>
 
@@ -20,7 +20,7 @@ struct CharacterProfile
     Armour armour;
     Shoe shoe;
 
-    AttackSkill* baseAttackAction;
+    Skill* baseAttackAction;
     std::vector<PersonaBase*> personas;
 
     PersonaBase* curPersona;

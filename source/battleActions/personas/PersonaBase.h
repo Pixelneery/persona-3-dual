@@ -1,6 +1,6 @@
 #pragma once
 #include "../BattleStats.h"
-#include "../skills/AttackSkill.h"
+#include "../skills/Skill.h"
 #include <nds.h>
 #include <string>
 
