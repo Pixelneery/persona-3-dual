@@ -90,9 +90,13 @@ void IwatodaiStreetsView::init()
     // FEMC: sun, MC: when the moon's reaching out stars, both: changing_seasons (base)
     std::string streetsMusicPath;
     if (saveData.femcMode)
+    {
         streetsMusicPath = "music/locations/iwatodaiStreets/sun.pcm";
+    }
     else
+    {
         streetsMusicPath = "music/locations/iwatodaiStreets/when_the_moons_reaching_out_stars.pcm";
+    }
     musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), 0.0f, -1.0f);
 
     // setup character model
