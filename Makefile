@@ -28,7 +28,7 @@ endif
 #---------------------------------------------------------------------------------
 TARGET      :=  persona-3-dual
 BUILD       :=  build
-SOURCES     :=  source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/helpers
+SOURCES := source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/helpers source/battleActions/armours source/battleActions/personas source/battleActions/shoes
 INCLUDES    :=  include source
 SFX         :=  assets/sfx
 

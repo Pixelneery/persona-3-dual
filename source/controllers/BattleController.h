@@ -15,7 +15,7 @@
 #include "./battleActions/BattleResult.h"
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/party/CharacterProfiles.h"
+#include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
 
 // Battle music tracks

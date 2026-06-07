@@ -7,6 +7,6 @@
 struct Shoe
 {
     u32 evasion = 10;
-    ArmourType armourType = ArmourType::Unisex;
+    ArmourType armourType = ArmourType::Enemy;
     // TODO: add stat boosts / other shenanigans later
 };

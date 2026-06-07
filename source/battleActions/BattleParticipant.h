@@ -27,5 +27,5 @@ struct BattleParticipant
     bool oneMore = false;
     bool knockedDown = false;
 
-    virtual BattleStats* getBattleStats();
+    virtual BattleStats* getBattleStats() = 0;
 };

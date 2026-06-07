@@ -1,8 +1,6 @@
 #pragma once
 #include "../BattleParticipant.h"
 #include "../BattleResult.h"
-#include "../armours/EnemyArmour.h"
-#include "../shoes/EnemyShoe.h"
 #include <nds.h>
 #include <vector>
 
@@ -14,8 +12,6 @@ struct Enemy : BattleParticipant
 
     Enemy()
     {
-        armour = new EnemyArmour;
-        shoe = new EnemyShoe;
         participantType = ParticipantType::Enemy;
     }
 

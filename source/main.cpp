@@ -40,6 +40,14 @@
 #include "models/kotone.h"
 #include "models/makoto.h"
 
+// db's
+#include "battleActions/armours/ArmourDb.h"
+#include "battleActions/enemies/EnemyDb.h"
+#include "battleActions/party/CharacterProfileDb.h"
+#include "battleActions/personas/PersonaDb.h"
+#include "battleActions/shoes/ShoeDb.h"
+#include "battleActions/skills/SkillDb.h"
+
 // variables
 volatile int frame = 0;
 int fps = 0;
@@ -184,6 +192,14 @@ int main(int argc, char* argv[])
 
     // setup character model
     loadModels(saveData.femcMode);
+
+    // setup db's. DO NOT CHANGE order
+    SkillDb::Initialize();
+    ArmourDb::Initialize();
+    ShoeDb::Initialize();
+    PersonaDb::Initialize();
+    EnemyDb::Initialize();
+    CharacterProfiles::Initialize();
 
     // use DS hardware timer for reliable randomness (time() can return 0 on DS)
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
