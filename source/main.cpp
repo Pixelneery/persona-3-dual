@@ -37,7 +37,7 @@
 #include "soundbank_bin.h"
 
 // character models
-#include "models/character.h"
+#include "models/kotone.h"
 #include "models/makoto.h"
 
 // variables
@@ -58,13 +58,13 @@ GraphicsController graphicsCtrl;
 // models
 unsigned int** bitmapsCharacter = nullptr;
 
-static unsigned int* bitmapsKotone[MODEL_CHARACTER_TEX_COUNT] = {nullptr};
+static unsigned int* bitmapsKotone[MODEL_KOTONE_TEX_COUNT] = {nullptr};
 static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
 
 // TODO: figure out a way to unload after being copied to ram
 static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
 {
-    std::string basePath = fatBasePath + "models/" + (isFemc ? "character/" : "makoto/");
+    std::string basePath = fatBasePath + "models/" + (isFemc ? "kotone/" : "makoto/");
     GraphicAsset asset = graphicsCtrl.loadGrit(basePath + name);
     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
     // graphicsCtrl.unloadGrit(asset);
@@ -113,11 +113,11 @@ void loadModels(bool isFemc)
     // Kotone
     if (isFemc)
     {
-        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] = loadCharacterTexture("character_texture_0", true);
-        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] = loadCharacterTexture("character_texture_1", true);
-        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] = loadCharacterTexture("character_texture_2", true);
-        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = loadCharacterTexture("character_texture_3", true);
-        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = loadCharacterTexture("character_texture_4", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_0] = loadCharacterTexture("kotone_texture_0", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_1] = loadCharacterTexture("kotone_texture_1", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_2] = loadCharacterTexture("kotone_texture_2", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_3] = loadCharacterTexture("kotone_texture_3", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_4] = loadCharacterTexture("kotone_texture_4", true);
 
         bitmapsCharacter = bitmapsKotone;
     }

@@ -12,7 +12,7 @@
 #include <string>
 
 // model
-#include "models/character.h"
+#include "models/kotone.h"
 #include "models/makoto.h"
 
 static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
@@ -93,11 +93,11 @@ void StationView::init()
     // setup character model
     std::string modelPath = fatBasePath + "models/";
     characterAnimationCtrl.loadModel(
-        (modelPath + (saveData.femcMode ? "character/character.bin" : "makoto/makoto.bin")).c_str());
+        (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
 
     if (saveData.femcMode)
     {
-        character_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+        kotone_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
     else
     {
