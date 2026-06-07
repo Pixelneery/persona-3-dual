@@ -30,6 +30,7 @@ class IwatodaiDormView : public BaseView
     int characterTextureId;
     iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
+    bool prevBattleState;
     // init Character Profiles
     CharacterProfiles characterProfiles;
     // Battle participants
@@ -65,4 +66,6 @@ class IwatodaiDormView : public BaseView
     int bgSharedSlot;
     int totalPolyCount = 0;
     bool isBattleMenuActive = false;
+
+    void setMusic();
 };

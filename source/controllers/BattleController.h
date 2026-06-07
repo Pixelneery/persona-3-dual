@@ -18,26 +18,6 @@
 #include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
 
-// Battle music tracks
-static const int GN_TRACK_COUNT   = 5;
-static const int FEMC_TRACK_COUNT = 2;
-static const int MC_TRACK_COUNT   = 1;
-
-static const char* GN_TRACKS[GN_TRACK_COUNT] = {
-    "music/battle/laser_beam.pcm",
-    "music/battle/mass_destruction.pcm",
-    "music/battle/burn_my_dread_last_battle.pcm",
-    "music/battle/mass_destruction_reincarnation.pcm",
-    "music/battle/light_the_fire_up_kagejikan.pcm",
-};
-static const char* FEMC_TRACKS[FEMC_TRACK_COUNT] = {
-    "music/battle/danger_zone.pcm",
-    "music/battle/wiping_all_out.pcm",
-};
-static const char* MC_TRACKS[MC_TRACK_COUNT] = {
-    "music/battle/light_the_fire_up_mayonaka.pcm",
-};
-
 enum class BattlePhase
 {
     ChooseAction,

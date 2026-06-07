@@ -30,6 +30,7 @@ class PaulowniaMallView : public BaseView
     int characterTextureId;
     paulownia_mall_Environment paulowniaMallEnv;
 
+    bool prevBattleState;
     // init Character Profiles
     CharacterProfiles characterProfiles;
     // Battle participants
@@ -65,4 +66,6 @@ class PaulowniaMallView : public BaseView
     int bgSharedSlot;
     int totalPolyCount = 0;
     bool isBattleMenuActive = false;
+
+    void setMusic();
 };

@@ -14,10 +14,15 @@
 #include "maps/iwatodai_dorm_floor_1.h"
 #include <string>
 
-static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
+const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = graphicsCtrl.loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
+}
+
+void IwatodaiDormView::setMusic()
+{
+    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
 }
 
 // TODO: dont forget to clear in future
@@ -99,7 +104,7 @@ void IwatodaiDormView::init()
                                          true);
 
     // setup music
-    musicCtrl.init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 0.0f, 920.973f);
+    setMusic();
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
@@ -242,6 +247,7 @@ void IwatodaiDormView::init()
 
     // setup battle menu
     battleMenuCmpt.init(-1, &isBattleMenuActive);
+    prevBattleState = false;
 }
 
 ViewState IwatodaiDormView::update()
@@ -254,6 +260,13 @@ ViewState IwatodaiDormView::update()
     scanKeys();
     u32 keys = keysHeld();
     u32 pressed = keysDown();
+
+    // resume music when battle 1. is no longer active, 2. when is previously was active
+    if (!battleController.isActive() && prevBattleState)
+    {
+        prevBattleState = false;
+        IwatodaiDormView::setMusic();
+    }
 
     if (pressed & KEY_START)
     {
@@ -306,6 +319,7 @@ ViewState IwatodaiDormView::update()
             if (keys & KEY_Y)
             {
                 battleController.execute();
+                prevBattleState = true;
             }
 
             bgHide(bgSharedSlot);

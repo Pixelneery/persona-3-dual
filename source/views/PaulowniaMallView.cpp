@@ -18,6 +18,12 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
+void PaulowniaMallView::setMusic()
+{
+    musicCtrl.init(
+        (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 0.0f, 920.973f);
+}
+
 // TODO: dont forget to clear in future
 PaulowniaMallView::PaulowniaMallView()
     : battleParticipants(new std::vector<BattleParticipant*>({&mercilessMaya, &cowardlyMaya})),
@@ -97,8 +103,7 @@ void PaulowniaMallView::init()
                                          false);
 
     // setup music
-    musicCtrl.init(
-        (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 0.0f, 920.973f);
+    setMusic();
 
     // setup character model
     std::string modelPath = fatBasePath + "models/";
@@ -212,6 +217,7 @@ void PaulowniaMallView::init()
 
     // setup battle menu
     battleMenuCmpt.init(-1, &isBattleMenuActive);
+    prevBattleState = false;
 }
 
 ViewState PaulowniaMallView::update()
@@ -224,6 +230,13 @@ ViewState PaulowniaMallView::update()
     scanKeys();
     u32 keys = keysHeld();
     u32 pressed = keysDown();
+
+    // resume music when battle 1. is no longer active, 2. when is previously was active
+    if (!battleController.isActive() && prevBattleState)
+    {
+        prevBattleState = false;
+        PaulowniaMallView::setMusic();
+    }
 
     if (pressed & KEY_START)
     {
@@ -276,6 +289,7 @@ ViewState PaulowniaMallView::update()
             if (keys & KEY_Y)
             {
                 battleController.execute();
+                prevBattleState = true;
             }
 
             bgHide(bgSharedSlot);
