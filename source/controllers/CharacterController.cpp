@@ -114,11 +114,9 @@ CameraPosition CharacterController::update(u32 keys)
     if (deltaX != 0.0f && deltaZ != 0.0f)
     {
         // set walking animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() !=
-                                    MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER))
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != characterWalkAnim))
         {
-            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0002_ROOT_MODEL_MOTION_0002_LAYER,
-                                       true);
+            characterAnimationCtrl.set(characterWalkAnim, true);
         }
 
         // normalize diagonal movement to prevent faster speed
@@ -129,11 +127,9 @@ CameraPosition CharacterController::update(u32 keys)
     else
     {
         // set idle animation
-        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() !=
-                                    MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER))
+        if (enableCharacterAnim && (characterAnimationCtrl.getCurrentAnimIndex() != characterIdleAnim))
         {
-            characterAnimationCtrl.set(MODEL_CHARACTER_ROOT_BONE_ROOT_MODEL_MOTION_0021_ROOT_MODEL_MOTION_0021_LAYER,
-                                       true);
+            characterAnimationCtrl.set(characterIdleAnim, true);
         }
     }
     characterAnimationCtrl.play();

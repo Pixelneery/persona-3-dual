@@ -18,15 +18,14 @@ extern volatile int frame;
 extern int fps;
 extern int fpsTimer;
 extern std::string fatBasePath;
-// TODO: save introVideoPath, names into some sort of .sav file when save support is implemented
 extern Save saveData;
+extern unsigned int** bitmapsCharacter;
 
 // controllers
 extern SaveController saveCtrl;
 extern MusicController musicCtrl;
 extern VideoController videoCtrl;
 extern AnimationController characterAnimationCtrl;
-extern const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
 extern SpriteController spriteCtrl;
 extern GraphicsController graphicsCtrl;
 

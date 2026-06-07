@@ -13,6 +13,7 @@
 
 // model
 #include "models/character.h"
+#include "models/makoto.h"
 
 static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
@@ -90,8 +91,19 @@ void IwatodaiStreetsView::init()
     musicCtrl.init((fatBasePath + "music/changing_seasons.pcm").c_str(), 0.0f, -1.0f);
 
     // setup character model
-    characterAnimationCtrl.loadModel((fatBasePath + "models/character/character.bin").c_str());
-    character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
+    // setup character model
+    std::string modelPath = fatBasePath + "models/";
+    characterAnimationCtrl.loadModel(
+        (modelPath + (saveData.femcMode ? "character/character.bin" : "makoto/makoto.bin")).c_str());
+
+    if (saveData.femcMode)
+    {
+        character_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+    }
+    else
+    {
+        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+    }
 
     // setup environment model
     GraphicAsset envTextures[IWATODAI_STREETS_TEX_COUNT] = {};

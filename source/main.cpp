@@ -56,15 +56,19 @@ SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;
 
 // models
-// TODO: switch enum values depending on femcMode
-const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
-static GraphicAsset characterTextureAssets[MODEL_CHARACTER_TEX_COUNT];
+unsigned int** bitmapsCharacter = nullptr;
 
-static const unsigned int* loadCharacterTexture(const std::string& name, GraphicAsset& asset, bool isFemc)
+static unsigned int* bitmapsKotone[MODEL_CHARACTER_TEX_COUNT] = {nullptr};
+static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
+
+// TODO: figure out a way to unload after being copied to ram
+static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
 {
     std::string basePath = fatBasePath + "models/" + (isFemc ? "character/" : "makoto/");
-    asset = graphicsCtrl.loadGrit(basePath + name);
-    return reinterpret_cast<const unsigned int*>(asset.tiles);
+    GraphicAsset asset = graphicsCtrl.loadGrit(basePath + name);
+    unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
+    // graphicsCtrl.unloadGrit(asset);
+    return tiles;
 }
 
 // components
@@ -109,30 +113,24 @@ void loadModels(bool isFemc)
     // Kotone
     if (isFemc)
     {
-        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] = loadCharacterTexture(
-            "character_texture_0", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0], true);
-        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] = loadCharacterTexture(
-            "character_texture_1", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1], true);
-        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] = loadCharacterTexture(
-            "character_texture_2", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2], true);
-        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = loadCharacterTexture(
-            "character_texture_3", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3], true);
-        bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = loadCharacterTexture(
-            "character_texture_4", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4], true);
+        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] = loadCharacterTexture("character_texture_0", true);
+        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] = loadCharacterTexture("character_texture_1", true);
+        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] = loadCharacterTexture("character_texture_2", true);
+        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] = loadCharacterTexture("character_texture_3", true);
+        bitmapsKotone[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] = loadCharacterTexture("character_texture_4", true);
+
+        bitmapsCharacter = bitmapsKotone;
     }
     // Makoto
     else
     {
-        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] =
-            loadCharacterTexture("makoto_texture_0", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0], false);
-        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] =
-            loadCharacterTexture("makoto_texture_1", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1], false);
-        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] =
-            loadCharacterTexture("makoto_texture_2", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2], false);
-        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] =
-            loadCharacterTexture("makoto_texture_3", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3], false);
-        bitmapsCharacter[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] =
-            loadCharacterTexture("makoto_texture_4", characterTextureAssets[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4], false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] = loadCharacterTexture("makoto_texture_0", false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] = loadCharacterTexture("makoto_texture_1", false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] = loadCharacterTexture("makoto_texture_2", false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] = loadCharacterTexture("makoto_texture_3", false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] = loadCharacterTexture("makoto_texture_4", false);
+
+        bitmapsCharacter = bitmapsMakoto;
     }
 }
 
@@ -192,7 +190,7 @@ int main(int argc, char* argv[])
     srand(TIMER0_DATA);
 
     // start with DisclaimerView
-    SwitchView(new IwatodaiDormView());
+    SwitchView(new DisclaimerView());
 
     while (pmMainLoop())
     {

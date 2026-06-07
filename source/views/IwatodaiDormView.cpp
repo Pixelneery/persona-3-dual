@@ -7,6 +7,7 @@
 
 // model
 #include "models/character.h"
+#include "models/makoto.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
 // maps
@@ -104,7 +105,15 @@ void IwatodaiDormView::init()
     std::string modelPath = fatBasePath + "models/";
     characterAnimationCtrl.loadModel(
         (modelPath + (saveData.femcMode ? "character/character.bin" : "makoto/makoto.bin")).c_str());
-    character_loadTextures(characterAnimationCtrl, bitmapsCharacter);
+
+    if (saveData.femcMode)
+    {
+        character_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+    }
+    else
+    {
+        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+    }
 
     // setup environment model
     GraphicAsset envTextures[IWATODAI_DORM_FLOOR_1_TEX_COUNT] = {};
