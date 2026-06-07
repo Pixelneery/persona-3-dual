@@ -16,7 +16,8 @@ Now, export the GMO model as a .fbx file, with the ```-fbxmultitake -fbxtexrel -
 ![Export settings](/docs/imgs/models/Noesis_4.png)
 
 Once you have exported the .fbx, you are ready to import the model into Blender!
-> **NOTE**: If you run into an issue where the textures will not load, it is most likely they have the wrong path. This is a known issue when using *Noesis via Crossover on MacOS*. You will need to open the .fbx file in a text editor, and update all ```RelativeFilename``` entries to ensure that ```RelativeFilename``` just has file name (no path)
+> **NOTE**: If you run into an issue where the textures will not load, it is most likely they have the wrong path. This is a known issue when using *Noesis via Crossover on MacOS*. You will need to open the .fbx file in a text editor, and update all ```RelativeFilename``` and ```RelPath``` entries to ensure that ```RelativeFilename``` just has file name (no path)
+![FBX Issue](/docs/imgs/models/fbx_rename.png)
 
 ## Optimize Models
 To optimize character models, install the nds_model_optimizer.py Blender plugin in tools/plugins/blender.

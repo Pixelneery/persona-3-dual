@@ -36,7 +36,9 @@
 // sfx
 #include "soundbank_bin.h"
 
-#include "models/character.h"
+// character models
+#include "models/kotone.h"
+#include "models/makoto.h"
 
 // db's
 #include "battleActions/armours/ArmourDb.h"
@@ -58,15 +60,23 @@ SaveController saveCtrl;
 MusicController musicCtrl;
 VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
-const unsigned int* bitmapsCharacter[MODEL_CHARACTER_TEX_COUNT];
-static GraphicAsset characterTextureAssets[MODEL_CHARACTER_TEX_COUNT];
 SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;
 
-static const unsigned int* loadCharacterTexture(const std::string& name, GraphicAsset& asset)
+// models
+unsigned int** bitmapsCharacter = nullptr;
+
+static unsigned int* bitmapsKotone[MODEL_KOTONE_TEX_COUNT] = {nullptr};
+static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
+
+// TODO: figure out a way to unload after being copied to ram
+static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
 {
-    asset = graphicsCtrl.loadGrit(fatBasePath + "models/character/" + name);
-    return reinterpret_cast<const unsigned int*>(asset.tiles);
+    std::string basePath = fatBasePath + "models/" + (isFemc ? "kotone/" : "makoto/");
+    GraphicAsset asset = graphicsCtrl.loadGrit(basePath + name);
+    unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
+    // graphicsCtrl.unloadGrit(asset);
+    return tiles;
 }
 
 // components
@@ -79,6 +89,7 @@ MenuHUDComponent menuHUDCmpt;
 BattleMenuComponent battleMenuCmpt;
 
 BaseView* currentView = nullptr;
+bool prevFemcMode;
 
 void SwitchView(BaseView* newView)
 {
@@ -103,6 +114,32 @@ void SwitchView(BaseView* newView)
 void Vblank()
 {
     frame++;
+}
+
+void loadModels(bool isFemc)
+{
+    // Kotone
+    if (isFemc)
+    {
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_0] = loadCharacterTexture("kotone_texture_0", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_1] = loadCharacterTexture("kotone_texture_1", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_2] = loadCharacterTexture("kotone_texture_2", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_3] = loadCharacterTexture("kotone_texture_3", true);
+        bitmapsKotone[MODEL_KOTONE_TEX_KOTONE_TEXTURE_4] = loadCharacterTexture("kotone_texture_4", true);
+
+        bitmapsCharacter = bitmapsKotone;
+    }
+    // Makoto
+    else
+    {
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_0] = loadCharacterTexture("makoto_texture_0", false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_1] = loadCharacterTexture("makoto_texture_1", false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_2] = loadCharacterTexture("makoto_texture_2", false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_3] = loadCharacterTexture("makoto_texture_3", false);
+        bitmapsMakoto[MODEL_MAKOTO_TEX_MAKOTO_TEXTURE_4] = loadCharacterTexture("makoto_texture_4", false);
+
+        bitmapsCharacter = bitmapsMakoto;
+    }
 }
 
 int main(int argc, char* argv[])
@@ -151,17 +188,10 @@ int main(int argc, char* argv[])
         }
     }
 
+    prevFemcMode = saveData.femcMode;
+
     // setup character model
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0] =
-        loadCharacterTexture("character_texture_0", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_0]);
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1] =
-        loadCharacterTexture("character_texture_1", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_1]);
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2] =
-        loadCharacterTexture("character_texture_2", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_2]);
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3] =
-        loadCharacterTexture("character_texture_3", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_3]);
-    bitmapsCharacter[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4] =
-        loadCharacterTexture("character_texture_4", characterTextureAssets[MODEL_CHARACTER_TEX_CHARACTER_TEXTURE_4]);
+    loadModels(saveData.femcMode);
 
     // setup db's. DO NOT CHANGE order
     SkillDb::Initialize();
@@ -181,6 +211,12 @@ int main(int argc, char* argv[])
     while (pmMainLoop())
     {
         swiWaitForVBlank();
+
+        if (saveData.femcMode != prevFemcMode)
+        {
+            loadModels(saveData.femcMode);
+            prevFemcMode = saveData.femcMode;
+        }
 
         // check state of currentView
         if (currentView != nullptr)

@@ -1,8 +1,8 @@
 """
 NDS Model Exporter for Blender
 Author: P3D Team
-Version: 2.1.3 (Bake World Space Geometry + Texture Name Sync + Axis Fix)
-Blender: 3.x / 4.x
+Version: 2.1.4 (Bake World Space Geometry + Texture Name Sync + Axis Fix + Blender 5.x Support)
+Blender: 3.x / 4.x / 5.x
 """
 
 import bpy
@@ -22,7 +22,7 @@ from bpy_extras.io_utils import ExportHelper
 bl_info = {
     "name": "NDS Model Exporter",
     "author": "P3D Team",
-    "version": (2, 1, 3),
+    "version": (2, 1, 4),
     "blender": (3, 0, 0),
     "location": "File > Export > NDS Model (.zip)",
     "description": "Exports armature + mesh baked into Blender World Space",
@@ -243,11 +243,46 @@ def collect_animations(arm_obj, bone_list, scene, correction: mathutils.Matrix):
     animations, original_frame = {}, scene.frame_current
 
     def export_action(action, anim_name):
-        f_start, f_end = int(action.frame_range[0]), int(action.frame_range[1])
+        f_start, f_end = float("inf"), float("-inf")
+        target_fcurves = []
+
+        # Determine the correct F-Curve path based on the Blender version
+        if hasattr(action, "slots") and len(action.slots) > 0:
+            # Blender 5.0+ Slotted API
+            for layer in getattr(action, "layers", []):
+                for strip in getattr(layer, "strips", []):
+                    # Try to grab frame ranges from the strips if they exist
+                    if hasattr(strip, "frame_start"):
+                        f_start = min(f_start, strip.frame_start)
+                        f_end = max(f_end, strip.frame_end)
+
+                    for slot in action.slots:
+                        if hasattr(strip, "channelbag"):
+                            bag = strip.channelbag(slot)
+                            if bag and getattr(bag, "fcurves", None):
+                                target_fcurves.extend(bag.fcurves)
+        elif hasattr(action, "fcurves"):
+            # Blender 4.x and below Legacy API
+            target_fcurves = action.fcurves
+            if hasattr(action, "frame_range"):
+                f_start, f_end = action.frame_range[0], action.frame_range[1]
+
+        # Fallback: If frame range wasn't found, calculate it from the keyframes
+        if f_start == float("inf"):
+            for fcurve in target_fcurves:
+                for kp in getattr(fcurve, "keyframe_points", []):
+                    f_start = min(f_start, kp.co[0])
+                    f_end = max(f_end, kp.co[0])
+
+            if f_start == float("inf"):
+                f_start, f_end = 0, 0
+
+        f_start, f_end = int(f_start), int(f_end)
+
         anim_data = {"duration": f_end - f_start + 1, "tracks": {}}
         bone_frames = defaultdict(set)
 
-        for fcurve in action.fcurves:
+        for fcurve in target_fcurves:
             if not fcurve.data_path.startswith("pose.bones"):
                 continue
             try:
@@ -275,13 +310,26 @@ def collect_animations(arm_obj, bone_list, scene, correction: mathutils.Matrix):
     if not arm_obj.animation_data:
         arm_obj.animation_data_create()
 
-    orig_action = arm_obj.animation_data.action
+    orig_action = getattr(arm_obj.animation_data, "action", None)
+    orig_slot = getattr(arm_obj.animation_data, "action_slot", None)
 
     for action in bpy.data.actions:
         arm_obj.animation_data.action = action
+        # Blender 5.x requires assigning an action slot for the animation to play
+        if (
+            hasattr(arm_obj.animation_data, "action_suitable_slots")
+            and arm_obj.animation_data.action_suitable_slots
+        ):
+            arm_obj.animation_data.action_slot = (
+                arm_obj.animation_data.action_suitable_slots[0]
+            )
+
         export_action(action, action.name)
 
+    # Restore original state
     arm_obj.animation_data.action = orig_action
+    if orig_slot and hasattr(arm_obj.animation_data, "action_slot"):
+        arm_obj.animation_data.action_slot = orig_slot
 
     scene.frame_set(original_frame)
     return animations

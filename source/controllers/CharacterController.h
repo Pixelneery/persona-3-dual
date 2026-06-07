@@ -1,8 +1,13 @@
 #pragma once
 #include "core/enums.h"
 #include "core/geometry.h"
+#include "core/globals.h"
 #include "core/structs.h"
 #include <stdint.h>
+
+// models
+#include "models/kotone.h"
+#include "models/makoto.h"
 
 class CharacterController
 {
@@ -11,6 +16,12 @@ class CharacterController
     const int mapWidth;
     const int mapHeight;
     const uint8_t* collisionMap;
+
+    // animations
+    int characterWalkAnim =
+        saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION_0002 : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION_0002;
+    int characterIdleAnim =
+        saveData.femcMode ? (int)MODEL_KOTONE_ROOT_MODEL_MOTION : (int)MODEL_MAKOTO_PLAYER_ROOT_MODEL_MOTION;
 
     // world
     const float tileSize;
