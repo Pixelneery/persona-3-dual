@@ -7,6 +7,7 @@
 struct Weapon
 {
     u32 weaponPower;
-    WeaponType hitRate;
+    u32 hitRate;
+    WeaponType weaponType;
     // TODO: add stat boosts / other shenanigans later
 };
