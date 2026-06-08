@@ -3,6 +3,7 @@
 void MenuHUDComponent::loadHUD()
 {
     bgLoaded = false;
+    spriteCtrl.spritePath = "graphics/MenuHUD/sprites/";
 
     // setup sprites
     // moon

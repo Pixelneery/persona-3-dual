@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <nds.h>
 #include <stdio.h>
+#include <string>
 
 // model
 #include "models/kotone.h"
@@ -12,7 +13,11 @@
 #include "dialogue/demo_dialogue.h"
 // maps
 #include "maps/iwatodai_dorm_floor_1.h"
-#include <string>
+
+// debug
+#include "components/DialogueComponent.h"
+
+DialogueComponent dialogueCmpt;
 
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
@@ -82,7 +87,7 @@ void IwatodaiDormView::init()
 
     // setup menuHUD
     // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
-    menuHUDCmpt.loadHUD();
+    dialogueCmpt.loadHUD();
 
     // setup player controller
     // TODO: add mapping
@@ -277,7 +282,7 @@ ViewState IwatodaiDormView::update()
     if (pressed & KEY_TOUCH)
     {
         touchRead(&touch);
-        if (menuHUDCmpt.isMenuTouchArea(&touch))
+        if (dialogueCmpt.isMenuTouchArea(&touch))
         {
             isPauseMenuActive = true;
         }
@@ -286,14 +291,14 @@ ViewState IwatodaiDormView::update()
     // draw menuHUD
     if (!dialogueCtrl.isActive() && !battleController.isActive() && !isPauseMenuActive)
     {
-        menuHUDCmpt.drawHUD(&bgMenuHUD);
+        dialogueCmpt.drawHUD(&bgMenuHUD);
         bgShow(bgMenuHUD);
     }
     // hide menuHUD if dialogue, battle, or pauseMenu is active
     else
     {
-        bgHide(bgMenuHUD);
-        oamClear(&oamSub, 0, 0);
+        // bgHide(bgMenuHUD);
+        // oamClear(&oamSub, 0, 0);
     }
 
     // render pauseMenu

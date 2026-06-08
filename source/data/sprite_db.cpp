@@ -73,7 +73,17 @@ static const SpriteDBEntry SPRITE_DB_ENTRY[] = {
     {SpriteType::TIME, static_cast<int>(TimeSprite::MORNING_1_0), "morning-1-0"},
 
     {SpriteType::SKILL_SPRITE, static_cast<int>(SkillSprite::SKILLS_LEVEL), "skills-level"},
-    {SpriteType::DIGIT, static_cast<int>(DigitSprite::SLASH), "slash"}};
+    {SpriteType::DIGIT, static_cast<int>(DigitSprite::SLASH), "slash"},
+
+    // Dialogue
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::NAME_TAG), "nameTag"},
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::NAME_TAG_FEMC), "nameTagFEMC"},
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CALENDAR), "calendar"},
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::CALENDAR), "calendarFEMC"},
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_CORNER), "textCorner"},
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_CORNER_FEMC), "textCornerFEMC"},
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_MIDDLE), "textMiddle"},
+    {SpriteType::DIALOGUE, static_cast<int>(DialogueSprite::TEXT_MIDDLE_FEMC), "textMiddleFEMC"}};
 
 static const int SPRITE_DB_ENTRY_LEN = sizeof(SPRITE_DB_ENTRY) / sizeof(SPRITE_DB_ENTRY[0]);
 
