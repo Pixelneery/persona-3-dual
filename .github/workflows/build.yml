@@ -212,8 +212,7 @@ jobs:
           fi
 
       # Cache compiled object files so unchanged source files are not recompiled.
-      # Keyed to the full tree hash so any source change produces a fresh key,
-      # but restore-keys fall back to the most recent build for incremental reuse.
+      # Keyed to a hash of all compiled source files
       - name: Cache build objects
         uses: actions/cache@v5
         with:
@@ -338,7 +337,7 @@ jobs:
           {
             echo "Automated build from commit \`${{ github.sha }}\` on \`${{ github.ref_name }}\`"
             echo ""
-            echo "## What's Changed${SINCE_MSG}"
+            echo "## Changes${SINCE_MSG}"
             echo "${CHANGES}"
             echo ""
             echo "## Release Assets"
@@ -347,32 +346,13 @@ jobs:
             echo "| \`persona-3-dual.nds\` | ROM - required for both emulator and hardware |"
             echo "| \`sdcard.img.gz\` | melonDS emulator - decompress & mount via DLDI settings |"
             echo "| \`data.zip\` | Real hardware - extract and place \`data/\` next to the ROM on your SD card |"
+            echo "See [melonDS](https://github.com/p3d-project/persona-3-dual#running-the-game) for installation instructions"
             echo ""
             echo "## Checksums"
             echo "| Algorithm | Hash |"
             echo "|-----------|------|"
             echo "| SHA-256   | \`${{ steps.checksums.outputs.sha256 }}\` |"
             echo "| MD5       | \`${{ steps.checksums.outputs.md5 }}\` |"
-            echo ""
-            echo "## Playing on 3DS"
-            echo ""
-            echo "### Auto-Updates (Universal Updater)"
-            echo "1. Install [Universal Updater](https://github.com/Universal-Team/Universal-Updater/releases) if you haven't already"
-            echo "2. Open Universal Updater, go to **Settings** > **Select UniStore** > tap the **+** icon at the bottom"
-            echo "3. Scan the QR code below with the QR icon, or tap the keyboard icon and enter the URL manually:"
-            echo ""
-            echo "![UniStore QR Code](https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/unistore/unistore-qr.png)"
-            echo ""
-            echo "\`https://raw.githubusercontent.com/p3d-project/persona-3-dual/main/unistore/p3d.unistore\`"
-            echo "4. Find **Persona 3 Dual** in the store and tap **Install/Update**"
-            echo ""
-            echo "### Home Menu Shortcut (Forwarder)"
-            echo "Only needs to be done once, after installing via Universal Updater above."
-            echo "1. Install **NDS Forwarder Generator** via Universal Updater"
-            echo "2. Launch it and navigate to \`/roms/nds/persona-3-dual.nds\`, select it"
-            echo "3. It generates a \`.cia\` file on your SD card"
-            echo "4. Open **FBI**, navigate to the \`.cia\`, and install it"
-            echo "5. Persona 3 Dual now appears as a tile on your 3DS home menu"
           } > release-notes.md
 
           echo "--- Release notes preview ---"
