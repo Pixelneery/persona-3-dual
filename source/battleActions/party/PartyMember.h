@@ -4,6 +4,7 @@
 #include "../armours/Armour.h"
 #include "../personas/PersonaBase.h"
 #include "../shoes/Shoe.h"
+#include "../weapons/Weapon.h"
 #include "CharacterProfile.h"
 #include <nds.h>
 
@@ -12,6 +13,8 @@ struct PartyMember : BattleParticipant
     ArmourType* armourType;
     std::vector<PersonaBase*> personas;
     PersonaBase* curPersona;
+    WeaponType weaponType;
+    Weapon weapon;
 
     bool guarding = false;
 
@@ -32,6 +35,8 @@ struct PartyMember : BattleParticipant
         armourType = &characterProfile->armourType;
         armour = &characterProfile->armour;
         shoe = &characterProfile->shoe;
+        weaponType = characterProfile->weaponType;
+        weapon = characterProfile->weapon;
         personas = characterProfile->personas;
         curPersona = characterProfile->curPersona;
     }
@@ -40,6 +45,9 @@ struct PartyMember : BattleParticipant
     {
         return &curPersona->battleStats;
     }
+
+    float calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
+    float getTeamMultiplier() override;
 
     ~PartyMember()
     {

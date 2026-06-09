@@ -14,7 +14,7 @@ Skill SkillDb::strikeAttack;
 void SkillDb::Initialize()
 {
     /*--------------REGULAR ATTACKS--------------*/
-    slashAttack.movePower = 10;
+    slashAttack.movePower = 15;
     slashAttack.element = Element::Slash;
     slashAttack.cost = 0;
     slashAttack.name = "Slash_Attack";
@@ -23,7 +23,7 @@ void SkillDb::Initialize()
     slashAttack.skillTarget = SkillTarget::OppositionTeam;
     slashAttack.skillType = SkillType::RegularAttack;
 
-    strikeAttack.movePower = 10;
+    strikeAttack.movePower = 15;
     strikeAttack.element = Element::Strike;
     strikeAttack.cost = 0;
     strikeAttack.name = "Strike_Attack";
@@ -32,7 +32,7 @@ void SkillDb::Initialize()
     strikeAttack.skillTarget = SkillTarget::OppositionTeam;
     strikeAttack.skillType = SkillType::RegularAttack;
 
-    pierceAttack.movePower = 10;
+    pierceAttack.movePower = 15;
     pierceAttack.element = Element::Pierce;
     pierceAttack.cost = 0;
     pierceAttack.name = "Pierce_Attack";
