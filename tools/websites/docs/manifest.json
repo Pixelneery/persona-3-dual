@@ -31,13 +31,13 @@
             "file": "md/ART_REFERENCE.md",
             "title": "Art Reference",
             "desc": "Reference document.",
-            "section": "References",
+            "section": "References"
         },
         {
             "file": "md/DEV_REFERENCE.md",
             "title": "Dev Reference",
             "desc": "Reference document.",
-            "section": "References",
+            "section": "References"
         },
         {
             "file": "md/COLLISION.md",
