@@ -210,10 +210,11 @@ npm run build
 
 | Role | Tools |
 |---|---|
-| Graphic Designer | [GIMP](https://www.gimp.org), [Aseprite](https://www.aseprite.org) |
-| Sprite Work | [GIMP](https://www.gimp.org), [Aseprite](https://www.aseprite.org) |
+| Graphic Designer | [GIMP](https://www.gimp.org), [Libresprite](https://libresprite.github.io/#!/), [Aseprite](https://www.aseprite.org) |
+| Sprite Work | [GIMP](https://www.gimp.org), [Libresprite](https://libresprite.github.io/#!/), [Aseprite](https://www.aseprite.org) |
 | Modeling | [Blender](https://www.blender.org) |
-| Ripper | Noesis |
+| Ripper | [Noesis](https://richwhitehouse.com/index.php?content=inc_projects.php&showproject=91) |
+
 
 ### Workflow
 

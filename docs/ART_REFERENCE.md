@@ -63,7 +63,7 @@ In indexed mode, **palette index 0 is reserved for transparency**. Whatever colo
 
 This is why many of our source assets have a **pink/magenta background** - it's a convention to use a color that's visually obvious and unlikely to appear in the actual artwork. When the asset is converted, that color is placed in palette slot 0 and becomes transparent in-game.
 
-> **When exporting assets:** Make sure your transparency color is in palette slot 0. In GIMP, you can control this directly in the indexed palette editor. In Aseprite, set your transparent color index to 0.
+> **When exporting assets:** Make sure your transparency color is in palette slot 0. In GIMP, you can control this directly in the indexed palette editor. In Aseprite/Libresprite, set your transparent color index to 0.
 
 ### Standard palette mode vs. Extended palettes
 
@@ -90,7 +90,7 @@ The DS uses a **15-bit color format (BGR555)** - 5 bits per channel (red, green,
 
 ### What this means for you
 
-Any colors you pick in Photoshop, GIMP, or Aseprite will be **rounded down to the nearest DS-supported color** during conversion. You won't see this in your source files, but you will see it in-game or in the emulator.
+Any colors you pick in GIMP, or Aseprite/Libresprite will be **rounded down to the nearest DS-supported color** during conversion. You won't see this in your source files, but you will see it in-game or in the emulator.
 
 Each channel (R, G, B) can only have **32 distinct values** (0–31) rather than 256. Colors that are close together in your source file may appear identical on hardware.
 
@@ -113,7 +113,7 @@ Each channel (R, G, B) can only have **32 distinct values** (0–31) rather than
 | Sprites | Indexed PNG | Palette slot 0 = transparency color |
 | Tiled backgrounds | Indexed PNG | Align content to 8×8 grid |
 | Bitmap backgrounds | PNG (direct color) | Memory-heavy; avoid if possible |
-| Editable source files | `.xcf` (GIMP) or `.aseprite` | Upload to Google Drive alongside exports |
+| Editable source files | `.xcf` (GIMP), `.aseprite` (Aseprite), `.ase` (Libresprite) | Upload to Google Drive alongside exports |
 > NOTE: If the colour palette is in extended mode, the assets don't need an explicit transparency color. Check with the dev team to confirm if your assets need a transparency colour or not.
 
 - Always upload both the **exported asset** and the **editable source file** to Google Drive.
@@ -124,12 +124,13 @@ Each channel (R, G, B) can only have **32 distinct values** (0–31) rather than
 
 ## Tools Quick Reference
 
-| Tool | Purpose | Download |
-|---|---|---|
-| [Aseprite](https://www.aseprite.org) | Pixel art & sprite animation | aseprite.org |
-| [GIMP](https://www.gimp.org) | General image editing, palette management | gimp.org |
-| [Blender](https://www.blender.org) | 3D modeling | blender.org |
-| Noesis | Ripping & converting game assets | [Rich Whitehouse's Site](https://richwhitehouse.com/index.php?content=inc_projects.php&showproject=91) |
+| Tool | Purpose |
+|---|---|
+| [Libresprite](https://libresprite.github.io/#!/) | Pixel art & sprite animation |
+| [Aseprite](https://www.aseprite.org) | Pixel art & sprite animation |
+| [GIMP](https://www.gimp.org) | General image editing, palette management |
+| [Blender](https://www.blender.org) | 3D modeling |
+| [Noesis](https://richwhitehouse.com/index.php?content=inc_projects.php&showproject=91) | Ripping & converting game assets |
 
 ---
 
