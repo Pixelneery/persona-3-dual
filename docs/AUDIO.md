@@ -1,4 +1,4 @@
-# Audio System
+# Audio
 
 Audio is handled by `MusicController` (`source/controllers/MusicController.h`), a wrapper around **Maxmod** for SFX and a custom **PCM streaming** system for background music.
 
