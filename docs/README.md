@@ -75,8 +75,8 @@ Requires [TWiLight Menu++](https://wiki.ds-homebrew.com/twilightmenu/) with DLDI
 
 ---
 
-## Developer Setup
-See [CONTRIBUTING.md](CONTRIBUTING.md)
+## Developer & Artist Setup
+See [ONBOARDING.md](ONBOARDING.md)
 
 ---
 
