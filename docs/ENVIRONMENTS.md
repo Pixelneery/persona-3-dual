@@ -1,3 +1,4 @@
+# Environments
 ## Billboards
 To create billboards, create a plane mesh with the **prefix "BB_"**. Ensure that the *top level grouping* of the mesh is named this (ex. BB_Tree, BB_Fence_1).
 
