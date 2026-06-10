@@ -4,7 +4,7 @@ Welcome to the Persona 3 Dual team! This guide will get you set up and oriented 
 
 ---
 
-## 1. Join the GitHub Organization
+## Join the GitHub Organization
 
 We use GitHub to track tasks and coordinate across all teams. **Everyone on the project needs to join the org.**
 
@@ -23,7 +23,7 @@ Once accepted, you'll have access to the [GitHub Organization](https://github.co
 
 ---
 
-## 2. Using the Project Board
+## Using the Project Board
 
 The project board is how we track progress across all teams.
 
@@ -69,7 +69,8 @@ Use the following format when creating issues:
 
 ---
 
-## 3. Dev Team Setup
+## Dev Team Setup
+https://github.com/p3d-project/persona-3-dual
 
 The team uses **Docker** as the official development environment. It wraps the entire toolchain into a single image so everyone gets an identical build environment regardless of OS.
 
@@ -172,7 +173,8 @@ You'll be inside the container at `/project` (your repo). Type `exit` to leave.
 
 ---
 
-## 4. Website Team Setup
+## Website Team Setup
+https://github.com/p3d-project/p3d-website
 
 The website is an [Astro](https://astro.build) project.
 
@@ -200,9 +202,9 @@ npm run build
 
 ---
 
-## 5. Art Team Setup
+## Art Team Setup
 
-### Tools
+### Recommended Tools
 
 | Role | Tools |
 |---|---|
@@ -219,11 +221,11 @@ npm run build
 
 ---
 
-## 6. Video Team Setup
+## Video Team Setup
 
 The video team produces **promo videos** and **devlog videos**, paired with each project milestone.
 
-### Tools
+### Recommended Tools
 - TBD
 
 ### Workflow
