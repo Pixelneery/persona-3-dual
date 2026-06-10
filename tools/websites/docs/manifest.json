@@ -10,6 +10,12 @@
             "tag": "README"
         },
         {
+            "file": "md/ONBOARDING.md",
+            "title": "Onboarding",
+            "desc": "How to join the organization, contribute, and setup your development workflows.",
+            "section": "Getting Started"
+        },
+        {
             "file": "md/CODE_OF_CONDUCT.md",
             "title": "Code of Conduct",
             "desc": "Community standards and enforcement guidelines for project contributors.",
@@ -18,15 +24,20 @@
         {
             "file": "md/CONTRIBUTING.md",
             "title": "Contributing",
-            "desc": "How to contribute, submit PRs, and use AI responsibly in this repo.",
+            "desc": "How to submit PRs and use AI responsibly in this repo.",
             "section": "Getting Started"
         },
         {
-            "file": "md/AUDIO.md",
-            "title": "Audio",
-            "desc": "Audio pipeline reference for music, SFX, and PCM conversion in the NDS build.",
-            "section": "Formats",
-            "tag": "spec"
+            "file": "md/ART_REFERENCE.md",
+            "title": "Art Reference",
+            "desc": "Reference document.",
+            "section": "References",
+        },
+        {
+            "file": "md/DEV_REFERENCE.md",
+            "title": "Dev Reference",
+            "desc": "Reference document.",
+            "section": "References",
         },
         {
             "file": "md/COLLISION.md",
