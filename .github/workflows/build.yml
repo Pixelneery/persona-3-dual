@@ -392,7 +392,7 @@ jobs:
         with:
           tag_name:   ${{ steps.version.outputs.tag }}
           name:       ${{ steps.version.outputs.release_name }}
-          prerelease: false
+          prerelease: true
           files: |
             persona-3-dual.nds
             sdcard.img.gz
