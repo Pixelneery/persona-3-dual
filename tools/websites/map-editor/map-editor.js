@@ -1,5 +1,7 @@
 // TILE DEFINITIONS & HELPERS
 let TILE_DEFS = {};
+let TILE_CATEGORIES = []; // Stores { id, name, tiles: [] }
+let activeCategory = "all";
 
 function hslToHex(h, s, l) {
   l /= 100;
@@ -29,25 +31,52 @@ async function loadTileDefinitions() {
     if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
 
-    const sortedKeys = Object.keys(data.TILE_MAP_META).sort();
     const shortcuts = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+    let shortcutIdx = 0;
 
-    sortedKeys.forEach((code, index) => {
-      const metaLabel = data.TILE_MAP_META[code];
-      const baseColor = generateDeterministicColor(code + metaLabel);
+    // Initialize "All Tiles" as the default base category
+    TILE_CATEGORIES = [{ id: "all", name: "All Tiles", tiles: [] }];
+    let currentGroup = TILE_CATEGORIES[0];
 
-      TILE_DEFS[code] = {
+    // Iterate over the keys (JS preserves insertion order for string keys)
+    for (const key of Object.keys(data.TILE_MAP_META)) {
+      if (key === "_legacy_aliases") continue;
+
+      // Detect if this is a group header
+      if (key.startsWith("_group_")) {
+        // Extract the nice string name after the colon (e.g., "Core / System")
+        const groupName =
+          data.TILE_MAP_META[key].split(":")[1]?.trim() ||
+          data.TILE_MAP_META[key];
+        currentGroup = { id: key, name: groupName, tiles: [] };
+        TILE_CATEGORIES.push(currentGroup);
+        continue;
+      }
+
+      // Standard tile mapping
+      const metaLabel = data.TILE_MAP_META[key];
+      const baseColor = generateDeterministicColor(key + metaLabel);
+
+      TILE_DEFS[key] = {
         label: metaLabel
           .replace(/_/g, " ")
           .replace(/\b\w/g, (l) => l.toUpperCase()),
         shortLabel: metaLabel.split("—")[0].trim().toLowerCase(),
-        mapValue: data.TILE_MAP[code],
-        key: index < shortcuts.length ? shortcuts[index] : "",
+        mapValue: data.TILE_MAP[key],
+        key: shortcutIdx < shortcuts.length ? shortcuts[shortcutIdx] : "",
         bg: baseColor + "40",
         border: baseColor,
         textColor: "#ffffff",
       };
-    });
+
+      // Add to "All Tiles" and the respective group
+      TILE_CATEGORIES[0].tiles.push(key);
+      if (currentGroup !== TILE_CATEGORIES[0]) {
+        currentGroup.tiles.push(key);
+      }
+
+      shortcutIdx++;
+    }
   } catch (error) {
     console.error(
       "Failed to load tile_map.json. Did you run a local server?",
@@ -57,6 +86,56 @@ async function loadTileDefinitions() {
       "Failed to load tile definitions from JSON. Check console for details.",
     );
   }
+}
+
+// UI GENERATORS
+function buildCategorySelect() {
+  const select = document.getElementById("category-select");
+  if (!select) return;
+  select.innerHTML = "";
+
+  TILE_CATEGORIES.forEach((cat) => {
+    // Hide empty groups (like Future Cutscenes) from the UI
+    if (cat.tiles.length === 0) return;
+
+    const opt = document.createElement("option");
+    opt.value = cat.id;
+    opt.textContent = cat.name;
+    select.appendChild(opt);
+  });
+
+  select.value = activeCategory;
+
+  select.addEventListener("change", (e) => {
+    activeCategory = e.target.value;
+    buildPalette();
+  });
+}
+
+function buildPalette() {
+  const el = document.getElementById("palette");
+  el.innerHTML = "";
+
+  // Find the selected category, default to "All Tiles"
+  const cat =
+    TILE_CATEGORIES.find((c) => c.id === activeCategory) || TILE_CATEGORIES[0];
+
+  cat.tiles.forEach((k) => {
+    const def = TILE_DEFS[k];
+    if (!def) return;
+    const btn = document.createElement("div");
+    btn.className = "tile-btn" + (k === currentTool ? " active" : "");
+    btn.id = `tb-${k}`;
+    btn.style.cssText = `background:${def.bg}; border-color:${def.border}; color:${def.textColor}`;
+    btn.innerHTML = `
+        <div class="tile-key">[${def.key || "-"}]</div>
+        <div class="tile-code">${k}</div>
+        <div class="tile-name">${def.shortLabel}</div>
+    `;
+    btn.dataset.tip = `Paint: ${def.label}${def.key ? ` · shortcut [${def.key}]` : ""}`;
+    btn.onclick = () => selectTool(k);
+    el.appendChild(btn);
+  });
 }
 
 // STATE
@@ -699,25 +778,6 @@ function hoverAt(e) {
 }
 
 // PALETTE UI
-function buildPalette() {
-  const el = document.getElementById("palette");
-  el.innerHTML = "";
-  for (const [k, def] of Object.entries(TILE_DEFS)) {
-    const btn = document.createElement("div");
-    btn.className = "tile-btn" + (k === currentTool ? " active" : "");
-    btn.id = `tb-${k}`;
-    btn.style.cssText = `background:${def.bg}; border-color:${def.border}; color:${def.textColor}`;
-    btn.innerHTML = `
-            <div class="tile-key">[${def.key || "-"}]</div>
-            <div class="tile-code">${k}</div>
-            <div class="tile-name">${def.shortLabel}</div>
-        `;
-    // Tooltip shows full label and keyboard shortcut
-    btn.dataset.tip = `Paint: ${def.label}${def.key ? ` · shortcut [${def.key}]` : ""}`;
-    btn.onclick = () => selectTool(k);
-    el.appendChild(btn);
-  }
-}
 
 function selectTool(k) {
   if (!TILE_DEFS[k]) return;
@@ -988,6 +1048,7 @@ function parseJmap(text) {
       const tileMatch = t.match(
         /#\s+([a-z0-9])\s*=\s*([^()]+)\s*(?:\(([^)]+)\))?/i,
       );
+
       if (tileMatch && tileMatch[1] !== "w") {
         const code = tileMatch[1];
         if (!TILE_DEFS[code]) {
@@ -1001,6 +1062,10 @@ function parseJmap(text) {
             border: baseColor,
             textColor: "#ffffff",
           };
+          // NEW: Ensure newly discovered tiles get injected into "All Tiles"
+          if (TILE_CATEGORIES.length > 0) {
+            TILE_CATEGORIES[0].tiles.push(code);
+          }
         }
       }
       continue;
@@ -1266,6 +1331,7 @@ function initTooltips() {
 // BOOT
 async function init() {
   await loadTileDefinitions();
+  buildCategorySelect(); // Call this immediately after loading definitions
   buildPalette();
 
   if (TILE_DEFS["w"]) {
@@ -1277,9 +1343,9 @@ async function init() {
 
   updateComputed();
   updateMapInfo();
-  initThree(); // must come before initMinimap (needs params.tileSize etc.)
-  initMinimap(); // grab canvas, set size, attach click handler
-  initTooltips(); // attach delegated hover events
+  initThree();
+  initMinimap();
+  initTooltips();
 }
 
 init();
