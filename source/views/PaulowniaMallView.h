@@ -58,10 +58,10 @@ class PaulowniaMallView : public BaseView
     const float distance = 1.0f;
     const float lookAhead = 0.2f;
     // set character initial translation position
-    const Point2D<float> characterTranslate = Point2D<float>(0, 0);
+    const Point2D<float> characterTranslate = Point2D<float>(0.0122f, 2.3355f);
     const float height = 0.2f;
-    const float angle = -1.6;
-    const float characterFacingAngle = 91.67;
+    const float angle = -3.2;
+    const float characterFacingAngle = 180;
     DialogueController dialogueCtrl;
     int bgSharedSlot;
     int totalPolyCount = 0;
