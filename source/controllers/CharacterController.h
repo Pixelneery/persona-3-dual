@@ -15,7 +15,7 @@ class CharacterController
     // 3D environment
     const int mapWidth;
     const int mapHeight;
-    const uint8_t* collisionMap;
+    const uint16_t* collisionMap;
 
     // animations
     int characterWalkAnim =
@@ -44,7 +44,7 @@ class CharacterController
 
     CharacterController(int iMapWidth,
                         int iMapHeight,
-                        const uint8_t* iCollisionMap,
+                        const uint16_t* iCollisionMap,
                         float iTileSize,
                         float iWorldOffsetX,
                         float iWorldOffsetZ,

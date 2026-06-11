@@ -53,8 +53,8 @@ class PaulowniaMallView : public BaseView
     const float worldOffsetZ = PAULOWNIA_MALL_WORLD_OFFSET_Z;
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
     // movement and viewpoint
-    const float speed = 0.05f;
-    const float angleIncrement = 0.10f;
+    const float speed = 0.03f;
+    const float angleIncrement = 0.05f;
     const float distance = 1.0f;
     const float lookAhead = 0.2f;
     // set character initial translation position

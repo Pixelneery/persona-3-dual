@@ -33,7 +33,23 @@ def _load_tile_map():
         if json_path.exists():
             with json_path.open("r") as f:
                 data = json.load(f)
-            return data["TILE_MAP"]
+
+            raw_map = data.get("TILE_MAP", {})
+            clean_map = {}
+
+            # Flatten the dictionary: filter out group strings and merge legacy aliases
+            for key, val in raw_map.items():
+                if key.startswith("_group_"):
+                    continue
+                if key == "_legacy_aliases":
+                    for leg_k, leg_v in val.items():
+                        clean_map[leg_k] = leg_v
+                    continue
+
+                clean_map[key] = val
+
+            return clean_map
+
     raise FileNotFoundError(
         f"Could not find tile_map.json. Searched: {[str(p) for p in candidates]}"
     )
@@ -84,8 +100,10 @@ def to_header(rows, height, width, stem):
     lines.append(f"#define {define_prefix}_MAP_WIDTH  {width}")
     lines.append(f"#define {define_prefix}_MAP_HEIGHT {height}")
     lines.append("")
+
+    # CRITICAL FIX: Changed uint8_t to uint16_t to support tile IDs > 255
     lines.append(
-        f"static const uint8_t {stem}_map[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{"
+        f"static const uint16_t {stem}_map[{define_prefix}_MAP_HEIGHT][{define_prefix}_MAP_WIDTH] = {{"
     )
     for r, row in enumerate(rows):
         comma = "," if r < height - 1 else ""
