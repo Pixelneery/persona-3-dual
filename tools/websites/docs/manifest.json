@@ -40,6 +40,12 @@
             "section": "References"
         },
         {
+            "file": "md/JMAP_REFERENCE.md",
+            "title": "Mapping system Reference",
+            "desc": "Reference document.",
+            "section": "References"
+        },
+        {
             "file": "md/COLLISION.md",
             "title": "Collision",
             "desc": "Collision system design, tile map behavior, and movement rules for the game world.",
