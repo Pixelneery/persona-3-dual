@@ -280,20 +280,29 @@ ViewState PaulowniaMallView::update()
             consoleClear();
 
             // trigger dialogue from interaction
-            if (playerCtrl->isTileAt() == TileType::NEXT_SCENE)
+            switch (playerCtrl->isTileAt())
             {
+            // left
+            case TileType::SCENE_0:
                 musicCtrl.pause();
                 return ViewState::IWATODAI_STREETS;
-            }
-            else if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko)
-            {
-                iprintf("\x1b[0;0HPress A to talk");
-                if (pressed & KEY_A)
-                {
-                    demo_yukari_kenji_argument_load();
-                    dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-                    dialogueCtrl.start(demo_yukari_kenji_argument_first());
-                }
+            // right
+            case TileType::SCENE_1:
+                musicCtrl.pause();
+                return ViewState::IWATODAI_DORM;
+            // middle
+            case TileType::SCENE_2:
+            case TileType::SCENE_3:
+            case TileType::SCENE_4:
+            case TileType::SCENE_5:
+            case TileType::SCENE_6:
+            case TileType::SCENE_7:
+            case TileType::SCENE_8:
+            case TileType::SCENE_9:
+                musicCtrl.pause();
+                return ViewState::STATION;
+            default:
+                break;
             }
         }
 

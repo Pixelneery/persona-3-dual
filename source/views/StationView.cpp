@@ -197,7 +197,7 @@ ViewState StationView::update()
 
         camPos = playerCtrl->update(keys);
 
-        if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
+        if (playerCtrl->isTileAt() == TileType::SCENE_0)
         {
             musicCtrl.pause();
             return ViewState::PAULOWNIA_MALL;

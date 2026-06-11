@@ -41,7 +41,7 @@
     "scene_8": 408,
     "scene_9": 409,
 
-    "_group_ingame_cutscene": "500-599: Future In-Game Cutscene / Dynamic Events",
+    "_group_ingame_cutscene": "500-599: Cutscene / Dynamic Events",
 
     "_group_party": "600-699: Characters (Party)",
     "c_mc":  600,
