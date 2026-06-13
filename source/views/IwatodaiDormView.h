@@ -11,6 +11,14 @@
 #include "./battleActions/enemies/EnemyDb.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
+enum class ViewPhase
+{
+    Battle,
+    Pause,
+    Dialogue,
+    Environment
+};
+
 class IwatodaiDormView : public BaseView
 {
   public:
@@ -20,6 +28,7 @@ class IwatodaiDormView : public BaseView
     IwatodaiDormView();
 
   private:
+    ViewPhase phase;
     touchPosition touch;
 
     // sub screen
@@ -31,6 +40,9 @@ class IwatodaiDormView : public BaseView
     iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
     bool prevBattleState;
+    bool prevDialogueState;
+    bool prevEnvironmentState;
+
     // init Character Profiles
     CharacterProfiles characterProfiles;
     // Battle participants
@@ -69,4 +81,5 @@ class IwatodaiDormView : public BaseView
     bool isBattleMenuActive = false;
 
     void setMusic();
+    void hideHUD();
 };

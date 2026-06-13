@@ -246,7 +246,17 @@ void IwatodaiDormView::init()
 
     // setup battle menu
     battleMenuCmpt.init(-1, &isBattleMenuActive);
+
     prevBattleState = false;
+    prevDialogueState = false;
+    prevEnvironmentState = false;
+    phase = ViewPhase::Environment;
+}
+
+void IwatodaiDormView::hideHUD()
+{
+    bgHide(bgSharedSub);
+    oamClear(&oamSub, 0, 0);
 }
 
 ViewState IwatodaiDormView::update()
@@ -260,90 +270,135 @@ ViewState IwatodaiDormView::update()
     u32 keys = keysHeld();
     u32 pressed = keysDown();
 
-    // resume music when battle 1. is no longer active, 2. when is previously was active
-    if (!battleController.isActive() && prevBattleState)
+    switch (phase)
     {
-        prevBattleState = false;
-        IwatodaiDormView::setMusic();
-    }
-
-    if (pressed & KEY_START)
+    case ViewPhase::Battle:
     {
-        isPauseMenuActive = !isPauseMenuActive;
-    }
-
-    // touch input
-    if (pressed & KEY_TOUCH)
-    {
-        touchRead(&touch);
-        if (menuHUDCmpt.isMenuTouchArea(&touch))
+        bool isActive = battleController.isActive();
+        // set
+        if (!isActive && !prevBattleState)
         {
-            isPauseMenuActive = true;
+            bgHide(bgSharedMain);
+            consoleClear();
+            battleController.execute();
+            prevBattleState = true;
         }
+        //exit
+        else if (!isActive && prevBattleState)
+        {
+            IwatodaiDormView::setMusic();
+            prevBattleState = false;
+            phase = ViewPhase::Environment;
+        }
+        break;
     }
 
-    // draw menuHUD
-    if (!dialogueCtrl.isActive() && !battleController.isActive() && !isPauseMenuActive)
+    case ViewPhase::Pause:
     {
-        menuHUDCmpt.drawHUD(&bgSharedSub);
-        bgShow(bgSharedSub);
-    }
-    // hide menuHUD if dialogue, battle, or pauseMenu is active
-    else
-    {
-        // bgHide(bgSharedSub);
-        // oamClear(&oamSub, 0, 0);
-    }
-
-    // render pauseMenu
-    if (isPauseMenuActive)
-    {
+        // run
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
             musicCtrl.pause();
             return menuResult;
         }
-    }
-    // render world
-    else
-    {
-        // only process world input when dialogue and battle are not active
-        if (!dialogueCtrl.isActive() && !battleController.isActive())
+
+        // exit
+        if (pressed & KEY_START)
         {
-            // move character
-            camPos = playerCtrl->update(keys);
-
-            // start battle
-            if (keys & KEY_Y)
-            {
-                battleController.execute();
-                prevBattleState = true;
-            }
-
-            bgHide(bgSharedMain);
             consoleClear();
+            phase = ViewPhase::Environment;
+        }
+        break;
+    }
 
-            if (pressed & KEY_A)
-            {
-                // set dialogue
-                demo_yukari_kenji_argument_load();
-                dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-                dialogueCtrl.setUISlot(bgSharedSub);
-                dialogueCtrl.start(demo_yukari_kenji_argument_first());
-            }
+    case ViewPhase::Dialogue:
+    {
+        bool isActive = dialogueCtrl.isActive();
+        // set
+        if (!isActive && !prevDialogueState)
+        {
+            demo_yukari_kenji_argument_load();
+            dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
+            dialogueCtrl.setUISlot(bgSharedSub);
+            dialogueCtrl.start(demo_yukari_kenji_argument_first());
+            prevDialogueState = true;
+        }
+        // exit
+        else if (!isActive && prevDialogueState)
+        {
+            prevDialogueState = false;
+            phase = ViewPhase::Environment;
+        }
+        break;
+    }
 
-            // trigger dialogue from interaction
-            if (playerCtrl->isTileAt() == TileType::SCENE_1)
+    case ViewPhase::Environment:
+    {
+        // TODO: fix issue where graphics are not cleaned up before loading
+        // TODO: fix issue where music gets stuck for a few frames when switching phases
+        if (!prevEnvironmentState)
+        {
+            bgHide(bgSharedSub);
+            vramSetBankH(VRAM_H_LCD);
+            vramSetBankI(VRAM_I_LCD);
+
+            // render HUD
+            menuHUDCmpt.loadHUD();
+            menuHUDCmpt.drawHUD(&bgSharedSub);
+            bgShow(bgSharedSub);
+            prevEnvironmentState = true;
+        }
+
+        // move character
+        camPos = playerCtrl->update(keys);
+
+        // start pause menu
+        if (pressed & KEY_START)
+        {
+            hideHUD();
+            prevEnvironmentState = false;
+            phase = ViewPhase::Pause;
+        }
+
+        // start pause menu
+        if (pressed & KEY_TOUCH)
+        {
+            touchRead(&touch);
+            if (menuHUDCmpt.isMenuTouchArea(&touch))
             {
-                musicCtrl.pause();
-                return ViewState::PAULOWNIA_MALL;
+                hideHUD();
+                prevEnvironmentState = false;
+                phase = ViewPhase::Pause;
             }
-            else if (playerCtrl->isTileAt() == TileType::SCENE_0)
-            {
-                musicCtrl.pause();
-                return ViewState::IWATODAI_STREETS;
-            }
+        }
+
+        // start dialogue
+        if (pressed & KEY_A)
+        {
+            hideHUD();
+            prevEnvironmentState = false;
+            phase = ViewPhase::Dialogue;
+        }
+
+        // start battle
+        if (keys & KEY_Y)
+        {
+            hideHUD();
+            prevEnvironmentState = false;
+            phase = ViewPhase::Battle;
+        }
+
+        // check position
+        if (playerCtrl->isTileAt() == TileType::SCENE_1)
+        {
+            musicCtrl.pause();
+            return ViewState::PAULOWNIA_MALL;
+        }
+        else if (playerCtrl->isTileAt() == TileType::SCENE_0)
+        {
+            musicCtrl.pause();
+            return ViewState::IWATODAI_STREETS;
         }
 
         // update camera position
@@ -391,9 +446,10 @@ ViewState IwatodaiDormView::update()
             iprintf(
                 "\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
+        break;
+    }
     }
 
-    // update controllers
     battleController.update(pressed);
     dialogueCtrl.update(keys);
     characterAnimationCtrl.update();
