@@ -44,6 +44,7 @@ jobs:
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       GIT_DIR: ${{ github.workspace }}/.git
+      HOME: /root
 
     # Ensure every run step executes from the repo root where .git lives.
     defaults:
