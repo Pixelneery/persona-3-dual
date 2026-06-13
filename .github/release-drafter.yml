@@ -1,0 +1,54 @@
+categories:
+  - title: 'Graphics & 3D'
+    labels:
+      - '🖼️ graphics'
+      - '🧊 3d'
+
+  - title: 'Features & Enhancements'
+    labels:
+      - 'enhancement'
+
+  - title: 'Polish & Improvements'
+    labels:
+      - '🧹 polish'
+
+  - title: 'Bug Fixes'
+    labels:
+      - 'bug'
+
+  - title: 'Web'
+    labels:
+      - '💻 web'
+
+  - title: 'Documentation'
+    labels:
+      - 'documentation'
+
+  - title: 'Workflow'
+    labels:
+      - '⚙️ workflow'
+
+# PRs with these labels will be entirely ignored in the release notes
+exclude-labels:
+  - 'duplicate'
+  - 'invalid'
+  - 'wontfix'
+  - 'question'
+  - 'discussion'
+
+# How each individual commit/PR will look in the list
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+
+# The overall structure of the release notes
+template: |
+  ## Changes
+  $CHANGES
+
+  ## Assets
+  | File | Use for |
+  |------|---------|
+  | `persona-3-dual.nds` | ROM - required for both emulator and hardware |
+  | `sdcard.img.gz` | melonDS emulator - decompress & mount via DLDI settings |
+  | `data.zip` | Real hardware - extract and place `data/` next to the ROM on your SD card |
+
+  See [melonDS](https://github.com/p3d-project/persona-3-dual#running-the-game) for installation instructions.
