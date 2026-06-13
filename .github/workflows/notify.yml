@@ -4,14 +4,13 @@ on:
   # Fires after every "Build ROM" run — success, failure, or cancellation,
   # including fork PRs. Uses workflow_run so secrets are always available
   # (GitHub blocks secret access on pull_request events from forks).
-  # This workflow never checks out or executes any fork code — it only
-  # reads metadata from github.event.workflow_run.
   workflow_run:
     workflows: ["Build ROM"]
     types: [completed]
 
   # Fires when a PR is opened, closed, or reopened.
-  pull_request:
+  # Using pull_request_target ensures secrets are available even for fork PRs.
+  pull_request_target:
     types: [opened, closed, reopened]
 
 permissions:
@@ -117,7 +116,7 @@ jobs:
 
   notify-pr:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request_target'
 
     steps:
       - name: Notify Discord PR channel
