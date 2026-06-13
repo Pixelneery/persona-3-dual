@@ -211,9 +211,9 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           name: ${{ steps.version.outputs.release_name }}
-          prerelease: false
+          prerelease: true
           body_path: release-notes.md
           files: |
-            ${{ github.workspace }}/persona-3-dual.nds
-            ${{ github.workspace }}/sdcard.img.gz
-            ${{ github.workspace }}/data.zip
+            persona-3-dual.nds
+            sdcard.img.gz
+            data.zip
