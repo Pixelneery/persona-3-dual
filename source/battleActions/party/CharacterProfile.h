@@ -3,6 +3,7 @@
 #include "../personas/PersonaBase.h"
 #include "../shoes/Shoe.h"
 #include "../skills/Skill.h"
+#include "../weapons/Weapon.h"
 #include <nds.h>
 #include <vector>
 
@@ -19,6 +20,9 @@ struct CharacterProfile
     ArmourType armourType;
     Armour armour;
     Shoe shoe;
+
+    WeaponType weaponType;
+    Weapon weapon;
 
     Skill* baseAttackAction;
     std::vector<PersonaBase*> personas;

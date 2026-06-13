@@ -47,6 +47,7 @@
 #include "battleActions/personas/PersonaDb.h"
 #include "battleActions/shoes/ShoeDb.h"
 #include "battleActions/skills/SkillDb.h"
+#include "battleActions/weapons/WeaponDb.h"
 
 // variables
 volatile int frame = 0;
@@ -194,6 +195,7 @@ int main(int argc, char* argv[])
     loadModels(saveData.femcMode);
 
     // setup db's. DO NOT CHANGE order
+    WeaponDb::Initialize();
     SkillDb::Initialize();
     ArmourDb::Initialize();
     ShoeDb::Initialize();

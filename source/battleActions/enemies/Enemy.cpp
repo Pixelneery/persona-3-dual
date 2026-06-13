@@ -20,7 +20,7 @@ BattleParticipant* Enemy::pickTarget(std::vector<BattleParticipant*>& partyMembe
     return target;
 }
 
-BattleResult Enemy::resolve(BattleParticipant* target, Skill* skill)
+TurnResult Enemy::resolve(BattleParticipant* target, Skill* skill)
 {
     PartyMember* party = static_cast<PartyMember*>(target);
 
@@ -57,4 +57,43 @@ BattleResult Enemy::resolve(BattleParticipant* target, Skill* skill)
     }
 
     return {true, -(s32)damage, oneMoreResult, targetLog + skill->name};
+}
+
+float Enemy::calculateBaseDamage(BattleParticipant& defender, Skill& skill)
+{
+    u32 atk = BattleCalcs::getAtk(battleStats, skill);
+    float levelDifference = BattleCalcs::getLevelDifference(lv, defender.lv);
+    float affinityMtp = BattleCalcs::getAffinityMtp(*defender.getBattleStats(), skill);
+    if (skill.skillType == SkillType::RegularAttack)
+        return (sqrt((float)(skill.movePower * 6 * atk) /
+                     (8 * defender.getBattleStats()->en + defender.armour->defense)) *
+                9 * levelDifference) *
+               affinityMtp;
+    else if (skill.skillType == SkillType::Attack || skill.skillType == SkillType::MultiAttack)
+        return (
+            (sqrt((float)(skill.movePower * 6 * atk) / (8 * defender.getBattleStats()->en + defender.armour->defense)) *
+                 9 * levelDifference -
+             10) *
+            affinityMtp);
+    else
+        return 0;
+}
+
+float Enemy::getTeamMultiplier()
+{
+    return 0.6f;
+}
+
+BattlePhase Enemy::getInitalTurnPhase()
+{
+    return BattlePhase::EnemyTurn;
+}
+
+void Enemy::onDead(BattleResult& battleResult)
+{
+}
+
+void Enemy::setCurrentTurnOrderAgility(float boost)
+{
+    currentTurnOrderAgility = battleStats.ag;
 }

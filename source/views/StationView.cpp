@@ -85,7 +85,7 @@ void StationView::init()
                                          height,
                                          characterTranslate,
                                          characterFacingAngle,
-                                         false);
+                                         true);
 
     // setup music
     musicCtrl.init((fatBasePath + "music/locations/paulowniaMall/station/paulownia_mall.pcm").c_str(), 0.0f, -1.0f);
@@ -197,7 +197,7 @@ ViewState StationView::update()
 
         camPos = playerCtrl->update(keys);
 
-        if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
+        if (playerCtrl->isTileAt() == TileType::SCENE_0)
         {
             musicCtrl.pause();
             return ViewState::PAULOWNIA_MALL;

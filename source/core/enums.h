@@ -134,9 +134,18 @@ enum class TileType
     NO_COLLISION = 0,
     COLLISION = 1,
     SAVE = 2,
-    PREV_SCENE = 3,
-    NEXT_SCENE = 4,
-    CHARACTER_Akihiko = 100
+
+    // scenes / events
+    SCENE_0 = 400,
+    SCENE_1 = 401,
+    SCENE_2 = 402,
+    SCENE_3 = 403,
+    SCENE_4 = 404,
+    SCENE_5 = 405,
+    SCENE_6 = 406,
+    SCENE_7 = 407,
+    SCENE_8 = 408,
+    SCENE_9 = 409,
 };
 
 enum class MainMenuOptions

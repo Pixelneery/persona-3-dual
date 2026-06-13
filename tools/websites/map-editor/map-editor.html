@@ -150,7 +150,6 @@
         <!-- TILE PALETTE -->
         <div class="section">
           <div class="section-title">Tile Palette</div>
-          <!-- Undo / Redo row -->
           <div class="row" style="margin-bottom: 8px">
             <button
               id="btn-undo"
@@ -171,6 +170,14 @@
               ↪ Redo
             </button>
           </div>
+
+          <div class="row" style="margin-bottom: 8px">
+            <select
+              id="category-select"
+              data-tip="Filter the tile palette by category"
+            ></select>
+          </div>
+
           <div class="tile-palette" id="palette"></div>
           <div class="row">
             <button

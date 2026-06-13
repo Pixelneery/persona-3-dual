@@ -1,35 +1,30 @@
 name: Discord Notification
 
-# Triggers after every "Build ROM" run completes — success, failure, or
-# cancellation — including runs triggered by fork PRs.
-#
-# WHY workflow_run INSTEAD OF A STEP IN build.yml:
-# GitHub blocks secret access for pull_request events from forks as a
-# security measure. workflow_run always executes in the base-repo context
-# regardless of where the triggering commit came from, so secrets are
-# available unconditionally.
-#
-# SECURITY NOTE: this workflow never checks out or executes any code from
-# the PR/fork. It only reads metadata from github.event.workflow_run.
-# That makes it safe to run with base-repo secrets even for untrusted forks.
 on:
+  # Fires after every "Build ROM" run — success, failure, or cancellation,
+  # including fork PRs. Uses workflow_run so secrets are always available
+  # (GitHub blocks secret access on pull_request events from forks).
   workflow_run:
-    workflows: ["Build ROM"]   # Must match the `name:` field in build.yml exactly
+    workflows: ["Build ROM"]
     types: [completed]
+
+  # Fires when a PR is opened, closed, or reopened.
+  # Using pull_request_target ensures secrets are available even for fork PRs.
+  pull_request_target:
+    types: [opened, closed, reopened]
 
 permissions:
   contents: read
-  actions: read   # Required to download artifacts from the triggering workflow run
+  actions: read  # Required to download artifacts from the triggering workflow run
 
 jobs:
-  notify:
+  notify-build:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_run'
 
     steps:
-      # Download the version tag written by build.yml's "Generate version tag"
-      # step. Only present on non-PR runs (PRs don't generate a tag).
-      # continue-on-error ensures PR builds still send a notification even
-      # though they produce no build-version artifact.
+      # Only present on non-PR runs (PRs don't generate a version tag).
+      # continue-on-error ensures PR builds still notify even without the artifact.
       - name: Download version artifact
         uses: actions/download-artifact@v4
         with:
@@ -53,7 +48,7 @@ jobs:
           RUN_ID:          ${{ github.event.workflow_run.id }}
         run: |
           if [ -z "$DISCORD_WEBHOOK" ]; then
-            echo "DISCORD_WEBHOOK secret not configured — skipping Discord notification"
+            echo "DISCORD_WEBHOOK secret not configured — skipping notification"
             exit 0
           fi
 
@@ -67,15 +62,9 @@ jobs:
           IS_PR="false"
           [ "$EVENT" = "pull_request" ] && IS_PR="true"
 
-          # Read the version tag from the artifact if present.
-          # build-version.txt is only uploaded on non-PR runs.
           VERSION_TAG=""
           [ -f build-version.txt ] && VERSION_TAG=$(cat build-version.txt | tr -d '[:space:]')
 
-          # Fork detection: head_repository differs from base repository when
-          # the workflow was triggered by a fork PR.
-          # FORK_FIELD is always initialised to [] first so jq always receives
-          # a valid JSON array — even if the if-block is skipped entirely.
           FORK_FIELD='[]'
           if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
             FORK_LABEL=" [fork: ${HEAD_REPO}]"
@@ -94,7 +83,6 @@ jobs:
             URL="${SERVER_URL}/${BASE_REPO}/actions/runs/${RUN_ID}"
             BUILD_TYPE="Release ${VERSION_TAG}"
           else
-            # Fallback for runs where the tag step never completed.
             TITLE="${EMOJI} Build ${JOB_STATUS}: ${BRANCH}@${SHORT_SHA}${FORK_LABEL}"
             URL="${SERVER_URL}/${BASE_REPO}/actions/runs/${RUN_ID}"
             BUILD_TYPE="Push to ${BRANCH}"
@@ -123,5 +111,97 @@ jobs:
               }]
             }' \
           | curl -sf -X POST "$DISCORD_WEBHOOK" \
+              -H "Content-Type: application/json" \
+              -d @-
+
+  notify-pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target'
+
+    steps:
+      - name: Notify Discord PR channel
+        env:
+          DISCORD_PR_WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK }}
+          ACTION:      ${{ github.event.action }}
+          PR_NUMBER:   ${{ github.event.pull_request.number }}
+          PR_TITLE:    ${{ github.event.pull_request.title }}
+          PR_URL:      ${{ github.event.pull_request.html_url }}
+          PR_AUTHOR:   ${{ github.event.pull_request.user.login }}
+          AUTHOR_URL:  ${{ github.event.pull_request.user.html_url }}
+          BRANCH:      ${{ github.event.pull_request.head.ref }}
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+          MERGED:      ${{ github.event.pull_request.merged }}
+          REPO:        ${{ github.repository }}
+          SERVER_URL:  ${{ github.server_url }}
+          BODY:        ${{ github.event.pull_request.body }}
+        run: |
+          if [ -z "$DISCORD_PR_WEBHOOK" ]; then
+            echo "DISCORD_PR_WEBHOOK secret not configured — skipping PR notification"
+            exit 0
+          fi
+
+          case "$ACTION" in
+            opened)
+              COLOR=5793266   # Blue
+              EMOJI="🟢"
+              STATUS="Opened"
+              ;;
+            closed)
+              if [ "$MERGED" = "true" ]; then
+                COLOR=8311585  # Purple
+                EMOJI="🟣"
+                STATUS="Merged"
+              else
+                COLOR=15158332 # Red
+                EMOJI="🔴"
+                STATUS="Closed (unmerged)"
+              fi
+              ;;
+            reopened)
+              COLOR=16776960  # Yellow
+              EMOJI="🔁"
+              STATUS="Reopened"
+              ;;
+            *)
+              COLOR=9807270
+              EMOJI="ℹ️"
+              STATUS="$ACTION"
+              ;;
+          esac
+
+          # Truncate PR body to 200 chars for the description field.
+          DESCRIPTION=""
+          if [ -n "$BODY" ]; then
+            DESCRIPTION=$(echo "$BODY" | head -c 200)
+            [ ${#BODY} -gt 200 ] && DESCRIPTION="${DESCRIPTION}…"
+          fi
+
+          jq -n \
+            --arg  emoji       "$EMOJI"       \
+            --arg  pr_number   "$PR_NUMBER"   \
+            --arg  status      "$STATUS"      \
+            --arg  pr_title    "$PR_TITLE"    \
+            --arg  pr_url      "$PR_URL"      \
+            --argjson color    "$COLOR"       \
+            --arg  description "$DESCRIPTION" \
+            --arg  pr_author   "$PR_AUTHOR"   \
+            --arg  author_url  "$AUTHOR_URL"  \
+            --arg  branch      "$BRANCH"      \
+            --arg  base_branch "$BASE_BRANCH" \
+            --arg  repo        "$REPO"        \
+            '{
+              embeds: [{
+                title:       "\($emoji) PR #\($pr_number) \($status): \($pr_title)",
+                color:       $color,
+                url:         $pr_url,
+                description: (if $description != "" then $description else null end),
+                fields: [
+                  { name: "Author",  value: "[`\($pr_author)`](\($author_url))", inline: true  },
+                  { name: "Branch",  value: "`\($branch)` → `\($base_branch)`", inline: false },
+                  { name: "Repo",    value: $repo,                               inline: true  }
+                ]
+              }]
+            }' \
+          | curl -sf -X POST "$DISCORD_PR_WEBHOOK" \
               -H "Content-Type: application/json" \
               -d @-

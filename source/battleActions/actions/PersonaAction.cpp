@@ -2,7 +2,7 @@
 #include "./battleActions/skills/BattleCalcs.h"
 #include <stdlib.h>
 
-BattleResult PersonaAction::resolve(PartyMember* user, BattleParticipant* target, Skill* skill)
+TurnResult PersonaAction::resolve(PartyMember* user, BattleParticipant* target, Skill* skill)
 {
     //TODO: same as attack actioon, get rid off in the futrue
     if (skill->skillType == SkillType::Attack || skill->skillType == SkillType::MultiAttack)

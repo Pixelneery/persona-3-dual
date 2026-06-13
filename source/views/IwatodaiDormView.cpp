@@ -331,12 +331,12 @@ ViewState IwatodaiDormView::update()
             consoleClear();
 
             // trigger dialogue from interaction
-            if (playerCtrl->isTileAt() == TileType::NEXT_SCENE)
+            if (playerCtrl->isTileAt() == TileType::SCENE_1)
             {
                 musicCtrl.pause();
                 return ViewState::PAULOWNIA_MALL;
             }
-            else if (playerCtrl->isTileAt() == TileType::PREV_SCENE)
+            else if (playerCtrl->isTileAt() == TileType::SCENE_0)
             {
                 musicCtrl.pause();
                 return ViewState::IWATODAI_STREETS;

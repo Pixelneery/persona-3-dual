@@ -11,5 +11,5 @@ struct PersonaAction : ActionBase
         possibleUsers = ParticipantType::Party;
     }
 
-    BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill) override;
+    TurnResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill) override;
 };

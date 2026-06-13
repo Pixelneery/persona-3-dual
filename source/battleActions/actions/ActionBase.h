@@ -1,6 +1,6 @@
 #pragma once
-#include "../BattleResult.h"
 #include "../ParticipantType.h"
+#include "../TurnResult.h"
 #include <nds.h>
 #include <string>
 
@@ -14,7 +14,7 @@ struct ActionBase
     std::string name;
     ParticipantType possibleUsers;
 
-    virtual BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) = 0;
+    virtual TurnResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) = 0;
 
     virtual ~ActionBase() = default;
 };

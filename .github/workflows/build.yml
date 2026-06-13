@@ -1,101 +1,119 @@
 name: Build ROM
 
-#  Triggers
-#  push to main/master  ->  full build + tag + release
-#  pull_request         ->  build + artifact only (no tag, no release)
-#  workflow_dispatch    ->  manual trigger, behaves like a push
 on:
   push:
     branches: [main, master]
-    paths-ignore:
-      - 'tools/**'
-      - 'docs/**'
-      - 'unistore/**'
-      - 'Dockerfile'
-      - '.dockerignore'
-      - '*.md'
-      - '**.md'
+    paths-ignore: ['tools/**', 'docs/**', 'unistore/**', 'Dockerfile', '.dockerignore', '*.md', '**.md']
   pull_request:
     branches: [main, master]
-    paths-ignore:
-      - 'tools/**'
-      - 'docs/**'
-      - 'unistore/**'
-      - 'Dockerfile'
-      - '.dockerignore'
-      - '*.md'
-      - '**.md'
+    paths-ignore: ['tools/**', 'docs/**', 'unistore/**', 'Dockerfile', '.dockerignore', '*.md', '**.md']
   workflow_dispatch:
 
-# Cancel any in-progress run on the same branch/PR when a new one starts.
-# Prevents duplicate releases and wasted runner minutes on stale pushes.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Required to create releases and push tags.
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
+  # 1. Linting
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - uses: pre-commit/action@v3.0.1
+
+  # 2. Containerized build
   build:
+    needs: lint
     runs-on: ubuntu-latest
 
+    # Run all steps directly inside custom compiler environment.
+    container:
+      image: ghcr.io/${{ github.repository }}/p3d-builder:latest
+
+    # CCACHE_DIR: explicit path so ccache writes inside the mounted workspace
+    # and actions/cache can find it at a stable absolute location.
+    # GIT_DIR: explicit path so git commands work correctly inside the container
+    # regardless of which directory a step happens to execute from.
+    # HOME: pin to /root so the venv at /root/.venv (baked into the image) is
+    # found correctly; GitHub Actions containers default HOME to /github/home.
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      GIT_DIR: ${{ github.workspace }}/.git
+      HOME: /root
+
+    # Ensure every run step executes from the repo root where .git lives.
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}
+
     steps:
-
-      # Checkout
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # Full history required so git tag --list sees all tags
-          lfs: false       # Don't auto-download LFS files; we restore them from cache below
+          fetch-depth: 0
+          lfs: false # Restored via cache below
 
-      # Generate a stable hash of ALL active LFS pointers in the current commit
+      # --- 1. LFS cache ---
+      # Generate a stable hash of all LFS pointers so the cache key changes
+      # only when LFS files themselves change, not on every commit.
       - name: Generate LFS cache key
         id: lfs-key
         run: |
           LFS_HASH=$(git lfs ls-files -l | cut -d' ' -f1 | sort | sha256sum | cut -d' ' -f1)
           echo "hash=${LFS_HASH}" >> $GITHUB_OUTPUT
 
-      # Cache LFS objects keyed to the robust hash generated above.
       - name: Cache Git LFS objects
         id: cache-lfs
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
-          path: .git/lfs
+          path: ${{ github.workspace }}/.git/lfs
           key: lfs-${{ runner.os }}-${{ steps.lfs-key.outputs.hash }}
-          restore-keys: |
-            lfs-${{ runner.os }}-
+          restore-keys: lfs-${{ runner.os }}-
 
-      # Only contact the LFS server when we don't have an exact cache hit.
+      # On cache miss: fetch from LFS server and prune stale objects before
+      # the post-action saves the cache, so it doesn't grow unboundedly.
       - name: Pull LFS files (cache miss)
         if: steps.cache-lfs.outputs.cache-hit != 'true'
-        run: git lfs pull
+        run: |
+          git lfs pull
+          git lfs prune
 
-      # Restore files from the local .git/lfs directory on a direct hit.
+      # On cache hit: hydrate the working tree from the local .git/lfs store.
+      # No network call needed.
       - name: Checkout LFS files from cache (cache hit)
         if: steps.cache-lfs.outputs.cache-hit == 'true'
         run: git lfs checkout
 
-      # Prune old LFS files to stop the cache from endlessly snowballing in size
-      # before the post-action saves it to GitHub.
-      - name: Prune LFS cache
-        run: git lfs prune
+      # --- 2. ccache ---
+      # ccache is pre-installed in the Docker image. We manage the cache
+      # manually via actions/cache rather than using ccache-action, which
+      # unconditionally tries to apt-install ccache and fails in containers
+      # where apt lists have been cleaned.
+      #
+      # Cache key includes github.sha so each commit gets a fresh save slot,
+      # while restore-keys falls back to the most recent prior build so
+      # unchanged translation units are still cache hits.
+      - name: Cache ccache objects
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.ccache
+          key: ccache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: ccache-${{ runner.os }}-
 
-      # Version tag (push / workflow_dispatch only)
-      # Format: YYwWWn  ->  e.g. "26w18a"
-      #   YY = 2-digit year   WW = ISO week number   n = per-week build letter
-      # Skipped entirely on pull_request events so no tag is reserved or leaked.
-      #
-      # The suffix letter is incremented by tools/next_suffix.py rather than
-      # inline Python, because embedding multi-line Python inside a YAML block
-      # scalar causes a syntax error. Unindented Python lines are interpreted
-      # by the YAML parser as ending the block.
-      #
-      # The tag is also written to build-version.txt and uploaded as an artifact
-      # so that notify.yml (which runs in a separate workflow_run context with no
-      # access to this job's step outputs) can read it and include it in the
-      # Discord notification.
+      - name: Configure ccache
+        run: |
+          ccache --set-config=max_size=500M
+          ccache --set-config=compression=true
+          ccache -z  # Zero stats so per-run hit rate is visible in the log
+
+      # --- 3. Build & compile ---
       - name: Generate version tag
         id: version
         if: github.event_name != 'pull_request'
@@ -103,7 +121,6 @@ jobs:
           YEAR=$(date -u +%y)
           WEEK=$(date -u +%V)
           PREFIX="${YEAR}w${WEEK}"
-
           EXISTING=$(git tag --list "${PREFIX}*" | sort | tail -n1)
 
           if [ -z "$EXISTING" ]; then
@@ -114,211 +131,43 @@ jobs:
           fi
 
           TAG="${PREFIX}${SUFFIX}"
-          RELEASE_NAME="Autobuild: ${TAG}"
-
           echo "${TAG}" > build-version.txt
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "release_name=Autobuild: ${TAG}" >> $GITHUB_OUTPUT
 
-          echo "tag=${TAG}"                   >> $GITHUB_OUTPUT
-          echo "release_name=${RELEASE_NAME}" >> $GITHUB_OUTPUT
-          echo "Version tag : ${TAG}"
-          echo "Release name: ${RELEASE_NAME}"
-
-      # Upload the version tag so notify.yml can read it.
-      # Skipped on PRs since they don't generate a tag.
-      # Retention of 1 day is enough - notify.yml fires within seconds of this
-      # job completing. Using a short retention avoids cluttering artifact storage.
       - name: Upload version artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: build-version
-          path: build-version.txt
+          path: ${{ github.workspace }}/build-version.txt
           retention-days: 1
 
-      # devkitARM
-      - name: Prepare devkitPro directory
-        run: |
-          sudo mkdir -p /opt/devkitpro
-          sudo chown -R "$(whoami)" /opt/devkitpro
-
-      - name: Cache devkitPro
-        id: cache-devkitpro
-        uses: actions/cache@v5
-        with:
-          path: /opt/devkitpro
-          key: devkitpro-nds-dev-${{ runner.os }}-v1
-
-      - name: Install devkitARM
-        if: steps.cache-devkitpro.outputs.cache-hit != 'true'
-        run: |
-          wget -U "dkp-apt" https://apt.devkitpro.org/install-devkitpro-pacman
-          chmod +x ./install-devkitpro-pacman
-          sudo ./install-devkitpro-pacman
-          sudo dkp-pacman -Sy --noconfirm nds-dev
-          sudo chown -R "$(whoami)" /opt/devkitpro
-
-      - name: Export devkitARM environment
-        run: |
-          echo "DEVKITPRO=/opt/devkitpro"           >> $GITHUB_ENV
-          echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
-          echo "PATH=/opt/devkitpro/tools/bin:/opt/devkitpro/devkitARM/bin:$PATH" >> $GITHUB_ENV
-
-      # System tools (ffmpeg + mtools)
-      # Both are cached via awalsh128 - subsequent runs restore in ~2s.
-      #
-      # libblas3 / liblapack3 are intentionally NOT included in the awalsh128
-      # package list. Their .so.3 symlinks are managed by update-alternatives,
-      # a post-install hook that awalsh128 skips entirely on cache restore.
-      # Without the hook, ffmpeg fails at runtime with:
-      #   libblas.so.3: cannot open shared object file: No such file or directory
-      # sudo ldconfig alone does not fix this because the symlink itself is never
-      # created - ldconfig only updates the linker cache, not the alternatives.
-      #
-      # The fix is to install those two packages directly with apt every run.
-      # They are small (~200 KB combined) and the install completes in ~1s,
-      # ensuring update-alternatives always fires and the symlink is always live.
-      - name: Cache and install ffmpeg and mtools
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: ffmpeg mtools
-          version: 1.0
-
-      - name: Install BLAS dependencies
-        run: sudo apt-get install -y --no-install-recommends libblas3 liblapack3
-
-      # Python venv
-      # Cache is keyed to requirements.txt so it auto-invalidates on dep changes.
-      # Key is versioned (v2) because the venv path moved from .venv (workspace)
-      # to ~/.venv (home) - bumping forces a clean write at the new location and
-      # avoids perpetual cache misses against stale v1 entries.
-      - name: Cache Python venv
-        uses: actions/cache@v5
-        with:
-          path: ~/.venv
-          key: python-venv-v2-${{ runner.os }}-${{ hashFiles('tools/requirements.txt') }}
-          restore-keys: |
-            python-venv-v2-${{ runner.os }}-
-
-      - name: Set up Python venv
-        run: |
-          python3 -m venv ~/.venv
-          echo "$HOME/.venv/bin" >> $GITHUB_PATH
-
-      - name: Install Python dependencies
-        run: |
-          pip install --upgrade pip
-          if [ -f tools/requirements.txt ]; then
-            pip install -r tools/requirements.txt
-          fi
-
-      # Cache compiled object files so unchanged source files are not recompiled.
-      # Keyed to a hash of all compiled source files
-      - name: Cache build objects
-        uses: actions/cache@v5
-        with:
-          path: build/
-          key: build-objects-${{ runner.os }}-${{ hashFiles('source/**', 'include/**', 'assets/**', 'Makefile') }}
-          restore-keys: |
-            build-objects-${{ runner.os }}-
-
-      # ROM compile
+      # Print hit/miss stats after the build so cache effectiveness is visible
+      # in the Actions log without having to dig into ccache internals.
       - name: Compile ROM
-        run: make
-
-      # Compress sdcard.img before packaging.
-      # The raw image is exactly 2 GB (GitHub's release asset limit is <2 GB).
-      # Since most of the FAT image is empty space, gzip typically reduces it
-      # to roughly the size of the actual game data - a small fraction of 2 GB.
-      # Users decompress once with: gzip -d sdcard.img.gz
-      # -1 is fastest compression; the image is mostly empty FAT space so the
-      # size difference vs -9 is negligible while the speed difference is large.
-      - name: Compress SD card image
-        run: gzip -1 sdcard.img
-
-      # Package the data folder as a zip for hardware users.
-      # Released alongside the ROM and sdcard.img.gz so that TWiLight Menu++ users
-      # can download data.zip, extract it, and drop the data/ folder next to the
-      # .nds on their SD card without needing to build from source.
-      - name: Package data folder
-        run: zip -r data.zip data/
-
-      # Verify output
-      - name: Verify ROM was produced
         run: |
-          echo "NDS files found in workspace:"
-          find . -name "*.nds" -not -path "./.git/*" 2>/dev/null \
-            | sort \
-            | xargs -I{} sh -c 'echo "  {} ($(du -sh {} | cut -f1))"' \
-            || echo "  (none)"
-          echo ""
+          export CC="ccache arm-none-eabi-gcc"
+          export CXX="ccache arm-none-eabi-g++"
+          make
+          ccache -s
 
-          if [ ! -f persona-3-dual.nds ]; then
-            echo "::error::persona-3-dual.nds not found."
-            echo "::error::If your Makefile outputs a different filename or path, update the"
-            echo "::error::ROM filename everywhere it appears in this workflow to match."
-            exit 1
-          fi
-          echo "ROM verified: persona-3-dual.nds ($(du -sh persona-3-dual.nds | cut -f1))"
-
-          if [ ! -f sdcard.img.gz ]; then
-            echo "::error::sdcard.img.gz not found - gzip step may have failed."
-            exit 1
-          fi
-          echo "SD card image verified: sdcard.img.gz ($(du -sh sdcard.img.gz | cut -f1))"
-
-          if [ ! -f data.zip ]; then
-            echo "::error::data.zip not found - zip step may have failed."
-            exit 1
-          fi
-          echo "Data archive verified: data.zip ($(du -sh data.zip | cut -f1))"
-
-      # NDS header validation
-      # Uses od (standard POSIX tool, always available) to read raw bytes from
-      # the 512-byte NDS header.
-      #
-      # The Nintendo logo CRC at offset 0x15C must be 0xCF56. This value is
-      # hard-coded into NDS hardware and required by every emulator. If it is
-      # wrong, the ROM will not boot regardless of everything else being correct.
-      - name: Validate ROM header
+      - name: Compress and Package Assets
         run: |
-          ROM="persona-3-dual.nds"
+          gzip -1 sdcard.img
+          zip -r data.zip data/
 
-          ACTUAL_SIZE=$(stat -c%s "$ROM")
-          if [ "$ACTUAL_SIZE" -lt 512 ]; then
-            echo "::error::ROM is only ${ACTUAL_SIZE} bytes - header is truncated"
-            exit 1
-          fi
-
-          # od -tx2 reads a native 16-bit word; on the LE x86 runner this matches
-          # the LE value stored in the file exactly.
-          LOGO_CRC=$(od -An -tx2 -j 0x15C -N 2 "$ROM" | tr -d ' \n')
-          echo "Logo CRC  : 0x${LOGO_CRC^^}  (expected 0xCF56)"
-
-          if [ "${LOGO_CRC,,}" != "cf56" ]; then
-            echo "::error::Nintendo logo CRC mismatch - ROM is likely corrupt or malformed"
-            exit 1
-          fi
-
-          GAME_TITLE=$(dd if="$ROM" bs=1 skip=0 count=12 2>/dev/null | tr -d '\000')
-          echo "Game title: ${GAME_TITLE}"
-          echo "ROM header validation passed ✓"
-
-      # Checksums
-      - name: Generate checksums
-        id: checksums
+      # --- 4. Validate and publish ---
+      - name: Validate Output
         run: |
-          SHA256=$(sha256sum persona-3-dual.nds | cut -d' ' -f1)
-          MD5=$(md5sum    persona-3-dual.nds | cut -d' ' -f1)
-          echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
-          echo "md5=${MD5}"       >> $GITHUB_OUTPUT
-          echo "SHA-256 : ${SHA256}"
-          echo "MD5     : ${MD5}"
+          if [ ! -f persona-3-dual.nds ]; then exit 1; fi
+          LOGO_CRC=$(od -An -tx2 -j 0x15C -N 2 "persona-3-dual.nds" | tr -d ' \n' | tr '[:upper:]' '[:lower:]')
+          if [ "$LOGO_CRC" != "cf56" ]; then exit 1; fi
 
-      # Release notes
-      # Written to a file rather than GITHUB_OUTPUT to safely handle multi-line
-      # strings. Commit messages can contain characters that break YAML strings.
-      # The new tag has not been pushed yet, so the most recent existing tag is
-      # the correct baseline for "what changed since last release".
+      # Release notes written to a file so multi-line strings with special
+      # characters are passed safely without any YAML quoting concerns.
+      # The new tag has not been pushed yet so the most recent existing tag
+      # is the correct baseline for "what changed since last release".
       - name: Write release notes
         if: github.event_name != 'pull_request'
         run: |
@@ -346,92 +195,25 @@ jobs:
             echo "| \`persona-3-dual.nds\` | ROM - required for both emulator and hardware |"
             echo "| \`sdcard.img.gz\` | melonDS emulator - decompress & mount via DLDI settings |"
             echo "| \`data.zip\` | Real hardware - extract and place \`data/\` next to the ROM on your SD card |"
-            echo "See [melonDS](https://github.com/p3d-project/persona-3-dual#running-the-game) for installation instructions"
             echo ""
             echo "## Checksums"
             echo "| Algorithm | Hash |"
             echo "|-----------|------|"
-            echo "| SHA-256   | \`${{ steps.checksums.outputs.sha256 }}\` |"
-            echo "| MD5       | \`${{ steps.checksums.outputs.md5 }}\` |"
+            echo "| SHA-256   | \`$(sha256sum persona-3-dual.nds | cut -d' ' -f1)\` |"
+            echo "| MD5       | \`$(md5sum persona-3-dual.nds | cut -d' ' -f1)\` |"
           } > release-notes.md
 
-          echo "--- Release notes preview ---"
-          cat release-notes.md
-
-      # Upload artifact
-      # Release builds: 30-day retention, clean name.
-      # PR builds:      7-day retention, named with PR number for traceability.
-      - name: Upload ROM artifact (release build)
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v5
-        with:
-          name: persona-3-dual-ROM
-          path: |
-            persona-3-dual.nds
-            sdcard.img.gz
-            data.zip
-          retention-days: 30
-
-      - name: Upload ROM artifact (PR build)
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v5
-        with:
-          name: persona-3-dual-ROM-PR${{ github.event.number }}
-          path: |
-            persona-3-dual.nds
-            sdcard.img.gz
-            data.zip
-          retention-days: 7
-
-      # Create release
-      # Skipped on PRs. Uses body_path so multi-line markdown in the changelog
-      # is passed safely without any YAML quoting concerns.
+      # Single release step: creates the tag, publishes with formatted notes,
+      # and attaches all build artifacts in one action.
       - name: Create release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name:   ${{ steps.version.outputs.tag }}
-          name:       ${{ steps.version.outputs.release_name }}
-          prerelease: false
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.release_name }}
+          prerelease: true
+          body_path: release-notes.md
           files: |
             persona-3-dual.nds
             sdcard.img.gz
             data.zip
-          body_path:  release-notes.md
-
-      # Job summary
-      # Visible in the Actions UI under the "Summary" tab of each run.
-      # Runs with always() so a partial summary appears even on failure.
-      #
-      # Each conditional echo uses || true so that a false condition (e.g. empty
-      # SHA256 when an earlier step failed) returns 0 instead of 1. Without this,
-      # the { } group command exits 1 on its last statement and the step fails.
-      - name: Write job summary
-        if: always()
-        run: |
-          IS_PR="${{ github.event_name == 'pull_request' }}"
-          ROM_SIZE=$(du -sh persona-3-dual.nds 2>/dev/null | cut -f1 || echo "N/A")
-          SD_SIZE=$(du -sh sdcard.img.gz 2>/dev/null | cut -f1 || echo "N/A")
-          DATA_SIZE=$(du -sh data.zip 2>/dev/null | cut -f1 || echo "N/A")
-          SHA256="${{ steps.checksums.outputs.sha256 }}"
-          MD5="${{ steps.checksums.outputs.md5 }}"
-          TAG="${{ steps.version.outputs.tag }}"
-
-          {
-            echo "## Build Summary"
-            if [ "$IS_PR" = "true" ]; then
-              echo "> **PR build** - artifact uploaded for testing, no release created."
-            fi
-            echo ""
-            echo "| Field      | Value |"
-            echo "|------------|-------|"
-            [ "$IS_PR" != "true" ] && echo "| Version    | \`${TAG:-N/A}\` |" || true
-            echo "| Commit     | \`${{ github.sha }}\` |"
-            echo "| Branch     | \`${{ github.ref_name }}\` |"
-            echo "| Triggered  | \`${{ github.actor }}\` |"
-            echo "| ROM Size   | ${ROM_SIZE} |"
-            echo "| SD Image   | ${SD_SIZE} |"
-            echo "| Data (zip) | ${DATA_SIZE} |"
-            [ -n "$SHA256" ] && echo "| SHA-256    | \`${SHA256}\` |" || true
-            [ -n "$MD5"    ] && echo "| MD5        | \`${MD5}\` |"    || true
-          } >> $GITHUB_STEP_SUMMARY

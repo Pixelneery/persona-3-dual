@@ -4,13 +4,15 @@
 #include <malloc.h>
 #include <nds.h>
 #include <stdio.h>
+#include <string>
 
 // model
 #include "models/kotone.h"
 #include "models/makoto.h"
 // dialogue
 #include "dialogue/demo_dialogue.h"
-#include <string>
+// map
+#include "maps/paulownia_mall.h"
 
 static const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
@@ -85,9 +87,9 @@ void PaulowniaMallView::init()
 
     // setup player controller
     // TODO: add mapping
-    playerCtrl = new CharacterController(0,
-                                         0,
-                                         nullptr,
+    playerCtrl = new CharacterController(PAULOWNIA_MALL_MAP_WIDTH,
+                                         PAULOWNIA_MALL_MAP_HEIGHT,
+                                         &paulownia_mall_map[0][0],
                                          tileSize,
                                          worldOffsetX,
                                          worldOffsetZ,
@@ -100,7 +102,7 @@ void PaulowniaMallView::init()
                                          height,
                                          characterTranslate,
                                          characterFacingAngle,
-                                         false);
+                                         true);
 
     // setup music
     setMusic();
@@ -144,15 +146,15 @@ void PaulowniaMallView::init()
                               envTextures[PAULOWNIA_MALL_TEX_F008_001_KOMONO01]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_FUN03] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_fun03", envTextures[PAULOWNIA_MALL_TEX_F008_001_FUN03]);
-    bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_GLOW] = loadEnvironmentBitmap(
-        fatBasePath + "environments/paulownia_mall/f008_001_glow", envTextures[PAULOWNIA_MALL_TEX_F008_001_GLOW]);
+    // bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_GLOW] = loadEnvironmentBitmap(
+    //     fatBasePath + "environments/paulownia_mall/f008_001_glow", envTextures[PAULOWNIA_MALL_TEX_F008_001_GLOW]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_KOMONO02] =
         loadEnvironmentBitmap(fatBasePath + "environments/paulownia_mall/f008_001_komono02",
                               envTextures[PAULOWNIA_MALL_TEX_F008_001_KOMONO02]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_LIGFLA] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_ligfla", envTextures[PAULOWNIA_MALL_TEX_F008_001_LIGFLA]);
-    bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_SHADOW] = loadEnvironmentBitmap(
-        fatBasePath + "environments/paulownia_mall/f008_001_shadow", envTextures[PAULOWNIA_MALL_TEX_F008_001_SHADOW]);
+    // bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_SHADOW] = loadEnvironmentBitmap(
+    //     fatBasePath + "environments/paulownia_mall/f008_001_shadow", envTextures[PAULOWNIA_MALL_TEX_F008_001_SHADOW]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_ENTER02] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_enter02", envTextures[PAULOWNIA_MALL_TEX_F008_001_ENTER02]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_REDRECT] = loadEnvironmentBitmap(
@@ -167,8 +169,8 @@ void PaulowniaMallView::init()
         fatBasePath + "environments/paulownia_mall/f008_001_fl01", envTextures[PAULOWNIA_MALL_TEX_F008_001_FL01]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_GRA02] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_gra02", envTextures[PAULOWNIA_MALL_TEX_F008_001_GRA02]);
-    bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_GRA] = loadEnvironmentBitmap(
-        fatBasePath + "environments/paulownia_mall/f008_001_gra", envTextures[PAULOWNIA_MALL_TEX_F008_001_GRA]);
+    // bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_GRA] = loadEnvironmentBitmap(
+    //     fatBasePath + "environments/paulownia_mall/f008_001_gra", envTextures[PAULOWNIA_MALL_TEX_F008_001_GRA]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_HIHO] = loadEnvironmentBitmap(
         fatBasePath + "environments/paulownia_mall/f008_001_hiho", envTextures[PAULOWNIA_MALL_TEX_F008_001_HIHO]);
     bitmapsEnv[PAULOWNIA_MALL_TEX_F008_001_KANBAN03] =
@@ -296,20 +298,29 @@ ViewState PaulowniaMallView::update()
             consoleClear();
 
             // trigger dialogue from interaction
-            if (playerCtrl->isTileAt() == TileType::NEXT_SCENE)
+            switch (playerCtrl->isTileAt())
             {
+            // left
+            case TileType::SCENE_0:
                 musicCtrl.pause();
                 return ViewState::IWATODAI_STREETS;
-            }
-            else if (playerCtrl->isTileAt() == TileType::CHARACTER_Akihiko)
-            {
-                iprintf("\x1b[0;0HPress A to talk");
-                if (pressed & KEY_A)
-                {
-                    demo_yukari_kenji_argument_load();
-                    dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-                    dialogueCtrl.start(demo_yukari_kenji_argument_first());
-                }
+            // right
+            case TileType::SCENE_1:
+                musicCtrl.pause();
+                return ViewState::IWATODAI_DORM;
+            // middle
+            case TileType::SCENE_2:
+            case TileType::SCENE_3:
+            case TileType::SCENE_4:
+            case TileType::SCENE_5:
+            case TileType::SCENE_6:
+            case TileType::SCENE_7:
+            case TileType::SCENE_8:
+            case TileType::SCENE_9:
+                musicCtrl.pause();
+                return ViewState::STATION;
+            default:
+                break;
             }
         }
 

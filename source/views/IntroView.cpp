@@ -76,58 +76,39 @@ void IntroView::init()
     GraphicAsset room = graphicsCtrl.loadGrit(bgPath + "roomBackground" + suffix + "/roomBackground" + suffix);
     GraphicAsset sky = graphicsCtrl.loadGrit(bgPath + "skyBackground" + suffix + "/skyBackground" + suffix);
     GraphicAsset overlay = graphicsCtrl.loadGrit(bgPath + "overlayBackground" + suffix + "/overlayBackground" + suffix);
-    GraphicAsset attribution =
-        graphicsCtrl.loadGrit(bgPath + "attributionBackground" + suffix + "/attributionBackground" + suffix);
     GraphicAsset skySub = graphicsCtrl.loadGrit(bgPath + "skyBackgroundSub" + suffix + "/skyBackgroundSub" + suffix);
-    GraphicAsset logoLeft = graphicsCtrl.loadGrit(spritePath + "logoSpriteLeft" + suffix + "/logoSpriteLeft" + suffix);
-    GraphicAsset logoRight =
-        graphicsCtrl.loadGrit(spritePath + "logoSpriteRight" + suffix + "/logoSpriteRight" + suffix);
+
+    GraphicAsset attribution = graphicsCtrl.loadGrit(bgPath + "attributionBackground/attributionBackground");
+    GraphicAsset logoLeft = graphicsCtrl.loadGrit(spritePath + "logoSpriteLeft/logoSpriteLeft");
+    GraphicAsset logoRight = graphicsCtrl.loadGrit(spritePath + "logoSpriteRight/logoSpriteRight");
 
     // copy graphics to vram
-    if (silhouette.tiles)
-        dmaCopy(silhouette.tiles, bgGetGfxPtr(bg[0]), silhouette.tilesLen);
-    if (room.tiles)
-        dmaCopy(room.tiles, bgGetGfxPtr(bg[1]), room.tilesLen);
-    if (sky.tiles)
-        dmaCopy(sky.tiles, bgGetGfxPtr(bg[2]), sky.tilesLen);
-    if (overlay.tiles)
-        dmaCopy(overlay.tiles, bgGetGfxPtr(bg[3]), overlay.tilesLen);
-    if (attribution.tiles)
-        dmaCopy(attribution.tiles, bgGetGfxPtr(bgSubLogo), attribution.tilesLen);
-    if (skySub.tiles)
-        dmaCopy(skySub.tiles, bgGetGfxPtr(bgSubSky), skySub.tilesLen);
+    dmaCopy(silhouette.tiles, bgGetGfxPtr(bg[0]), silhouette.tilesLen);
+    dmaCopy(room.tiles, bgGetGfxPtr(bg[1]), room.tilesLen);
+    dmaCopy(sky.tiles, bgGetGfxPtr(bg[2]), sky.tilesLen);
+    dmaCopy(overlay.tiles, bgGetGfxPtr(bg[3]), overlay.tilesLen);
+    dmaCopy(attribution.tiles, bgGetGfxPtr(bgSubLogo), attribution.tilesLen);
+    dmaCopy(skySub.tiles, bgGetGfxPtr(bgSubSky), skySub.tilesLen);
 
     // copy maps to vram
-    if (silhouette.map)
-        dmaCopy(silhouette.map, bgGetMapPtr(bg[0]), silhouette.mapLen);
-    if (room.map)
-        dmaCopy(room.map, bgGetMapPtr(bg[1]), room.mapLen);
-    if (sky.map)
-        dmaCopy(sky.map, bgGetMapPtr(bg[2]), sky.mapLen);
-    if (overlay.map)
-        dmaCopy(overlay.map, bgGetMapPtr(bg[3]), overlay.mapLen);
-    if (attribution.map)
-        dmaCopy(attribution.map, bgGetMapPtr(bgSubLogo), attribution.mapLen);
-    if (skySub.map)
-        dmaCopy(skySub.map, bgGetMapPtr(bgSubSky), skySub.mapLen);
+    dmaCopy(silhouette.map, bgGetMapPtr(bg[0]), silhouette.mapLen);
+    dmaCopy(room.map, bgGetMapPtr(bg[1]), room.mapLen);
+    dmaCopy(sky.map, bgGetMapPtr(bg[2]), sky.mapLen);
+    dmaCopy(overlay.map, bgGetMapPtr(bg[3]), overlay.mapLen);
+    dmaCopy(attribution.map, bgGetMapPtr(bgSubLogo), attribution.mapLen);
+    dmaCopy(skySub.map, bgGetMapPtr(bgSubSky), skySub.mapLen);
 
     // can only write to extended palettes in LCD mode
     vramSetBankE(VRAM_E_LCD); // for main engine
     vramSetBankH(VRAM_H_LCD); // for subv engine
 
     // copy palettes to extended palette area
-    if (silhouette.pal)
-        dmaCopy(silhouette.pal, &VRAM_E_EXT_PALETTE[0][0], silhouette.palLen);
-    if (room.pal)
-        dmaCopy(room.pal, &VRAM_E_EXT_PALETTE[1][0], room.palLen);
-    if (sky.pal)
-        dmaCopy(sky.pal, &VRAM_E_EXT_PALETTE[2][0], sky.palLen);
-    if (overlay.pal)
-        dmaCopy(overlay.pal, &VRAM_E_EXT_PALETTE[3][0], overlay.palLen);
-    if (attribution.pal)
-        dmaCopy(attribution.pal, &VRAM_H_EXT_PALETTE[0][0], attribution.palLen);
-    if (skySub.pal)
-        dmaCopy(skySub.pal, &VRAM_H_EXT_PALETTE[1][0], skySub.palLen);
+    dmaCopy(silhouette.pal, &VRAM_E_EXT_PALETTE[0][0], silhouette.palLen);
+    dmaCopy(room.pal, &VRAM_E_EXT_PALETTE[1][0], room.palLen);
+    dmaCopy(sky.pal, &VRAM_E_EXT_PALETTE[2][0], sky.palLen);
+    dmaCopy(overlay.pal, &VRAM_E_EXT_PALETTE[3][0], overlay.palLen);
+    dmaCopy(attribution.pal, &VRAM_H_EXT_PALETTE[0][0], attribution.palLen);
+    dmaCopy(skySub.pal, &VRAM_H_EXT_PALETTE[1][0], skySub.palLen);
 
     // map vram to extended palette
     vramSetBankE(VRAM_E_BG_EXT_PALETTE);

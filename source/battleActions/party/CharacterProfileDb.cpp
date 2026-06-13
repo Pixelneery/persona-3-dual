@@ -3,6 +3,7 @@
 #include "../personas/PersonaDb.h"
 #include "../shoes/ShoeDb.h"
 #include "../skills/SkillDb.h"
+#include "../weapons/WeaponDb.h"
 
 CharacterProfile CharacterProfiles::player;
 CharacterProfile CharacterProfiles::yukari;
@@ -19,6 +20,8 @@ void CharacterProfiles::Initialize()
     player.lv = 2;
     player.participantType = ParticipantType::Player;
     player.armourType = ArmourType::Male;
+    player.weaponType = WeaponType::OneHandedSword;
+    player.weapon = WeaponDb::shortSword;
     player.baseAttackAction = &SkillDb::slashAttack;
     player.armour = ArmourDb::plainShirt;
     player.shoe = ShoeDb::rubberSole;
@@ -35,6 +38,8 @@ void CharacterProfiles::Initialize()
     yukari.lv = 1;
     yukari.participantType = ParticipantType::Party;
     yukari.armourType = ArmourType::Female;
+    yukari.weaponType = WeaponType::Bow;
+    yukari.weapon = WeaponDb::practiceBow;
     yukari.baseAttackAction = &SkillDb::pierceAttack;
     yukari.armour = ArmourDb::rashGuard;
     yukari.shoe = ShoeDb::rubberSole;
@@ -50,6 +55,8 @@ void CharacterProfiles::Initialize()
     junpei.lv = 1;
     junpei.participantType = ParticipantType::Party;
     junpei.armourType = ArmourType::Male;
+    junpei.weaponType = WeaponType::TwoHandedSword;
+    junpei.weapon = WeaponDb::imitationKatana;
     junpei.baseAttackAction = &SkillDb::slashAttack;
     junpei.armour = ArmourDb::rashGuard;
     junpei.shoe = ShoeDb::rubberSole;
