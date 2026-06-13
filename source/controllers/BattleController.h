@@ -37,10 +37,7 @@ class BattleController
     BattleParticipant* currentParticipantTurn = nullptr;
     u32 currentParticipantIndex = 0;
 
-    u32 actionIndex = 0;
-    u32 skillIndex = 0;
-    u32 personaIndex = 0;
-    u32 targetIndex = 0;
+    int menuIndex = 0;
     Skill* selectedSkill = nullptr;
 
     std::string pendingAlert;

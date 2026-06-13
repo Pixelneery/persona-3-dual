@@ -40,7 +40,7 @@ void BattleController::execute()
 
     currentParticipantTurn = battleParticipants->at(0);
 
-    actionIndex = -1;
+    menuIndex = -1;
     phase = currentParticipantTurn->getInitalTurnPhase();
 }
 
@@ -57,32 +57,29 @@ BattleResult BattleController::update(u32 keys)
 
         // render battleMenu
         battleMenuCmpt.loadActionOptions(&actions, actor->name);
-        actionIndex = -1;
-        actionIndex = (int)battleMenuCmpt.update(keys);
+        menuIndex = -1;
+        menuIndex = (int)battleMenuCmpt.update(keys);
 
-        if (((int)actionIndex != -1) && (keys & KEY_A) && actor->actorCanUse(actions[actionIndex]))
+        if ((menuIndex != -1) && (keys & KEY_A) && actor->actorCanUse(actions[menuIndex]))
         {
             consoleClear();
-            if (actionIndex == ACTION_ATTACK)
+            if (menuIndex == ACTION_ATTACK)
             {
                 selectedSkill = actor->baseAttackAction;
-                targetIndex = -1;
                 phase = BattlePhase::ChooseTarget;
             }
-            else if (actionIndex == ACTION_GUARD)
+            else if (menuIndex == ACTION_GUARD)
             {
                 TurnResult turnResult = guard.resolve(actor, nullptr);
                 applyResult(turnResult);
                 advanceTurn();
             }
-            else if (actionIndex == ACTION_PERSONA)
+            else if (menuIndex == ACTION_PERSONA)
             {
-                skillIndex = -1;
                 phase = BattlePhase::ChooseSkill;
             }
-            else if (actionIndex == ACTION_SWITCH)
+            else if (menuIndex == ACTION_SWITCH)
             {
-                personaIndex = -1;
                 phase = BattlePhase::ChoosePersona;
             }
         }
@@ -96,12 +93,13 @@ BattleResult BattleController::update(u32 keys)
         // render battleMenu
         battleMenuCmpt.loadSkillOptions(actor->curPersona);
         //TODO: why not just return nullptr if nothing happens instead of setting -1 manually everywhere?
-        skillIndex = -1;
-        skillIndex = (int)battleMenuCmpt.update(keys);
 
-        if (((int)skillIndex != -1) && (keys & KEY_A))
+        menuIndex = -1;
+        menuIndex = (int)battleMenuCmpt.update(keys);
+
+        if ((menuIndex != -1) && (keys & KEY_A))
         {
-            Skill* s = actor->curPersona->skills[skillIndex];
+            Skill* s = actor->curPersona->skills[menuIndex];
 
             s32* resource;
             if (s->skillRace == SkillRace::mag)
@@ -114,7 +112,7 @@ BattleResult BattleController::update(u32 keys)
             {
                 *resource -= s->cost;
                 selectedSkill = s;
-                targetIndex = 0;
+                menuIndex = 0;
                 phase = BattlePhase::ChooseTarget;
             }
             else
@@ -136,12 +134,12 @@ BattleResult BattleController::update(u32 keys)
         PartyMember* actor = static_cast<PartyMember*>(currentParticipantTurn);
 
         battleMenuCmpt.loadPersonaOptions(&actor->personas);
-        personaIndex = -1;
-        personaIndex = (int)battleMenuCmpt.update(keys);
+        menuIndex = -1;
+        menuIndex = (int)battleMenuCmpt.update(keys);
 
-        if (((int)personaIndex != -1) && (keys & KEY_A))
+        if ((menuIndex != -1) && (keys & KEY_A))
         {
-            if (actor->curPersona == actor->personas[personaIndex])
+            if (actor->curPersona == actor->personas[menuIndex])
             {
                 pendingAlert = "Already using this Persona\n";
                 alertReturnPhase = BattlePhase::ChoosePersona;
@@ -150,7 +148,7 @@ BattleResult BattleController::update(u32 keys)
             }
             else
             {
-                actor->curPersona = actor->personas[personaIndex];
+                actor->curPersona = actor->personas[menuIndex];
                 pendingAlert = "Switched to: " + actor->curPersona->name + "\n";
                 advanceTurn();
             }
@@ -165,7 +163,8 @@ BattleResult BattleController::update(u32 keys)
     {
         PartyMember* actor = static_cast<PartyMember*>(currentParticipantTurn);
 
-        bool healTarget = selectedSkill && selectedSkill->skillType == SkillType::Heal;
+        bool healTarget = selectedSkill && (selectedSkill->skillType == SkillType::Heal ||
+                                            selectedSkill->skillType == SkillType::MultiHeal);
 
         std::vector<BattleParticipant*> targets;
         if (healTarget)
@@ -177,14 +176,14 @@ BattleResult BattleController::update(u32 keys)
                       targets.end());
 
         battleMenuCmpt.loadTargetOptions(&targets, healTarget);
-        targetIndex = -1;
-        targetIndex = (int)battleMenuCmpt.update(keys);
+        menuIndex = -1;
+        menuIndex = (int)battleMenuCmpt.update(keys);
 
-        if ((int)targetIndex != -1 && (keys & KEY_A))
+        if (menuIndex != -1 && (keys & KEY_A))
         {
             if (isSingleTarget(selectedSkill->skillType))
             {
-                targets = {targets[targetIndex]};
+                targets = {targets[menuIndex]};
             }
 
             // Check so you cant heal target that has max hp
@@ -206,8 +205,8 @@ BattleResult BattleController::update(u32 keys)
 
             for (BattleParticipant* target : targets)
             {
-                TurnResult turnResult = (actionIndex == ACTION_ATTACK) ? attack.resolve(actor, target)
-                                                                       : persona.resolve(actor, target, selectedSkill);
+                TurnResult turnResult = (menuIndex == ACTION_ATTACK) ? attack.resolve(actor, target)
+                                                                     : persona.resolve(actor, target, selectedSkill);
                 applyResult(turnResult, target);
             }
 
@@ -216,8 +215,8 @@ BattleResult BattleController::update(u32 keys)
 
         if (keys & KEY_B)
         {
-            targetIndex = -1;
-            phase = (actionIndex == ACTION_ATTACK) ? BattlePhase::ChooseAction : BattlePhase::ChooseSkill;
+            phase = (selectedSkill == actor->baseAttackAction) ? BattlePhase::ChooseAction : BattlePhase::ChooseSkill;
+            menuIndex = -1;
         }
         break;
     }
@@ -325,7 +324,7 @@ void BattleController::advanceTurn()
     turnsTaken++;
     currentParticipantTurn = battleParticipants->at(next);
 
-    actionIndex = -1;
+    menuIndex = -1;
     BattlePhase nextPhase = currentParticipantTurn->getInitalTurnPhase();
 
     setNextPhase(nextPhase);
