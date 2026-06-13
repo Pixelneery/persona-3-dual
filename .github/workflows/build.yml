@@ -37,12 +37,15 @@ jobs:
     container:
       image: ghcr.io/${{ github.repository }}/p3d-builder:latest
 
-    # Force ccache and git to use the workspace directory
+    # CCACHE_DIR: explicit path so ccache writes inside the mounted workspace
+    # and actions/cache can find it at a stable absolute location.
+    # GIT_DIR: explicit path so git commands work correctly inside the container
+    # regardless of which directory a step happens to execute from.
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       GIT_DIR: ${{ github.workspace }}/.git
 
-    # Ensure every run step executes from the repo root where .git lives
+    # Ensure every run step executes from the repo root where .git lives.
     defaults:
       run:
         working-directory: ${{ github.workspace }}
@@ -59,7 +62,6 @@ jobs:
       # only when LFS files themselves change, not on every commit.
       - name: Generate LFS cache key
         id: lfs-key
-        working-directory: ${{ github.workspace }}
         run: |
           LFS_HASH=$(git lfs ls-files -l | cut -d' ' -f1 | sort | sha256sum | cut -d' ' -f1)
           echo "hash=${LFS_HASH}" >> $GITHUB_OUTPUT
@@ -86,13 +88,27 @@ jobs:
         if: steps.cache-lfs.outputs.cache-hit == 'true'
         run: git lfs checkout
 
-      # --- 2. ccache integration ---
-      - name: Setup ccache
-        uses: hendrikmuhs/ccache-action@v1.2.14
+      # --- 2. ccache ---
+      # ccache is pre-installed in the Docker image. We manage the cache
+      # manually via actions/cache rather than using ccache-action, which
+      # unconditionally tries to apt-install ccache and fails in containers
+      # where apt lists have been cleaned.
+      #
+      # Cache key includes github.sha so each commit gets a fresh save slot,
+      # while restore-keys falls back to the most recent prior build so
+      # unchanged translation units are still cache hits.
+      - name: Cache ccache objects
+        uses: actions/cache@v4
         with:
-          key: ${{ runner.os }}-ccache-nds
-          max-size: '500M'
-          install: false  # Already installed in the Docker image
+          path: ${{ github.workspace }}/.ccache
+          key: ccache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: ccache-${{ runner.os }}-
+
+      - name: Configure ccache
+        run: |
+          ccache --set-config=max_size=500M
+          ccache --set-config=compression=true
+          ccache -z  # Zero stats so per-run hit rate is visible in the log
 
       # --- 3. Build & compile ---
       - name: Generate version tag
@@ -124,11 +140,14 @@ jobs:
           path: ${{ github.workspace }}/build-version.txt
           retention-days: 1
 
+      # Print hit/miss stats after the build so cache effectiveness is visible
+      # in the Actions log without having to dig into ccache internals.
       - name: Compile ROM
         run: |
           export CC="ccache arm-none-eabi-gcc"
           export CXX="ccache arm-none-eabi-g++"
           make
+          ccache -s
 
       - name: Compress and Package Assets
         run: |

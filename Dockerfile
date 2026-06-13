@@ -23,7 +23,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # python3 / pip – asset pipeline scripts
 # zip / gzip   – packaging release artifacts
 # git-lfs      – large file storage (LFS pointers resolved during CI checkout)
-# ccache      – compiler cache for faster rebuilds (used by ccache-action in CI)
+# ccache      – compiler cache for faster rebuilds (CI manages cache via actions/cache)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ffmpeg \
         mtools \
