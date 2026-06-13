@@ -81,5 +81,5 @@ class IwatodaiDormView : public BaseView
     bool isBattleMenuActive = false;
 
     void setMusic();
-    void hideHUD();
+    void clearGraphics();
 };

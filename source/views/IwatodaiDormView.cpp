@@ -253,9 +253,14 @@ void IwatodaiDormView::init()
     phase = ViewPhase::Environment;
 }
 
-void IwatodaiDormView::hideHUD()
+void IwatodaiDormView::clearGraphics()
 {
+    bgHide(bgSharedMain);
     bgHide(bgSharedSub);
+
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedMain), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub), 2048);
+
     oamClear(&oamSub, 0, 0);
 }
 
@@ -278,8 +283,6 @@ ViewState IwatodaiDormView::update()
         // set
         if (!isActive && !prevBattleState)
         {
-            bgHide(bgSharedMain);
-            consoleClear();
             battleController.execute();
             prevBattleState = true;
         }
@@ -306,6 +309,7 @@ ViewState IwatodaiDormView::update()
         // exit
         if (pressed & KEY_START)
         {
+            clearGraphics();
             consoleClear();
             phase = ViewPhase::Environment;
         }
@@ -327,6 +331,7 @@ ViewState IwatodaiDormView::update()
         // exit
         else if (!isActive && prevDialogueState)
         {
+            clearGraphics();
             prevDialogueState = false;
             phase = ViewPhase::Environment;
         }
@@ -335,14 +340,9 @@ ViewState IwatodaiDormView::update()
 
     case ViewPhase::Environment:
     {
-        // TODO: fix issue where graphics are not cleaned up before loading
         // TODO: fix issue where music gets stuck for a few frames when switching phases
         if (!prevEnvironmentState)
         {
-            bgHide(bgSharedSub);
-            vramSetBankH(VRAM_H_LCD);
-            vramSetBankI(VRAM_I_LCD);
-
             // render HUD
             menuHUDCmpt.loadHUD();
             menuHUDCmpt.drawHUD(&bgSharedSub);
@@ -356,7 +356,7 @@ ViewState IwatodaiDormView::update()
         // start pause menu
         if (pressed & KEY_START)
         {
-            hideHUD();
+            clearGraphics();
             prevEnvironmentState = false;
             phase = ViewPhase::Pause;
         }
@@ -367,7 +367,7 @@ ViewState IwatodaiDormView::update()
             touchRead(&touch);
             if (menuHUDCmpt.isMenuTouchArea(&touch))
             {
-                hideHUD();
+                clearGraphics();
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;
             }
@@ -376,7 +376,7 @@ ViewState IwatodaiDormView::update()
         // start dialogue
         if (pressed & KEY_A)
         {
-            hideHUD();
+            clearGraphics();
             prevEnvironmentState = false;
             phase = ViewPhase::Dialogue;
         }
@@ -384,7 +384,7 @@ ViewState IwatodaiDormView::update()
         // start battle
         if (keys & KEY_Y)
         {
-            hideHUD();
+            clearGraphics();
             prevEnvironmentState = false;
             phase = ViewPhase::Battle;
         }
