@@ -1,6 +1,6 @@
 #pragma once
 #include "../BattleParticipant.h"
-#include "../BattleResult.h"
+#include "../TurnResult.h"
 #include <nds.h>
 #include <vector>
 
@@ -17,7 +17,7 @@ struct Enemy : BattleParticipant
 
     Skill* pickSkill();
     BattleParticipant* pickTarget(std::vector<BattleParticipant*>& partyMembers);
-    BattleResult resolve(BattleParticipant* target, Skill* skill);
+    TurnResult resolve(BattleParticipant* target, Skill* skill);
 
     BattleStats* getBattleStats() override
     {
@@ -26,6 +26,9 @@ struct Enemy : BattleParticipant
 
     float calculateBaseDamage(BattleParticipant& defender, Skill& skill) override;
     float getTeamMultiplier() override;
+    BattlePhase getInitalTurnPhase() override;
+    void onDead(BattleResult& battleResult) override;
+    void setCurrentTurnOrderAgility(float boost);
 
     virtual ~Enemy() = default;
 };

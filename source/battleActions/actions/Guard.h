@@ -10,5 +10,5 @@ struct Guard : ActionBase
         possibleUsers = ParticipantType::Party;
     }
 
-    BattleResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) override;
+    TurnResult resolve(PartyMember* user, BattleParticipant* target, Skill* skill = nullptr) override;
 };

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 //ignore skill here
-BattleResult AttackAction::resolve(PartyMember* user, BattleParticipant* target, Skill* skill)
+TurnResult AttackAction::resolve(PartyMember* user, BattleParticipant* target, Skill* skill)
 {
     Skill* atk = user->baseAttackAction;
     Enemy* enemy = static_cast<Enemy*>(target);
