@@ -1,5 +1,18 @@
 #include "UIScreen.h"
 
+void UIScreen::renderSprites()
+{
+}
+
+void UIScreen::removeSprites()
+{
+}
+
+int UIScreen::onTouch(touchPosition* touch)
+{
+    return -1;
+}
+
 void UIScreen::moveSprite(int spriteId, int x, int y)
 {
     oamSetXY(oam, spriteId, x, y);

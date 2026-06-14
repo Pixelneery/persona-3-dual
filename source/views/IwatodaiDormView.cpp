@@ -15,11 +15,13 @@
 #include "maps/iwatodai_dorm_floor_1.h"
 
 // debug
+#include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
 #include "controllers/UIController.h"
 
-UIController uiController;
 MenuHUDScreen menuHUDScreen;
+DialogueScreen dialogueScreen;
+UIController uiController;
 
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
@@ -72,27 +74,26 @@ void IwatodaiDormView::init()
     glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
 
     // setup sub screen
-    bgSharedMain = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
-    bgSharedSub = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedMain), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub), 2048);
+    bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);
+    bgSharedSub2 = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 3, 3);
+    bgSharedSub3 = bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, 4, 5);
+
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
 
     // setup console
-    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
+    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 5, 0, false, true);
     consoleSelect(&console);
 
     // adjust sub screen image and console to sit correctly on each other
     bgSetPriority(console.bgId, 0);
-    bgSetPriority(bgSharedMain, 1);
-    bgSetPriority(bgSharedSub, 2);
+    bgSetPriority(bgSharedSub1, 1);
+    bgSetPriority(bgSharedSub2, 2);
+    bgSetPriority(bgSharedSub3, 3);
     bgUpdate();
 
-    // setup menuHUD
-    // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
-    // menuHUDCmpt.loadHUD();
-
     // setup player controller
-    // TODO: add mapping
     playerCtrl = new CharacterController(IWATODAI_DORM_FLOOR_1_MAP_WIDTH,
                                          IWATODAI_DORM_FLOOR_1_MAP_HEIGHT,
                                          &iwatodai_dorm_floor_1_map[0][0],
@@ -243,43 +244,37 @@ void IwatodaiDormView::init()
     {
         graphicsCtrl.unloadGrit(envTextures[i]);
     }
-    totalPolyCount = iwatodaiDormFloor1Env.getPolyCount();
 
     // setup dialogue
-    demo_dialogue_bg_slot = bgSharedMain;
+    demo_dialogue_bg_slot = bgSharedSub1;
 
     // setup pause menu
-    pauseMenuCmpt.init(bgSharedMain, &isPauseMenuActive);
+    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
 
     // setup battle menu
+    // TODO: check if isBattleMenuActive is just a dummy value
     battleMenuCmpt.init(-1, &isBattleMenuActive);
 
-    prevBattleState = false;
-    prevDialogueState = false;
-    prevEnvironmentState = false;
-    phase = ViewPhase::Environment;
-
-    // DEBUG
+    // setup UI
     // NOTE: bg 0 is the 3D view
     int bgMain[3] = {1, 2, 3};
     // TODO: Setting the first index to anything other than bgSharedSub results in black bg (but sprites still load)
     // This might be okay/intended, as long as we create 4 seperate bg to pass in
-    int bgSub[4] = {bgSharedSub, 1, 2, 3};
+    int bgSub[4] = {bgSharedSub2, bgSharedSub3, 2, 3};
 
-    uiController.setBackgrounds(bgSub, bgMain);
+    // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
+    oamInit(&oamSub, SpriteMapping_1D_128, true);
+
+    uiController.setGraphics(bgSub, bgMain, &oamSub, nullptr);
     uiController.registerScreen(&menuHUDScreen, false);
+    uiController.registerScreen(&dialogueScreen, false);
     uiController.show(&menuHUDScreen, false);
-}
 
-void IwatodaiDormView::clearGraphics()
-{
-    bgHide(bgSharedMain);
-    bgHide(bgSharedSub);
-
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedMain), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub), 2048);
-
-    oamClear(&oamSub, 0, 0);
+    // setup view phases
+    prevBattleState = false;
+    prevDialogueState = false;
+    prevEnvironmentState = false;
+    phase = ViewPhase::Environment;
 }
 
 ViewState IwatodaiDormView::update()
@@ -327,7 +322,6 @@ ViewState IwatodaiDormView::update()
         // exit
         if (pressed & KEY_START)
         {
-            clearGraphics();
             consoleClear();
             phase = ViewPhase::Environment;
         }
@@ -340,16 +334,17 @@ ViewState IwatodaiDormView::update()
         // set
         if (!isActive && !prevDialogueState)
         {
+            // TODO: fix dialogue view. It uses the same background id as the UI render (when it should use an alt id)
+            uiController.show(&dialogueScreen, false);
             demo_yukari_kenji_argument_load();
             dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-            dialogueCtrl.setUISlot(bgSharedSub);
             dialogueCtrl.start(demo_yukari_kenji_argument_first());
             prevDialogueState = true;
         }
         // exit
         else if (!isActive && prevDialogueState)
         {
-            clearGraphics();
+            bgHide(bgSharedSub1);
             prevDialogueState = false;
             phase = ViewPhase::Environment;
         }
@@ -358,13 +353,10 @@ ViewState IwatodaiDormView::update()
 
     case ViewPhase::Environment:
     {
-        // TODO: fix issue where music gets stuck for a few frames when switching phases
         if (!prevEnvironmentState)
         {
             // render HUD
-            // menuHUDCmpt.loadHUD();
-            // menuHUDCmpt.drawHUD(&bgSharedSub);
-            // bgShow(bgSharedSub);
+            uiController.show(&menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
@@ -374,7 +366,6 @@ ViewState IwatodaiDormView::update()
         // start pause menu
         if (pressed & KEY_START)
         {
-            clearGraphics();
             prevEnvironmentState = false;
             phase = ViewPhase::Pause;
         }
@@ -383,9 +374,8 @@ ViewState IwatodaiDormView::update()
         if (pressed & KEY_TOUCH)
         {
             touchRead(&touch);
-            if (menuHUDCmpt.isMenuTouchArea(&touch))
+            if (menuHUDScreen.onTouch(&touch) == 1)
             {
-                clearGraphics();
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;
             }
@@ -394,7 +384,6 @@ ViewState IwatodaiDormView::update()
         // start dialogue
         if (pressed & KEY_A)
         {
-            clearGraphics();
             prevEnvironmentState = false;
             phase = ViewPhase::Dialogue;
         }
@@ -402,7 +391,6 @@ ViewState IwatodaiDormView::update()
         // start battle
         if (keys & KEY_Y)
         {
-            clearGraphics();
             prevEnvironmentState = false;
             phase = ViewPhase::Battle;
         }
@@ -487,7 +475,7 @@ void IwatodaiDormView::cleanup()
     // reset textures
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedMain), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
 
     // cleanup controllers
     delete playerCtrl;

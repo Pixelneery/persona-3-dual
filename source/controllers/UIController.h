@@ -13,7 +13,7 @@ class UIController
     // TODO: add persistence support
     /*
     * NOTE ON BACKGROUND IDs:
-    * The arrays passed into setBackgrounds() must contain the actual libnds
+    * The arrays passed into setGraphics() must contain the actual libnds
     * hardware background layer IDs (e.g., 0, 1, 2, 3).
     * * The UIController manages the mapping of UIScreens to these hardware layers.
     * When a screen is registered, it is assigned an available hardware bgId.
@@ -21,7 +21,7 @@ class UIController
     * (LRU) hardware layer at index [0], ensuring the oldest visible screen is
     * the one overwritten when capacity is reached.
     */
-    void setBackgrounds(int iBgSub[4], int iBgMain[3]);
+    void setGraphics(int iBgSub[4], int iBgMain[3], OamState* iOamSub, OamState* iOamMain);
     void registerScreen(UIScreen* screen, bool isMain);
     void show(UIScreen* screen, bool isMain);
     void hideAll();
@@ -30,6 +30,9 @@ class UIController
   private:
     // UIController() = default;
     void lruUpdate(int id, bool isMain);
+
+    OamState* oamSub;
+    OamState* oamMain;
 
     // background ids. The order of the arrays matter. Front = least recently updated, back = last updated
     int lruBgSub[4];

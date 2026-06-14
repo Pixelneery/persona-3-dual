@@ -10,6 +10,9 @@ class MenuHUDScreen : public UIScreen
   public:
     void load();
     void unload();
+    void renderSprites() override;
+    void removeSprites() override;
+    int onTouch(touchPosition* touch) override;
 
   private:
     // NOTE: we can have max:
@@ -28,6 +31,5 @@ class MenuHUDScreen : public UIScreen
     SpriteRegister skillSprites[18];
     SpriteRegister slashSprite;
     bool bgLoaded;
-
-    void loadBg(int* bgId);
+    void renderBackground();
 };

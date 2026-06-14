@@ -1,8 +1,10 @@
 #include "UIController.h"
 
 // set the background pointers to use
-void UIController::setBackgrounds(int iBgSub[4], int iBgMain[3])
+void UIController::setGraphics(int iBgSub[4], int iBgMain[3], OamState* iOamSub, OamState* iOamMain)
 {
+    oamSub = iOamSub;
+    oamMain = iOamMain;
     for (int i = 0; i < 4; i++)
     {
         lruBgSub[i] = iBgSub[i];
@@ -13,6 +15,8 @@ void UIController::setBackgrounds(int iBgSub[4], int iBgMain[3])
         lruBgMain[i] = iBgMain[i];
         hwBgMain[i] = iBgMain[i];
     }
+
+    UIController::hideAll();
 }
 
 // register screen. Persistent = is always loaded into memory. Paged (swappable) = can be loaded/unloaded into memory.
@@ -25,6 +29,7 @@ void UIController::registerScreen(UIScreen* screen, bool isMain)
         loadedMain[screenMainCount] = screen;
         screen->bgId = hwBgMain[screenMainCount];
         screenMainCount++;
+        screen->oam = oamMain;
         screen->load();
         screen->isLoaded = true;
         return;
@@ -35,6 +40,7 @@ void UIController::registerScreen(UIScreen* screen, bool isMain)
         screen->bgId = hwBgSub[screenSubCount];
         ;
         screenSubCount++;
+        screen->oam = oamSub;
         screen->load();
         screen->isLoaded = true;
         return;
@@ -101,7 +107,9 @@ void UIController::show(UIScreen* screen, bool isMain)
             oldScreen->isLoaded = false;
 
             screen->bgId = oldScreen->bgId;
+            screen->oam = oldScreen->oam;
             oldScreen->bgId = -1;
+            oldScreen->oam = nullptr;
 
             screen->load();
             screen->isLoaded = true;
@@ -110,6 +118,7 @@ void UIController::show(UIScreen* screen, bool isMain)
 
     // load screen
     hideAll();
+    screen->renderSprites();
     bgShow(screen->bgId);
 
     // update the "least recently updated" index
@@ -120,16 +129,26 @@ void UIController::show(UIScreen* screen, bool isMain)
 void UIController::hideAll()
 {
     // hide sub screens
-    for (const int& val : lruBgSub)
+    for (UIScreen* val : loadedSub)
     {
-        bgHide(val);
+        if (val == nullptr)
+        {
+            continue;
+        }
+        bgHide(val->bgId);
+        val->removeSprites();
     }
 
-    // TODO: fix bug, where it hides the 3d layer
+    // NOTE: do not hide the 3D layer
     // hide main screens
-    for (const int& val : lruBgMain)
+    for (UIScreen* val : loadedMain)
     {
-        bgHide(val);
+        if (val == nullptr)
+        {
+            continue;
+        }
+        bgHide(val->bgId);
+        val->removeSprites();
     }
 }
 
@@ -147,6 +166,7 @@ void UIController::cleanup()
         }
         loadedSub[i]->unload();
         loadedSub[i]->isLoaded = false;
+        loadedSub[i]->oam = nullptr;
         loadedSub[i]->bgId = -1;
         loadedSub[i] = nullptr;
     }
@@ -161,6 +181,7 @@ void UIController::cleanup()
         }
         loadedMain[j]->unload();
         loadedMain[j]->isLoaded = false;
+        loadedMain[j]->oam = nullptr;
         loadedMain[j]->bgId = -1;
         loadedMain[j] = nullptr;
     }

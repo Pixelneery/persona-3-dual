@@ -44,31 +44,12 @@ void DialogueController::start(Dialogue* firstLine)
     prevKeys = 0;
     advanceTo(firstLine);
     active = true;
-
-    // // load dialogue UI
-    // // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
-    // vramSetBankH(VRAM_H_LCD);
-    // vramSetBankI(VRAM_I_LCD);
-    // oamClear(&oamSub, 0, 0);
-
-    // dialogueCmpt2.loadHUD();
-    // dialogueCmpt2.drawHUD(&bgDialogueUIId);
-    // bgShow(bgDialogueUIId);
 }
 
 void DialogueController::exit()
 {
     consoleClear();
     active = false;
-
-    // // clear dialogue UI
-    // vramSetBankH(VRAM_H_LCD);
-    // vramSetBankI(VRAM_I_LCD);
-    // oamClear(&oamSub, 0, 0);
-
-    // menuHUDCmpt.loadHUD();
-    // menuHUDCmpt.drawHUD(&bgDialogueUIId);
-    // bgShow(bgDialogueUIId);
 }
 
 void DialogueController::update(u32 keys)
