@@ -25,23 +25,6 @@ void StationView::init()
     videoSetMode(MODE_0_3D);
     videoSetModeSub(MODE_0_2D);
 
-    // disable any leftover blending from other views
-    REG_BLDCNT = 0;
-    REG_BLDCNT_SUB = 0;
-    REG_BLDALPHA = 0;
-    REG_BLDALPHA_SUB = 0;
-
-    // clear sub engine vram banks to prevent garbage graphics from other views
-    vramSetBankC(VRAM_C_LCD);
-    vramSetBankD(VRAM_D_LCD);
-    vramSetBankH(VRAM_H_LCD);
-    vramSetBankI(VRAM_I_LCD);
-
-    dmaFillHalfWords(0, (u16*)0x06840000, 131072);      // VRAM C
-    dmaFillHalfWords(0, (u16*)0x06860000, 131072);      // VRAM D
-    dmaFillHalfWords(0, VRAM_H_EXT_PALETTE, 32768);     // VRAM H
-    dmaFillHalfWords(0, VRAM_I_EXT_SPR_PALETTE, 16384); // VRAM I
-
     vramSetBankA(VRAM_A_TEXTURE);
     vramSetBankB(VRAM_B_TEXTURE);
     vramSetBankC(VRAM_C_SUB_BG);
@@ -306,4 +289,14 @@ void StationView::cleanup()
 
     delete playerCtrl;
     playerCtrl = nullptr;
+
+    vramSetBankC(VRAM_C_LCD);
+    vramSetBankD(VRAM_D_LCD);
+    vramSetBankH(VRAM_H_LCD);
+    vramSetBankI(VRAM_I_LCD);
+
+    dmaFillHalfWords(0, (u16*)0x06840000, 131072); // VRAM C
+    dmaFillHalfWords(0, (u16*)0x06860000, 131072); // VRAM D
+    dmaFillHalfWords(0, (u16*)0x06898000, 32768);  // VRAM H
+    dmaFillHalfWords(0, (u16*)0x068A0000, 16384);  // VRAM I
 }

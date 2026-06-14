@@ -269,4 +269,17 @@ void SignContractView::cleanup()
     }
 
     BaseView::cleanup();
+
+    REG_BLDCNT_SUB = 0;
+    REG_BLDALPHA_SUB = 0;
+
+    vramSetBankA(VRAM_A_LCD);
+    vramSetBankC(VRAM_C_LCD);
+    vramSetBankD(VRAM_D_LCD);
+    vramSetBankE(VRAM_E_LCD);
+
+    dmaFillHalfWords(0, (u16*)0x06800000, 131072); // VRAM A
+    dmaFillHalfWords(0, (u16*)0x06840000, 131072); // VRAM C
+    dmaFillHalfWords(0, (u16*)0x06860000, 131072); // VRAM D
+    dmaFillHalfWords(0, (u16*)0x06880000, 65536);  // VRAM E
 }

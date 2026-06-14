@@ -115,4 +115,16 @@ void DisclaimerView::cleanup()
     // reset backgrounds
     dmaFillHalfWords(0, bgGetMapPtr(bg[1]), 2048);
     dmaFillHalfWords(0, bgGetMapPtr(bg[0]), 2048);
+
+    vramSetBankA(VRAM_A_LCD);
+    vramSetBankC(VRAM_C_LCD);
+    vramSetBankD(VRAM_D_LCD);
+    vramSetBankE(VRAM_E_LCD);
+    vramSetBankH(VRAM_H_LCD);
+
+    dmaFillHalfWords(0, (u16*)0x06800000, 131072); // VRAM A
+    dmaFillHalfWords(0, (u16*)0x06840000, 131072); // VRAM C
+    dmaFillHalfWords(0, (u16*)0x06860000, 131072); // VRAM D
+    dmaFillHalfWords(0, (u16*)0x06880000, 65536);  // VRAM E
+    dmaFillHalfWords(0, (u16*)0x06898000, 32768);  // VRAM H
 }
