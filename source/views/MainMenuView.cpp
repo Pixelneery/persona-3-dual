@@ -13,8 +13,8 @@ void MainMenuView::init()
     isMainMenuCmptActive = true;
     mainMenuCmpt.init(-1, &isMainMenuCmptActive);
 
-    // transition both screens from white
-    for (int i = 16; i > 0; i--)
+    // transition both screens from black
+    for (int i = -16; i < 0; i++)
     {
         setBrightness(3, i);
 

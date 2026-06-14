@@ -210,7 +210,7 @@ ViewState IntroView::update()
         // transition both screens to white
         for (int i = 0; i <= 16; i++)
         {
-            setBrightness(3, i);
+            setBrightness(3, -i);
 
             // wait a few frames
             for (int duration = 0; duration <= 2; duration++)
