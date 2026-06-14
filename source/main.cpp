@@ -227,49 +227,54 @@ int main(int argc, char* argv[])
         if (currentView != nullptr)
         {
             ViewState nextState = currentView->update();
-            if (nextState == ViewState::INTRO)
+            switch (nextState)
             {
+            case ViewState::INTRO:
                 SwitchView(new IntroView());
-            }
-            else if (nextState == ViewState::MAIN_MENU)
-            {
+                break;
+
+            case ViewState::MAIN_MENU:
                 SwitchView(new MainMenuView());
-            }
-            else if (nextState == ViewState::IWATODAI_DORM)
-            {
+                break;
+
+            case ViewState::IWATODAI_DORM:
                 SwitchView(new IwatodaiDormView());
-            }
-            else if (nextState == ViewState::IWATODAI_STREETS)
-            {
+                break;
+
+            case ViewState::IWATODAI_STREETS:
                 SwitchView(new IwatodaiStreetsView());
-            }
-            else if (nextState == ViewState::DISCLAIMER)
-            {
+                break;
+
+            case ViewState::DISCLAIMER:
                 SwitchView(new DisclaimerView());
-            }
-            else if (nextState == ViewState::INTRO_VIDEO)
-            {
+                break;
+
+            case ViewState::INTRO_VIDEO:
                 SwitchView(new VideoView(saveData.introVideoPath, ViewState::INTRO));
-            }
-            else if (nextState == ViewState::CUTSCENE_1)
-            {
+                break;
+
+            case ViewState::CUTSCENE_1:
                 SwitchView(new VideoView("cutscene-1.vid", ViewState::SIGN_CONTRACT));
-            }
-            else if (nextState == ViewState::SIGN_CONTRACT)
-            {
+                break;
+
+            case ViewState::SIGN_CONTRACT:
                 SwitchView(new SignContractView());
-            }
-            else if (nextState == ViewState::CUTSCENE_2)
-            {
+                break;
+
+            case ViewState::CUTSCENE_2:
                 SwitchView(new VideoView("cutscene-2.vid", ViewState::IWATODAI_DORM));
-            }
-            else if (nextState == ViewState::STATION)
-            {
+                break;
+
+            case ViewState::STATION:
                 SwitchView(new StationView());
-            }
-            else if (nextState == ViewState::PAULOWNIA_MALL)
-            {
+                break;
+
+            case ViewState::PAULOWNIA_MALL:
                 SwitchView(new PaulowniaMallView());
+                break;
+
+            default:
+                break;
             }
         }
 
