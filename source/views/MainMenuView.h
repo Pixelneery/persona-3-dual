@@ -1,5 +1,5 @@
 #pragma once
-#include "components/MainMenuComponent.h"
+#include "components/menu/MainMenuComponent.h"
 #include "core/BaseView.h"
 
 class MainMenuView : public BaseView

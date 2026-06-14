@@ -1,6 +1,6 @@
 #include "SpriteController.h"
 #include "core/globals.h"
-#include "data/sprite_db.h"
+#include "data/spriteDb.h"
 
 bool SpriteController::switchSpriteImpl(SpriteType type, int spriteId, SpriteRegister* out)
 {
@@ -10,7 +10,8 @@ bool SpriteController::switchSpriteImpl(SpriteType type, int spriteId, SpriteReg
         return false;
     }
 
-    GraphicAsset asset = graphicsCtrl.loadGrit(fatBasePath + "graphics/MenuHUD/sprites/" + filename);
+    // TODO: pass path
+    GraphicAsset asset = graphicsCtrl.loadGrit(fatBasePath + spritePath + filename);
     loadedAssets.push_back(asset);
 
     out->id = spriteId;

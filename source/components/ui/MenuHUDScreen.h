@@ -1,11 +1,19 @@
 #pragma once
+#include "components/ui/UIScreen.h"
 #include "core/enums.h"
 #include "core/globals.h"
 #include "core/structs.h"
 #include <nds.h>
 
-class MenuHUDComponent
+class MenuHUDScreen : public UIScreen
 {
+  public:
+    void load();
+    void unload();
+    void renderSprites() override;
+    void removeSprites() override;
+    int onTouch(touchPosition* touch) override;
+
   private:
     // NOTE: we can have max:
     // 1 moon
@@ -23,11 +31,5 @@ class MenuHUDComponent
     SpriteRegister skillSprites[18];
     SpriteRegister slashSprite;
     bool bgLoaded;
-
-    void loadBg(int* bgId);
-
-  public:
-    void loadHUD();
-    void drawHUD(int* bgId);
-    bool isMenuTouchArea(touchPosition* touch);
+    void renderBackground();
 };

@@ -7,6 +7,7 @@
 class SpriteController
 {
   public:
+    std::string spritePath;
     template <typename SpriteID> bool switchSprite(SpriteType type, SpriteID spriteId, SpriteRegister* out)
     {
         return switchSpriteImpl(type, static_cast<int>(spriteId), out);

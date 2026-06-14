@@ -1,5 +1,5 @@
 #pragma once
-#include "core/BaseMenu.h"
+#include "components/menu/BaseMenu.h"
 #include "dialogue/demo_dialogue.h"
 
 #define MENU_OPTIONS 8

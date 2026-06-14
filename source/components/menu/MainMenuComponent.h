@@ -1,5 +1,4 @@
-#include "core/BaseMenu.h"
-#include "core/globals.h"
+#include "components/menu/BaseMenu.h"
 
 #define MAIN_MENU_OPTIONS 3
 #define LEVEL_OPTIONS 6

@@ -1,7 +1,9 @@
 #pragma once
-// #include "core/globals.h"
-#include "controllers/BattleController.h"
-#include "core/BaseMenu.h"
+#include "battleActions/BattleParticipant.h"
+#include "battleActions/actions/ActionBase.h"
+#include "battleActions/personas/PersonaBase.h"
+#include "components/menu/BaseMenu.h"
+#include "components/menu/BattleMenuComponent.h"
 
 class BattleMenuComponent : public BaseMenu
 {
@@ -9,7 +11,6 @@ class BattleMenuComponent : public BaseMenu
     void loadBg(int bgIndex) override;
 
   private:
-    // TODO: create enum
     BattleMenuOptions loadedOption = BattleMenuOptions::NONE;
 
     std::vector<MenuOption> battleOptions;

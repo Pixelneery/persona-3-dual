@@ -1,4 +1,5 @@
 #include "MainMenuComponent.h"
+#include "core/globals.h"
 #include <string>
 
 void MainMenuComponent::loadBg(int bgIndex)

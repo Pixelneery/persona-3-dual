@@ -12,11 +12,18 @@ class StationView : public BaseView
     void cleanup() override;
 
   private:
+    ViewPhase phase;
     touchPosition touch;
 
-    int bgMenuHUD;
-    int bgSharedSlot;
+    // sub screen
+    int bgSharedSub1;
+    int bgSharedSub2;
+    int bgSharedSub3;
     PrintConsole console;
+
+    // 3D
+    int characterTextureId;
+    station_Environment stationEnv;
 
     CharacterController* playerCtrl;
     CameraPosition camPos;
@@ -34,4 +41,6 @@ class StationView : public BaseView
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180.0f;
     int totalPolyCount = 0;
+
+    bool prevEnvironmentState;
 };

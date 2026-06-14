@@ -29,9 +29,10 @@
 #include "controllers/VideoController.h"
 
 // components
-#include "components/BattleMenuComponent.h"
-#include "components/MenuHUDComponent.h"
-#include "components/PauseMenuComponent.h"
+#include "components/menu/BattleMenuComponent.h"
+#include "components/menu/PauseMenuComponent.h"
+#include "components/ui/DialogueScreen.h"
+#include "components/ui/MenuHUDScreen.h"
 
 // sfx
 #include "soundbank_bin.h"
@@ -40,7 +41,7 @@
 #include "models/kotone.h"
 #include "models/makoto.h"
 
-// db's
+// DBs
 #include "battleActions/armours/ArmourDb.h"
 #include "battleActions/enemies/EnemyDb.h"
 #include "battleActions/party/CharacterProfileDb.h"
@@ -63,6 +64,7 @@ VideoController videoCtrl;
 AnimationController characterAnimationCtrl;
 SpriteController spriteCtrl;
 GraphicsController graphicsCtrl;
+UIController uiCtrl;
 
 // models
 unsigned int** bitmapsCharacter = nullptr;
@@ -86,8 +88,9 @@ bool enableBillboards = true;
 bool enableCharacterAnim = true;
 bool enableDebugPrint = false;
 bool isPauseMenuActive = false;
-MenuHUDComponent menuHUDCmpt;
 BattleMenuComponent battleMenuCmpt;
+MenuHUDScreen menuHUDScreen;
+DialogueScreen dialogueScreen;
 
 BaseView* currentView = nullptr;
 bool prevFemcMode;

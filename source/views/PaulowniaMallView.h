@@ -20,10 +20,13 @@ class PaulowniaMallView : public BaseView
     PaulowniaMallView();
 
   private:
+    ViewPhase phase;
     touchPosition touch;
 
     // sub screen
-    int bgMenuHUD;
+    int bgSharedSub1;
+    int bgSharedSub2;
+    int bgSharedSub3;
     PrintConsole console;
 
     // 3D
@@ -31,6 +34,8 @@ class PaulowniaMallView : public BaseView
     paulownia_mall_Environment paulowniaMallEnv;
 
     bool prevBattleState;
+    bool prevDialogueState;
+    bool prevEnvironmentState;
     // init Character Profiles
     CharacterProfiles characterProfiles;
     // Battle participants
@@ -63,7 +68,6 @@ class PaulowniaMallView : public BaseView
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180;
     DialogueController dialogueCtrl;
-    int bgSharedSlot;
     int totalPolyCount = 0;
     bool isBattleMenuActive = false;
 

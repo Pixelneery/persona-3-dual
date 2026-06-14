@@ -20,10 +20,13 @@ class IwatodaiDormView : public BaseView
     IwatodaiDormView();
 
   private:
+    ViewPhase phase;
     touchPosition touch;
 
     // sub screen
-    int bgMenuHUD;
+    int bgSharedSub1;
+    int bgSharedSub2;
+    int bgSharedSub3;
     PrintConsole console;
 
     // 3D
@@ -31,6 +34,9 @@ class IwatodaiDormView : public BaseView
     iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
     bool prevBattleState;
+    bool prevDialogueState;
+    bool prevEnvironmentState;
+
     // init Character Profiles
     CharacterProfiles characterProfiles;
     // Battle participants
@@ -63,8 +69,7 @@ class IwatodaiDormView : public BaseView
     const float angle = -1.6;
     const float characterFacingAngle = 180.0f;
     DialogueController dialogueCtrl;
-    int bgSharedSlot;
-    int totalPolyCount = 0;
+
     bool isBattleMenuActive = false;
 
     void setMusic();

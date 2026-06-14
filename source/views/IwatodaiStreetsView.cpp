@@ -10,7 +10,6 @@
 // environment
 #include "environments/iwatodai_streets.h"
 #include <string>
-
 // model
 #include "models/kotone.h"
 #include "models/makoto.h"
@@ -20,9 +19,6 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
     asset = graphicsCtrl.loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
-
-int streetsCharacterTextureId;
-iwatodai_streets_Environment iwatodaiStreetsEnv;
 
 void IwatodaiStreetsView::init()
 {
@@ -52,23 +48,24 @@ void IwatodaiStreetsView::init()
     glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
     glColor3b(255, 255, 255);
 
-    // sub screen console
-    bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
-    bgMenuHUD = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgMenuHUD), 2048);
+    // setup sub screen
+    bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);
+    bgSharedSub2 = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 3, 3);
+    bgSharedSub3 = bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, 4, 5);
 
-    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
+
+    // setup console
+    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 5, 0, false, true);
     consoleSelect(&console);
 
     bgSetPriority(console.bgId, 0);
-    bgSetPriority(bgSharedSlot, 1);
-    bgSetPriority(bgMenuHUD, 2);
+    bgSetPriority(bgSharedSub1, 1);
+    bgSetPriority(bgSharedSub2, 2);
+    bgSetPriority(bgSharedSub3, 3);
     bgUpdate();
-
-    // setup menuHUD
-    // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
-    menuHUDCmpt.loadHUD();
 
     playerCtrl = new CharacterController(IWATODAI_STREETS_MAP_WIDTH,
                                          IWATODAI_STREETS_MAP_HEIGHT,
@@ -99,7 +96,6 @@ void IwatodaiStreetsView::init()
     }
     musicCtrl.init((fatBasePath + streetsMusicPath).c_str(), 0.0f, -1.0f);
 
-    // setup character model
     // setup character model
     std::string modelPath = fatBasePath + "models/";
     characterAnimationCtrl.loadModel(
@@ -179,7 +175,22 @@ void IwatodaiStreetsView::init()
     totalPolyCount = iwatodaiStreetsEnv.getPolyCount();
 
     // pause menu
-    pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
+    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
+
+    // setup UI
+    int bgMain[3] = {1, 2, 3};
+    int bgSub[4] = {bgSharedSub2, bgSharedSub3, 2, 3};
+
+    // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
+    oamInit(&oamSub, SpriteMapping_1D_128, true);
+
+    uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
+    uiCtrl.registerScreen(&menuHUDScreen, false);
+    uiCtrl.show(&menuHUDScreen, false);
+
+    // setup view phases
+    prevEnvironmentState = false;
+    phase = ViewPhase::Environment;
 }
 
 ViewState IwatodaiStreetsView::update()
@@ -193,49 +204,55 @@ ViewState IwatodaiStreetsView::update()
     u32 keys = keysHeld();
     u32 pressed = keysDown();
 
-    if (pressed & KEY_START)
+    switch (phase)
     {
-        isPauseMenuActive = !isPauseMenuActive;
-    }
-
-    // touch input
-    if (pressed & KEY_TOUCH)
+    case ViewPhase::Pause:
     {
-        touchRead(&touch);
-        if (menuHUDCmpt.isMenuTouchArea(&touch))
-        {
-            isPauseMenuActive = true;
-        }
-    }
-
-    // draw menuHUD
-    if (!isPauseMenuActive)
-    {
-        menuHUDCmpt.drawHUD(&bgMenuHUD);
-        bgShow(bgMenuHUD);
-    }
-    // hide menuHUD if pauseMenu is active
-    else
-    {
-        bgHide(bgMenuHUD);
-        oamClear(&oamSub, 0, 0);
-    }
-
-    if (isPauseMenuActive)
-    {
+        // run
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
             musicCtrl.pause();
             return menuResult;
         }
+
+        // exit
+        if (pressed & KEY_START)
+        {
+            consoleClear();
+            phase = ViewPhase::Environment;
+        }
+        break;
     }
-    else
+
+    case ViewPhase::Environment:
     {
-        consoleClear();
-        bgHide(bgSharedSlot);
+        if (!prevEnvironmentState)
+        {
+            // render HUD
+            uiCtrl.show(&menuHUDScreen, false);
+            prevEnvironmentState = true;
+        }
 
         camPos = playerCtrl->update(keys);
+
+        // start pause menu
+        if (pressed & KEY_START)
+        {
+            prevEnvironmentState = false;
+            phase = ViewPhase::Pause;
+        }
+
+        // start pause menu
+        if (pressed & KEY_TOUCH)
+        {
+            touchRead(&touch);
+            if (menuHUDScreen.onTouch(&touch) == 1)
+            {
+                prevEnvironmentState = false;
+                phase = ViewPhase::Pause;
+            }
+        }
 
         if (playerCtrl->isTileAt() == TileType::SCENE_0)
         {
@@ -278,6 +295,14 @@ ViewState IwatodaiStreetsView::update()
             iprintf(
                 "\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
+        break;
+    }
+
+    default:
+    {
+        phase = ViewPhase::Environment;
+        break;
+    }
     }
 
     musicCtrl.update();
@@ -291,8 +316,9 @@ void IwatodaiStreetsView::cleanup()
     BaseView::cleanup();
 
     iwatodaiStreetsEnv.cleanup();
-    glDeleteTextures(1, &streetsCharacterTextureId);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
+    uiCtrl.cleanup();
+    glDeleteTextures(1, &characterTextureId);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
 
     delete playerCtrl;
     playerCtrl = nullptr;

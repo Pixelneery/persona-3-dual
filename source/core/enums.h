@@ -24,6 +24,7 @@ enum class SpriteType
     DIGIT,
     TIME,
     SKILL_SPRITE,
+    DIALOGUE,
     CUSTOM,
 };
 
@@ -114,6 +115,18 @@ enum class DigitSprite
     DIGIT_8,
     DIGIT_9,
     SLASH
+};
+
+enum class DialogueSprite
+{
+    NAME_TAG = 0,
+    NAME_TAG_FEMC,
+    CALENDAR,
+    CALENDAR_FEMC,
+    TEXT_CORNER,
+    TEXT_CORNER_FEMC,
+    TEXT_MIDDLE,
+    TEXT_MIDDLE_FEMC,
 };
 
 enum class TileType
@@ -278,4 +291,12 @@ enum class CharacterAnimOption
     ANIM_22 = 22,
     ANIM_23 = 23,
     ANIM_24 = 24
+};
+
+enum class ViewPhase
+{
+    Battle,
+    Pause,
+    Dialogue,
+    Environment
 };

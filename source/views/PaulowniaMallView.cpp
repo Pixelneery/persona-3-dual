@@ -66,24 +66,25 @@ void PaulowniaMallView::init()
     glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
 
     // setup sub screen
-    bgSharedSlot = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
-    bgMenuHUD = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 10, 3);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgMenuHUD), 2048);
+    // https://mtheall.com/vram.html#SUB=1&T0=1&NT0=512&MB0=2&TB0=1&S0=0&T1=3&NT1=128&MB1=5&TB1=0&T2=1&NT2=512&MB2=3&TB2=3&S2=0&T3=1&NT3=512&MB3=4&TB3=5&S3=0
+    bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);
+    bgSharedSub2 = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 3, 3);
+    bgSharedSub3 = bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, 4, 5);
+
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
 
     // setup console
-    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 4, 5, false, true);
+    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 5, 0, false, true);
     consoleSelect(&console);
 
     // adjust sub screen image and console to sit correctly on each other
     bgSetPriority(console.bgId, 0);
-    bgSetPriority(bgSharedSlot, 1);
-    bgSetPriority(bgMenuHUD, 2);
+    bgSetPriority(bgSharedSub1, 1);
+    bgSetPriority(bgSharedSub2, 2);
+    bgSetPriority(bgSharedSub3, 3);
     bgUpdate();
-
-    // setup menuHUD
-    // uses VRAM bank I for sprite extended palettes, VRAM H for bg palettes
-    menuHUDCmpt.loadHUD();
 
     // setup player controller
     // TODO: add mapping
@@ -211,15 +212,36 @@ void PaulowniaMallView::init()
     totalPolyCount = paulowniaMallEnv.getPolyCount();
 
     // setup dialogue
-    demo_dialogue_bg_slot = bgSharedSlot;
+    demo_dialogue_bg_slot = bgSharedSub1;
 
     // setup pause menu
     // use the same shared background slot as the demo dialogue
-    pauseMenuCmpt.init(bgSharedSlot, &isPauseMenuActive);
+    pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
 
     // setup battle menu
+    // TODO: check if isBattleMenuActive is just a dummy value
     battleMenuCmpt.init(-1, &isBattleMenuActive);
+
+    // setup UI
+    // NOTE: bg 0 is the 3D view
+    int bgMain[3] = {1, 2, 3};
+    // TODO: Setting the first index to anything other than bgSharedSub results in black bg (but sprites still load)
+    // This might be okay/intended, as long as we create 4 seperate bg to pass in
+    int bgSub[4] = {bgSharedSub2, bgSharedSub3, 2, 3};
+
+    // initialize sub sprite engine with 1D mapping, 128 byte boundry, external palette support
+    oamInit(&oamSub, SpriteMapping_1D_128, true);
+
+    uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
+    uiCtrl.registerScreen(&menuHUDScreen, false);
+    uiCtrl.registerScreen(&dialogueScreen, false);
+    uiCtrl.show(&menuHUDScreen, false);
+
+    // setup view phases
     prevBattleState = false;
+    prevDialogueState = false;
+    prevEnvironmentState = false;
+    phase = ViewPhase::Environment;
 }
 
 ViewState PaulowniaMallView::update()
@@ -233,95 +255,137 @@ ViewState PaulowniaMallView::update()
     u32 keys = keysHeld();
     u32 pressed = keysDown();
 
-    // resume music when battle 1. is no longer active, 2. when is previously was active
-    if (!battleController.isActive() && prevBattleState)
+    switch (phase)
     {
-        prevBattleState = false;
-        PaulowniaMallView::setMusic();
-    }
-
-    if (pressed & KEY_START)
+    case ViewPhase::Battle:
     {
-        isPauseMenuActive = !isPauseMenuActive;
-    }
-
-    // touch input
-    if (pressed & KEY_TOUCH)
-    {
-        touchRead(&touch);
-        if (menuHUDCmpt.isMenuTouchArea(&touch))
+        bool isActive = battleController.isActive();
+        // set
+        if (!isActive && !prevBattleState)
         {
-            isPauseMenuActive = true;
+            battleController.execute();
+            prevBattleState = true;
         }
+        //exit
+        else if (!isActive && prevBattleState)
+        {
+            PaulowniaMallView::setMusic();
+            prevBattleState = false;
+            phase = ViewPhase::Environment;
+        }
+        break;
     }
 
-    // draw menuHUD
-    if (!dialogueCtrl.isActive() && !battleController.isActive() && !isPauseMenuActive)
+    case ViewPhase::Pause:
     {
-        menuHUDCmpt.drawHUD(&bgMenuHUD);
-        bgShow(bgMenuHUD);
-    }
-    // hide menuHUD if dialogue, battle, or pauseMenu is active
-    else
-    {
-        bgHide(bgMenuHUD);
-        oamClear(&oamSub, 0, 0);
-    }
-
-    // render pauseMenu
-    if (isPauseMenuActive)
-    {
+        // run
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
         {
             musicCtrl.pause();
             return menuResult;
         }
-    }
-    // render world
-    else
-    {
-        // only process world input when dialogue and battle are not active
-        if (!dialogueCtrl.isActive() && !battleController.isActive())
+
+        // exit
+        if (pressed & KEY_START)
         {
-            // move character
-            camPos = playerCtrl->update(keys);
-
-            // start battle
-            if (keys & KEY_Y)
-            {
-                battleController.execute();
-                prevBattleState = true;
-            }
-
-            bgHide(bgSharedSlot);
             consoleClear();
+            phase = ViewPhase::Environment;
+        }
+        break;
+    }
 
-            // trigger dialogue from interaction
-            switch (playerCtrl->isTileAt())
+    case ViewPhase::Dialogue:
+    {
+        bool isActive = dialogueCtrl.isActive();
+        // set
+        if (!isActive && !prevDialogueState)
+        {
+            // TODO: fix dialogue view. It uses the same background id as the UI render (when it should use an alt id)
+            uiCtrl.show(&dialogueScreen, false);
+            demo_yukari_kenji_argument_load();
+            dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
+            dialogueCtrl.start(demo_yukari_kenji_argument_first());
+            prevDialogueState = true;
+        }
+        // exit
+        else if (!isActive && prevDialogueState)
+        {
+            bgHide(bgSharedSub1);
+            prevDialogueState = false;
+            phase = ViewPhase::Environment;
+        }
+        break;
+    }
+
+    case ViewPhase::Environment:
+    {
+        if (!prevEnvironmentState)
+        {
+            // render HUD
+            uiCtrl.show(&menuHUDScreen, false);
+            prevEnvironmentState = true;
+        }
+
+        // move character
+        camPos = playerCtrl->update(keys);
+
+        // start pause menu
+        if (pressed & KEY_START)
+        {
+            prevEnvironmentState = false;
+            phase = ViewPhase::Pause;
+        }
+
+        // start pause menu
+        if (pressed & KEY_TOUCH)
+        {
+            touchRead(&touch);
+            if (menuHUDScreen.onTouch(&touch) == 1)
             {
-            // left
-            case TileType::SCENE_0:
-                musicCtrl.pause();
-                return ViewState::IWATODAI_STREETS;
-            // right
-            case TileType::SCENE_1:
-                musicCtrl.pause();
-                return ViewState::IWATODAI_DORM;
-            // middle
-            case TileType::SCENE_2:
-            case TileType::SCENE_3:
-            case TileType::SCENE_4:
-            case TileType::SCENE_5:
-            case TileType::SCENE_6:
-            case TileType::SCENE_7:
-            case TileType::SCENE_8:
-            case TileType::SCENE_9:
-                musicCtrl.pause();
-                return ViewState::STATION;
-            default:
-                break;
+                prevEnvironmentState = false;
+                phase = ViewPhase::Pause;
             }
+        }
+
+        // start dialogue
+        if (pressed & KEY_A)
+        {
+            prevEnvironmentState = false;
+            phase = ViewPhase::Dialogue;
+        }
+
+        // start battle
+        if (keys & KEY_Y)
+        {
+            prevEnvironmentState = false;
+            phase = ViewPhase::Battle;
+        }
+
+        // trigger dialogue from interaction
+        switch (playerCtrl->isTileAt())
+        {
+        // left
+        case TileType::SCENE_0:
+            musicCtrl.pause();
+            return ViewState::IWATODAI_STREETS;
+        // right
+        case TileType::SCENE_1:
+            musicCtrl.pause();
+            return ViewState::IWATODAI_DORM;
+        // middle
+        case TileType::SCENE_2:
+        case TileType::SCENE_3:
+        case TileType::SCENE_4:
+        case TileType::SCENE_5:
+        case TileType::SCENE_6:
+        case TileType::SCENE_7:
+        case TileType::SCENE_8:
+        case TileType::SCENE_9:
+            musicCtrl.pause();
+            return ViewState::STATION;
+        default:
+            break;
         }
 
         // update camera position
@@ -369,6 +433,14 @@ ViewState PaulowniaMallView::update()
             iprintf(
                 "\x1b[23;0H\033[31mangle(w,c): %d, %d", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
         }
+        break;
+    }
+
+    default:
+    {
+        phase = ViewPhase::Environment;
+        break;
+    }
     }
 
     // update controllers
@@ -386,10 +458,12 @@ void PaulowniaMallView::cleanup()
 
     // cleanup environment
     paulowniaMallEnv.cleanup();
+    // reset ui
+    uiCtrl.cleanup();
     // reset textures
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSlot), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
 
     // cleanup controllers
     delete playerCtrl;
