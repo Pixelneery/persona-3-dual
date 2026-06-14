@@ -1,6 +1,5 @@
 #pragma once
 #include "components/BattleMenuComponent.h"
-#include "components/MenuHUDComponent.h"
 #include "components/PauseMenuComponent.h"
 #include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
@@ -12,7 +11,6 @@
 #include "controllers/UIController.h"
 #include "controllers/VideoController.h"
 
-class MenuHUDComponent;
 class PauseMenuComponent;
 class DialogueScreen;
 class MenuHUDScreen;
@@ -40,7 +38,6 @@ extern bool enableBillboards;
 extern bool enableDebugPrint;
 extern bool enableCharacterAnim;
 extern bool isPauseMenuActive;
-extern MenuHUDComponent menuHUDCmpt;
 extern BattleMenuComponent battleMenuCmpt;
 extern MenuHUDScreen menuHUDScreen;
 extern DialogueScreen dialogueScreen;

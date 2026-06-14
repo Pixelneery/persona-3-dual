@@ -2,9 +2,6 @@
 #include <nds.h>
 #include <stdio.h>
 
-// debug
-DialogueComponent dialogueCmpt2;
-
 DialogueController::DialogueController()
 {
 }

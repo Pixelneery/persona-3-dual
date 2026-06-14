@@ -1,5 +1,4 @@
 #pragma once
-#include "components/DialogueComponent.h"
 #include "core/structs.h"
 #include <nds.h>
 #include <string>
