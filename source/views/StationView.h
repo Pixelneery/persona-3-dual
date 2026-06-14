@@ -22,7 +22,6 @@ class StationView : public BaseView
     PrintConsole console;
 
     // 3D
-    int characterTextureId;
     station_Environment stationEnv;
 
     CharacterController* playerCtrl;

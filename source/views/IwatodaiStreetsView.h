@@ -22,7 +22,6 @@ class IwatodaiStreetsView : public BaseView
     PrintConsole console;
 
     // 3D
-    int characterTextureId;
     iwatodai_streets_Environment iwatodaiStreetsEnv;
 
     CharacterController* playerCtrl;

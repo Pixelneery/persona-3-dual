@@ -30,7 +30,6 @@ class IwatodaiDormView : public BaseView
     PrintConsole console;
 
     // 3D
-    int characterTextureId;
     iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
     bool prevBattleState;

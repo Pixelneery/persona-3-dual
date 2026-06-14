@@ -30,7 +30,6 @@ class PaulowniaMallView : public BaseView
     PrintConsole console;
 
     // 3D
-    int characterTextureId;
     paulownia_mall_Environment paulowniaMallEnv;
 
     bool prevBattleState;
