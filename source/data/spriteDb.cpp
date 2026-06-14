@@ -1,4 +1,4 @@
-#include "data/sprite_db.h"
+#include "data/spriteDb.h"
 
 static const SpriteDBEntry SPRITE_DB_ENTRY[] = {
     {SpriteType::MOON, static_cast<int>(MoonSprite::MOON_0), "moon-0"},
