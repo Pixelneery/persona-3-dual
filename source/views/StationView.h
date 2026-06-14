@@ -1,10 +1,10 @@
 #pragma once
 #include "controllers/CharacterController.h"
-#include "core/View3D.h"
 #include "environments/station.h"
+#include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
 
-class StationView : public View3D
+class StationView : public BaseView3D
 {
   public:
     void init() override;

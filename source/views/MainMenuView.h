@@ -1,6 +1,6 @@
 #pragma once
 #include "components/menu/MainMenuComponent.h"
-#include "core/BaseView.h"
+#include "views/BaseView.h"
 
 class MainMenuView : public BaseView
 {

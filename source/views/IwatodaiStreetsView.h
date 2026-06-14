@@ -1,10 +1,10 @@
 #pragma once
 #include "controllers/CharacterController.h"
-#include "core/View3D.h"
 #include "environments/iwatodai_streets.h"
+#include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
 
-class IwatodaiStreetsView : public View3D
+class IwatodaiStreetsView : public BaseView3D
 {
   public:
     void init() override;

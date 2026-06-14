@@ -1,9 +1,9 @@
-#include "View3D.h"
+#include "BaseView3D.h"
 #include "core/globals.h"
 #include <nds.h>
 #include <stdio.h>
 
-void View3D::init()
+void BaseView3D::init()
 {
     // set modes
     videoSetMode(MODE_0_3D);

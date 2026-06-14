@@ -1,4 +1,4 @@
-#include "core/View3D.h"
+#include "views/BaseView3D.h"
 #include <nds/arm9/console.h>
 // controllers
 #include "controllers/CharacterController.h"
@@ -11,7 +11,7 @@
 #include "./battleActions/enemies/EnemyDb.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
-class PaulowniaMallView : public View3D
+class PaulowniaMallView : public BaseView3D
 {
   public:
     void init() override;

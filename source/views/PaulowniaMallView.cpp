@@ -125,7 +125,7 @@ void PaulowniaMallView::setupEnvironment()
 
 void PaulowniaMallView::init()
 {
-    View3D::init();
+    BaseView3D::init();
 
     // setup sub screen
     // https://mtheall.com/vram.html#SUB=1&T0=1&NT0=512&MB0=2&TB0=1&S0=0&T1=3&NT1=128&MB1=5&TB1=0&T2=1&NT2=512&MB2=3&TB2=3&S2=0&T3=1&NT3=512&MB3=4&TB3=5&S3=0

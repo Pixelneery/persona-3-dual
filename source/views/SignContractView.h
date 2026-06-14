@@ -1,5 +1,5 @@
 #pragma once
-#include "core/BaseView.h"
+#include "views/BaseView.h"
 #include <maxmod9.h>
 #include <nds/arm9/console.h>
 #include <nds/arm9/keyboard.h>

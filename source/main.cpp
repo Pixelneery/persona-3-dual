@@ -10,7 +10,7 @@
 #include "core/enums.h"
 
 // states
-#include "core/BaseView.h"
+#include "views/BaseView.h"
 #include "views/DisclaimerView.h"
 #include "views/IntroView.h"
 #include "views/IwatodaiDormView.h"

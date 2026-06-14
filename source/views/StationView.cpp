@@ -57,7 +57,7 @@ void StationView::setupEnvironment()
 
 void StationView::init()
 {
-    View3D::init();
+    BaseView3D::init();
 
     // setup sub screen
     bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);

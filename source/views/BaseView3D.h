@@ -1,9 +1,9 @@
 #pragma once
-#include "core/BaseView.h"
 #include "core/globals.h"
+#include "views/BaseView.h"
 #include <nds.h>
 
-class View3D : public BaseView
+class BaseView3D : public BaseView
 {
   public:
     virtual void init() override;

@@ -1,6 +1,6 @@
 #pragma once
-#include "core/BaseView.h"
 #include "core/globals.h"
+#include "views/BaseView.h"
 
 class VideoView : public BaseView
 {
