@@ -280,6 +280,8 @@ void StationView::cleanup()
     uiCtrl.cleanup();
     glDeleteTextures(1, &characterTextureId);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
 
     delete playerCtrl;
     playerCtrl = nullptr;

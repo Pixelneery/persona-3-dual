@@ -464,6 +464,8 @@ void PaulowniaMallView::cleanup()
     glDeleteTextures(1, &characterTextureId);
     // reset shared bg slot
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
 
     // cleanup controllers
     delete playerCtrl;
