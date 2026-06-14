@@ -25,6 +25,10 @@ void BaseView::cleanup()
     REG_BLDALPHA = 0;
     REG_BLDALPHA_SUB = 0;
 
+    // reset sprites
+    oamClear(&oamMain, 0, 0);
+    oamClear(&oamSub, 0, 0);
+
     // reset vram
     vramSetPrimaryBanks(VRAM_A_LCD, VRAM_B_LCD, VRAM_C_LCD, VRAM_D_LCD);
     vramSetBanks_EFG(VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD);

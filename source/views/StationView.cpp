@@ -20,38 +20,44 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
+void StationView::setupEnvironment()
+{
+    GraphicAsset envTextures[STATION_TEX_COUNT] = {};
+    const unsigned int* bitmaps[STATION_TEX_COUNT] = {nullptr};
+
+    bitmaps[STATION_TEX_F008_005OBJ04] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj04",
+                                                               envTextures[STATION_TEX_F008_005OBJ04]);
+    bitmaps[STATION_TEX_F008_005OBJ02] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj02",
+                                                               envTextures[STATION_TEX_F008_005OBJ02]);
+    bitmaps[STATION_TEX_F008_005OBJ07] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj07",
+                                                               envTextures[STATION_TEX_F008_005OBJ07]);
+    bitmaps[STATION_TEX_F008_005OBJ06] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj06",
+                                                               envTextures[STATION_TEX_F008_005OBJ06]);
+    bitmaps[STATION_TEX_F008_005OBJ08] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj08",
+                                                               envTextures[STATION_TEX_F008_005OBJ08]);
+    bitmaps[STATION_TEX_LIGHTMAP_WHITE] = loadEnvironmentBitmap(fatBasePath + "environments/station/lightmap_white",
+                                                                envTextures[STATION_TEX_LIGHTMAP_WHITE]);
+    bitmaps[STATION_TEX_F008_005WALL01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005wall01",
+                                                                envTextures[STATION_TEX_F008_005WALL01]);
+    bitmaps[STATION_TEX_F008_005OBJ01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj01",
+                                                               envTextures[STATION_TEX_F008_005OBJ01]);
+    bitmaps[STATION_TEX_F008_005OBJ03] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj03",
+                                                               envTextures[STATION_TEX_F008_005OBJ03]);
+    bitmaps[STATION_TEX_F008_005FLOOR01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005floor01",
+                                                                 envTextures[STATION_TEX_F008_005FLOOR01]);
+    bitmaps[STATION_TEX_F008_005BOLT01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005bolt01",
+                                                                envTextures[STATION_TEX_F008_005BOLT01]);
+
+    stationEnv.load((fatBasePath + "environments/station/station.bin").c_str(), bitmaps);
+    for (int i = 0; i < STATION_TEX_COUNT; ++i)
+    {
+        graphicsCtrl.unloadGrit(envTextures[i]);
+    }
+}
+
 void StationView::init()
 {
-    videoSetMode(MODE_0_3D);
-    videoSetModeSub(MODE_0_2D);
-
-    vramSetBankA(VRAM_A_TEXTURE);
-    vramSetBankB(VRAM_B_TEXTURE);
-    vramSetBankC(VRAM_C_SUB_BG);
-    vramSetBankD(VRAM_D_SUB_SPRITE);
-    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-    vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
-    bgExtPaletteEnableSub();
-
-    // clear main engine OAM to prevent leftover sprites from rendering over 3D
-    oamClear(&oamMain, 0, 0);
-
-    glInit();
-    glEnable(GL_ANTIALIAS);
-    glEnable(GL_TEXTURE_2D);
-
-    glClearColor(0, 0, 0, 31);
-    glClearPolyID(63);
-    glClearDepth(0x7FFF);
-
-    glViewport(0, 0, 255, 191);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(55, 256.0 / 192.0, 0.1, 40);
-
-    glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
-    glColor3b(255, 255, 255);
+    View3D::init();
 
     // setup sub screen
     bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);
@@ -106,39 +112,8 @@ void StationView::init()
         makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
-    // setup environment model
-    GraphicAsset envTextures[STATION_TEX_COUNT] = {};
-    const unsigned int* bitmaps[STATION_TEX_COUNT] = {nullptr};
-
-    bitmaps[STATION_TEX_F008_005OBJ04] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj04",
-                                                               envTextures[STATION_TEX_F008_005OBJ04]);
-    bitmaps[STATION_TEX_F008_005OBJ02] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj02",
-                                                               envTextures[STATION_TEX_F008_005OBJ02]);
-    bitmaps[STATION_TEX_F008_005OBJ07] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj07",
-                                                               envTextures[STATION_TEX_F008_005OBJ07]);
-    bitmaps[STATION_TEX_F008_005OBJ06] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj06",
-                                                               envTextures[STATION_TEX_F008_005OBJ06]);
-    bitmaps[STATION_TEX_F008_005OBJ08] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj08",
-                                                               envTextures[STATION_TEX_F008_005OBJ08]);
-    bitmaps[STATION_TEX_LIGHTMAP_WHITE] = loadEnvironmentBitmap(fatBasePath + "environments/station/lightmap_white",
-                                                                envTextures[STATION_TEX_LIGHTMAP_WHITE]);
-    bitmaps[STATION_TEX_F008_005WALL01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005wall01",
-                                                                envTextures[STATION_TEX_F008_005WALL01]);
-    bitmaps[STATION_TEX_F008_005OBJ01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj01",
-                                                               envTextures[STATION_TEX_F008_005OBJ01]);
-    bitmaps[STATION_TEX_F008_005OBJ03] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005obj03",
-                                                               envTextures[STATION_TEX_F008_005OBJ03]);
-    bitmaps[STATION_TEX_F008_005FLOOR01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005floor01",
-                                                                 envTextures[STATION_TEX_F008_005FLOOR01]);
-    bitmaps[STATION_TEX_F008_005BOLT01] = loadEnvironmentBitmap(fatBasePath + "environments/station/f008_005bolt01",
-                                                                envTextures[STATION_TEX_F008_005BOLT01]);
-
-    stationEnv.load((fatBasePath + "environments/station/station.bin").c_str(), bitmaps);
-    for (int i = 0; i < STATION_TEX_COUNT; ++i)
-    {
-        graphicsCtrl.unloadGrit(envTextures[i]);
-    }
-    totalPolyCount = stationEnv.getPolyCount();
+    // setup environment
+    StationView::setupEnvironment();
 
     // pause menu
     pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);

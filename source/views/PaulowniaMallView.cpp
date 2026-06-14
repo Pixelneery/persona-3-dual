@@ -33,100 +33,8 @@ PaulowniaMallView::PaulowniaMallView()
 {
 }
 
-void PaulowniaMallView::init()
+void PaulowniaMallView::setupEnvironment()
 {
-    videoSetMode(MODE_0_3D);
-    videoSetModeSub(MODE_0_2D);
-
-    vramSetBankA(VRAM_A_TEXTURE);
-    vramSetBankB(VRAM_B_TEXTURE);
-    vramSetBankC(VRAM_C_SUB_BG);
-    vramSetBankD(VRAM_D_SUB_SPRITE);
-    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
-    vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
-    bgExtPaletteEnableSub();
-
-    // clear main engine OAM to prevent leftover sprites from rendering over 3D
-    oamClear(&oamMain, 0, 0);
-
-    // main screen, 3D
-    glInit();
-    glEnable(GL_ANTIALIAS);
-    glEnable(GL_TEXTURE_2D); // enable texturing
-
-    glClearColor(0, 0, 0, 31);
-    glClearPolyID(63);
-    glClearDepth(0x7FFF);
-
-    // set size of main screen
-    glViewport(0, 0, 255, 191);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    // zNear is how close the camera can see, zFar is the maximum draw distance
-    gluPerspective(55, 256.0 / 192.0, 0.1, 40);
-
-    glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK);
-    glColor3b(255, 255, 255); // keep white so texture colors aren't tinted
-
-    // setup sub screen
-    // https://mtheall.com/vram.html#SUB=1&T0=1&NT0=512&MB0=2&TB0=1&S0=0&T1=3&NT1=128&MB1=5&TB1=0&T2=1&NT2=512&MB2=3&TB2=3&S2=0&T3=1&NT3=512&MB3=4&TB3=5&S3=0
-    bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);
-    bgSharedSub2 = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 3, 3);
-    bgSharedSub3 = bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, 4, 5);
-
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
-    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
-
-    // setup console
-    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 5, 0, false, true);
-    consoleSelect(&console);
-
-    // adjust sub screen image and console to sit correctly on each other
-    bgSetPriority(console.bgId, 0);
-    bgSetPriority(bgSharedSub1, 1);
-    bgSetPriority(bgSharedSub2, 2);
-    bgSetPriority(bgSharedSub3, 3);
-    bgUpdate();
-
-    // setup player controller
-    // TODO: add mapping
-    playerCtrl = new CharacterController(PAULOWNIA_MALL_MAP_WIDTH,
-                                         PAULOWNIA_MALL_MAP_HEIGHT,
-                                         &paulownia_mall_map[0][0],
-                                         tileSize,
-                                         worldOffsetX,
-                                         worldOffsetZ,
-                                         characterSize,
-                                         speed,
-                                         angleIncrement,
-                                         distance,
-                                         lookAhead,
-                                         angle,
-                                         height,
-                                         characterTranslate,
-                                         characterFacingAngle,
-                                         true);
-
-    // setup music
-    setMusic();
-
-    // setup character model
-    std::string modelPath = fatBasePath + "models/";
-    characterAnimationCtrl.loadModel(
-        (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
-
-    if (saveData.femcMode)
-    {
-        kotone_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
-    }
-    else
-    {
-        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
-    }
-
-    // setup environment model
     GraphicAsset envTextures[PAULOWNIA_MALL_TEX_COUNT] = {};
     const unsigned int* bitmapsEnv[PAULOWNIA_MALL_TEX_COUNT] = {nullptr};
 
@@ -213,7 +121,70 @@ void PaulowniaMallView::init()
     {
         graphicsCtrl.unloadGrit(envTextures[i]);
     }
-    totalPolyCount = paulowniaMallEnv.getPolyCount();
+}
+
+void PaulowniaMallView::init()
+{
+    View3D::init();
+
+    // setup sub screen
+    // https://mtheall.com/vram.html#SUB=1&T0=1&NT0=512&MB0=2&TB0=1&S0=0&T1=3&NT1=128&MB1=5&TB1=0&T2=1&NT2=512&MB2=3&TB2=3&S2=0&T3=1&NT3=512&MB3=4&TB3=5&S3=0
+    bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);
+    bgSharedSub2 = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 3, 3);
+    bgSharedSub3 = bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, 4, 5);
+
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
+    dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
+
+    // setup console
+    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 5, 0, false, true);
+    consoleSelect(&console);
+
+    // adjust sub screen image and console to sit correctly on each other
+    bgSetPriority(console.bgId, 0);
+    bgSetPriority(bgSharedSub1, 1);
+    bgSetPriority(bgSharedSub2, 2);
+    bgSetPriority(bgSharedSub3, 3);
+    bgUpdate();
+
+    // setup player controller
+    playerCtrl = new CharacterController(PAULOWNIA_MALL_MAP_WIDTH,
+                                         PAULOWNIA_MALL_MAP_HEIGHT,
+                                         &paulownia_mall_map[0][0],
+                                         tileSize,
+                                         worldOffsetX,
+                                         worldOffsetZ,
+                                         characterSize,
+                                         speed,
+                                         angleIncrement,
+                                         distance,
+                                         lookAhead,
+                                         angle,
+                                         height,
+                                         characterTranslate,
+                                         characterFacingAngle,
+                                         true);
+
+    // setup music
+    setMusic();
+
+    // setup character model
+    std::string modelPath = fatBasePath + "models/";
+    characterAnimationCtrl.loadModel(
+        (modelPath + (saveData.femcMode ? "kotone/kotone.bin" : "makoto/makoto.bin")).c_str());
+
+    if (saveData.femcMode)
+    {
+        kotone_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+    }
+    else
+    {
+        makoto_loadTextures(characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
+    }
+
+    // setup environment
+    PaulowniaMallView::setupEnvironment();
 
     // setup dialogue
     demo_dialogue_bg_slot = bgSharedSub1;
@@ -460,12 +431,9 @@ void PaulowniaMallView::cleanup()
 {
     BaseView::cleanup();
 
-    // cleanup environment
     paulowniaMallEnv.cleanup();
-    // reset ui
     uiCtrl.cleanup();
 
-    // cleanup controllers
     delete playerCtrl;
     playerCtrl = NULL;
 }

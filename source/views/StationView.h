@@ -1,15 +1,16 @@
 #pragma once
 #include "controllers/CharacterController.h"
-#include "core/BaseView.h"
+#include "core/View3D.h"
 #include "environments/station.h"
 #include <nds/arm9/console.h>
 
-class StationView : public BaseView
+class StationView : public View3D
 {
   public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
+    void setupEnvironment() override;
 
   private:
     ViewPhase phase;
@@ -39,7 +40,6 @@ class StationView : public BaseView
     const float height = 0.0f;
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180.0f;
-    int totalPolyCount = 0;
 
     bool prevEnvironmentState;
 };

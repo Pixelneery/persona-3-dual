@@ -1,4 +1,4 @@
-#include "core/BaseView.h"
+#include "core/View3D.h"
 #include <nds/arm9/console.h>
 // controllers
 #include "controllers/CharacterController.h"
@@ -11,12 +11,13 @@
 #include "./battleActions/enemies/EnemyDb.h"
 #include "./controllers/BattleController.h" // TODO: move somewhere
 
-class IwatodaiDormView : public BaseView
+class IwatodaiDormView : public View3D
 {
   public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
+    void setupEnvironment() override;
     IwatodaiDormView();
 
   private:

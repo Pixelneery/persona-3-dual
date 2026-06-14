@@ -1,15 +1,16 @@
 #pragma once
 #include "controllers/CharacterController.h"
-#include "core/BaseView.h"
+#include "core/View3D.h"
 #include "environments/iwatodai_streets.h"
 #include <nds/arm9/console.h>
 
-class IwatodaiStreetsView : public BaseView
+class IwatodaiStreetsView : public View3D
 {
   public:
     void init() override;
     ViewState update() override;
     void cleanup() override;
+    void setupEnvironment() override;
 
   private:
     ViewPhase phase;
@@ -39,7 +40,6 @@ class IwatodaiStreetsView : public BaseView
     const float height = 0.05f;
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 0.0f;
-    int totalPolyCount = 0;
 
     bool prevEnvironmentState;
 };
