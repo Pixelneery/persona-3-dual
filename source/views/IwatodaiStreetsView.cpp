@@ -236,10 +236,19 @@ ViewState IwatodaiStreetsView::update()
             }
         }
 
-        if (playerCtrl->isTileAt() == TileType::SCENE_0)
+        switch (playerCtrl->isTileAt())
         {
+        case TileType::SCENE_0:
             musicCtrl.pause();
             return ViewState::IWATODAI_DORM;
+        case TileType::SCENE_1:
+            musicCtrl.pause();
+            return ViewState::PAULOWNIA_MALL;
+        case TileType::SCENE_2:
+            musicCtrl.pause();
+            return ViewState::STATION;
+        default:
+            break;
         }
 
         gluLookAt(camPos.cameraX,
