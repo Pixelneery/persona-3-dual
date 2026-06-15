@@ -242,6 +242,7 @@ void IwatodaiDormView::init()
 
     // setup view phases
     prevBattleState = false;
+    prevPauseState = false;
     prevDialogueState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
@@ -266,6 +267,8 @@ ViewState IwatodaiDormView::update()
         // set
         if (!isActive && !prevBattleState)
         {
+            // TODO: display battle menu UI
+            uiCtrl.hideAll();
             battleController.execute();
             prevBattleState = true;
         }
@@ -281,6 +284,14 @@ ViewState IwatodaiDormView::update()
 
     case ViewPhase::Pause:
     {
+        // set
+        if (!prevPauseState)
+        {
+            // TODO: display pause menu UI
+            uiCtrl.hideAll();
+            prevPauseState = true;
+        }
+
         // run
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
@@ -293,6 +304,7 @@ ViewState IwatodaiDormView::update()
         if (pressed & KEY_START)
         {
             consoleClear();
+            prevPauseState = false;
             phase = ViewPhase::Environment;
         }
         break;

@@ -13,8 +13,11 @@ class StationView : public BaseView3D
     void setupEnvironment() override;
 
   private:
-    ViewPhase phase;
     touchPosition touch;
+
+    ViewPhase phase;
+    bool prevPauseState;
+    bool prevEnvironmentState;
 
     // sub screen
     int bgSharedSub1;
@@ -40,6 +43,4 @@ class StationView : public BaseView3D
     const float height = 0.0f;
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180.0f;
-
-    bool prevEnvironmentState;
 };

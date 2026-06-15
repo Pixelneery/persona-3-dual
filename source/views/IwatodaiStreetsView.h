@@ -13,7 +13,6 @@ class IwatodaiStreetsView : public BaseView3D
     void setupEnvironment() override;
 
   private:
-    ViewPhase phase;
     touchPosition touch;
 
     // sub screen
@@ -21,6 +20,10 @@ class IwatodaiStreetsView : public BaseView3D
     int bgSharedSub2;
     int bgSharedSub3;
     PrintConsole console;
+
+    ViewPhase phase;
+    bool prevPauseState;
+    bool prevEnvironmentState;
 
     // 3D
     iwatodai_streets_Environment iwatodaiStreetsEnv;
@@ -40,6 +43,4 @@ class IwatodaiStreetsView : public BaseView3D
     const float height = 0.05f;
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 0.0f;
-
-    bool prevEnvironmentState;
 };

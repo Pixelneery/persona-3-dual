@@ -21,7 +21,6 @@ class PaulowniaMallView : public BaseView3D
     PaulowniaMallView();
 
   private:
-    ViewPhase phase;
     touchPosition touch;
 
     // sub screen
@@ -33,9 +32,12 @@ class PaulowniaMallView : public BaseView3D
     // 3D
     paulownia_mall_Environment paulowniaMallEnv;
 
+    ViewPhase phase;
     bool prevBattleState;
+    bool prevPauseState;
     bool prevDialogueState;
     bool prevEnvironmentState;
+
     // init Character Profiles
     CharacterProfiles characterProfiles;
     // Battle participants

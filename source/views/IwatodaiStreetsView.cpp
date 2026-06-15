@@ -169,6 +169,7 @@ void IwatodaiStreetsView::init()
     uiCtrl.show(&menuHUDScreen, false);
 
     // setup view phases
+    prevPauseState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
 }
@@ -188,6 +189,14 @@ ViewState IwatodaiStreetsView::update()
     {
     case ViewPhase::Pause:
     {
+        // set
+        if (!prevPauseState)
+        {
+            // TODO: display pause menu UI
+            uiCtrl.hideAll();
+            prevPauseState = true;
+        }
+
         // run
         ViewState menuResult = pauseMenuCmpt.update(pressed);
         if (menuResult != ViewState::KEEP_CURRENT)
@@ -200,6 +209,7 @@ ViewState IwatodaiStreetsView::update()
         if (pressed & KEY_START)
         {
             consoleClear();
+            prevPauseState = true;
             phase = ViewPhase::Environment;
         }
         break;

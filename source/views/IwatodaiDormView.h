@@ -21,7 +21,6 @@ class IwatodaiDormView : public BaseView3D
     IwatodaiDormView();
 
   private:
-    ViewPhase phase;
     touchPosition touch;
 
     // sub screen
@@ -33,7 +32,9 @@ class IwatodaiDormView : public BaseView3D
     // 3D
     iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
+    ViewPhase phase;
     bool prevBattleState;
+    bool prevPauseState;
     bool prevDialogueState;
     bool prevEnvironmentState;
 
