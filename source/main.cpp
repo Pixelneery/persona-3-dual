@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
     EnemyDb::Initialize();
     CharacterProfiles::Initialize();
 
-    // use DS hardware timer for reliable randomness (time() can return 0 on DS)
+    // seed random using DS hardware timer
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
     srand(TIMER0_DATA);
 
