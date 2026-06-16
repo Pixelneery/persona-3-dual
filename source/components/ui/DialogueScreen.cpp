@@ -188,7 +188,7 @@ void DialogueScreen::load()
     sprites[4] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, 0, 1, 128, 128};
     sprites[5] = {0, SpriteSize_64x64, SpriteColorFormat_256Color, -1, 1, 192, 128};
     // name tag
-    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 2, 24, 112};
+    sprites[6] = {0, SpriteSize_64x32, SpriteColorFormat_256Color, 0, 2, 20, 112};
 
     // allocating space for sprite graphics
     // calendar

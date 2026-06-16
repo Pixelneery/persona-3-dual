@@ -21,14 +21,16 @@ void DialogueController::advanceTo(Dialogue* next)
 // print the text up to animIndex using a precision field
 void DialogueController::renderAnimFrame()
 {
-    iprintf("\x1b[12;0H%.*s \n", animIndex, current->text.c_str());
+    iprintf("\x1b[15;4H%s\n", current->characterName.c_str());
+    iprintf("\x1b[17;0H%.*s\n", animIndex, current->text.c_str());
 }
 
 void DialogueController::renderOptions()
 {
     // reprint the complete line then list choices below it
     consoleClear();
-    iprintf("\x1b[12;0H%s\n", current->text.c_str());
+    iprintf("\x1b[15;4H%s\n", current->characterName.c_str());
+    iprintf("\x1b[17;0H%s\n", current->text.c_str());
     for (int i = 0; i < optionCount; i++)
     {
         iprintf("%c %s\n", i == selectedOption ? '>' : ' ', current->selections[i].text.c_str());
