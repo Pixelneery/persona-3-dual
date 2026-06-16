@@ -26,7 +26,11 @@ void BattleController::execute(Player* player,
     this->battleParticipants = battleParticipants;
     this->battleStartCondition = battleStartCondition;
 
+    turnsTaken = 0;
     currentParticipantIndex = 0;
+    selectedSkill = nullptr;
+    pendingAlert.clear();
+    battleResult = BattleResult();
 
     calculateTurnOrder();
 
@@ -158,17 +162,16 @@ BattleResult BattleController::update(u32 keys)
         bool healTarget = selectedSkill && (selectedSkill->skillType == SkillType::Heal ||
                                             selectedSkill->skillType == SkillType::MultiHeal);
 
-        std::vector<BattleParticipant*>* targets;
+        std::vector<BattleParticipant*> targets;
         if (healTarget)
-            targets = partyMembers;
+            targets = *partyMembers;
         else
-            targets = enemies;
+            targets = *enemies;
 
-        targets->erase(
-            std::remove_if(targets->begin(), targets->end(), [](BattleParticipant* t) { return t->hp <= 0; }),
-            targets->end());
+        targets.erase(std::remove_if(targets.begin(), targets.end(), [](BattleParticipant* t) { return t->hp <= 0; }),
+                      targets.end());
 
-        battleMenuCmpt.loadTargetOptions(targets, healTarget);
+        battleMenuCmpt.loadTargetOptions(&targets, healTarget);
         menuIndex = -1;
         menuIndex = (int)battleMenuCmpt.update(keys);
 
@@ -176,9 +179,10 @@ BattleResult BattleController::update(u32 keys)
         {
             if (isSingleTarget(selectedSkill->skillType))
             {
-                BattleParticipant* selectedTarget = (*targets)[menuIndex];
-                targets->clear();
-                targets->push_back(selectedTarget);
+                BattleParticipant* selectedTarget = targets[menuIndex];
+
+                targets.clear();
+                targets.push_back(selectedTarget);
             }
 
             // Check so you cant heal target that has max hp
@@ -186,7 +190,7 @@ BattleResult BattleController::update(u32 keys)
                 (selectedSkill->skillType == SkillType::Heal || selectedSkill->skillType == SkillType::MultiHeal))
             {
                 bool canHealAnyTarget = false;
-                for (BattleParticipant* target : *targets)
+                for (BattleParticipant* target : targets)
                 {
                     if (target->hp < target->maxHp)
                     {
@@ -198,10 +202,12 @@ BattleResult BattleController::update(u32 keys)
                     return battleResult;
             }
 
-            for (BattleParticipant* target : *targets)
+            bool usingBaseAttack = selectedSkill == actor->baseAttackAction;
+
+            for (BattleParticipant* target : targets)
             {
-                TurnResult turnResult = (menuIndex == ACTION_ATTACK) ? attack.resolve(actor, target)
-                                                                     : persona.resolve(actor, target, selectedSkill);
+                TurnResult turnResult =
+                    (usingBaseAttack) ? attack.resolve(actor, target) : persona.resolve(actor, target, selectedSkill);
                 applyResult(turnResult, target);
             }
 
