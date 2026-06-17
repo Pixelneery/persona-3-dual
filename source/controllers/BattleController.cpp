@@ -272,6 +272,7 @@ BattleResult BattleController::update(u32 keys)
             } //no
             else
             {
+                currentParticipantTurn->oneMore = false;
                 battleMenuCmpt.reset();
                 phase = BattlePhase::ChooseAction;
             }

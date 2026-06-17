@@ -41,6 +41,7 @@ void EnemyDb::Initialize()
     mercilessMaya.battleStats.affinities[(u32)Element::Wind] = BattleStats::Neutral;
     mercilessMaya.battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
     mercilessMaya.battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
+    mercilessMaya.battleStats.affinities[(u32)Element::Almighty] = BattleStats::Neutral;
 
     /*--------------COWARDLY MAYA--------------*/
     cowardlyMaya.name = "Cowardly Maya";
@@ -71,4 +72,5 @@ void EnemyDb::Initialize()
     cowardlyMaya.battleStats.affinities[(u32)Element::Wind] = BattleStats::Neutral;
     cowardlyMaya.battleStats.affinities[(u32)Element::Light] = BattleStats::Neutral;
     cowardlyMaya.battleStats.affinities[(u32)Element::Dark] = BattleStats::Neutral;
+    cowardlyMaya.battleStats.affinities[(u32)Element::Almighty] = BattleStats::Neutral;
 }

@@ -18,13 +18,13 @@ void SkillDb::Initialize()
     //Most of the stuff is not used, only element is actually important
     //this skill only exists because it would be even uglier to solve it otherwise
     allOutAttack.movePower = 15;
-    slashAttack.element = Element::Almighty;
-    slashAttack.cost = 0;
-    slashAttack.name = "All_Out_Attack";
-    slashAttack.hitRate = 90;
-    slashAttack.skillRace = SkillRace::mag;
-    slashAttack.skillTarget = SkillTarget::OppositionTeam;
-    slashAttack.skillType = SkillType::AllOutAttack;
+    allOutAttack.element = Element::Almighty;
+    allOutAttack.cost = 0;
+    allOutAttack.name = "All_Out_Attack";
+    allOutAttack.hitRate = 90;
+    allOutAttack.skillRace = SkillRace::mag;
+    allOutAttack.skillTarget = SkillTarget::OppositionTeam;
+    allOutAttack.skillType = SkillType::AllOutAttack;
 
     /*--------------REGULAR ATTACKS--------------*/
     slashAttack.movePower = 15;
