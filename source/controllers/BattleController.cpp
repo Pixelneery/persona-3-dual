@@ -224,17 +224,7 @@ BattleResult BattleController::update(u32 keys)
                 applyResult(turnResult, target);
             }
 
-            //all out attack availability check
-            if (allEnemiesKnockedDown() && !allOutAttackWasPossibleThisKnockDown)
-            {
-                alertReturnPhase = BattlePhase::ChooseAction;
-                battleMenuCmpt.reset();
-                phase = BattlePhase::ConfirmAllOutAttack;
-            }
-            else
-            {
-                advanceTurn();
-            }
+            advanceTurn();
         }
 
         if (keys & KEY_B)
@@ -253,6 +243,8 @@ BattleResult BattleController::update(u32 keys)
 
         if (menuIndex != -1 && (keys & KEY_A))
         {
+            allOutAttackWasPossibleThisKnockDown = true;
+
             //if yes
             if (menuIndex == 0)
             {
@@ -261,7 +253,10 @@ BattleResult BattleController::update(u32 keys)
                 uint8_t participantCount = 0;
                 for (PartyMember* partyMember : *partyMembers)
                 {
-                    participantCount += partyMember->canParticipateInAllOutAttack();
+                    if (partyMember->canParticipateInAllOutAttack())
+                    {
+                        participantCount++;
+                    }
                 }
 
                 for (BattleParticipant* enemy : aliveEnemies)
@@ -272,11 +267,14 @@ BattleResult BattleController::update(u32 keys)
                     TurnResult turnResult = {true, -(s32)damage, false, enemy->name + ": "};
                     applyResult(turnResult, enemy);
                 }
+
+                advanceTurn();
+            } //no
+            else
+            {
+                battleMenuCmpt.reset();
+                phase = BattlePhase::ChooseAction;
             }
-
-            allOutAttackWasPossibleThisKnockDown = true;
-
-            advanceTurn();
         }
         break;
     }
@@ -375,6 +373,15 @@ void BattleController::advanceTurn()
     handleDeadParticipants();
     if (!active)
         return;
+
+    //all out attack availability check
+    if (allEnemiesKnockedDown() && !allOutAttackWasPossibleThisKnockDown)
+    {
+        alertReturnPhase = BattlePhase::ChooseAction;
+        battleMenuCmpt.reset();
+        setNextPhase(BattlePhase::ConfirmAllOutAttack);
+        return;
+    }
 
     pendingAlert += "Previous attacker: " + currentParticipantTurn->name + "\n";
 
@@ -525,7 +532,8 @@ bool BattleController::allEnemiesKnockedDown()
         if (enemy->hp > 0)
         {
             aliveCount++;
-            knockedDownCount += (enemy->knockedDown);
+            if (enemy->knockedDown)
+                knockedDownCount++;
         }
     }
 
