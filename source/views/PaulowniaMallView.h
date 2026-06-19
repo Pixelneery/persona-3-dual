@@ -2,13 +2,8 @@
 #include <nds/arm9/console.h>
 // controllers
 #include "controllers/CharacterController.h"
-#include "controllers/DialogueController.h"
 // environments
 #include "environments/paulownia_mall.h"
-// battle-related
-#include "./battleActions/BattleParticipant.h"
-#include "./battleActions/BattleStartCondition.h"
-#include "./battleActions/enemies/EnemyDb.h"
 
 class PaulowniaMallView : public BaseView3D
 {
@@ -33,7 +28,6 @@ class PaulowniaMallView : public BaseView3D
 
     ViewPhase phase;
     bool prevPauseState;
-    bool prevDialogueState;
     bool prevEnvironmentState;
 
     CharacterController* playerCtrl;
@@ -55,8 +49,6 @@ class PaulowniaMallView : public BaseView3D
     const float height = 1.9f;
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180;
-    DialogueController dialogueCtrl;
-    bool isBattleMenuActive = false;
 
     void setMusic();
 };

@@ -5,13 +5,6 @@
 #include "controllers/DialogueController.h"
 // environments
 #include "environments/iwatodai_dorm_floor_1.h"
-// battle-related
-#include "./battleActions/BattleParticipant.h"
-#include "./battleActions/BattleStartCondition.h"
-#include "./battleActions/enemies/EnemyDb.h"
-#include "./battleActions/party/CharacterProfileDb.h"
-#include "./controllers/BattleController.h" // TODO: move somewhere
-#include <memory>
 
 class IwatodaiDormView : public BaseView3D
 {
@@ -35,27 +28,11 @@ class IwatodaiDormView : public BaseView3D
     iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
 
     ViewPhase phase;
-    bool prevBattleState;
     bool prevPauseState;
     bool prevDialogueState;
     bool prevEnvironmentState;
 
-    // Battle participants
-    Enemy* mercilessMaya = new Enemy(EnemyDb::mercilessMaya);
-    Enemy* cowardlyMaya = new Enemy(EnemyDb::cowardlyMaya);
-    Player* player = new Player(CharacterProfileDb::player);
-    PartyMember* yukari = new PartyMember(CharacterProfileDb::yukari);
-    PartyMember* junpei = new PartyMember(CharacterProfileDb::junpei);
-
-    std::vector<BattleParticipant*> battleParticipants = {mercilessMaya, cowardlyMaya, player, yukari, junpei};
-    std::vector<Enemy*> enemies = {mercilessMaya, cowardlyMaya};
-    std::vector<PartyMember*> partyMembers = {player, yukari, junpei};
-
-    // hardcoded for now, we will have to build a battle creater for tartarus anyways
-    BattleStartCondition battleStartCondition = BattleStartCondition::Even;
-
     // controllers
-    BattleController battleController;
     CharacterController* playerCtrl;
     // camera pos
     CameraPosition camPos;
@@ -75,8 +52,6 @@ class IwatodaiDormView : public BaseView3D
     const float angle = -1.6;
     const float characterFacingAngle = 180.0f;
     DialogueController dialogueCtrl;
-
-    bool isBattleMenuActive = false;
 
     void setMusic();
 };

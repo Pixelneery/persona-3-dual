@@ -9,8 +9,6 @@
 // model
 #include "models/kotone.h"
 #include "models/makoto.h"
-// dialogue
-#include "dialogue/demo_dialogue.h"
 // map
 #include "maps/paulownia_mall.h"
 
@@ -183,16 +181,8 @@ void PaulowniaMallView::init()
     // setup environment
     PaulowniaMallView::setupEnvironment();
 
-    // setup dialogue
-    demo_dialogue_bg_slot = bgSharedSub1;
-
     // setup pause menu
-    // use the same shared background slot as the demo dialogue
     pauseMenuCmpt.init(bgSharedSub1, &isPauseMenuActive);
-
-    // setup battle menu
-    // TODO: check if isBattleMenuActive is just a dummy value
-    battleMenuCmpt.init(-1, &isBattleMenuActive);
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -206,12 +196,10 @@ void PaulowniaMallView::init()
 
     uiCtrl.setGraphics(bgSub, bgMain, &oamSub, nullptr);
     uiCtrl.registerScreen(&menuHUDScreen, false);
-    uiCtrl.registerScreen(&dialogueScreen, false);
     uiCtrl.show(&menuHUDScreen, false);
 
     // setup view phases
     prevPauseState = false;
-    prevDialogueState = false;
     prevEnvironmentState = false;
     phase = ViewPhase::Environment;
 }
@@ -257,29 +245,6 @@ ViewState PaulowniaMallView::update()
         break;
     }
 
-    case ViewPhase::Dialogue:
-    {
-        bool isActive = dialogueCtrl.isActive();
-        // set
-        if (!isActive && !prevDialogueState)
-        {
-            // TODO: fix dialogue view. It uses the same background id as the UI render (when it should use an alt id)
-            uiCtrl.show(&dialogueScreen, false);
-            demo_yukari_kenji_argument_load();
-            dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-            dialogueCtrl.start(demo_yukari_kenji_argument_first());
-            prevDialogueState = true;
-        }
-        // exit
-        else if (!isActive && prevDialogueState)
-        {
-            bgHide(bgSharedSub1);
-            prevDialogueState = false;
-            phase = ViewPhase::Environment;
-        }
-        break;
-    }
-
     case ViewPhase::Environment:
     {
         if (!prevEnvironmentState)
@@ -310,21 +275,6 @@ ViewState PaulowniaMallView::update()
             }
         }
 
-        // start dialogue
-        if (pressed & KEY_A)
-        {
-            prevEnvironmentState = false;
-            phase = ViewPhase::Dialogue;
-        }
-
-        // start battle
-        if (keys & KEY_Y)
-        {
-            prevEnvironmentState = false;
-            phase = ViewPhase::Battle;
-        }
-
-        // trigger dialogue from interaction
         switch (playerCtrl->isTileAt())
         {
         // left
@@ -406,7 +356,6 @@ ViewState PaulowniaMallView::update()
     }
 
     // update controllers
-    dialogueCtrl.update(keys);
     characterAnimationCtrl.update();
     musicCtrl.update();
 
