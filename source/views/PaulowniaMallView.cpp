@@ -21,7 +21,7 @@ static const unsigned int* loadEnvironmentBitmap(const std::string& path, Graphi
 void PaulowniaMallView::setMusic()
 {
     musicCtrl.init(
-        (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.005f, 202.073f);
+        (fatBasePath + "music/locations/paulowniaMall/overworld/color_your_night.pcm").c_str(), 2.050f, 204.191f);
 }
 
 PaulowniaMallView::PaulowniaMallView()
