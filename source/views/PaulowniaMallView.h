@@ -46,7 +46,7 @@ class PaulowniaMallView : public BaseView3D
     const float lookAhead = 0.2f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0.0122f, 2.3355f);
-    const float height = 1.9f;
+    const float height = 0.2f;
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180;
 
