@@ -3,7 +3,7 @@ import math
 
 bl_info = {
     "name": "NDS Environment Optimizer",
-    "author": "P3D Team",
+    "author": "P3Dual Team",
     "version": (1, 0, 0),
     "blender": (3, 0, 0),
     "location": "View3D > Sidebar > NDS Engine",
