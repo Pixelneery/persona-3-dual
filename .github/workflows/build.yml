@@ -154,7 +154,7 @@ jobs:
 
       - name: Compress and Package Assets
         run: |
-          gzip -1 sdcard.img
+          GZIP="-1" tar -czvf sdcard.img.tar.gz sdcard.img
           zip -r data.zip data/
 
       # --- 4. Validate and publish ---
