@@ -1,6 +1,6 @@
 """
 NDS Model Exporter for Blender
-Author: P3Dual Team
+Author: P3D Team
 Version: 2.1.4 (Bake World Space Geometry + Texture Name Sync + Axis Fix + Blender 5.x Support)
 Blender: 3.x / 4.x / 5.x
 """
@@ -21,7 +21,7 @@ from bpy_extras.io_utils import ExportHelper
 
 bl_info = {
     "name": "NDS Model Exporter",
-    "author": "P3Dual Team",
+    "author": "P3D Team",
     "version": (2, 1, 4),
     "blender": (3, 0, 0),
     "location": "File > Export > NDS Model (.zip)",

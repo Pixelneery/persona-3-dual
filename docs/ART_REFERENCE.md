@@ -1,6 +1,6 @@
 # Art Team Reference
 
-This document covers the technical constraints and workflows the P3Dual art team needs to be aware of when creating assets. Understanding the DS hardware limitations is essential. Assets that don't conform to these specs won't display correctly in-game.
+This document covers the technical constraints and workflows the P3D art team needs to be aware of when creating assets. Understanding the DS hardware limitations is essential. Assets that don't conform to these specs won't display correctly in-game.
 
 ---
 
@@ -24,7 +24,7 @@ Backgrounds are tile-based - they're composed of 8×8 pixel tiles assembled into
 
 ## Sprites
 
-Sprites are the main building block for UI elements, characters, and interactive objects in P3Dual.
+Sprites are the main building block for UI elements, characters, and interactive objects in P3D.
 
 Each graphics engine supports up to **128 sprites on screen at once**.
 
@@ -74,7 +74,7 @@ This is why many of our source assets have a **pink/magenta background** - it's 
 
 **Standard palette mode** is the default. All sprites share one global palette of up to 256 colors (or 16 palettes of 16 colors each). This is limiting if assets have very different color schemes.
 
-**Extended palette mode** gives each sprite its own palette slot (up to 16 palettes of 256 colors), which is much more flexible. P3Dual uses extended palettes for sprites. This means:
+**Extended palette mode** gives each sprite its own palette slot (up to 16 palettes of 256 colors), which is much more flexible. P3D uses extended palettes for sprites. This means:
 
 - Each individual sprite/asset can have up to **256 unique colors** drawn from the full DS color space.
 - You still need to index your image - you're just no longer constrained to sharing a single global palette with all other sprites.

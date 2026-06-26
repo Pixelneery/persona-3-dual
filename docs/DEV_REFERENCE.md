@@ -29,7 +29,7 @@ A collection of useful links and resources for development.
 
 | Resource | Link | Description |
 |---|---|---|
-| **Maxmod Conversion Guide** | [maxmod.org - conversion guide](https://maxmod.org/ref/tut/convguide.html) | Guide to converting audio files for use with Maxmod, the music and sound effect library used in P3Dual. |
+| **Maxmod Conversion Guide** | [maxmod.org - conversion guide](https://maxmod.org/ref/tut/convguide.html) | Guide to converting audio files for use with Maxmod, the music and sound effect library used in P3D. |
 | **Maxmod Reference** | [maxmod.org](https://maxmod.org) | Full Maxmod API reference for playback, sound banks, and streaming. |
 
 ---
@@ -38,7 +38,7 @@ A collection of useful links and resources for development.
 
 | Resource | Link | Description |
 |---|---|---|
-| **P3Dual Math Reference** | [Google Sheets](https://docs.google.com/spreadsheets/d/1f4Bhkg0gBqUSm4YR1Bba1JsQn6w6fPDrqBTaWlHla8A/edit?usp=drivesdk) | Spreadsheet covering math used in the project. |
+| **P3D Math Reference** | [Google Sheets](https://docs.google.com/spreadsheets/d/1f4Bhkg0gBqUSm4YR1Bba1JsQn6w6fPDrqBTaWlHla8A/edit?usp=drivesdk) | Spreadsheet covering math used in the project. |
 | **Fixed-Point Math (GBATEK)** | [problemkaputt.de/gbatek.htm#dsmath](https://problemkaputt.de/gbatek.htm#dsmath) | The DS has no floating-point unit - all math uses fixed-point integers. This section covers the hardware math accelerator registers. |
 
 ---

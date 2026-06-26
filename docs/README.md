@@ -69,7 +69,7 @@ See [ONBOARDING.md](ONBOARDING.md)
 
 ## Roadmap
 - See the [Project Board](https://github.com/orgs/p3d-project/projects/1) for current progress and open issues.
-- See the [P3Dual Roadmap](https://docs.google.com/document/d/1VUxY2xVGtKzGWCES0VeZ_-vMpKSifB5vTW2ZkXJMPJM/edit?usp=sharing) document for progress on Milestones
+- See the [P3D Roadmap](https://docs.google.com/document/d/1VUxY2xVGtKzGWCES0VeZ_-vMpKSifB5vTW2ZkXJMPJM/edit?usp=sharing) document for progress on Milestones
 
 ---
 

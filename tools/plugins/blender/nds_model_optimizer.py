@@ -3,7 +3,7 @@ import math
 
 bl_info = {
     "name": "NDS Model Optimizer",
-    "author": "P3Dual Team",
+    "author": "P3D Team",
     "version": (1, 1, 0),
     "blender": (3, 0, 0),
     "location": "View3D > Sidebar > NDS Engine",
