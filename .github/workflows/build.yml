@@ -215,5 +215,5 @@ jobs:
           body_path: release-notes.md
           files: |
             persona-3-dual.nds
-            sdcard.img.gz
+            sdcard.img.zip
             data.zip
