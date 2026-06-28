@@ -27,7 +27,7 @@ function generateDeterministicColor(seedString) {
 
 async function loadTileDefinitions() {
   try {
-    const response = await fetch("../../tile_map.json");
+    const response = await fetch("../tile_map.json");
     if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
 

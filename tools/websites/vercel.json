@@ -4,11 +4,11 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/map-editor/map-editor.html"
+      "destination": "/index.html"
     },
     {
       "source": "/map-editor",
-      "destination": "/map-editor/map-editor.html"
+      "destination": "/index.html"
     }
   ]
 }
