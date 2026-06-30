@@ -259,7 +259,7 @@ ViewState IwatodaiStreetsView::update()
         if (pressed & KEY_START)
         {
             consoleClear();
-            prevPauseState = true;
+            prevPauseState = false;
             phase = ViewPhase::Environment;
         }
         break;
