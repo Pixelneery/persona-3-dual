@@ -35,6 +35,22 @@ int AnimationController::textureSizeToEnum(int px)
     return TEXTURE_SIZE_1024;
 }
 
+// Check model magic and get version
+static ModelVersion readModelVersion(FILE* file)
+{
+    char magic[4];
+
+    fread(magic, 1, 4, file);
+
+    if (strncmp(magic, "MDL1", 4) == 0)
+        return ModelVersion::MDL1;
+
+    if (strncmp(magic, "MDL2", 4) == 0)
+        return ModelVersion::MDL2;
+
+    return ModelVersion::INVALID;
+}
+
 // loadModel  - supports MDL2 (multi-texture) and MDL1 (legacy, no textures)
 //
 // MDL2 binary layout (produced by obj2model.py):
@@ -53,13 +69,8 @@ bool AnimationController::loadModel(const char* filepath)
     if (!file)
         return false;
 
-    char magic[4];
-    fread(magic, 1, 4, file);
-
-    const bool isMDL2 = (strncmp(magic, "MDL2", 4) == 0);
-    const bool isMDL1 = (strncmp(magic, "MDL1", 4) == 0);
-
-    if (!isMDL1 && !isMDL2)
+    ModelVersion version = readModelVersion(file);
+    if (version == ModelVersion::INVALID)
     {
         fclose(file);
         return false;
@@ -69,7 +80,7 @@ bool AnimationController::loadModel(const char* filepath)
     fread(&numNodes, sizeof(u32), 1, file);
     fread(&numAnims, sizeof(u32), 1, file);
 
-    if (isMDL2)
+    if (version == ModelVersion::MDL2)
     {
         u32 texCount;
         fread(&texCount, sizeof(u32), 1, file);
@@ -100,7 +111,7 @@ bool AnimationController::loadModel(const char* filepath)
         node.pivotY = (v16)py;
         node.pivotZ = (v16)pz;
 
-        if (isMDL2)
+        if (version == ModelVersion::MDL2)
         {
             u32 subListCount;
             fread(&subListCount, sizeof(u32), 1, file);
