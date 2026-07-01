@@ -131,27 +131,27 @@ ViewState MainMenuView::update()
             isSilhouetteStillMoving = false;
         }
 
-        // scroll silhouette background
         // animate X (moving right towards 0)
         if (silhouetteX < 0 && frame % 5 == 0)
         {
             silhouetteX += (-silhouetteX) / 6 + 1;
-            if (silhouetteX > 0)
-            {
-                isSilhouetteStillMoving = false;
-                silhouetteX = 0;
-            }
         }
 
         // animate Y (moving up towards 0)
         if (silhouetteY > 0 && frame % 5 == 0)
         {
             silhouetteY -= (silhouetteY / 6) + 1;
-            if (silhouetteY < 0)
-            {
-                isSilhouetteStillMoving = false;
-                silhouetteY = 0;
-            }
+        }
+
+        if (silhouetteX >= 0)
+        {
+            isSilhouetteStillMoving = false;
+            silhouetteX = 0;
+        }
+        if (silhouetteY <= 0)
+        {
+            isSilhouetteStillMoving = false;
+            silhouetteY = 0;
         }
         bgSetScroll(bg[0], -silhouetteX, -silhouetteY);
         return ViewState::KEEP_CURRENT;
