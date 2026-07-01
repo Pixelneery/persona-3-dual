@@ -188,6 +188,9 @@ ViewState VideoController::update()
 
 void VideoController::cleanup()
 {
+    musicCtrl.cleanup();
+    swiWaitForVBlank();
+
     if (ramBuffer != nullptr)
     {
         dmaFillWords(0, bgGetGfxPtr(bg), frameSize);
