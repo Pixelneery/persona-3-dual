@@ -131,6 +131,10 @@ void EnvironmentView::init()
     // setup pause menu
     pauseMenuCmpt->init(bgSharedSub1);
 
+    // setup battle menu
+    // setup battle menu
+    battleMenuCmpt->init(-1, &isBattleMenuActive);
+
     // setup UI
     // NOTE: bg 0 is the 3D view
     int bgMain[3] = {1, 2, 3};
@@ -152,6 +156,8 @@ void EnvironmentView::init()
     prevPauseState = false;
     prevDialogueState = false;
     prevEnvironmentState = false;
+    isBattleMenuActive = false;
+    prevBattleState = false;
     phase = ViewPhase::Environment;
 }
 
@@ -159,25 +165,55 @@ ViewState EnvironmentView::update()
 {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
     bgUpdate();
     oamUpdate(&oamSub);
 
     scanKeys();
+
     u32 keys = keysHeld();
     u32 pressed = keysDown();
 
     switch (phase)
     {
+    case ViewPhase::Battle:
+    {
+        if (!prevBattleState)
+        {
+            uiCtrl->hideAll();
+
+            startBattle();
+
+            prevBattleState = true;
+        }
+
+        battleController->update(pressed);
+
+        if (!battleController->isActive() && prevBattleState)
+        {
+            prevBattleState = false;
+
+            uiCtrl->show(menuHUDScreen, false);
+
+            prevEnvironmentState = true;
+            phase = ViewPhase::Environment;
+
+            setMusic();
+        }
+
+        break;
+    }
+
     case ViewPhase::Pause:
     {
         if (!prevPauseState)
         {
-            // TODO: display pause menu UI
             uiCtrl->hideAll();
             prevPauseState = true;
         }
 
         ViewState menuResult = pauseMenuCmpt->update(pressed);
+
         if (menuResult != ViewState::KEEP_CURRENT)
         {
             musicCtrl->pause();
@@ -187,27 +223,39 @@ ViewState EnvironmentView::update()
         if (pressed & KEY_START)
         {
             consoleClear();
+
             prevPauseState = false;
             phase = ViewPhase::Environment;
+            prevEnvironmentState = false;
         }
+
         break;
     }
 
     case ViewPhase::Dialogue:
     {
         bool isActive = dialogueCtrl.isActive();
+
         if (!isActive && !prevDialogueState)
         {
             uiCtrl->show(dialogueScreen, false);
+
             onDialogueStart();
+
             prevDialogueState = true;
         }
         else if (!isActive && prevDialogueState)
         {
             bgHide(bgSharedSub1);
+
             prevDialogueState = false;
+            prevEnvironmentState = false;
+
             phase = ViewPhase::Environment;
         }
+
+        dialogueCtrl.update(keys);
+
         break;
     }
 
@@ -215,41 +263,39 @@ ViewState EnvironmentView::update()
     {
         if (!prevEnvironmentState)
         {
-            // render HUD
             uiCtrl->show(menuHUDScreen, false);
             prevEnvironmentState = true;
         }
 
-        // move character
         camPos = playerCtrl->update(keys);
 
-        // start pause menu
         if (pressed & KEY_START)
         {
             prevEnvironmentState = false;
             phase = ViewPhase::Pause;
+            break;
         }
 
-        // start pause menu (touch)
         if (pressed & KEY_TOUCH)
         {
             touchRead(&touch);
+
             if (menuHUDScreen->onTouch(&touch) == 1)
             {
                 prevEnvironmentState = false;
                 phase = ViewPhase::Pause;
+                break;
             }
         }
 
-        // room-specific: scene transitions / NPC interactions
         ViewState tileResult = onTileCheck(playerCtrl->isTileAt(), pressed);
+
         if (tileResult != ViewState::KEEP_CURRENT)
         {
             musicCtrl->pause();
             return tileResult;
         }
 
-        // update camera position
         gluLookAt(camPos.cameraX,
                   camPos.cameraY + 0.1f,
                   camPos.cameraZ,
@@ -260,38 +306,45 @@ ViewState EnvironmentView::update()
                   camPos.upY,
                   camPos.upZ);
 
-        // draw environment
         glPushMatrix();
+
         env.draw();
-        env.drawBillboards(Globals::enableBillboards, // billboards face camera
-                           camPos.cameraX,
-                           camPos.cameraY,
-                           camPos.cameraZ);
+
+        env.drawBillboards(Globals::enableBillboards, camPos.cameraX, camPos.cameraY, camPos.cameraZ);
+
         glPopMatrix(1);
 
-        // draw character
         glPushMatrix();
+
         CharacterPosition charPos = playerCtrl->isCharacterAt();
+
         glTranslatef(charPos.x, charPos.y, charPos.z);
+
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
+
         characterAnimationCtrl->render();
+
         glPopMatrix(1);
 
         glFlush(0);
 
-        // print coordinates (64x64 area from 0,0 to 64,64)
         if (Globals::enableDebugPrint)
         {
             iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
+
             iprintf("\x1b[20;0HTouch y = %04X, %04X\n", touch.rawy, touch.py);
+
             iprintf("\x1b[21;0Htile(x,z): %d, %d",
                     (int)((charPos.x + dbEntry->worldOffsetX) / tileSize),
                     (int)((charPos.z + dbEntry->worldOffsetZ) / tileSize));
+
             iprintf("\x1b[22;0Htranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
+
             iprintf("\x1b[23;0Hangle(w,c): %d, %d \033[37;1m",
                     (int)(charPos.angle * 100),
                     (int)(charPos.facingAngle * 100));
         }
+
         break;
     }
 
@@ -302,7 +355,6 @@ ViewState EnvironmentView::update()
     }
     }
 
-    dialogueCtrl.update(keys);
     characterAnimationCtrl->update();
     musicCtrl->update();
 

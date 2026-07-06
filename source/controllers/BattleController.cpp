@@ -340,10 +340,25 @@ void BattleController::exit()
 {
     consoleClear();
     musicCtrl->pause();
+
     active = false;
     phase = BattlePhase::Done;
 
+    turnsTaken = 0;
+    currentParticipantIndex = 0;
+
     currentParticipantTurn = nullptr;
+
+    selectedSkill = nullptr;
+
+    pendingAlert.clear();
+
+    pendingPersonaSwitch = false;
+    switchedPersonaThisTurn = false;
+    personaBeforeSwitch = nullptr;
+
+    allOutAttackWasPossibleThisKnockDown = false;
+
     player = nullptr;
     battleParticipants = nullptr;
     enemies = nullptr;
