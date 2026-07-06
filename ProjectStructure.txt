@@ -1,0 +1,3484 @@
+.
+├── Dockerfile
+├── Doxyfile
+├── Makefile
+├── ProjectStructure.txt
+├── assets
+│   ├── dialogue
+│   │   └── demo.dlg
+│   ├── environments
+│   │   ├── iwatodai_dorm_floor_1
+│   │   │   ├── akihiko.grit
+│   │   │   ├── akihiko.png
+│   │   │   ├── enemy.grit
+│   │   │   ├── f007_002bolt01.grit
+│   │   │   ├── f007_002bolt01.png
+│   │   │   ├── f007_002bolt02.grit
+│   │   │   ├── f007_002bolt02.png
+│   │   │   ├── f007_002bolt03.grit
+│   │   │   ├── f007_002bolt03.png
+│   │   │   ├── f007_002door01.grit
+│   │   │   ├── f007_002door01.png
+│   │   │   ├── f007_002door02.grit
+│   │   │   ├── f007_002door02.png
+│   │   │   ├── f007_002floor01.grit
+│   │   │   ├── f007_002floor01.png
+│   │   │   ├── f007_002floor02.grit
+│   │   │   ├── f007_002floor02.png
+│   │   │   ├── f007_002floor03.grit
+│   │   │   ├── f007_002floor03.png
+│   │   │   ├── f007_002kzr01.grit
+│   │   │   ├── f007_002kzr01.png
+│   │   │   ├── f007_002kzr02.grit
+│   │   │   ├── f007_002kzr02.png
+│   │   │   ├── f007_002kzr03.grit
+│   │   │   ├── f007_002kzr03.png
+│   │   │   ├── f007_002kzr04.grit
+│   │   │   ├── f007_002kzr04.png
+│   │   │   ├── f007_002obj01.grit
+│   │   │   ├── f007_002obj01.png
+│   │   │   ├── f007_002obj02.grit
+│   │   │   ├── f007_002obj02.png
+│   │   │   ├── f007_002obj03.grit
+│   │   │   ├── f007_002obj03.png
+│   │   │   ├── f007_002obj04.grit
+│   │   │   ├── f007_002obj04.png
+│   │   │   ├── f007_002obj05.grit
+│   │   │   ├── f007_002obj05.png
+│   │   │   ├── f007_002obj07.grit
+│   │   │   ├── f007_002obj07.png
+│   │   │   ├── f007_002obj09.grit
+│   │   │   ├── f007_002obj09.png
+│   │   │   ├── f007_002obj10.grit
+│   │   │   ├── f007_002obj10.png
+│   │   │   ├── f007_002obj11.grit
+│   │   │   ├── f007_002obj11.png
+│   │   │   ├── f007_002obj12.grit
+│   │   │   ├── f007_002obj12.png
+│   │   │   ├── f007_002obj13.grit
+│   │   │   ├── f007_002obj13.png
+│   │   │   ├── f007_002obj15.grit
+│   │   │   ├── f007_002obj15.png
+│   │   │   ├── f007_002step01.grit
+│   │   │   ├── f007_002step01.png
+│   │   │   ├── f007_002step02.grit
+│   │   │   ├── f007_002step02.png
+│   │   │   ├── f007_002wall01.grit
+│   │   │   ├── f007_002wall01.png
+│   │   │   ├── f007_002wall02.grit
+│   │   │   ├── f007_002wall02.png
+│   │   │   ├── f007_002wall03.grit
+│   │   │   ├── f007_002wall03.png
+│   │   │   ├── f007_002wall04.grit
+│   │   │   ├── f007_002wall04.png
+│   │   │   ├── f007_002wall05.grit
+│   │   │   ├── f007_002wall05.png
+│   │   │   ├── f007_002wall06.grit
+│   │   │   ├── f007_002wall06.png
+│   │   │   ├── f007_002window_LT.png
+│   │   │   ├── iwatodai_dorm_floor_1.build.json
+│   │   │   ├── iwatodai_dorm_floor_1.mtl
+│   │   │   └── iwatodai_dorm_floor_1.obj
+│   │   ├── iwatodai_streets
+│   │   │   ├── enemy.grit
+│   │   │   ├── enemy.png
+│   │   │   ├── f007_009_01.grit
+│   │   │   ├── f007_009_01.png
+│   │   │   ├── f007_009_02.grit
+│   │   │   ├── f007_009_02.png
+│   │   │   ├── f007_009_03.grit
+│   │   │   ├── f007_009_03.png
+│   │   │   ├── f007_009_04.grit
+│   │   │   ├── f007_009_04.png
+│   │   │   ├── f007_009_05.grit
+│   │   │   ├── f007_009_05.png
+│   │   │   ├── f007_009_06.png
+│   │   │   ├── f007_009_07.grit
+│   │   │   ├── f007_009_07.png
+│   │   │   ├── f007_009_08.grit
+│   │   │   ├── f007_009_08.png
+│   │   │   ├── f007_009_09.grit
+│   │   │   ├── f007_009_09.png
+│   │   │   ├── f007_009_10.grit
+│   │   │   ├── f007_009_10.png
+│   │   │   ├── f007_009_11.grit
+│   │   │   ├── f007_009_11.png
+│   │   │   ├── f007_009_12.grit
+│   │   │   ├── f007_009_12.png
+│   │   │   ├── f007_009_13.grit
+│   │   │   ├── f007_009_13.png
+│   │   │   ├── f007_009_16.grit
+│   │   │   ├── f007_009_16.png
+│   │   │   ├── f007_009_17.grit
+│   │   │   ├── f007_009_17.png
+│   │   │   ├── f007_009_18.grit
+│   │   │   ├── f007_009_18.png
+│   │   │   ├── f007_009_20.png
+│   │   │   ├── f007_009_21.png
+│   │   │   ├── f007_009_23.grit
+│   │   │   ├── f007_009_23.png
+│   │   │   ├── f007_009_24.grit
+│   │   │   ├── f007_009_24.png
+│   │   │   ├── f007_009_25.grit
+│   │   │   ├── f007_009_25.png
+│   │   │   ├── f007_009_27.grit
+│   │   │   ├── f007_009_27.png
+│   │   │   ├── f007_009_28.grit
+│   │   │   ├── f007_009_28.png
+│   │   │   ├── f007_009_29.png
+│   │   │   ├── f007_009_30.grit
+│   │   │   ├── f007_009_30.png
+│   │   │   ├── f007_009_32.png
+│   │   │   ├── f007_009_33.png
+│   │   │   ├── f007_009_car.png
+│   │   │   ├── f007_009_car_ref.png
+│   │   │   ├── f007_009_infloor.grit
+│   │   │   ├── f007_009_infloor.png
+│   │   │   ├── f007_009_taxi.png
+│   │   │   ├── f007_009_window_LT.png
+│   │   │   ├── f007_009_window_LT02.png
+│   │   │   ├── f007_009_wood01.png
+│   │   │   ├── f007_light_effect.png
+│   │   │   ├── iwatodai_streets.build.json
+│   │   │   ├── iwatodai_streets.mtl
+│   │   │   └── iwatodai_streets.obj
+│   │   ├── paulownia_mall
+│   │   │   ├── f008_001_acyane.grit
+│   │   │   ├── f008_001_acyane.png
+│   │   │   ├── f008_001_cd.grit
+│   │   │   ├── f008_001_cd.png
+│   │   │   ├── f008_001_chair.grit
+│   │   │   ├── f008_001_chair.png
+│   │   │   ├── f008_001_enter01.grit
+│   │   │   ├── f008_001_enter01.png
+│   │   │   ├── f008_001_enter02.grit
+│   │   │   ├── f008_001_enter02.png
+│   │   │   ├── f008_001_fl01.grit
+│   │   │   ├── f008_001_fl01.png
+│   │   │   ├── f008_001_fl02.grit
+│   │   │   ├── f008_001_fl02.png
+│   │   │   ├── f008_001_fl03.grit
+│   │   │   ├── f008_001_fl03.png
+│   │   │   ├── f008_001_fun01.grit
+│   │   │   ├── f008_001_fun01.png
+│   │   │   ├── f008_001_fun02.grit
+│   │   │   ├── f008_001_fun02.png
+│   │   │   ├── f008_001_fun03.grit
+│   │   │   ├── f008_001_fun03.png
+│   │   │   ├── f008_001_gafl.grit
+│   │   │   ├── f008_001_gafl.png
+│   │   │   ├── f008_001_glass.grit
+│   │   │   ├── f008_001_glass.png
+│   │   │   ├── f008_001_gra.grit
+│   │   │   ├── f008_001_gra.png
+│   │   │   ├── f008_001_gra02.grit
+│   │   │   ├── f008_001_gra02.png
+│   │   │   ├── f008_001_gsfl.grit
+│   │   │   ├── f008_001_gsfl.png
+│   │   │   ├── f008_001_hasira.grit
+│   │   │   ├── f008_001_hasira.png
+│   │   │   ├── f008_001_hiho.grit
+│   │   │   ├── f008_001_hiho.png
+│   │   │   ├── f008_001_jitensya.grit
+│   │   │   ├── f008_001_jitensya.png
+│   │   │   ├── f008_001_jyutan.grit
+│   │   │   ├── f008_001_jyutan.png
+│   │   │   ├── f008_001_kaidan.grit
+│   │   │   ├── f008_001_kaidan.png
+│   │   │   ├── f008_001_kanban.grit
+│   │   │   ├── f008_001_kanban.png
+│   │   │   ├── f008_001_kanban02.grit
+│   │   │   ├── f008_001_kanban02.png
+│   │   │   ├── f008_001_kanban03.grit
+│   │   │   ├── f008_001_kanban03.png
+│   │   │   ├── f008_001_kar.grit
+│   │   │   ├── f008_001_kar.png
+│   │   │   ├── f008_001_keimark.grit
+│   │   │   ├── f008_001_keimark.png
+│   │   │   ├── f008_001_komono01.grit
+│   │   │   ├── f008_001_komono01.png
+│   │   │   ├── f008_001_komono02.grit
+│   │   │   ├── f008_001_komono02.png
+│   │   │   ├── f008_001_ligfla.grit
+│   │   │   ├── f008_001_ligfla.png
+│   │   │   ├── f008_001_plantA.grit
+│   │   │   ├── f008_001_plantA.png
+│   │   │   ├── f008_001_redrect.grit
+│   │   │   ├── f008_001_redrect.png
+│   │   │   ├── f008_001_shadow.grit
+│   │   │   ├── f008_001_shadow.png
+│   │   │   ├── f008_001_sky.grit
+│   │   │   ├── f008_001_sky.png
+│   │   │   ├── f008_001_wl01.grit
+│   │   │   ├── f008_001_wl01.png
+│   │   │   ├── f008_001_wl02.grit
+│   │   │   ├── f008_001_wl02.png
+│   │   │   ├── paulownia_mall.build.json
+│   │   │   ├── paulownia_mall.mtl
+│   │   │   └── paulownia_mall.obj
+│   │   └── station
+│   │       ├── f008_005bolt01.grit
+│   │       ├── f008_005bolt01.png
+│   │       ├── f008_005floor01.grit
+│   │       ├── f008_005floor01.png
+│   │       ├── f008_005obj01.grit
+│   │       ├── f008_005obj01.png
+│   │       ├── f008_005obj02.grit
+│   │       ├── f008_005obj02.png
+│   │       ├── f008_005obj03.grit
+│   │       ├── f008_005obj03.png
+│   │       ├── f008_005obj04.grit
+│   │       ├── f008_005obj04.png
+│   │       ├── f008_005obj06.grit
+│   │       ├── f008_005obj06.png
+│   │       ├── f008_005obj07.grit
+│   │       ├── f008_005obj07.png
+│   │       ├── f008_005obj08.grit
+│   │       ├── f008_005obj08.png
+│   │       ├── f008_005wall01.grit
+│   │       ├── f008_005wall01.png
+│   │       ├── lightmap_white.grit
+│   │       ├── lightmap_white.png
+│   │       ├── station.build.json
+│   │       ├── station.mtl
+│   │       └── station.obj
+│   ├── graphics
+│   │   ├── Dialogue
+│   │   │   ├── backgrounds
+│   │   │   │   ├── bgAkihiko.grit
+│   │   │   │   ├── bgAkihiko.png
+│   │   │   │   ├── bgKenji.grit
+│   │   │   │   ├── bgKenji.png
+│   │   │   │   ├── bgYukari.grit
+│   │   │   │   ├── bgYukari.png
+│   │   │   │   ├── bgYukariClose.grit
+│   │   │   │   └── bgYukariClose.png
+│   │   │   └── sprites
+│   │   │       ├── calendar.grit
+│   │   │       ├── calendar.png
+│   │   │       ├── calendarFEMC.grit
+│   │   │       ├── calendarFEMC.png
+│   │   │       ├── nameTag.grit
+│   │   │       ├── nameTag.png
+│   │   │       ├── nameTagFEMC.grit
+│   │   │       ├── nameTagFEMC.png
+│   │   │       ├── textCorner.grit
+│   │   │       ├── textCorner.png
+│   │   │       ├── textCornerFEMC.grit
+│   │   │       ├── textCornerFEMC.png
+│   │   │       ├── textMiddle.grit
+│   │   │       ├── textMiddle.png
+│   │   │       ├── textMiddleFEMC.grit
+│   │   │       └── textMiddleFEMC.png
+│   │   ├── DisclaimerView
+│   │   │   └── backgrounds
+│   │   │       ├── cautionBackground.grit
+│   │   │       ├── cautionBackground.png
+│   │   │       ├── cautionBackgroundSub.grit
+│   │   │       └── cautionBackgroundSub.png
+│   │   ├── IntroView
+│   │   │   ├── backgrounds
+│   │   │   │   ├── attributionBackground.grit
+│   │   │   │   ├── attributionBackground.png
+│   │   │   │   ├── overlayBackground.grit
+│   │   │   │   ├── overlayBackground.png
+│   │   │   │   ├── overlayBackgroundFEMC.grit
+│   │   │   │   ├── overlayBackgroundFEMC.png
+│   │   │   │   ├── roomBackground.grit
+│   │   │   │   ├── roomBackground.png
+│   │   │   │   ├── roomBackgroundFEMC.grit
+│   │   │   │   ├── roomBackgroundFEMC.png
+│   │   │   │   ├── silhouetteBackground.grit
+│   │   │   │   ├── silhouetteBackground.png
+│   │   │   │   ├── silhouetteBackgroundFEMC.grit
+│   │   │   │   ├── silhouetteBackgroundFEMC.png
+│   │   │   │   ├── skyBackground.grit
+│   │   │   │   ├── skyBackground.png
+│   │   │   │   ├── skyBackgroundFEMC.grit
+│   │   │   │   ├── skyBackgroundFEMC.png
+│   │   │   │   ├── skyBackgroundSub.grit
+│   │   │   │   ├── skyBackgroundSub.png
+│   │   │   │   ├── skyBackgroundSubFEMC.grit
+│   │   │   │   └── skyBackgroundSubFEMC.png
+│   │   │   └── sprites
+│   │   │       ├── logoSpriteLeft.grit
+│   │   │       ├── logoSpriteLeft.png
+│   │   │       ├── logoSpriteRight.grit
+│   │   │       └── logoSpriteRight.png
+│   │   ├── MainMenuView
+│   │   │   └── backgrounds
+│   │   │       ├── doorBackground.grit
+│   │   │       ├── doorBackground.png
+│   │   │       ├── fogBackground.grit
+│   │   │       ├── fogBackground.png
+│   │   │       ├── menuSilhouetteBackground.grit
+│   │   │       └── menuSilhouetteBackground.png
+│   │   ├── MenuHUD
+│   │   │   ├── backgrounds
+│   │   │   │   ├── menuHUD.grit
+│   │   │   │   ├── menuHUD.png
+│   │   │   │   ├── menuHUDFEMC.grit
+│   │   │   │   └── menuHUDFEMC.png
+│   │   │   └── sprites
+│   │   │       ├── after-school-0-0.grit
+│   │   │       ├── after-school-0-0.png
+│   │   │       ├── after-school-1-0.grit
+│   │   │       ├── after-school-1-0.png
+│   │   │       ├── after-school-2-0.grit
+│   │   │       ├── after-school-2-0.png
+│   │   │       ├── afternoon-0-0.grit
+│   │   │       ├── afternoon-0-0.png
+│   │   │       ├── afternoon-1-0.grit
+│   │   │       ├── afternoon-1-0.png
+│   │   │       ├── afternoon-2-0.grit
+│   │   │       ├── afternoon-2-0.png
+│   │   │       ├── daytime-0-0.grit
+│   │   │       ├── daytime-0-0.png
+│   │   │       ├── daytime-1-0.grit
+│   │   │       ├── daytime-1-0.png
+│   │   │       ├── early-morning-0-0.grit
+│   │   │       ├── early-morning-0-0.png
+│   │   │       ├── early-morning-1-0.grit
+│   │   │       ├── early-morning-1-0.png
+│   │   │       ├── early-morning-2-0.grit
+│   │   │       ├── early-morning-2-0.png
+│   │   │       ├── early-morning-3-0.grit
+│   │   │       ├── early-morning-3-0.png
+│   │   │       ├── evening-0-0.grit
+│   │   │       ├── evening-0-0.png
+│   │   │       ├── evening-1-0.grit
+│   │   │       ├── evening-1-0.png
+│   │   │       ├── friday.grit
+│   │   │       ├── friday.png
+│   │   │       ├── late-night-0-0.grit
+│   │   │       ├── late-night-0-0.png
+│   │   │       ├── late-night-1-0.grit
+│   │   │       ├── late-night-1-0.png
+│   │   │       ├── late-night-2-0.grit
+│   │   │       ├── late-night-2-0.png
+│   │   │       ├── lunchtime-0-0.grit
+│   │   │       ├── lunchtime-0-0.png
+│   │   │       ├── lunchtime-1-0.grit
+│   │   │       ├── lunchtime-1-0.png
+│   │   │       ├── lunchtime-2-0.grit
+│   │   │       ├── lunchtime-2-0.png
+│   │   │       ├── monday.grit
+│   │   │       ├── monday.png
+│   │   │       ├── moon-0.grit
+│   │   │       ├── moon-0.png
+│   │   │       ├── moon-1.grit
+│   │   │       ├── moon-1.png
+│   │   │       ├── moon-10.grit
+│   │   │       ├── moon-10.png
+│   │   │       ├── moon-11.grit
+│   │   │       ├── moon-11.png
+│   │   │       ├── moon-12.grit
+│   │   │       ├── moon-12.png
+│   │   │       ├── moon-13.grit
+│   │   │       ├── moon-13.png
+│   │   │       ├── moon-14.grit
+│   │   │       ├── moon-14.png
+│   │   │       ├── moon-15.grit
+│   │   │       ├── moon-15.png
+│   │   │       ├── moon-16.grit
+│   │   │       ├── moon-16.png
+│   │   │       ├── moon-17.grit
+│   │   │       ├── moon-17.png
+│   │   │       ├── moon-18.grit
+│   │   │       ├── moon-18.png
+│   │   │       ├── moon-19.grit
+│   │   │       ├── moon-19.png
+│   │   │       ├── moon-2.grit
+│   │   │       ├── moon-2.png
+│   │   │       ├── moon-20.grit
+│   │   │       ├── moon-20.png
+│   │   │       ├── moon-21.grit
+│   │   │       ├── moon-21.png
+│   │   │       ├── moon-22.grit
+│   │   │       ├── moon-22.png
+│   │   │       ├── moon-23.grit
+│   │   │       ├── moon-23.png
+│   │   │       ├── moon-24.grit
+│   │   │       ├── moon-24.png
+│   │   │       ├── moon-25.grit
+│   │   │       ├── moon-25.png
+│   │   │       ├── moon-26.grit
+│   │   │       ├── moon-26.png
+│   │   │       ├── moon-27.grit
+│   │   │       ├── moon-27.png
+│   │   │       ├── moon-28.grit
+│   │   │       ├── moon-28.png
+│   │   │       ├── moon-29.grit
+│   │   │       ├── moon-29.png
+│   │   │       ├── moon-3.grit
+│   │   │       ├── moon-3.png
+│   │   │       ├── moon-4.grit
+│   │   │       ├── moon-4.png
+│   │   │       ├── moon-5.grit
+│   │   │       ├── moon-5.png
+│   │   │       ├── moon-6.grit
+│   │   │       ├── moon-6.png
+│   │   │       ├── moon-7.grit
+│   │   │       ├── moon-7.png
+│   │   │       ├── moon-8.grit
+│   │   │       ├── moon-8.png
+│   │   │       ├── moon-9.grit
+│   │   │       ├── moon-9.png
+│   │   │       ├── morning-0-0.grit
+│   │   │       ├── morning-0-0.png
+│   │   │       ├── morning-1-0.grit
+│   │   │       ├── morning-1-0.png
+│   │   │       ├── number-0.grit
+│   │   │       ├── number-0.png
+│   │   │       ├── number-1.grit
+│   │   │       ├── number-1.png
+│   │   │       ├── number-2.grit
+│   │   │       ├── number-2.png
+│   │   │       ├── number-3.grit
+│   │   │       ├── number-3.png
+│   │   │       ├── number-4.grit
+│   │   │       ├── number-4.png
+│   │   │       ├── number-5.grit
+│   │   │       ├── number-5.png
+│   │   │       ├── number-6.grit
+│   │   │       ├── number-6.png
+│   │   │       ├── number-7.grit
+│   │   │       ├── number-7.png
+│   │   │       ├── number-8.grit
+│   │   │       ├── number-8.png
+│   │   │       ├── number-9.grit
+│   │   │       ├── number-9.png
+│   │   │       ├── saturday.grit
+│   │   │       ├── saturday.png
+│   │   │       ├── skills-level.grit
+│   │   │       ├── skills-level.png
+│   │   │       ├── slash.grit
+│   │   │       ├── slash.png
+│   │   │       ├── sunday.grit
+│   │   │       ├── sunday.png
+│   │   │       ├── thursday.grit
+│   │   │       ├── thursday.png
+│   │   │       ├── tuesday.grit
+│   │   │       ├── tuesday.png
+│   │   │       ├── wednesday.grit
+│   │   │       └── wednesday.png
+│   │   └── SignContractView
+│   │       └── backgrounds
+│   │           ├── contract.grit
+│   │           └── contract.png
+│   ├── maps
+│   │   ├── iwatodai_dorm_floor_1.jmap
+│   │   ├── iwatodai_streets.jmap
+│   │   ├── paulownia_mall.jmap
+│   │   └── station.jmap
+│   ├── models
+│   │   ├── kotone
+│   │   │   ├── kotone.json
+│   │   │   ├── kotone_n0.mtl
+│   │   │   ├── kotone_n0.obj
+│   │   │   ├── kotone_n1.mtl
+│   │   │   ├── kotone_n1.obj
+│   │   │   ├── kotone_n10.mtl
+│   │   │   ├── kotone_n10.obj
+│   │   │   ├── kotone_n11.mtl
+│   │   │   ├── kotone_n11.obj
+│   │   │   ├── kotone_n12.mtl
+│   │   │   ├── kotone_n12.obj
+│   │   │   ├── kotone_n13.mtl
+│   │   │   ├── kotone_n13.obj
+│   │   │   ├── kotone_n14.mtl
+│   │   │   ├── kotone_n14.obj
+│   │   │   ├── kotone_n15.mtl
+│   │   │   ├── kotone_n15.obj
+│   │   │   ├── kotone_n16.mtl
+│   │   │   ├── kotone_n16.obj
+│   │   │   ├── kotone_n17.mtl
+│   │   │   ├── kotone_n17.obj
+│   │   │   ├── kotone_n18.mtl
+│   │   │   ├── kotone_n18.obj
+│   │   │   ├── kotone_n19.mtl
+│   │   │   ├── kotone_n19.obj
+│   │   │   ├── kotone_n2.mtl
+│   │   │   ├── kotone_n2.obj
+│   │   │   ├── kotone_n20.mtl
+│   │   │   ├── kotone_n20.obj
+│   │   │   ├── kotone_n21.mtl
+│   │   │   ├── kotone_n21.obj
+│   │   │   ├── kotone_n22.mtl
+│   │   │   ├── kotone_n22.obj
+│   │   │   ├── kotone_n23.mtl
+│   │   │   ├── kotone_n23.obj
+│   │   │   ├── kotone_n24.mtl
+│   │   │   ├── kotone_n24.obj
+│   │   │   ├── kotone_n25.mtl
+│   │   │   ├── kotone_n25.obj
+│   │   │   ├── kotone_n26.mtl
+│   │   │   ├── kotone_n26.obj
+│   │   │   ├── kotone_n27.mtl
+│   │   │   ├── kotone_n27.obj
+│   │   │   ├── kotone_n28.mtl
+│   │   │   ├── kotone_n28.obj
+│   │   │   ├── kotone_n29.mtl
+│   │   │   ├── kotone_n29.obj
+│   │   │   ├── kotone_n3.mtl
+│   │   │   ├── kotone_n3.obj
+│   │   │   ├── kotone_n30.mtl
+│   │   │   ├── kotone_n30.obj
+│   │   │   ├── kotone_n31.mtl
+│   │   │   ├── kotone_n31.obj
+│   │   │   ├── kotone_n32.mtl
+│   │   │   ├── kotone_n32.obj
+│   │   │   ├── kotone_n33.mtl
+│   │   │   ├── kotone_n33.obj
+│   │   │   ├── kotone_n34.mtl
+│   │   │   ├── kotone_n34.obj
+│   │   │   ├── kotone_n35.mtl
+│   │   │   ├── kotone_n35.obj
+│   │   │   ├── kotone_n36.mtl
+│   │   │   ├── kotone_n36.obj
+│   │   │   ├── kotone_n37.mtl
+│   │   │   ├── kotone_n37.obj
+│   │   │   ├── kotone_n38.mtl
+│   │   │   ├── kotone_n38.obj
+│   │   │   ├── kotone_n39.mtl
+│   │   │   ├── kotone_n39.obj
+│   │   │   ├── kotone_n4.mtl
+│   │   │   ├── kotone_n4.obj
+│   │   │   ├── kotone_n40.mtl
+│   │   │   ├── kotone_n40.obj
+│   │   │   ├── kotone_n41.mtl
+│   │   │   ├── kotone_n41.obj
+│   │   │   ├── kotone_n42.mtl
+│   │   │   ├── kotone_n42.obj
+│   │   │   ├── kotone_n43.mtl
+│   │   │   ├── kotone_n43.obj
+│   │   │   ├── kotone_n44.mtl
+│   │   │   ├── kotone_n44.obj
+│   │   │   ├── kotone_n45.mtl
+│   │   │   ├── kotone_n45.obj
+│   │   │   ├── kotone_n46.mtl
+│   │   │   ├── kotone_n46.obj
+│   │   │   ├── kotone_n47.mtl
+│   │   │   ├── kotone_n47.obj
+│   │   │   ├── kotone_n48.mtl
+│   │   │   ├── kotone_n48.obj
+│   │   │   ├── kotone_n49.mtl
+│   │   │   ├── kotone_n49.obj
+│   │   │   ├── kotone_n5.mtl
+│   │   │   ├── kotone_n5.obj
+│   │   │   ├── kotone_n50.mtl
+│   │   │   ├── kotone_n50.obj
+│   │   │   ├── kotone_n51.mtl
+│   │   │   ├── kotone_n51.obj
+│   │   │   ├── kotone_n52.mtl
+│   │   │   ├── kotone_n52.obj
+│   │   │   ├── kotone_n53.mtl
+│   │   │   ├── kotone_n53.obj
+│   │   │   ├── kotone_n54.mtl
+│   │   │   ├── kotone_n54.obj
+│   │   │   ├── kotone_n55.mtl
+│   │   │   ├── kotone_n55.obj
+│   │   │   ├── kotone_n56.mtl
+│   │   │   ├── kotone_n56.obj
+│   │   │   ├── kotone_n57.mtl
+│   │   │   ├── kotone_n57.obj
+│   │   │   ├── kotone_n58.mtl
+│   │   │   ├── kotone_n58.obj
+│   │   │   ├── kotone_n59.mtl
+│   │   │   ├── kotone_n59.obj
+│   │   │   ├── kotone_n6.mtl
+│   │   │   ├── kotone_n6.obj
+│   │   │   ├── kotone_n60.mtl
+│   │   │   ├── kotone_n60.obj
+│   │   │   ├── kotone_n61.mtl
+│   │   │   ├── kotone_n61.obj
+│   │   │   ├── kotone_n62.mtl
+│   │   │   ├── kotone_n62.obj
+│   │   │   ├── kotone_n63.mtl
+│   │   │   ├── kotone_n63.obj
+│   │   │   ├── kotone_n64.mtl
+│   │   │   ├── kotone_n64.obj
+│   │   │   ├── kotone_n65.mtl
+│   │   │   ├── kotone_n65.obj
+│   │   │   ├── kotone_n66.mtl
+│   │   │   ├── kotone_n66.obj
+│   │   │   ├── kotone_n67.mtl
+│   │   │   ├── kotone_n67.obj
+│   │   │   ├── kotone_n68.mtl
+│   │   │   ├── kotone_n68.obj
+│   │   │   ├── kotone_n69.mtl
+│   │   │   ├── kotone_n69.obj
+│   │   │   ├── kotone_n7.mtl
+│   │   │   ├── kotone_n7.obj
+│   │   │   ├── kotone_n8.mtl
+│   │   │   ├── kotone_n8.obj
+│   │   │   ├── kotone_n9.mtl
+│   │   │   ├── kotone_n9.obj
+│   │   │   ├── kotone_texture_0.grit
+│   │   │   ├── kotone_texture_0.png
+│   │   │   ├── kotone_texture_1.grit
+│   │   │   ├── kotone_texture_1.png
+│   │   │   ├── kotone_texture_2.grit
+│   │   │   ├── kotone_texture_2.png
+│   │   │   ├── kotone_texture_3.grit
+│   │   │   ├── kotone_texture_3.png
+│   │   │   ├── kotone_texture_4.grit
+│   │   │   └── kotone_texture_4.png
+│   │   ├── kotone.build.json
+│   │   ├── makoto
+│   │   │   ├── makoto.json
+│   │   │   ├── makoto_n0.mtl
+│   │   │   ├── makoto_n0.obj
+│   │   │   ├── makoto_n1.mtl
+│   │   │   ├── makoto_n1.obj
+│   │   │   ├── makoto_n10.mtl
+│   │   │   ├── makoto_n10.obj
+│   │   │   ├── makoto_n11.mtl
+│   │   │   ├── makoto_n11.obj
+│   │   │   ├── makoto_n12.mtl
+│   │   │   ├── makoto_n12.obj
+│   │   │   ├── makoto_n13.mtl
+│   │   │   ├── makoto_n13.obj
+│   │   │   ├── makoto_n14.mtl
+│   │   │   ├── makoto_n14.obj
+│   │   │   ├── makoto_n15.mtl
+│   │   │   ├── makoto_n15.obj
+│   │   │   ├── makoto_n16.mtl
+│   │   │   ├── makoto_n16.obj
+│   │   │   ├── makoto_n17.mtl
+│   │   │   ├── makoto_n17.obj
+│   │   │   ├── makoto_n18.mtl
+│   │   │   ├── makoto_n18.obj
+│   │   │   ├── makoto_n19.mtl
+│   │   │   ├── makoto_n19.obj
+│   │   │   ├── makoto_n2.mtl
+│   │   │   ├── makoto_n2.obj
+│   │   │   ├── makoto_n20.mtl
+│   │   │   ├── makoto_n20.obj
+│   │   │   ├── makoto_n21.mtl
+│   │   │   ├── makoto_n21.obj
+│   │   │   ├── makoto_n22.mtl
+│   │   │   ├── makoto_n22.obj
+│   │   │   ├── makoto_n23.mtl
+│   │   │   ├── makoto_n23.obj
+│   │   │   ├── makoto_n24.mtl
+│   │   │   ├── makoto_n24.obj
+│   │   │   ├── makoto_n25.mtl
+│   │   │   ├── makoto_n25.obj
+│   │   │   ├── makoto_n26.mtl
+│   │   │   ├── makoto_n26.obj
+│   │   │   ├── makoto_n27.mtl
+│   │   │   ├── makoto_n27.obj
+│   │   │   ├── makoto_n28.mtl
+│   │   │   ├── makoto_n28.obj
+│   │   │   ├── makoto_n29.mtl
+│   │   │   ├── makoto_n29.obj
+│   │   │   ├── makoto_n3.mtl
+│   │   │   ├── makoto_n3.obj
+│   │   │   ├── makoto_n30.mtl
+│   │   │   ├── makoto_n30.obj
+│   │   │   ├── makoto_n31.mtl
+│   │   │   ├── makoto_n31.obj
+│   │   │   ├── makoto_n32.mtl
+│   │   │   ├── makoto_n32.obj
+│   │   │   ├── makoto_n33.mtl
+│   │   │   ├── makoto_n33.obj
+│   │   │   ├── makoto_n34.mtl
+│   │   │   ├── makoto_n34.obj
+│   │   │   ├── makoto_n35.mtl
+│   │   │   ├── makoto_n35.obj
+│   │   │   ├── makoto_n36.mtl
+│   │   │   ├── makoto_n36.obj
+│   │   │   ├── makoto_n37.mtl
+│   │   │   ├── makoto_n37.obj
+│   │   │   ├── makoto_n38.mtl
+│   │   │   ├── makoto_n38.obj
+│   │   │   ├── makoto_n39.mtl
+│   │   │   ├── makoto_n39.obj
+│   │   │   ├── makoto_n4.mtl
+│   │   │   ├── makoto_n4.obj
+│   │   │   ├── makoto_n40.mtl
+│   │   │   ├── makoto_n40.obj
+│   │   │   ├── makoto_n41.mtl
+│   │   │   ├── makoto_n41.obj
+│   │   │   ├── makoto_n42.mtl
+│   │   │   ├── makoto_n42.obj
+│   │   │   ├── makoto_n43.mtl
+│   │   │   ├── makoto_n43.obj
+│   │   │   ├── makoto_n44.mtl
+│   │   │   ├── makoto_n44.obj
+│   │   │   ├── makoto_n45.mtl
+│   │   │   ├── makoto_n45.obj
+│   │   │   ├── makoto_n46.mtl
+│   │   │   ├── makoto_n46.obj
+│   │   │   ├── makoto_n47.mtl
+│   │   │   ├── makoto_n47.obj
+│   │   │   ├── makoto_n48.mtl
+│   │   │   ├── makoto_n48.obj
+│   │   │   ├── makoto_n49.mtl
+│   │   │   ├── makoto_n49.obj
+│   │   │   ├── makoto_n5.mtl
+│   │   │   ├── makoto_n5.obj
+│   │   │   ├── makoto_n50.mtl
+│   │   │   ├── makoto_n50.obj
+│   │   │   ├── makoto_n51.mtl
+│   │   │   ├── makoto_n51.obj
+│   │   │   ├── makoto_n52.mtl
+│   │   │   ├── makoto_n52.obj
+│   │   │   ├── makoto_n53.mtl
+│   │   │   ├── makoto_n53.obj
+│   │   │   ├── makoto_n54.mtl
+│   │   │   ├── makoto_n54.obj
+│   │   │   ├── makoto_n55.mtl
+│   │   │   ├── makoto_n55.obj
+│   │   │   ├── makoto_n56.mtl
+│   │   │   ├── makoto_n56.obj
+│   │   │   ├── makoto_n57.mtl
+│   │   │   ├── makoto_n57.obj
+│   │   │   ├── makoto_n58.mtl
+│   │   │   ├── makoto_n58.obj
+│   │   │   ├── makoto_n59.mtl
+│   │   │   ├── makoto_n59.obj
+│   │   │   ├── makoto_n6.mtl
+│   │   │   ├── makoto_n6.obj
+│   │   │   ├── makoto_n60.mtl
+│   │   │   ├── makoto_n60.obj
+│   │   │   ├── makoto_n61.mtl
+│   │   │   ├── makoto_n61.obj
+│   │   │   ├── makoto_n62.mtl
+│   │   │   ├── makoto_n62.obj
+│   │   │   ├── makoto_n63.mtl
+│   │   │   ├── makoto_n63.obj
+│   │   │   ├── makoto_n64.mtl
+│   │   │   ├── makoto_n64.obj
+│   │   │   ├── makoto_n65.mtl
+│   │   │   ├── makoto_n65.obj
+│   │   │   ├── makoto_n66.mtl
+│   │   │   ├── makoto_n66.obj
+│   │   │   ├── makoto_n67.mtl
+│   │   │   ├── makoto_n67.obj
+│   │   │   ├── makoto_n68.mtl
+│   │   │   ├── makoto_n68.obj
+│   │   │   ├── makoto_n69.mtl
+│   │   │   ├── makoto_n69.obj
+│   │   │   ├── makoto_n7.mtl
+│   │   │   ├── makoto_n7.obj
+│   │   │   ├── makoto_n70.mtl
+│   │   │   ├── makoto_n70.obj
+│   │   │   ├── makoto_n71.mtl
+│   │   │   ├── makoto_n71.obj
+│   │   │   ├── makoto_n72.mtl
+│   │   │   ├── makoto_n72.obj
+│   │   │   ├── makoto_n73.mtl
+│   │   │   ├── makoto_n73.obj
+│   │   │   ├── makoto_n74.mtl
+│   │   │   ├── makoto_n74.obj
+│   │   │   ├── makoto_n75.mtl
+│   │   │   ├── makoto_n75.obj
+│   │   │   ├── makoto_n76.mtl
+│   │   │   ├── makoto_n76.obj
+│   │   │   ├── makoto_n77.mtl
+│   │   │   ├── makoto_n77.obj
+│   │   │   ├── makoto_n8.mtl
+│   │   │   ├── makoto_n8.obj
+│   │   │   ├── makoto_n9.mtl
+│   │   │   ├── makoto_n9.obj
+│   │   │   ├── makoto_texture_0.grit
+│   │   │   ├── makoto_texture_0.png
+│   │   │   ├── makoto_texture_1.grit
+│   │   │   ├── makoto_texture_1.png
+│   │   │   ├── makoto_texture_2.grit
+│   │   │   ├── makoto_texture_2.png
+│   │   │   ├── makoto_texture_3.grit
+│   │   │   ├── makoto_texture_3.png
+│   │   │   ├── makoto_texture_4.grit
+│   │   │   └── makoto_texture_4.png
+│   │   └── makoto.build.json
+│   ├── music
+│   │   ├── battle
+│   │   │   ├── mass_destruction.mp3
+│   │   │   └── wiping_all_out.mp3
+│   │   ├── locations
+│   │   │   ├── iwatodaiDorm
+│   │   │   │   └── iwatodai_dorm.mp3
+│   │   │   ├── iwatodaiStreets
+│   │   │   │   ├── changing_seasons.mp3
+│   │   │   │   └── sun.mp3
+│   │   │   └── paulowniaMall
+│   │   │       ├── overworld
+│   │   │       │   └── color_your_night.mp3
+│   │   │       └── station
+│   │   │           └── paulownia_mall.mp3
+│   │   └── menus
+│   │       ├── contract
+│   │       │   └── mistic.mp3
+│   │       ├── title
+│   │       │   └── tightrope.mp3
+│   │       └── velvetRoom
+│   │           └── aria_of_the_soul.mp3
+│   ├── sfx
+│   │   ├── cancel.wav
+│   │   ├── menu.wav
+│   │   └── select.wav
+│   └── video
+│       ├── base.build.json
+│       ├── base.mp4
+│       ├── cutscene-1.build.json
+│       ├── cutscene-1.mp4
+│       ├── cutscene-2.build.json
+│       ├── cutscene-2.mp4
+│       ├── fes.build.json
+│       ├── fes.mp4
+│       ├── portable.build.json
+│       ├── portable.mp4
+│       ├── reload.build.json
+│       └── reload.mp4
+├── build
+│   ├── AnimationController.d
+│   ├── AnimationController.o
+│   ├── ArmourDb.d
+│   ├── ArmourDb.o
+│   ├── AttackAction.d
+│   ├── AttackAction.o
+│   ├── BaseMenu.d
+│   ├── BaseMenu.o
+│   ├── BaseView.d
+│   ├── BaseView.o
+│   ├── BaseView3D.d
+│   ├── BaseView3D.o
+│   ├── BattleCalcs.d
+│   ├── BattleCalcs.o
+│   ├── BattleController.d
+│   ├── BattleController.o
+│   ├── BattleMenuComponent.d
+│   ├── BattleMenuComponent.o
+│   ├── CharacterController.d
+│   ├── CharacterController.o
+│   ├── CharacterProfileDb.d
+│   ├── CharacterProfileDb.o
+│   ├── DialogueController.d
+│   ├── DialogueController.o
+│   ├── DialogueScreen.d
+│   ├── DialogueScreen.o
+│   ├── DisclaimerView.d
+│   ├── DisclaimerView.o
+│   ├── Enemy.d
+│   ├── Enemy.o
+│   ├── EnemyDb.d
+│   ├── EnemyDb.o
+│   ├── EnvironmentView.d
+│   ├── EnvironmentView.o
+│   ├── GraphicsController.d
+│   ├── GraphicsController.o
+│   ├── Guard.d
+│   ├── Guard.o
+│   ├── IntroView.d
+│   ├── IntroView.o
+│   ├── IwatodaiDormView.d
+│   ├── IwatodaiDormView.o
+│   ├── IwatodaiStreetsView.d
+│   ├── IwatodaiStreetsView.o
+│   ├── MainMenuComponent.d
+│   ├── MainMenuComponent.o
+│   ├── MainMenuView.d
+│   ├── MainMenuView.o
+│   ├── MenuHUDScreen.d
+│   ├── MenuHUDScreen.o
+│   ├── MusicController.d
+│   ├── MusicController.o
+│   ├── PartyMember.d
+│   ├── PartyMember.o
+│   ├── PaulowniaMallView.d
+│   ├── PaulowniaMallView.o
+│   ├── PauseMenuComponent.d
+│   ├── PauseMenuComponent.o
+│   ├── PersonaAction.d
+│   ├── PersonaAction.o
+│   ├── PersonaDb.d
+│   ├── PersonaDb.o
+│   ├── Player.d
+│   ├── Player.o
+│   ├── SaveController.d
+│   ├── SaveController.o
+│   ├── ShoeDb.d
+│   ├── ShoeDb.o
+│   ├── SignContractView.d
+│   ├── SignContractView.o
+│   ├── SkillDb.d
+│   ├── SkillDb.o
+│   ├── SpriteController.d
+│   ├── SpriteController.o
+│   ├── StationView.d
+│   ├── StationView.o
+│   ├── SwitchPersona.d
+│   ├── SwitchPersona.o
+│   ├── UIController.d
+│   ├── UIController.o
+│   ├── UIScreen.d
+│   ├── UIScreen.o
+│   ├── VideoController.d
+│   ├── VideoController.o
+│   ├── VideoView.d
+│   ├── VideoView.o
+│   ├── WeaponDb.d
+│   ├── WeaponDb.o
+│   ├── demo_dialogue.d
+│   ├── demo_dialogue.o
+│   ├── environmentDb.d
+│   ├── environmentDb.o
+│   ├── globals.d
+│   ├── globals.o
+│   ├── main.d
+│   ├── main.o
+│   ├── persona-3-dual.lst
+│   ├── persona-3-dual.map
+│   ├── soundbank.bin
+│   ├── soundbank.bin.o
+│   ├── soundbank.h
+│   ├── soundbank_bin.h
+│   ├── spriteDb.d
+│   └── spriteDb.o
+├── data
+│   ├── environments
+│   │   ├── iwatodai_dorm_floor_1
+│   │   │   ├── akihiko
+│   │   │   │   └── akihiko.img.bin
+│   │   │   ├── f007_002bolt01
+│   │   │   │   └── f007_002bolt01.img.bin
+│   │   │   ├── f007_002bolt02
+│   │   │   │   └── f007_002bolt02.img.bin
+│   │   │   ├── f007_002bolt03
+│   │   │   │   └── f007_002bolt03.img.bin
+│   │   │   ├── f007_002door01
+│   │   │   │   └── f007_002door01.img.bin
+│   │   │   ├── f007_002door02
+│   │   │   │   └── f007_002door02.img.bin
+│   │   │   ├── f007_002floor01
+│   │   │   │   └── f007_002floor01.img.bin
+│   │   │   ├── f007_002floor02
+│   │   │   │   └── f007_002floor02.img.bin
+│   │   │   ├── f007_002floor03
+│   │   │   │   └── f007_002floor03.img.bin
+│   │   │   ├── f007_002kzr01
+│   │   │   │   └── f007_002kzr01.img.bin
+│   │   │   ├── f007_002kzr02
+│   │   │   │   └── f007_002kzr02.img.bin
+│   │   │   ├── f007_002kzr03
+│   │   │   │   └── f007_002kzr03.img.bin
+│   │   │   ├── f007_002kzr04
+│   │   │   │   └── f007_002kzr04.img.bin
+│   │   │   ├── f007_002obj01
+│   │   │   │   └── f007_002obj01.img.bin
+│   │   │   ├── f007_002obj02
+│   │   │   │   └── f007_002obj02.img.bin
+│   │   │   ├── f007_002obj03
+│   │   │   │   └── f007_002obj03.img.bin
+│   │   │   ├── f007_002obj04
+│   │   │   │   └── f007_002obj04.img.bin
+│   │   │   ├── f007_002obj05
+│   │   │   │   └── f007_002obj05.img.bin
+│   │   │   ├── f007_002obj07
+│   │   │   │   └── f007_002obj07.img.bin
+│   │   │   ├── f007_002obj09
+│   │   │   │   └── f007_002obj09.img.bin
+│   │   │   ├── f007_002obj10
+│   │   │   │   └── f007_002obj10.img.bin
+│   │   │   ├── f007_002obj11
+│   │   │   │   └── f007_002obj11.img.bin
+│   │   │   ├── f007_002obj12
+│   │   │   │   └── f007_002obj12.img.bin
+│   │   │   ├── f007_002obj13
+│   │   │   │   └── f007_002obj13.img.bin
+│   │   │   ├── f007_002obj15
+│   │   │   │   └── f007_002obj15.img.bin
+│   │   │   ├── f007_002step01
+│   │   │   │   └── f007_002step01.img.bin
+│   │   │   ├── f007_002step02
+│   │   │   │   └── f007_002step02.img.bin
+│   │   │   ├── f007_002wall01
+│   │   │   │   └── f007_002wall01.img.bin
+│   │   │   ├── f007_002wall02
+│   │   │   │   └── f007_002wall02.img.bin
+│   │   │   ├── f007_002wall03
+│   │   │   │   └── f007_002wall03.img.bin
+│   │   │   ├── f007_002wall04
+│   │   │   │   └── f007_002wall04.img.bin
+│   │   │   ├── f007_002wall05
+│   │   │   │   └── f007_002wall05.img.bin
+│   │   │   ├── f007_002wall06
+│   │   │   │   └── f007_002wall06.img.bin
+│   │   │   ├── f007_002window_LT
+│   │   │   │   └── f007_002window_LT.img.bin
+│   │   │   └── iwatodai_dorm_floor_1.bin
+│   │   ├── iwatodai_streets
+│   │   │   ├── enemy
+│   │   │   │   └── enemy.img.bin
+│   │   │   ├── f007_009_01
+│   │   │   │   └── f007_009_01.img.bin
+│   │   │   ├── f007_009_02
+│   │   │   │   └── f007_009_02.img.bin
+│   │   │   ├── f007_009_03
+│   │   │   │   └── f007_009_03.img.bin
+│   │   │   ├── f007_009_04
+│   │   │   │   └── f007_009_04.img.bin
+│   │   │   ├── f007_009_05
+│   │   │   │   └── f007_009_05.img.bin
+│   │   │   ├── f007_009_06
+│   │   │   │   └── f007_009_06.img.bin
+│   │   │   ├── f007_009_07
+│   │   │   │   └── f007_009_07.img.bin
+│   │   │   ├── f007_009_08
+│   │   │   │   └── f007_009_08.img.bin
+│   │   │   ├── f007_009_09
+│   │   │   │   └── f007_009_09.img.bin
+│   │   │   ├── f007_009_10
+│   │   │   │   └── f007_009_10.img.bin
+│   │   │   ├── f007_009_11
+│   │   │   │   └── f007_009_11.img.bin
+│   │   │   ├── f007_009_12
+│   │   │   │   └── f007_009_12.img.bin
+│   │   │   ├── f007_009_13
+│   │   │   │   └── f007_009_13.img.bin
+│   │   │   ├── f007_009_16
+│   │   │   │   └── f007_009_16.img.bin
+│   │   │   ├── f007_009_17
+│   │   │   │   └── f007_009_17.img.bin
+│   │   │   ├── f007_009_18
+│   │   │   │   └── f007_009_18.img.bin
+│   │   │   ├── f007_009_20
+│   │   │   │   └── f007_009_20.img.bin
+│   │   │   ├── f007_009_21
+│   │   │   │   └── f007_009_21.img.bin
+│   │   │   ├── f007_009_23
+│   │   │   │   └── f007_009_23.img.bin
+│   │   │   ├── f007_009_24
+│   │   │   │   └── f007_009_24.img.bin
+│   │   │   ├── f007_009_25
+│   │   │   │   └── f007_009_25.img.bin
+│   │   │   ├── f007_009_27
+│   │   │   │   └── f007_009_27.img.bin
+│   │   │   ├── f007_009_28
+│   │   │   │   └── f007_009_28.img.bin
+│   │   │   ├── f007_009_29
+│   │   │   │   └── f007_009_29.img.bin
+│   │   │   ├── f007_009_30
+│   │   │   │   └── f007_009_30.img.bin
+│   │   │   ├── f007_009_32
+│   │   │   │   └── f007_009_32.img.bin
+│   │   │   ├── f007_009_33
+│   │   │   │   └── f007_009_33.img.bin
+│   │   │   ├── f007_009_car
+│   │   │   │   └── f007_009_car.img.bin
+│   │   │   ├── f007_009_car_ref
+│   │   │   │   └── f007_009_car_ref.img.bin
+│   │   │   ├── f007_009_infloor
+│   │   │   │   └── f007_009_infloor.img.bin
+│   │   │   ├── f007_009_taxi
+│   │   │   │   └── f007_009_taxi.img.bin
+│   │   │   ├── f007_009_window_LT
+│   │   │   │   └── f007_009_window_LT.img.bin
+│   │   │   ├── f007_009_window_LT02
+│   │   │   │   └── f007_009_window_LT02.img.bin
+│   │   │   ├── f007_009_wood01
+│   │   │   │   └── f007_009_wood01.img.bin
+│   │   │   ├── f007_light_effect
+│   │   │   │   └── f007_light_effect.img.bin
+│   │   │   └── iwatodai_streets.bin
+│   │   ├── paulownia_mall
+│   │   │   ├── f008_001_acyane
+│   │   │   │   └── f008_001_acyane.img.bin
+│   │   │   ├── f008_001_cd
+│   │   │   │   └── f008_001_cd.img.bin
+│   │   │   ├── f008_001_chair
+│   │   │   │   └── f008_001_chair.img.bin
+│   │   │   ├── f008_001_enter01
+│   │   │   │   └── f008_001_enter01.img.bin
+│   │   │   ├── f008_001_enter02
+│   │   │   │   └── f008_001_enter02.img.bin
+│   │   │   ├── f008_001_fl01
+│   │   │   │   └── f008_001_fl01.img.bin
+│   │   │   ├── f008_001_fl02
+│   │   │   │   └── f008_001_fl02.img.bin
+│   │   │   ├── f008_001_fl03
+│   │   │   │   └── f008_001_fl03.img.bin
+│   │   │   ├── f008_001_fun01
+│   │   │   │   └── f008_001_fun01.img.bin
+│   │   │   ├── f008_001_fun02
+│   │   │   │   └── f008_001_fun02.img.bin
+│   │   │   ├── f008_001_fun03
+│   │   │   │   └── f008_001_fun03.img.bin
+│   │   │   ├── f008_001_gafl
+│   │   │   │   └── f008_001_gafl.img.bin
+│   │   │   ├── f008_001_glass
+│   │   │   │   └── f008_001_glass.img.bin
+│   │   │   ├── f008_001_gra
+│   │   │   │   └── f008_001_gra.img.bin
+│   │   │   ├── f008_001_gra02
+│   │   │   │   └── f008_001_gra02.img.bin
+│   │   │   ├── f008_001_gsfl
+│   │   │   │   └── f008_001_gsfl.img.bin
+│   │   │   ├── f008_001_hasira
+│   │   │   │   └── f008_001_hasira.img.bin
+│   │   │   ├── f008_001_hiho
+│   │   │   │   └── f008_001_hiho.img.bin
+│   │   │   ├── f008_001_jitensya
+│   │   │   │   └── f008_001_jitensya.img.bin
+│   │   │   ├── f008_001_jyutan
+│   │   │   │   └── f008_001_jyutan.img.bin
+│   │   │   ├── f008_001_kaidan
+│   │   │   │   └── f008_001_kaidan.img.bin
+│   │   │   ├── f008_001_kanban
+│   │   │   │   └── f008_001_kanban.img.bin
+│   │   │   ├── f008_001_kanban02
+│   │   │   │   └── f008_001_kanban02.img.bin
+│   │   │   ├── f008_001_kanban03
+│   │   │   │   └── f008_001_kanban03.img.bin
+│   │   │   ├── f008_001_kar
+│   │   │   │   └── f008_001_kar.img.bin
+│   │   │   ├── f008_001_keimark
+│   │   │   │   └── f008_001_keimark.img.bin
+│   │   │   ├── f008_001_komono01
+│   │   │   │   └── f008_001_komono01.img.bin
+│   │   │   ├── f008_001_komono02
+│   │   │   │   └── f008_001_komono02.img.bin
+│   │   │   ├── f008_001_ligfla
+│   │   │   │   └── f008_001_ligfla.img.bin
+│   │   │   ├── f008_001_plantA
+│   │   │   │   └── f008_001_plantA.img.bin
+│   │   │   ├── f008_001_redrect
+│   │   │   │   └── f008_001_redrect.img.bin
+│   │   │   ├── f008_001_shadow
+│   │   │   │   └── f008_001_shadow.img.bin
+│   │   │   ├── f008_001_sky
+│   │   │   │   └── f008_001_sky.img.bin
+│   │   │   ├── f008_001_wl01
+│   │   │   │   └── f008_001_wl01.img.bin
+│   │   │   ├── f008_001_wl02
+│   │   │   │   └── f008_001_wl02.img.bin
+│   │   │   └── paulownia_mall.bin
+│   │   └── station
+│   │       ├── f008_005bolt01
+│   │       │   └── f008_005bolt01.img.bin
+│   │       ├── f008_005floor01
+│   │       │   └── f008_005floor01.img.bin
+│   │       ├── f008_005obj01
+│   │       │   └── f008_005obj01.img.bin
+│   │       ├── f008_005obj02
+│   │       │   └── f008_005obj02.img.bin
+│   │       ├── f008_005obj03
+│   │       │   └── f008_005obj03.img.bin
+│   │       ├── f008_005obj04
+│   │       │   └── f008_005obj04.img.bin
+│   │       ├── f008_005obj06
+│   │       │   └── f008_005obj06.img.bin
+│   │       ├── f008_005obj07
+│   │       │   └── f008_005obj07.img.bin
+│   │       ├── f008_005obj08
+│   │       │   └── f008_005obj08.img.bin
+│   │       ├── f008_005wall01
+│   │       │   └── f008_005wall01.img.bin
+│   │       ├── lightmap_white
+│   │       │   └── lightmap_white.img.bin
+│   │       └── station.bin
+│   ├── graphics
+│   │   ├── Dialogue
+│   │   │   ├── backgrounds
+│   │   │   │   ├── bgAkihiko
+│   │   │   │   │   ├── bgAkihiko.img.bin
+│   │   │   │   │   ├── bgAkihiko.map.bin
+│   │   │   │   │   └── bgAkihiko.pal.bin
+│   │   │   │   ├── bgKenji
+│   │   │   │   │   ├── bgKenji.img.bin
+│   │   │   │   │   ├── bgKenji.map.bin
+│   │   │   │   │   └── bgKenji.pal.bin
+│   │   │   │   ├── bgYukari
+│   │   │   │   │   ├── bgYukari.img.bin
+│   │   │   │   │   ├── bgYukari.map.bin
+│   │   │   │   │   └── bgYukari.pal.bin
+│   │   │   │   └── bgYukariClose
+│   │   │   │       ├── bgYukariClose.img.bin
+│   │   │   │       ├── bgYukariClose.map.bin
+│   │   │   │       └── bgYukariClose.pal.bin
+│   │   │   └── sprites
+│   │   │       ├── calendar
+│   │   │       │   ├── calendar.img.bin
+│   │   │       │   └── calendar.pal.bin
+│   │   │       ├── calendarFEMC
+│   │   │       │   ├── calendarFEMC.img.bin
+│   │   │       │   └── calendarFEMC.pal.bin
+│   │   │       ├── nameTag
+│   │   │       │   ├── nameTag.img.bin
+│   │   │       │   └── nameTag.pal.bin
+│   │   │       ├── nameTagFEMC
+│   │   │       │   ├── nameTagFEMC.img.bin
+│   │   │       │   └── nameTagFEMC.pal.bin
+│   │   │       ├── textCorner
+│   │   │       │   ├── textCorner.img.bin
+│   │   │       │   └── textCorner.pal.bin
+│   │   │       ├── textCornerFEMC
+│   │   │       │   ├── textCornerFEMC.img.bin
+│   │   │       │   └── textCornerFEMC.pal.bin
+│   │   │       ├── textMiddle
+│   │   │       │   ├── textMiddle.img.bin
+│   │   │       │   └── textMiddle.pal.bin
+│   │   │       └── textMiddleFEMC
+│   │   │           ├── textMiddleFEMC.img.bin
+│   │   │           └── textMiddleFEMC.pal.bin
+│   │   ├── DisclaimerView
+│   │   │   └── backgrounds
+│   │   │       ├── cautionBackground
+│   │   │       │   ├── cautionBackground.img.bin
+│   │   │       │   ├── cautionBackground.map.bin
+│   │   │       │   └── cautionBackground.pal.bin
+│   │   │       └── cautionBackgroundSub
+│   │   │           ├── cautionBackgroundSub.img.bin
+│   │   │           ├── cautionBackgroundSub.map.bin
+│   │   │           └── cautionBackgroundSub.pal.bin
+│   │   ├── IntroView
+│   │   │   ├── backgrounds
+│   │   │   │   ├── attributionBackground
+│   │   │   │   │   ├── attributionBackground.img.bin
+│   │   │   │   │   ├── attributionBackground.map.bin
+│   │   │   │   │   └── attributionBackground.pal.bin
+│   │   │   │   ├── overlayBackground
+│   │   │   │   │   ├── overlayBackground.img.bin
+│   │   │   │   │   ├── overlayBackground.map.bin
+│   │   │   │   │   └── overlayBackground.pal.bin
+│   │   │   │   ├── overlayBackgroundFEMC
+│   │   │   │   │   ├── overlayBackgroundFEMC.img.bin
+│   │   │   │   │   ├── overlayBackgroundFEMC.map.bin
+│   │   │   │   │   └── overlayBackgroundFEMC.pal.bin
+│   │   │   │   ├── roomBackground
+│   │   │   │   │   ├── roomBackground.img.bin
+│   │   │   │   │   ├── roomBackground.map.bin
+│   │   │   │   │   └── roomBackground.pal.bin
+│   │   │   │   ├── roomBackgroundFEMC
+│   │   │   │   │   ├── roomBackgroundFEMC.img.bin
+│   │   │   │   │   ├── roomBackgroundFEMC.map.bin
+│   │   │   │   │   └── roomBackgroundFEMC.pal.bin
+│   │   │   │   ├── silhouetteBackground
+│   │   │   │   │   ├── silhouetteBackground.img.bin
+│   │   │   │   │   ├── silhouetteBackground.map.bin
+│   │   │   │   │   └── silhouetteBackground.pal.bin
+│   │   │   │   ├── silhouetteBackgroundFEMC
+│   │   │   │   │   ├── silhouetteBackgroundFEMC.img.bin
+│   │   │   │   │   ├── silhouetteBackgroundFEMC.map.bin
+│   │   │   │   │   └── silhouetteBackgroundFEMC.pal.bin
+│   │   │   │   ├── skyBackground
+│   │   │   │   │   ├── skyBackground.img.bin
+│   │   │   │   │   ├── skyBackground.map.bin
+│   │   │   │   │   └── skyBackground.pal.bin
+│   │   │   │   ├── skyBackgroundFEMC
+│   │   │   │   │   ├── skyBackgroundFEMC.img.bin
+│   │   │   │   │   ├── skyBackgroundFEMC.map.bin
+│   │   │   │   │   └── skyBackgroundFEMC.pal.bin
+│   │   │   │   ├── skyBackgroundSub
+│   │   │   │   │   ├── skyBackgroundSub.img.bin
+│   │   │   │   │   ├── skyBackgroundSub.map.bin
+│   │   │   │   │   └── skyBackgroundSub.pal.bin
+│   │   │   │   └── skyBackgroundSubFEMC
+│   │   │   │       ├── skyBackgroundSubFEMC.img.bin
+│   │   │   │       ├── skyBackgroundSubFEMC.map.bin
+│   │   │   │       └── skyBackgroundSubFEMC.pal.bin
+│   │   │   └── sprites
+│   │   │       ├── logoSpriteLeft
+│   │   │       │   ├── logoSpriteLeft.img.bin
+│   │   │       │   └── logoSpriteLeft.pal.bin
+│   │   │       └── logoSpriteRight
+│   │   │           ├── logoSpriteRight.img.bin
+│   │   │           └── logoSpriteRight.pal.bin
+│   │   ├── MainMenuView
+│   │   │   └── backgrounds
+│   │   │       ├── doorBackground
+│   │   │       │   ├── doorBackground.img.bin
+│   │   │       │   ├── doorBackground.map.bin
+│   │   │       │   └── doorBackground.pal.bin
+│   │   │       ├── fogBackground
+│   │   │       │   ├── fogBackground.img.bin
+│   │   │       │   ├── fogBackground.map.bin
+│   │   │       │   └── fogBackground.pal.bin
+│   │   │       └── menuSilhouetteBackground
+│   │   │           ├── menuSilhouetteBackground.img.bin
+│   │   │           ├── menuSilhouetteBackground.map.bin
+│   │   │           └── menuSilhouetteBackground.pal.bin
+│   │   ├── MenuHUD
+│   │   │   ├── backgrounds
+│   │   │   │   ├── menuHUD
+│   │   │   │   │   ├── menuHUD.img.bin
+│   │   │   │   │   ├── menuHUD.map.bin
+│   │   │   │   │   └── menuHUD.pal.bin
+│   │   │   │   └── menuHUDFEMC
+│   │   │   │       ├── menuHUDFEMC.img.bin
+│   │   │   │       ├── menuHUDFEMC.map.bin
+│   │   │   │       └── menuHUDFEMC.pal.bin
+│   │   │   └── sprites
+│   │   │       ├── after-school-0-0
+│   │   │       │   ├── after-school-0-0.img.bin
+│   │   │       │   └── after-school-0-0.pal.bin
+│   │   │       ├── after-school-1-0
+│   │   │       │   ├── after-school-1-0.img.bin
+│   │   │       │   └── after-school-1-0.pal.bin
+│   │   │       ├── after-school-2-0
+│   │   │       │   ├── after-school-2-0.img.bin
+│   │   │       │   └── after-school-2-0.pal.bin
+│   │   │       ├── afternoon-0-0
+│   │   │       │   ├── afternoon-0-0.img.bin
+│   │   │       │   └── afternoon-0-0.pal.bin
+│   │   │       ├── afternoon-1-0
+│   │   │       │   ├── afternoon-1-0.img.bin
+│   │   │       │   └── afternoon-1-0.pal.bin
+│   │   │       ├── afternoon-2-0
+│   │   │       │   ├── afternoon-2-0.img.bin
+│   │   │       │   └── afternoon-2-0.pal.bin
+│   │   │       ├── daytime-0-0
+│   │   │       │   ├── daytime-0-0.img.bin
+│   │   │       │   └── daytime-0-0.pal.bin
+│   │   │       ├── daytime-1-0
+│   │   │       │   ├── daytime-1-0.img.bin
+│   │   │       │   └── daytime-1-0.pal.bin
+│   │   │       ├── early-morning-0-0
+│   │   │       │   ├── early-morning-0-0.img.bin
+│   │   │       │   └── early-morning-0-0.pal.bin
+│   │   │       ├── early-morning-1-0
+│   │   │       │   ├── early-morning-1-0.img.bin
+│   │   │       │   └── early-morning-1-0.pal.bin
+│   │   │       ├── early-morning-2-0
+│   │   │       │   ├── early-morning-2-0.img.bin
+│   │   │       │   └── early-morning-2-0.pal.bin
+│   │   │       ├── early-morning-3-0
+│   │   │       │   ├── early-morning-3-0.img.bin
+│   │   │       │   └── early-morning-3-0.pal.bin
+│   │   │       ├── evening-0-0
+│   │   │       │   ├── evening-0-0.img.bin
+│   │   │       │   └── evening-0-0.pal.bin
+│   │   │       ├── evening-1-0
+│   │   │       │   ├── evening-1-0.img.bin
+│   │   │       │   └── evening-1-0.pal.bin
+│   │   │       ├── friday
+│   │   │       │   ├── friday.img.bin
+│   │   │       │   └── friday.pal.bin
+│   │   │       ├── late-night-0-0
+│   │   │       │   ├── late-night-0-0.img.bin
+│   │   │       │   └── late-night-0-0.pal.bin
+│   │   │       ├── late-night-1-0
+│   │   │       │   ├── late-night-1-0.img.bin
+│   │   │       │   └── late-night-1-0.pal.bin
+│   │   │       ├── late-night-2-0
+│   │   │       │   ├── late-night-2-0.img.bin
+│   │   │       │   └── late-night-2-0.pal.bin
+│   │   │       ├── lunchtime-0-0
+│   │   │       │   ├── lunchtime-0-0.img.bin
+│   │   │       │   └── lunchtime-0-0.pal.bin
+│   │   │       ├── lunchtime-1-0
+│   │   │       │   ├── lunchtime-1-0.img.bin
+│   │   │       │   └── lunchtime-1-0.pal.bin
+│   │   │       ├── lunchtime-2-0
+│   │   │       │   ├── lunchtime-2-0.img.bin
+│   │   │       │   └── lunchtime-2-0.pal.bin
+│   │   │       ├── monday
+│   │   │       │   ├── monday.img.bin
+│   │   │       │   └── monday.pal.bin
+│   │   │       ├── moon-0
+│   │   │       │   ├── moon-0.img.bin
+│   │   │       │   └── moon-0.pal.bin
+│   │   │       ├── moon-1
+│   │   │       │   ├── moon-1.img.bin
+│   │   │       │   └── moon-1.pal.bin
+│   │   │       ├── moon-10
+│   │   │       │   ├── moon-10.img.bin
+│   │   │       │   └── moon-10.pal.bin
+│   │   │       ├── moon-11
+│   │   │       │   ├── moon-11.img.bin
+│   │   │       │   └── moon-11.pal.bin
+│   │   │       ├── moon-12
+│   │   │       │   ├── moon-12.img.bin
+│   │   │       │   └── moon-12.pal.bin
+│   │   │       ├── moon-13
+│   │   │       │   ├── moon-13.img.bin
+│   │   │       │   └── moon-13.pal.bin
+│   │   │       ├── moon-14
+│   │   │       │   ├── moon-14.img.bin
+│   │   │       │   └── moon-14.pal.bin
+│   │   │       ├── moon-15
+│   │   │       │   ├── moon-15.img.bin
+│   │   │       │   └── moon-15.pal.bin
+│   │   │       ├── moon-16
+│   │   │       │   ├── moon-16.img.bin
+│   │   │       │   └── moon-16.pal.bin
+│   │   │       ├── moon-17
+│   │   │       │   ├── moon-17.img.bin
+│   │   │       │   └── moon-17.pal.bin
+│   │   │       ├── moon-18
+│   │   │       │   ├── moon-18.img.bin
+│   │   │       │   └── moon-18.pal.bin
+│   │   │       ├── moon-19
+│   │   │       │   ├── moon-19.img.bin
+│   │   │       │   └── moon-19.pal.bin
+│   │   │       ├── moon-2
+│   │   │       │   ├── moon-2.img.bin
+│   │   │       │   └── moon-2.pal.bin
+│   │   │       ├── moon-20
+│   │   │       │   ├── moon-20.img.bin
+│   │   │       │   └── moon-20.pal.bin
+│   │   │       ├── moon-21
+│   │   │       │   ├── moon-21.img.bin
+│   │   │       │   └── moon-21.pal.bin
+│   │   │       ├── moon-22
+│   │   │       │   ├── moon-22.img.bin
+│   │   │       │   └── moon-22.pal.bin
+│   │   │       ├── moon-23
+│   │   │       │   ├── moon-23.img.bin
+│   │   │       │   └── moon-23.pal.bin
+│   │   │       ├── moon-24
+│   │   │       │   ├── moon-24.img.bin
+│   │   │       │   └── moon-24.pal.bin
+│   │   │       ├── moon-25
+│   │   │       │   ├── moon-25.img.bin
+│   │   │       │   └── moon-25.pal.bin
+│   │   │       ├── moon-26
+│   │   │       │   ├── moon-26.img.bin
+│   │   │       │   └── moon-26.pal.bin
+│   │   │       ├── moon-27
+│   │   │       │   ├── moon-27.img.bin
+│   │   │       │   └── moon-27.pal.bin
+│   │   │       ├── moon-28
+│   │   │       │   ├── moon-28.img.bin
+│   │   │       │   └── moon-28.pal.bin
+│   │   │       ├── moon-29
+│   │   │       │   ├── moon-29.img.bin
+│   │   │       │   └── moon-29.pal.bin
+│   │   │       ├── moon-3
+│   │   │       │   ├── moon-3.img.bin
+│   │   │       │   └── moon-3.pal.bin
+│   │   │       ├── moon-4
+│   │   │       │   ├── moon-4.img.bin
+│   │   │       │   └── moon-4.pal.bin
+│   │   │       ├── moon-5
+│   │   │       │   ├── moon-5.img.bin
+│   │   │       │   └── moon-5.pal.bin
+│   │   │       ├── moon-6
+│   │   │       │   ├── moon-6.img.bin
+│   │   │       │   └── moon-6.pal.bin
+│   │   │       ├── moon-7
+│   │   │       │   ├── moon-7.img.bin
+│   │   │       │   └── moon-7.pal.bin
+│   │   │       ├── moon-8
+│   │   │       │   ├── moon-8.img.bin
+│   │   │       │   └── moon-8.pal.bin
+│   │   │       ├── moon-9
+│   │   │       │   ├── moon-9.img.bin
+│   │   │       │   └── moon-9.pal.bin
+│   │   │       ├── morning-0-0
+│   │   │       │   ├── morning-0-0.img.bin
+│   │   │       │   └── morning-0-0.pal.bin
+│   │   │       ├── morning-1-0
+│   │   │       │   ├── morning-1-0.img.bin
+│   │   │       │   └── morning-1-0.pal.bin
+│   │   │       ├── number-0
+│   │   │       │   ├── number-0.img.bin
+│   │   │       │   └── number-0.pal.bin
+│   │   │       ├── number-1
+│   │   │       │   ├── number-1.img.bin
+│   │   │       │   └── number-1.pal.bin
+│   │   │       ├── number-2
+│   │   │       │   ├── number-2.img.bin
+│   │   │       │   └── number-2.pal.bin
+│   │   │       ├── number-3
+│   │   │       │   ├── number-3.img.bin
+│   │   │       │   └── number-3.pal.bin
+│   │   │       ├── number-4
+│   │   │       │   ├── number-4.img.bin
+│   │   │       │   └── number-4.pal.bin
+│   │   │       ├── number-5
+│   │   │       │   ├── number-5.img.bin
+│   │   │       │   └── number-5.pal.bin
+│   │   │       ├── number-6
+│   │   │       │   ├── number-6.img.bin
+│   │   │       │   └── number-6.pal.bin
+│   │   │       ├── number-7
+│   │   │       │   ├── number-7.img.bin
+│   │   │       │   └── number-7.pal.bin
+│   │   │       ├── number-8
+│   │   │       │   ├── number-8.img.bin
+│   │   │       │   └── number-8.pal.bin
+│   │   │       ├── number-9
+│   │   │       │   ├── number-9.img.bin
+│   │   │       │   └── number-9.pal.bin
+│   │   │       ├── saturday
+│   │   │       │   ├── saturday.img.bin
+│   │   │       │   └── saturday.pal.bin
+│   │   │       ├── skills-level
+│   │   │       │   ├── skills-level.img.bin
+│   │   │       │   └── skills-level.pal.bin
+│   │   │       ├── slash
+│   │   │       │   ├── slash.img.bin
+│   │   │       │   └── slash.pal.bin
+│   │   │       ├── sunday
+│   │   │       │   ├── sunday.img.bin
+│   │   │       │   └── sunday.pal.bin
+│   │   │       ├── thursday
+│   │   │       │   ├── thursday.img.bin
+│   │   │       │   └── thursday.pal.bin
+│   │   │       ├── tuesday
+│   │   │       │   ├── tuesday.img.bin
+│   │   │       │   └── tuesday.pal.bin
+│   │   │       └── wednesday
+│   │   │           ├── wednesday.img.bin
+│   │   │           └── wednesday.pal.bin
+│   │   └── SignContractView
+│   │       └── backgrounds
+│   │           └── contract
+│   │               ├── contract.img.bin
+│   │               ├── contract.map.bin
+│   │               └── contract.pal.bin
+│   ├── models
+│   │   ├── kotone
+│   │   │   ├── kotone.bin
+│   │   │   ├── kotone_texture_0
+│   │   │   │   └── kotone_texture_0.img.bin
+│   │   │   ├── kotone_texture_1
+│   │   │   │   └── kotone_texture_1.img.bin
+│   │   │   ├── kotone_texture_2
+│   │   │   │   └── kotone_texture_2.img.bin
+│   │   │   ├── kotone_texture_3
+│   │   │   │   └── kotone_texture_3.img.bin
+│   │   │   └── kotone_texture_4
+│   │   │       └── kotone_texture_4.img.bin
+│   │   └── makoto
+│   │       ├── makoto.bin
+│   │       ├── makoto_texture_0
+│   │       │   └── makoto_texture_0.img.bin
+│   │       ├── makoto_texture_1
+│   │       │   └── makoto_texture_1.img.bin
+│   │       ├── makoto_texture_2
+│   │       │   └── makoto_texture_2.img.bin
+│   │       ├── makoto_texture_3
+│   │       │   └── makoto_texture_3.img.bin
+│   │       └── makoto_texture_4
+│   │           └── makoto_texture_4.img.bin
+│   ├── music
+│   │   ├── battle
+│   │   │   ├── mass_destruction.pcm
+│   │   │   └── wiping_all_out.pcm
+│   │   ├── locations
+│   │   │   ├── iwatodaiDorm
+│   │   │   │   └── iwatodai_dorm.pcm
+│   │   │   ├── iwatodaiStreets
+│   │   │   │   ├── changing_seasons.pcm
+│   │   │   │   └── sun.pcm
+│   │   │   └── paulowniaMall
+│   │   │       ├── overworld
+│   │   │       │   └── color_your_night.pcm
+│   │   │       └── station
+│   │   │           └── paulownia_mall.pcm
+│   │   └── menus
+│   │       ├── contract
+│   │       │   └── mistic.pcm
+│   │       ├── title
+│   │       │   └── tightrope.pcm
+│   │       └── velvetRoom
+│   │           └── aria_of_the_soul.pcm
+│   ├── save
+│   │   └── save.sav
+│   └── video
+│       ├── base.vid
+│       ├── cutscene-1.vid
+│       ├── cutscene-2.vid
+│       ├── fes.vid
+│       ├── portable.vid
+│       └── reload.vid
+├── docs
+│   ├── CODE_OF_CONDUCT.md
+│   ├── CONTRIBUTING.md
+│   ├── LICENSE.md
+│   └── README.md
+├── icon.bmp
+├── include
+│   └── vscode_fix.h
+├── persona-3-dual.elf
+├── persona-3-dual.nds
+├── sdcard.img
+├── source
+│   ├── battleActions
+│   │   ├── ArmourType.h
+│   │   ├── BattleParticipant.h
+│   │   ├── BattlePhase.h
+│   │   ├── BattleResult.h
+│   │   ├── BattleStartCondition.h
+│   │   ├── BattleStats.h
+│   │   ├── Element.h
+│   │   ├── ParticipantType.h
+│   │   ├── TurnResult.h
+│   │   ├── WeaponType.h
+│   │   ├── actions
+│   │   │   ├── ActionBase.h
+│   │   │   ├── AttackAction.cpp
+│   │   │   ├── AttackAction.h
+│   │   │   ├── Guard.cpp
+│   │   │   ├── Guard.h
+│   │   │   ├── PersonaAction.cpp
+│   │   │   ├── PersonaAction.h
+│   │   │   ├── SwitchPersona.cpp
+│   │   │   └── SwitchPersona.h
+│   │   ├── armours
+│   │   │   ├── Armour.h
+│   │   │   ├── ArmourDb.cpp
+│   │   │   └── ArmourDb.h
+│   │   ├── enemies
+│   │   │   ├── Enemy.cpp
+│   │   │   ├── Enemy.h
+│   │   │   ├── EnemyDb.cpp
+│   │   │   └── EnemyDb.h
+│   │   ├── party
+│   │   │   ├── CharacterProfile.h
+│   │   │   ├── CharacterProfileDb.cpp
+│   │   │   ├── CharacterProfileDb.h
+│   │   │   ├── PartyMember.cpp
+│   │   │   ├── PartyMember.h
+│   │   │   ├── Player.cpp
+│   │   │   └── Player.h
+│   │   ├── personas
+│   │   │   ├── PersonaBase.h
+│   │   │   ├── PersonaDb.cpp
+│   │   │   └── PersonaDb.h
+│   │   ├── shoes
+│   │   │   ├── Shoe.h
+│   │   │   ├── ShoeDb.cpp
+│   │   │   └── ShoeDb.h
+│   │   ├── skills
+│   │   │   ├── BattleCalcs.cpp
+│   │   │   ├── BattleCalcs.h
+│   │   │   ├── Skill.h
+│   │   │   ├── SkillDb.cpp
+│   │   │   ├── SkillDb.h
+│   │   │   ├── SkillRace.h
+│   │   │   ├── SkillTarget.h
+│   │   │   └── SkillType.h
+│   │   └── weapons
+│   │       ├── Weapon.h
+│   │       ├── WeaponDb.cpp
+│   │       └── WeaponDb.h
+│   ├── components
+│   │   ├── menu
+│   │   │   ├── BaseMenu.cpp
+│   │   │   ├── BaseMenu.h
+│   │   │   ├── BattleMenuComponent.cpp
+│   │   │   ├── BattleMenuComponent.h
+│   │   │   ├── MainMenuComponent.cpp
+│   │   │   ├── MainMenuComponent.h
+│   │   │   ├── PauseMenuComponent.cpp
+│   │   │   └── PauseMenuComponent.h
+│   │   └── ui
+│   │       ├── DialogueScreen.cpp
+│   │       ├── DialogueScreen.h
+│   │       ├── MenuHUDScreen.cpp
+│   │       ├── MenuHUDScreen.h
+│   │       ├── UIScreen.cpp
+│   │       └── UIScreen.h
+│   ├── controllers
+│   │   ├── AnimationController.cpp
+│   │   ├── AnimationController.h
+│   │   ├── BattleController.cpp
+│   │   ├── BattleController.h
+│   │   ├── CharacterController.cpp
+│   │   ├── CharacterController.h
+│   │   ├── DialogueController.cpp
+│   │   ├── DialogueController.h
+│   │   ├── GraphicsController.cpp
+│   │   ├── GraphicsController.h
+│   │   ├── MusicController.cpp
+│   │   ├── MusicController.h
+│   │   ├── SaveController.cpp
+│   │   ├── SaveController.h
+│   │   ├── SpriteController.cpp
+│   │   ├── SpriteController.h
+│   │   ├── UIController.cpp
+│   │   ├── UIController.h
+│   │   ├── VideoController.cpp
+│   │   └── VideoController.h
+│   ├── core
+│   │   ├── enums.h
+│   │   ├── geometry.h
+│   │   ├── globals.cpp
+│   │   ├── globals.h
+│   │   └── structs.h
+│   ├── data
+│   │   ├── environmentDb.cpp
+│   │   ├── environmentDb.h
+│   │   ├── spriteDb.cpp
+│   │   └── spriteDb.h
+│   ├── dialogue
+│   │   ├── demo_dialogue.cpp
+│   │   └── demo_dialogue.h
+│   ├── environments
+│   │   ├── iwatodai_dorm_floor_1.h
+│   │   ├── iwatodai_streets.h
+│   │   ├── paulownia_mall.h
+│   │   └── station.h
+│   ├── helpers
+│   │   └── random.h
+│   ├── main.cpp
+│   ├── maps
+│   │   ├── iwatodai_dorm_floor_1.h
+│   │   ├── iwatodai_streets.h
+│   │   ├── paulownia_mall.h
+│   │   └── station.h
+│   ├── models
+│   │   ├── kotone.h
+│   │   └── makoto.h
+│   └── views
+│       ├── BaseView.cpp
+│       ├── BaseView.h
+│       ├── BaseView3D.cpp
+│       ├── BaseView3D.h
+│       ├── DisclaimerView.cpp
+│       ├── DisclaimerView.h
+│       ├── EnvironmentView.cpp
+│       ├── EnvironmentView.h
+│       ├── IntroView.cpp
+│       ├── IntroView.h
+│       ├── IwatodaiDormView.cpp
+│       ├── IwatodaiDormView.h
+│       ├── IwatodaiStreetsView.cpp
+│       ├── IwatodaiStreetsView.h
+│       ├── MainMenuView.cpp
+│       ├── MainMenuView.h
+│       ├── PaulowniaMallView.cpp
+│       ├── PaulowniaMallView.h
+│       ├── SignContractView.cpp
+│       ├── SignContractView.h
+│       ├── StationView.cpp
+│       ├── StationView.h
+│       ├── VideoView.cpp
+│       └── VideoView.h
+├── tools
+│   ├── build_asset.py
+│   ├── converters
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   │   ├── __init__.cpython-311.pyc
+│   │   │   ├── build_environment.cpython-311.pyc
+│   │   │   ├── build_model.cpython-311.pyc
+│   │   │   ├── dlg2dialogue.cpython-311.pyc
+│   │   │   ├── jmap2map.cpython-311.pyc
+│   │   │   ├── obj2environment.cpython-311.pyc
+│   │   │   ├── obj2model.cpython-311.pyc
+│   │   │   └── video2vid.cpython-311.pyc
+│   │   ├── build_environment.py
+│   │   ├── build_model.py
+│   │   ├── dlg2dialogue.py
+│   │   ├── jmap2map.py
+│   │   ├── obj2environment.py
+│   │   ├── obj2model.py
+│   │   └── video2vid.py
+│   ├── github-workflows
+│   │   └── next_suffix.py
+│   ├── plugins
+│   │   └── blender
+│   │       ├── nds_environment_optimizer.py
+│   │       ├── nds_model_exporter.py
+│   │       └── nds_model_optimizer.py
+│   ├── requirements.txt
+│   ├── tile_map.json
+│   └── websites
+│       ├── fonts
+│       │   └── BMSPA___.TTF
+│       ├── index.css
+│       ├── index.html
+│       ├── index.js
+│       └── vercel.json
+└── venv
+    ├── bin
+    │   ├── Activate.ps1
+    │   ├── activate
+    │   ├── activate.csh
+    │   ├── activate.fish
+    │   ├── identify-cli
+    │   ├── nodeenv
+    │   ├── pip
+    │   ├── pip3
+    │   ├── pip3.14
+    │   ├── pre-commit
+    │   ├── python -> /usr/bin/python
+    │   ├── python3 -> python
+    │   ├── python3.14 -> python
+    │   ├── virtualenv
+    │   └── 𝜋thon -> python
+    ├── include
+    ├── lib
+    │   └── python3.14
+    │       └── site-packages
+    │           ├── __pycache__
+    │           │   ├── cfgv.cpython-314.pyc
+    │           │   └── nodeenv.cpython-314.pyc
+    │           ├── _yaml
+    │           │   ├── __init__.py
+    │           │   └── __pycache__
+    │           │       └── __init__.cpython-314.pyc
+    │           ├── cfgv-3.5.0.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   └── top_level.txt
+    │           ├── cfgv.py
+    │           ├── distlib
+    │           │   ├── __init__.py
+    │           │   ├── __pycache__
+    │           │   │   ├── __init__.cpython-314.pyc
+    │           │   │   ├── compat.cpython-314.pyc
+    │           │   │   ├── database.cpython-314.pyc
+    │           │   │   ├── index.cpython-314.pyc
+    │           │   │   ├── locators.cpython-314.pyc
+    │           │   │   ├── manifest.cpython-314.pyc
+    │           │   │   ├── markers.cpython-314.pyc
+    │           │   │   ├── metadata.cpython-314.pyc
+    │           │   │   ├── resources.cpython-314.pyc
+    │           │   │   ├── scripts.cpython-314.pyc
+    │           │   │   ├── util.cpython-314.pyc
+    │           │   │   ├── version.cpython-314.pyc
+    │           │   │   └── wheel.cpython-314.pyc
+    │           │   ├── compat.py
+    │           │   ├── database.py
+    │           │   ├── index.py
+    │           │   ├── locators.py
+    │           │   ├── manifest.py
+    │           │   ├── markers.py
+    │           │   ├── metadata.py
+    │           │   ├── resources.py
+    │           │   ├── scripts.py
+    │           │   ├── t32.exe
+    │           │   ├── t64-arm.exe
+    │           │   ├── t64.exe
+    │           │   ├── util.py
+    │           │   ├── version.py
+    │           │   ├── w32.exe
+    │           │   ├── w64-arm.exe
+    │           │   ├── w64.exe
+    │           │   └── wheel.py
+    │           ├── distlib-0.4.3.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   ├── licenses
+    │           │   │   └── LICENSE.txt
+    │           │   └── top_level.txt
+    │           ├── filelock
+    │           │   ├── __init__.py
+    │           │   ├── __pycache__
+    │           │   │   ├── __init__.cpython-314.pyc
+    │           │   │   ├── _api.cpython-314.pyc
+    │           │   │   ├── _async_read_write.cpython-314.pyc
+    │           │   │   ├── _error.cpython-314.pyc
+    │           │   │   ├── _read_write.cpython-314.pyc
+    │           │   │   ├── _soft.cpython-314.pyc
+    │           │   │   ├── _unix.cpython-314.pyc
+    │           │   │   ├── _util.cpython-314.pyc
+    │           │   │   ├── _windows.cpython-314.pyc
+    │           │   │   ├── asyncio.cpython-314.pyc
+    │           │   │   └── version.cpython-314.pyc
+    │           │   ├── _api.py
+    │           │   ├── _async_read_write.py
+    │           │   ├── _error.py
+    │           │   ├── _read_write.py
+    │           │   ├── _soft.py
+    │           │   ├── _soft_rw
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── _async.cpython-314.pyc
+    │           │   │   │   └── _sync.cpython-314.pyc
+    │           │   │   ├── _async.py
+    │           │   │   └── _sync.py
+    │           │   ├── _unix.py
+    │           │   ├── _util.py
+    │           │   ├── _windows.py
+    │           │   ├── asyncio.py
+    │           │   ├── py.typed
+    │           │   └── version.py
+    │           ├── filelock-3.29.5.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   └── licenses
+    │           │       └── LICENSE
+    │           ├── identify
+    │           │   ├── __init__.py
+    │           │   ├── __pycache__
+    │           │   │   ├── __init__.cpython-314.pyc
+    │           │   │   ├── cli.cpython-314.pyc
+    │           │   │   ├── extensions.cpython-314.pyc
+    │           │   │   ├── identify.cpython-314.pyc
+    │           │   │   └── interpreters.cpython-314.pyc
+    │           │   ├── cli.py
+    │           │   ├── extensions.py
+    │           │   ├── identify.py
+    │           │   ├── interpreters.py
+    │           │   ├── py.typed
+    │           │   └── vendor
+    │           │       ├── __init__.py
+    │           │       ├── __pycache__
+    │           │       │   ├── __init__.cpython-314.pyc
+    │           │       │   └── licenses.cpython-314.pyc
+    │           │       └── licenses.py
+    │           ├── identify-2.6.19.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   ├── entry_points.txt
+    │           │   └── top_level.txt
+    │           ├── nodeenv-1.10.0.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   ├── entry_points.txt
+    │           │   ├── licenses
+    │           │   │   ├── AUTHORS
+    │           │   │   └── LICENSE
+    │           │   └── top_level.txt
+    │           ├── nodeenv.py
+    │           ├── pip
+    │           │   ├── __init__.py
+    │           │   ├── __main__.py
+    │           │   ├── __pip-runner__.py
+    │           │   ├── __pycache__
+    │           │   │   ├── __init__.cpython-314.pyc
+    │           │   │   ├── __main__.cpython-314.pyc
+    │           │   │   └── __pip-runner__.cpython-314.pyc
+    │           │   ├── _internal
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── build_env.cpython-314.pyc
+    │           │   │   │   ├── cache.cpython-314.pyc
+    │           │   │   │   ├── configuration.cpython-314.pyc
+    │           │   │   │   ├── exceptions.cpython-314.pyc
+    │           │   │   │   ├── main.cpython-314.pyc
+    │           │   │   │   ├── pyproject.cpython-314.pyc
+    │           │   │   │   ├── self_outdated_check.cpython-314.pyc
+    │           │   │   │   └── wheel_builder.cpython-314.pyc
+    │           │   │   ├── build_env.py
+    │           │   │   ├── cache.py
+    │           │   │   ├── cli
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── autocompletion.cpython-314.pyc
+    │           │   │   │   │   ├── base_command.cpython-314.pyc
+    │           │   │   │   │   ├── cmdoptions.cpython-314.pyc
+    │           │   │   │   │   ├── command_context.cpython-314.pyc
+    │           │   │   │   │   ├── index_command.cpython-314.pyc
+    │           │   │   │   │   ├── main.cpython-314.pyc
+    │           │   │   │   │   ├── main_parser.cpython-314.pyc
+    │           │   │   │   │   ├── parser.cpython-314.pyc
+    │           │   │   │   │   ├── progress_bars.cpython-314.pyc
+    │           │   │   │   │   ├── req_command.cpython-314.pyc
+    │           │   │   │   │   ├── spinners.cpython-314.pyc
+    │           │   │   │   │   └── status_codes.cpython-314.pyc
+    │           │   │   │   ├── autocompletion.py
+    │           │   │   │   ├── base_command.py
+    │           │   │   │   ├── cmdoptions.py
+    │           │   │   │   ├── command_context.py
+    │           │   │   │   ├── index_command.py
+    │           │   │   │   ├── main.py
+    │           │   │   │   ├── main_parser.py
+    │           │   │   │   ├── parser.py
+    │           │   │   │   ├── progress_bars.py
+    │           │   │   │   ├── req_command.py
+    │           │   │   │   ├── spinners.py
+    │           │   │   │   └── status_codes.py
+    │           │   │   ├── commands
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── cache.cpython-314.pyc
+    │           │   │   │   │   ├── check.cpython-314.pyc
+    │           │   │   │   │   ├── completion.cpython-314.pyc
+    │           │   │   │   │   ├── configuration.cpython-314.pyc
+    │           │   │   │   │   ├── debug.cpython-314.pyc
+    │           │   │   │   │   ├── download.cpython-314.pyc
+    │           │   │   │   │   ├── freeze.cpython-314.pyc
+    │           │   │   │   │   ├── hash.cpython-314.pyc
+    │           │   │   │   │   ├── help.cpython-314.pyc
+    │           │   │   │   │   ├── index.cpython-314.pyc
+    │           │   │   │   │   ├── inspect.cpython-314.pyc
+    │           │   │   │   │   ├── install.cpython-314.pyc
+    │           │   │   │   │   ├── list.cpython-314.pyc
+    │           │   │   │   │   ├── lock.cpython-314.pyc
+    │           │   │   │   │   ├── search.cpython-314.pyc
+    │           │   │   │   │   ├── show.cpython-314.pyc
+    │           │   │   │   │   ├── uninstall.cpython-314.pyc
+    │           │   │   │   │   └── wheel.cpython-314.pyc
+    │           │   │   │   ├── cache.py
+    │           │   │   │   ├── check.py
+    │           │   │   │   ├── completion.py
+    │           │   │   │   ├── configuration.py
+    │           │   │   │   ├── debug.py
+    │           │   │   │   ├── download.py
+    │           │   │   │   ├── freeze.py
+    │           │   │   │   ├── hash.py
+    │           │   │   │   ├── help.py
+    │           │   │   │   ├── index.py
+    │           │   │   │   ├── inspect.py
+    │           │   │   │   ├── install.py
+    │           │   │   │   ├── list.py
+    │           │   │   │   ├── lock.py
+    │           │   │   │   ├── search.py
+    │           │   │   │   ├── show.py
+    │           │   │   │   ├── uninstall.py
+    │           │   │   │   └── wheel.py
+    │           │   │   ├── configuration.py
+    │           │   │   ├── distributions
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── base.cpython-314.pyc
+    │           │   │   │   │   ├── installed.cpython-314.pyc
+    │           │   │   │   │   ├── sdist.cpython-314.pyc
+    │           │   │   │   │   └── wheel.cpython-314.pyc
+    │           │   │   │   ├── base.py
+    │           │   │   │   ├── installed.py
+    │           │   │   │   ├── sdist.py
+    │           │   │   │   └── wheel.py
+    │           │   │   ├── exceptions.py
+    │           │   │   ├── index
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── collector.cpython-314.pyc
+    │           │   │   │   │   ├── package_finder.cpython-314.pyc
+    │           │   │   │   │   └── sources.cpython-314.pyc
+    │           │   │   │   ├── collector.py
+    │           │   │   │   ├── package_finder.py
+    │           │   │   │   └── sources.py
+    │           │   │   ├── locations
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _distutils.cpython-314.pyc
+    │           │   │   │   │   ├── _sysconfig.cpython-314.pyc
+    │           │   │   │   │   └── base.cpython-314.pyc
+    │           │   │   │   ├── _distutils.py
+    │           │   │   │   ├── _sysconfig.py
+    │           │   │   │   └── base.py
+    │           │   │   ├── main.py
+    │           │   │   ├── metadata
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _json.cpython-314.pyc
+    │           │   │   │   │   ├── base.cpython-314.pyc
+    │           │   │   │   │   └── pkg_resources.cpython-314.pyc
+    │           │   │   │   ├── _json.py
+    │           │   │   │   ├── base.py
+    │           │   │   │   ├── importlib
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   ├── _compat.cpython-314.pyc
+    │           │   │   │   │   │   ├── _dists.cpython-314.pyc
+    │           │   │   │   │   │   └── _envs.cpython-314.pyc
+    │           │   │   │   │   ├── _compat.py
+    │           │   │   │   │   ├── _dists.py
+    │           │   │   │   │   └── _envs.py
+    │           │   │   │   └── pkg_resources.py
+    │           │   │   ├── models
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── candidate.cpython-314.pyc
+    │           │   │   │   │   ├── direct_url.cpython-314.pyc
+    │           │   │   │   │   ├── format_control.cpython-314.pyc
+    │           │   │   │   │   ├── index.cpython-314.pyc
+    │           │   │   │   │   ├── installation_report.cpython-314.pyc
+    │           │   │   │   │   ├── link.cpython-314.pyc
+    │           │   │   │   │   ├── release_control.cpython-314.pyc
+    │           │   │   │   │   ├── scheme.cpython-314.pyc
+    │           │   │   │   │   ├── search_scope.cpython-314.pyc
+    │           │   │   │   │   ├── selection_prefs.cpython-314.pyc
+    │           │   │   │   │   ├── target_python.cpython-314.pyc
+    │           │   │   │   │   └── wheel.cpython-314.pyc
+    │           │   │   │   ├── candidate.py
+    │           │   │   │   ├── direct_url.py
+    │           │   │   │   ├── format_control.py
+    │           │   │   │   ├── index.py
+    │           │   │   │   ├── installation_report.py
+    │           │   │   │   ├── link.py
+    │           │   │   │   ├── release_control.py
+    │           │   │   │   ├── scheme.py
+    │           │   │   │   ├── search_scope.py
+    │           │   │   │   ├── selection_prefs.py
+    │           │   │   │   ├── target_python.py
+    │           │   │   │   └── wheel.py
+    │           │   │   ├── network
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── auth.cpython-314.pyc
+    │           │   │   │   │   ├── cache.cpython-314.pyc
+    │           │   │   │   │   ├── download.cpython-314.pyc
+    │           │   │   │   │   ├── lazy_wheel.cpython-314.pyc
+    │           │   │   │   │   ├── session.cpython-314.pyc
+    │           │   │   │   │   ├── utils.cpython-314.pyc
+    │           │   │   │   │   └── xmlrpc.cpython-314.pyc
+    │           │   │   │   ├── auth.py
+    │           │   │   │   ├── cache.py
+    │           │   │   │   ├── download.py
+    │           │   │   │   ├── lazy_wheel.py
+    │           │   │   │   ├── session.py
+    │           │   │   │   ├── utils.py
+    │           │   │   │   └── xmlrpc.py
+    │           │   │   ├── operations
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── check.cpython-314.pyc
+    │           │   │   │   │   ├── freeze.cpython-314.pyc
+    │           │   │   │   │   └── prepare.cpython-314.pyc
+    │           │   │   │   ├── build
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   ├── build_tracker.cpython-314.pyc
+    │           │   │   │   │   │   ├── metadata.cpython-314.pyc
+    │           │   │   │   │   │   ├── metadata_editable.cpython-314.pyc
+    │           │   │   │   │   │   ├── wheel.cpython-314.pyc
+    │           │   │   │   │   │   └── wheel_editable.cpython-314.pyc
+    │           │   │   │   │   ├── build_tracker.py
+    │           │   │   │   │   ├── metadata.py
+    │           │   │   │   │   ├── metadata_editable.py
+    │           │   │   │   │   ├── wheel.py
+    │           │   │   │   │   └── wheel_editable.py
+    │           │   │   │   ├── check.py
+    │           │   │   │   ├── freeze.py
+    │           │   │   │   ├── install
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   └── wheel.cpython-314.pyc
+    │           │   │   │   │   └── wheel.py
+    │           │   │   │   └── prepare.py
+    │           │   │   ├── pyproject.py
+    │           │   │   ├── req
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── constructors.cpython-314.pyc
+    │           │   │   │   │   ├── pep723.cpython-314.pyc
+    │           │   │   │   │   ├── req_dependency_group.cpython-314.pyc
+    │           │   │   │   │   ├── req_file.cpython-314.pyc
+    │           │   │   │   │   ├── req_install.cpython-314.pyc
+    │           │   │   │   │   ├── req_set.cpython-314.pyc
+    │           │   │   │   │   └── req_uninstall.cpython-314.pyc
+    │           │   │   │   ├── constructors.py
+    │           │   │   │   ├── pep723.py
+    │           │   │   │   ├── req_dependency_group.py
+    │           │   │   │   ├── req_file.py
+    │           │   │   │   ├── req_install.py
+    │           │   │   │   ├── req_set.py
+    │           │   │   │   └── req_uninstall.py
+    │           │   │   ├── resolution
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   └── base.cpython-314.pyc
+    │           │   │   │   ├── base.py
+    │           │   │   │   ├── legacy
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   └── resolver.cpython-314.pyc
+    │           │   │   │   │   └── resolver.py
+    │           │   │   │   └── resolvelib
+    │           │   │   │       ├── __init__.py
+    │           │   │   │       ├── __pycache__
+    │           │   │   │       │   ├── __init__.cpython-314.pyc
+    │           │   │   │       │   ├── base.cpython-314.pyc
+    │           │   │   │       │   ├── candidates.cpython-314.pyc
+    │           │   │   │       │   ├── factory.cpython-314.pyc
+    │           │   │   │       │   ├── found_candidates.cpython-314.pyc
+    │           │   │   │       │   ├── provider.cpython-314.pyc
+    │           │   │   │       │   ├── reporter.cpython-314.pyc
+    │           │   │   │       │   ├── requirements.cpython-314.pyc
+    │           │   │   │       │   └── resolver.cpython-314.pyc
+    │           │   │   │       ├── base.py
+    │           │   │   │       ├── candidates.py
+    │           │   │   │       ├── factory.py
+    │           │   │   │       ├── found_candidates.py
+    │           │   │   │       ├── provider.py
+    │           │   │   │       ├── reporter.py
+    │           │   │   │       ├── requirements.py
+    │           │   │   │       └── resolver.py
+    │           │   │   ├── self_outdated_check.py
+    │           │   │   ├── utils
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _jaraco_text.cpython-314.pyc
+    │           │   │   │   │   ├── _log.cpython-314.pyc
+    │           │   │   │   │   ├── appdirs.cpython-314.pyc
+    │           │   │   │   │   ├── compat.cpython-314.pyc
+    │           │   │   │   │   ├── compatibility_tags.cpython-314.pyc
+    │           │   │   │   │   ├── datetime.cpython-314.pyc
+    │           │   │   │   │   ├── deprecation.cpython-314.pyc
+    │           │   │   │   │   ├── direct_url_helpers.cpython-314.pyc
+    │           │   │   │   │   ├── egg_link.cpython-314.pyc
+    │           │   │   │   │   ├── entrypoints.cpython-314.pyc
+    │           │   │   │   │   ├── filesystem.cpython-314.pyc
+    │           │   │   │   │   ├── filetypes.cpython-314.pyc
+    │           │   │   │   │   ├── glibc.cpython-314.pyc
+    │           │   │   │   │   ├── hashes.cpython-314.pyc
+    │           │   │   │   │   ├── logging.cpython-314.pyc
+    │           │   │   │   │   ├── misc.cpython-314.pyc
+    │           │   │   │   │   ├── packaging.cpython-314.pyc
+    │           │   │   │   │   ├── pylock.cpython-314.pyc
+    │           │   │   │   │   ├── retry.cpython-314.pyc
+    │           │   │   │   │   ├── subprocess.cpython-314.pyc
+    │           │   │   │   │   ├── temp_dir.cpython-314.pyc
+    │           │   │   │   │   ├── unpacking.cpython-314.pyc
+    │           │   │   │   │   ├── urls.cpython-314.pyc
+    │           │   │   │   │   ├── virtualenv.cpython-314.pyc
+    │           │   │   │   │   └── wheel.cpython-314.pyc
+    │           │   │   │   ├── _jaraco_text.py
+    │           │   │   │   ├── _log.py
+    │           │   │   │   ├── appdirs.py
+    │           │   │   │   ├── compat.py
+    │           │   │   │   ├── compatibility_tags.py
+    │           │   │   │   ├── datetime.py
+    │           │   │   │   ├── deprecation.py
+    │           │   │   │   ├── direct_url_helpers.py
+    │           │   │   │   ├── egg_link.py
+    │           │   │   │   ├── entrypoints.py
+    │           │   │   │   ├── filesystem.py
+    │           │   │   │   ├── filetypes.py
+    │           │   │   │   ├── glibc.py
+    │           │   │   │   ├── hashes.py
+    │           │   │   │   ├── logging.py
+    │           │   │   │   ├── misc.py
+    │           │   │   │   ├── packaging.py
+    │           │   │   │   ├── pylock.py
+    │           │   │   │   ├── retry.py
+    │           │   │   │   ├── subprocess.py
+    │           │   │   │   ├── temp_dir.py
+    │           │   │   │   ├── unpacking.py
+    │           │   │   │   ├── urls.py
+    │           │   │   │   ├── virtualenv.py
+    │           │   │   │   └── wheel.py
+    │           │   │   ├── vcs
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── bazaar.cpython-314.pyc
+    │           │   │   │   │   ├── git.cpython-314.pyc
+    │           │   │   │   │   ├── mercurial.cpython-314.pyc
+    │           │   │   │   │   ├── subversion.cpython-314.pyc
+    │           │   │   │   │   └── versioncontrol.cpython-314.pyc
+    │           │   │   │   ├── bazaar.py
+    │           │   │   │   ├── git.py
+    │           │   │   │   ├── mercurial.py
+    │           │   │   │   ├── subversion.py
+    │           │   │   │   └── versioncontrol.py
+    │           │   │   └── wheel_builder.py
+    │           │   ├── _vendor
+    │           │   │   ├── README.rst
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   └── __init__.cpython-314.pyc
+    │           │   │   ├── cachecontrol
+    │           │   │   │   ├── LICENSE.txt
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _cmd.cpython-314.pyc
+    │           │   │   │   │   ├── adapter.cpython-314.pyc
+    │           │   │   │   │   ├── cache.cpython-314.pyc
+    │           │   │   │   │   ├── controller.cpython-314.pyc
+    │           │   │   │   │   ├── filewrapper.cpython-314.pyc
+    │           │   │   │   │   ├── heuristics.cpython-314.pyc
+    │           │   │   │   │   ├── serialize.cpython-314.pyc
+    │           │   │   │   │   └── wrapper.cpython-314.pyc
+    │           │   │   │   ├── _cmd.py
+    │           │   │   │   ├── adapter.py
+    │           │   │   │   ├── cache.py
+    │           │   │   │   ├── caches
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   ├── file_cache.cpython-314.pyc
+    │           │   │   │   │   │   └── redis_cache.cpython-314.pyc
+    │           │   │   │   │   ├── file_cache.py
+    │           │   │   │   │   └── redis_cache.py
+    │           │   │   │   ├── controller.py
+    │           │   │   │   ├── filewrapper.py
+    │           │   │   │   ├── heuristics.py
+    │           │   │   │   ├── py.typed
+    │           │   │   │   ├── serialize.py
+    │           │   │   │   └── wrapper.py
+    │           │   │   ├── certifi
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __main__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── __main__.cpython-314.pyc
+    │           │   │   │   │   └── core.cpython-314.pyc
+    │           │   │   │   ├── cacert.pem
+    │           │   │   │   ├── core.py
+    │           │   │   │   └── py.typed
+    │           │   │   ├── distlib
+    │           │   │   │   ├── LICENSE.txt
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── compat.cpython-314.pyc
+    │           │   │   │   │   ├── resources.cpython-314.pyc
+    │           │   │   │   │   ├── scripts.cpython-314.pyc
+    │           │   │   │   │   └── util.cpython-314.pyc
+    │           │   │   │   ├── compat.py
+    │           │   │   │   ├── resources.py
+    │           │   │   │   ├── scripts.py
+    │           │   │   │   ├── t32.exe
+    │           │   │   │   ├── t64-arm.exe
+    │           │   │   │   ├── t64.exe
+    │           │   │   │   ├── util.py
+    │           │   │   │   ├── w32.exe
+    │           │   │   │   ├── w64-arm.exe
+    │           │   │   │   └── w64.exe
+    │           │   │   ├── distro
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __main__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── __main__.cpython-314.pyc
+    │           │   │   │   │   └── distro.cpython-314.pyc
+    │           │   │   │   ├── distro.py
+    │           │   │   │   └── py.typed
+    │           │   │   ├── idna
+    │           │   │   │   ├── LICENSE.md
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── codec.cpython-314.pyc
+    │           │   │   │   │   ├── compat.cpython-314.pyc
+    │           │   │   │   │   ├── core.cpython-314.pyc
+    │           │   │   │   │   ├── idnadata.cpython-314.pyc
+    │           │   │   │   │   ├── intranges.cpython-314.pyc
+    │           │   │   │   │   ├── package_data.cpython-314.pyc
+    │           │   │   │   │   └── uts46data.cpython-314.pyc
+    │           │   │   │   ├── codec.py
+    │           │   │   │   ├── compat.py
+    │           │   │   │   ├── core.py
+    │           │   │   │   ├── idnadata.py
+    │           │   │   │   ├── intranges.py
+    │           │   │   │   ├── package_data.py
+    │           │   │   │   ├── py.typed
+    │           │   │   │   └── uts46data.py
+    │           │   │   ├── msgpack
+    │           │   │   │   ├── COPYING
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── exceptions.cpython-314.pyc
+    │           │   │   │   │   ├── ext.cpython-314.pyc
+    │           │   │   │   │   └── fallback.cpython-314.pyc
+    │           │   │   │   ├── exceptions.py
+    │           │   │   │   ├── ext.py
+    │           │   │   │   └── fallback.py
+    │           │   │   ├── packaging
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── LICENSE.APACHE
+    │           │   │   │   ├── LICENSE.BSD
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _elffile.cpython-314.pyc
+    │           │   │   │   │   ├── _manylinux.cpython-314.pyc
+    │           │   │   │   │   ├── _musllinux.cpython-314.pyc
+    │           │   │   │   │   ├── _parser.cpython-314.pyc
+    │           │   │   │   │   ├── _structures.cpython-314.pyc
+    │           │   │   │   │   ├── _tokenizer.cpython-314.pyc
+    │           │   │   │   │   ├── dependency_groups.cpython-314.pyc
+    │           │   │   │   │   ├── direct_url.cpython-314.pyc
+    │           │   │   │   │   ├── errors.cpython-314.pyc
+    │           │   │   │   │   ├── markers.cpython-314.pyc
+    │           │   │   │   │   ├── metadata.cpython-314.pyc
+    │           │   │   │   │   ├── pylock.cpython-314.pyc
+    │           │   │   │   │   ├── requirements.cpython-314.pyc
+    │           │   │   │   │   ├── specifiers.cpython-314.pyc
+    │           │   │   │   │   ├── tags.cpython-314.pyc
+    │           │   │   │   │   ├── utils.cpython-314.pyc
+    │           │   │   │   │   └── version.cpython-314.pyc
+    │           │   │   │   ├── _elffile.py
+    │           │   │   │   ├── _manylinux.py
+    │           │   │   │   ├── _musllinux.py
+    │           │   │   │   ├── _parser.py
+    │           │   │   │   ├── _structures.py
+    │           │   │   │   ├── _tokenizer.py
+    │           │   │   │   ├── dependency_groups.py
+    │           │   │   │   ├── direct_url.py
+    │           │   │   │   ├── errors.py
+    │           │   │   │   ├── licenses
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   └── _spdx.cpython-314.pyc
+    │           │   │   │   │   └── _spdx.py
+    │           │   │   │   ├── markers.py
+    │           │   │   │   ├── metadata.py
+    │           │   │   │   ├── py.typed
+    │           │   │   │   ├── pylock.py
+    │           │   │   │   ├── requirements.py
+    │           │   │   │   ├── specifiers.py
+    │           │   │   │   ├── tags.py
+    │           │   │   │   ├── utils.py
+    │           │   │   │   └── version.py
+    │           │   │   ├── pkg_resources
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   └── __pycache__
+    │           │   │   │       └── __init__.cpython-314.pyc
+    │           │   │   ├── platformdirs
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __main__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── __main__.cpython-314.pyc
+    │           │   │   │   │   ├── android.cpython-314.pyc
+    │           │   │   │   │   ├── api.cpython-314.pyc
+    │           │   │   │   │   ├── macos.cpython-314.pyc
+    │           │   │   │   │   ├── unix.cpython-314.pyc
+    │           │   │   │   │   ├── version.cpython-314.pyc
+    │           │   │   │   │   └── windows.cpython-314.pyc
+    │           │   │   │   ├── android.py
+    │           │   │   │   ├── api.py
+    │           │   │   │   ├── macos.py
+    │           │   │   │   ├── py.typed
+    │           │   │   │   ├── unix.py
+    │           │   │   │   ├── version.py
+    │           │   │   │   └── windows.py
+    │           │   │   ├── pygments
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __main__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── __main__.cpython-314.pyc
+    │           │   │   │   │   ├── console.cpython-314.pyc
+    │           │   │   │   │   ├── filter.cpython-314.pyc
+    │           │   │   │   │   ├── formatter.cpython-314.pyc
+    │           │   │   │   │   ├── lexer.cpython-314.pyc
+    │           │   │   │   │   ├── modeline.cpython-314.pyc
+    │           │   │   │   │   ├── plugin.cpython-314.pyc
+    │           │   │   │   │   ├── regexopt.cpython-314.pyc
+    │           │   │   │   │   ├── scanner.cpython-314.pyc
+    │           │   │   │   │   ├── sphinxext.cpython-314.pyc
+    │           │   │   │   │   ├── style.cpython-314.pyc
+    │           │   │   │   │   ├── token.cpython-314.pyc
+    │           │   │   │   │   ├── unistring.cpython-314.pyc
+    │           │   │   │   │   └── util.cpython-314.pyc
+    │           │   │   │   ├── console.py
+    │           │   │   │   ├── filter.py
+    │           │   │   │   ├── filters
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   └── __pycache__
+    │           │   │   │   │       └── __init__.cpython-314.pyc
+    │           │   │   │   ├── formatter.py
+    │           │   │   │   ├── formatters
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   └── _mapping.cpython-314.pyc
+    │           │   │   │   │   └── _mapping.py
+    │           │   │   │   ├── lexer.py
+    │           │   │   │   ├── lexers
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   ├── _mapping.cpython-314.pyc
+    │           │   │   │   │   │   └── python.cpython-314.pyc
+    │           │   │   │   │   ├── _mapping.py
+    │           │   │   │   │   └── python.py
+    │           │   │   │   ├── modeline.py
+    │           │   │   │   ├── plugin.py
+    │           │   │   │   ├── regexopt.py
+    │           │   │   │   ├── scanner.py
+    │           │   │   │   ├── sphinxext.py
+    │           │   │   │   ├── style.py
+    │           │   │   │   ├── styles
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   └── _mapping.cpython-314.pyc
+    │           │   │   │   │   └── _mapping.py
+    │           │   │   │   ├── token.py
+    │           │   │   │   ├── unistring.py
+    │           │   │   │   └── util.py
+    │           │   │   ├── pyproject_hooks
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   └── _impl.cpython-314.pyc
+    │           │   │   │   ├── _impl.py
+    │           │   │   │   ├── _in_process
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   └── _in_process.cpython-314.pyc
+    │           │   │   │   │   └── _in_process.py
+    │           │   │   │   └── py.typed
+    │           │   │   ├── requests
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── __version__.cpython-314.pyc
+    │           │   │   │   │   ├── _internal_utils.cpython-314.pyc
+    │           │   │   │   │   ├── adapters.cpython-314.pyc
+    │           │   │   │   │   ├── api.cpython-314.pyc
+    │           │   │   │   │   ├── auth.cpython-314.pyc
+    │           │   │   │   │   ├── certs.cpython-314.pyc
+    │           │   │   │   │   ├── compat.cpython-314.pyc
+    │           │   │   │   │   ├── cookies.cpython-314.pyc
+    │           │   │   │   │   ├── exceptions.cpython-314.pyc
+    │           │   │   │   │   ├── help.cpython-314.pyc
+    │           │   │   │   │   ├── hooks.cpython-314.pyc
+    │           │   │   │   │   ├── models.cpython-314.pyc
+    │           │   │   │   │   ├── packages.cpython-314.pyc
+    │           │   │   │   │   ├── sessions.cpython-314.pyc
+    │           │   │   │   │   ├── status_codes.cpython-314.pyc
+    │           │   │   │   │   ├── structures.cpython-314.pyc
+    │           │   │   │   │   └── utils.cpython-314.pyc
+    │           │   │   │   ├── __version__.py
+    │           │   │   │   ├── _internal_utils.py
+    │           │   │   │   ├── adapters.py
+    │           │   │   │   ├── api.py
+    │           │   │   │   ├── auth.py
+    │           │   │   │   ├── certs.py
+    │           │   │   │   ├── compat.py
+    │           │   │   │   ├── cookies.py
+    │           │   │   │   ├── exceptions.py
+    │           │   │   │   ├── help.py
+    │           │   │   │   ├── hooks.py
+    │           │   │   │   ├── models.py
+    │           │   │   │   ├── packages.py
+    │           │   │   │   ├── sessions.py
+    │           │   │   │   ├── status_codes.py
+    │           │   │   │   ├── structures.py
+    │           │   │   │   └── utils.py
+    │           │   │   ├── resolvelib
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── providers.cpython-314.pyc
+    │           │   │   │   │   ├── reporters.cpython-314.pyc
+    │           │   │   │   │   └── structs.cpython-314.pyc
+    │           │   │   │   ├── providers.py
+    │           │   │   │   ├── py.typed
+    │           │   │   │   ├── reporters.py
+    │           │   │   │   ├── resolvers
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   ├── abstract.cpython-314.pyc
+    │           │   │   │   │   │   ├── criterion.cpython-314.pyc
+    │           │   │   │   │   │   ├── exceptions.cpython-314.pyc
+    │           │   │   │   │   │   └── resolution.cpython-314.pyc
+    │           │   │   │   │   ├── abstract.py
+    │           │   │   │   │   ├── criterion.py
+    │           │   │   │   │   ├── exceptions.py
+    │           │   │   │   │   └── resolution.py
+    │           │   │   │   └── structs.py
+    │           │   │   ├── rich
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __main__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── __main__.cpython-314.pyc
+    │           │   │   │   │   ├── _cell_widths.cpython-314.pyc
+    │           │   │   │   │   ├── _emoji_codes.cpython-314.pyc
+    │           │   │   │   │   ├── _emoji_replace.cpython-314.pyc
+    │           │   │   │   │   ├── _export_format.cpython-314.pyc
+    │           │   │   │   │   ├── _extension.cpython-314.pyc
+    │           │   │   │   │   ├── _fileno.cpython-314.pyc
+    │           │   │   │   │   ├── _inspect.cpython-314.pyc
+    │           │   │   │   │   ├── _log_render.cpython-314.pyc
+    │           │   │   │   │   ├── _loop.cpython-314.pyc
+    │           │   │   │   │   ├── _null_file.cpython-314.pyc
+    │           │   │   │   │   ├── _palettes.cpython-314.pyc
+    │           │   │   │   │   ├── _pick.cpython-314.pyc
+    │           │   │   │   │   ├── _ratio.cpython-314.pyc
+    │           │   │   │   │   ├── _spinners.cpython-314.pyc
+    │           │   │   │   │   ├── _stack.cpython-314.pyc
+    │           │   │   │   │   ├── _timer.cpython-314.pyc
+    │           │   │   │   │   ├── _win32_console.cpython-314.pyc
+    │           │   │   │   │   ├── _windows.cpython-314.pyc
+    │           │   │   │   │   ├── _windows_renderer.cpython-314.pyc
+    │           │   │   │   │   ├── _wrap.cpython-314.pyc
+    │           │   │   │   │   ├── abc.cpython-314.pyc
+    │           │   │   │   │   ├── align.cpython-314.pyc
+    │           │   │   │   │   ├── ansi.cpython-314.pyc
+    │           │   │   │   │   ├── bar.cpython-314.pyc
+    │           │   │   │   │   ├── box.cpython-314.pyc
+    │           │   │   │   │   ├── cells.cpython-314.pyc
+    │           │   │   │   │   ├── color.cpython-314.pyc
+    │           │   │   │   │   ├── color_triplet.cpython-314.pyc
+    │           │   │   │   │   ├── columns.cpython-314.pyc
+    │           │   │   │   │   ├── console.cpython-314.pyc
+    │           │   │   │   │   ├── constrain.cpython-314.pyc
+    │           │   │   │   │   ├── containers.cpython-314.pyc
+    │           │   │   │   │   ├── control.cpython-314.pyc
+    │           │   │   │   │   ├── default_styles.cpython-314.pyc
+    │           │   │   │   │   ├── diagnose.cpython-314.pyc
+    │           │   │   │   │   ├── emoji.cpython-314.pyc
+    │           │   │   │   │   ├── errors.cpython-314.pyc
+    │           │   │   │   │   ├── file_proxy.cpython-314.pyc
+    │           │   │   │   │   ├── filesize.cpython-314.pyc
+    │           │   │   │   │   ├── highlighter.cpython-314.pyc
+    │           │   │   │   │   ├── json.cpython-314.pyc
+    │           │   │   │   │   ├── jupyter.cpython-314.pyc
+    │           │   │   │   │   ├── layout.cpython-314.pyc
+    │           │   │   │   │   ├── live.cpython-314.pyc
+    │           │   │   │   │   ├── live_render.cpython-314.pyc
+    │           │   │   │   │   ├── logging.cpython-314.pyc
+    │           │   │   │   │   ├── markup.cpython-314.pyc
+    │           │   │   │   │   ├── measure.cpython-314.pyc
+    │           │   │   │   │   ├── padding.cpython-314.pyc
+    │           │   │   │   │   ├── pager.cpython-314.pyc
+    │           │   │   │   │   ├── palette.cpython-314.pyc
+    │           │   │   │   │   ├── panel.cpython-314.pyc
+    │           │   │   │   │   ├── pretty.cpython-314.pyc
+    │           │   │   │   │   ├── progress.cpython-314.pyc
+    │           │   │   │   │   ├── progress_bar.cpython-314.pyc
+    │           │   │   │   │   ├── prompt.cpython-314.pyc
+    │           │   │   │   │   ├── protocol.cpython-314.pyc
+    │           │   │   │   │   ├── region.cpython-314.pyc
+    │           │   │   │   │   ├── repr.cpython-314.pyc
+    │           │   │   │   │   ├── rule.cpython-314.pyc
+    │           │   │   │   │   ├── scope.cpython-314.pyc
+    │           │   │   │   │   ├── screen.cpython-314.pyc
+    │           │   │   │   │   ├── segment.cpython-314.pyc
+    │           │   │   │   │   ├── spinner.cpython-314.pyc
+    │           │   │   │   │   ├── status.cpython-314.pyc
+    │           │   │   │   │   ├── style.cpython-314.pyc
+    │           │   │   │   │   ├── styled.cpython-314.pyc
+    │           │   │   │   │   ├── syntax.cpython-314.pyc
+    │           │   │   │   │   ├── table.cpython-314.pyc
+    │           │   │   │   │   ├── terminal_theme.cpython-314.pyc
+    │           │   │   │   │   ├── text.cpython-314.pyc
+    │           │   │   │   │   ├── theme.cpython-314.pyc
+    │           │   │   │   │   ├── themes.cpython-314.pyc
+    │           │   │   │   │   ├── traceback.cpython-314.pyc
+    │           │   │   │   │   └── tree.cpython-314.pyc
+    │           │   │   │   ├── _cell_widths.py
+    │           │   │   │   ├── _emoji_codes.py
+    │           │   │   │   ├── _emoji_replace.py
+    │           │   │   │   ├── _export_format.py
+    │           │   │   │   ├── _extension.py
+    │           │   │   │   ├── _fileno.py
+    │           │   │   │   ├── _inspect.py
+    │           │   │   │   ├── _log_render.py
+    │           │   │   │   ├── _loop.py
+    │           │   │   │   ├── _null_file.py
+    │           │   │   │   ├── _palettes.py
+    │           │   │   │   ├── _pick.py
+    │           │   │   │   ├── _ratio.py
+    │           │   │   │   ├── _spinners.py
+    │           │   │   │   ├── _stack.py
+    │           │   │   │   ├── _timer.py
+    │           │   │   │   ├── _win32_console.py
+    │           │   │   │   ├── _windows.py
+    │           │   │   │   ├── _windows_renderer.py
+    │           │   │   │   ├── _wrap.py
+    │           │   │   │   ├── abc.py
+    │           │   │   │   ├── align.py
+    │           │   │   │   ├── ansi.py
+    │           │   │   │   ├── bar.py
+    │           │   │   │   ├── box.py
+    │           │   │   │   ├── cells.py
+    │           │   │   │   ├── color.py
+    │           │   │   │   ├── color_triplet.py
+    │           │   │   │   ├── columns.py
+    │           │   │   │   ├── console.py
+    │           │   │   │   ├── constrain.py
+    │           │   │   │   ├── containers.py
+    │           │   │   │   ├── control.py
+    │           │   │   │   ├── default_styles.py
+    │           │   │   │   ├── diagnose.py
+    │           │   │   │   ├── emoji.py
+    │           │   │   │   ├── errors.py
+    │           │   │   │   ├── file_proxy.py
+    │           │   │   │   ├── filesize.py
+    │           │   │   │   ├── highlighter.py
+    │           │   │   │   ├── json.py
+    │           │   │   │   ├── jupyter.py
+    │           │   │   │   ├── layout.py
+    │           │   │   │   ├── live.py
+    │           │   │   │   ├── live_render.py
+    │           │   │   │   ├── logging.py
+    │           │   │   │   ├── markup.py
+    │           │   │   │   ├── measure.py
+    │           │   │   │   ├── padding.py
+    │           │   │   │   ├── pager.py
+    │           │   │   │   ├── palette.py
+    │           │   │   │   ├── panel.py
+    │           │   │   │   ├── pretty.py
+    │           │   │   │   ├── progress.py
+    │           │   │   │   ├── progress_bar.py
+    │           │   │   │   ├── prompt.py
+    │           │   │   │   ├── protocol.py
+    │           │   │   │   ├── py.typed
+    │           │   │   │   ├── region.py
+    │           │   │   │   ├── repr.py
+    │           │   │   │   ├── rule.py
+    │           │   │   │   ├── scope.py
+    │           │   │   │   ├── screen.py
+    │           │   │   │   ├── segment.py
+    │           │   │   │   ├── spinner.py
+    │           │   │   │   ├── status.py
+    │           │   │   │   ├── style.py
+    │           │   │   │   ├── styled.py
+    │           │   │   │   ├── syntax.py
+    │           │   │   │   ├── table.py
+    │           │   │   │   ├── terminal_theme.py
+    │           │   │   │   ├── text.py
+    │           │   │   │   ├── theme.py
+    │           │   │   │   ├── themes.py
+    │           │   │   │   ├── traceback.py
+    │           │   │   │   └── tree.py
+    │           │   │   ├── tomli
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _parser.cpython-314.pyc
+    │           │   │   │   │   ├── _re.cpython-314.pyc
+    │           │   │   │   │   └── _types.cpython-314.pyc
+    │           │   │   │   ├── _parser.py
+    │           │   │   │   ├── _re.py
+    │           │   │   │   ├── _types.py
+    │           │   │   │   └── py.typed
+    │           │   │   ├── tomli_w
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   └── _writer.cpython-314.pyc
+    │           │   │   │   ├── _writer.py
+    │           │   │   │   └── py.typed
+    │           │   │   ├── truststore
+    │           │   │   │   ├── LICENSE
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _api.cpython-314.pyc
+    │           │   │   │   │   ├── _macos.cpython-314.pyc
+    │           │   │   │   │   ├── _openssl.cpython-314.pyc
+    │           │   │   │   │   ├── _ssl_constants.cpython-314.pyc
+    │           │   │   │   │   └── _windows.cpython-314.pyc
+    │           │   │   │   ├── _api.py
+    │           │   │   │   ├── _macos.py
+    │           │   │   │   ├── _openssl.py
+    │           │   │   │   ├── _ssl_constants.py
+    │           │   │   │   ├── _windows.py
+    │           │   │   │   └── py.typed
+    │           │   │   ├── urllib3
+    │           │   │   │   ├── LICENSE.txt
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _base_connection.cpython-314.pyc
+    │           │   │   │   │   ├── _collections.cpython-314.pyc
+    │           │   │   │   │   ├── _request_methods.cpython-314.pyc
+    │           │   │   │   │   ├── _version.cpython-314.pyc
+    │           │   │   │   │   ├── connection.cpython-314.pyc
+    │           │   │   │   │   ├── connectionpool.cpython-314.pyc
+    │           │   │   │   │   ├── exceptions.cpython-314.pyc
+    │           │   │   │   │   ├── fields.cpython-314.pyc
+    │           │   │   │   │   ├── filepost.cpython-314.pyc
+    │           │   │   │   │   ├── poolmanager.cpython-314.pyc
+    │           │   │   │   │   └── response.cpython-314.pyc
+    │           │   │   │   ├── _base_connection.py
+    │           │   │   │   ├── _collections.py
+    │           │   │   │   ├── _request_methods.py
+    │           │   │   │   ├── _version.py
+    │           │   │   │   ├── connection.py
+    │           │   │   │   ├── connectionpool.py
+    │           │   │   │   ├── contrib
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   ├── pyopenssl.cpython-314.pyc
+    │           │   │   │   │   │   └── socks.cpython-314.pyc
+    │           │   │   │   │   ├── emscripten
+    │           │   │   │   │   │   ├── __init__.py
+    │           │   │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   │   ├── connection.cpython-314.pyc
+    │           │   │   │   │   │   │   ├── fetch.cpython-314.pyc
+    │           │   │   │   │   │   │   ├── request.cpython-314.pyc
+    │           │   │   │   │   │   │   └── response.cpython-314.pyc
+    │           │   │   │   │   │   ├── connection.py
+    │           │   │   │   │   │   ├── emscripten_fetch_worker.js
+    │           │   │   │   │   │   ├── fetch.py
+    │           │   │   │   │   │   ├── request.py
+    │           │   │   │   │   │   └── response.py
+    │           │   │   │   │   ├── pyopenssl.py
+    │           │   │   │   │   └── socks.py
+    │           │   │   │   ├── exceptions.py
+    │           │   │   │   ├── fields.py
+    │           │   │   │   ├── filepost.py
+    │           │   │   │   ├── http2
+    │           │   │   │   │   ├── __init__.py
+    │           │   │   │   │   ├── __pycache__
+    │           │   │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   │   ├── connection.cpython-314.pyc
+    │           │   │   │   │   │   └── probe.cpython-314.pyc
+    │           │   │   │   │   ├── connection.py
+    │           │   │   │   │   └── probe.py
+    │           │   │   │   ├── poolmanager.py
+    │           │   │   │   ├── py.typed
+    │           │   │   │   ├── response.py
+    │           │   │   │   └── util
+    │           │   │   │       ├── __init__.py
+    │           │   │   │       ├── __pycache__
+    │           │   │   │       │   ├── __init__.cpython-314.pyc
+    │           │   │   │       │   ├── connection.cpython-314.pyc
+    │           │   │   │       │   ├── proxy.cpython-314.pyc
+    │           │   │   │       │   ├── request.cpython-314.pyc
+    │           │   │   │       │   ├── response.cpython-314.pyc
+    │           │   │   │       │   ├── retry.cpython-314.pyc
+    │           │   │   │       │   ├── ssl_.cpython-314.pyc
+    │           │   │   │       │   ├── ssl_match_hostname.cpython-314.pyc
+    │           │   │   │       │   ├── ssltransport.cpython-314.pyc
+    │           │   │   │       │   ├── timeout.cpython-314.pyc
+    │           │   │   │       │   ├── url.cpython-314.pyc
+    │           │   │   │       │   ├── util.cpython-314.pyc
+    │           │   │   │       │   └── wait.cpython-314.pyc
+    │           │   │   │       ├── connection.py
+    │           │   │   │       ├── proxy.py
+    │           │   │   │       ├── request.py
+    │           │   │   │       ├── response.py
+    │           │   │   │       ├── retry.py
+    │           │   │   │       ├── ssl_.py
+    │           │   │   │       ├── ssl_match_hostname.py
+    │           │   │   │       ├── ssltransport.py
+    │           │   │   │       ├── timeout.py
+    │           │   │   │       ├── url.py
+    │           │   │   │       ├── util.py
+    │           │   │   │       └── wait.py
+    │           │   │   └── vendor.txt
+    │           │   └── py.typed
+    │           ├── pip-26.1.2.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── REQUESTED
+    │           │   ├── WHEEL
+    │           │   ├── entry_points.txt
+    │           │   └── licenses
+    │           │       ├── AUTHORS.txt
+    │           │       ├── LICENSE.txt
+    │           │       └── src
+    │           │           └── pip
+    │           │               └── _vendor
+    │           │                   ├── cachecontrol
+    │           │                   │   └── LICENSE.txt
+    │           │                   ├── certifi
+    │           │                   │   └── LICENSE
+    │           │                   ├── distlib
+    │           │                   │   └── LICENSE.txt
+    │           │                   ├── distro
+    │           │                   │   └── LICENSE
+    │           │                   ├── idna
+    │           │                   │   └── LICENSE.md
+    │           │                   ├── msgpack
+    │           │                   │   └── COPYING
+    │           │                   ├── packaging
+    │           │                   │   ├── LICENSE
+    │           │                   │   ├── LICENSE.APACHE
+    │           │                   │   └── LICENSE.BSD
+    │           │                   ├── pkg_resources
+    │           │                   │   └── LICENSE
+    │           │                   ├── platformdirs
+    │           │                   │   └── LICENSE
+    │           │                   ├── pygments
+    │           │                   │   └── LICENSE
+    │           │                   ├── pyproject_hooks
+    │           │                   │   └── LICENSE
+    │           │                   ├── requests
+    │           │                   │   └── LICENSE
+    │           │                   ├── resolvelib
+    │           │                   │   └── LICENSE
+    │           │                   ├── rich
+    │           │                   │   └── LICENSE
+    │           │                   ├── tomli
+    │           │                   │   └── LICENSE
+    │           │                   ├── tomli_w
+    │           │                   │   └── LICENSE
+    │           │                   ├── truststore
+    │           │                   │   └── LICENSE
+    │           │                   └── urllib3
+    │           │                       └── LICENSE.txt
+    │           ├── platformdirs
+    │           │   ├── __init__.py
+    │           │   ├── __main__.py
+    │           │   ├── __pycache__
+    │           │   │   ├── __init__.cpython-314.pyc
+    │           │   │   ├── __main__.cpython-314.pyc
+    │           │   │   ├── _xdg.cpython-314.pyc
+    │           │   │   ├── android.cpython-314.pyc
+    │           │   │   ├── api.cpython-314.pyc
+    │           │   │   ├── macos.cpython-314.pyc
+    │           │   │   ├── unix.cpython-314.pyc
+    │           │   │   ├── version.cpython-314.pyc
+    │           │   │   └── windows.cpython-314.pyc
+    │           │   ├── _xdg.py
+    │           │   ├── android.py
+    │           │   ├── api.py
+    │           │   ├── macos.py
+    │           │   ├── py.typed
+    │           │   ├── unix.py
+    │           │   ├── version.py
+    │           │   └── windows.py
+    │           ├── platformdirs-4.10.0.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   └── licenses
+    │           │       └── LICENSE
+    │           ├── pre_commit
+    │           │   ├── __init__.py
+    │           │   ├── __main__.py
+    │           │   ├── __pycache__
+    │           │   │   ├── __init__.cpython-314.pyc
+    │           │   │   ├── __main__.cpython-314.pyc
+    │           │   │   ├── all_languages.cpython-314.pyc
+    │           │   │   ├── clientlib.cpython-314.pyc
+    │           │   │   ├── color.cpython-314.pyc
+    │           │   │   ├── constants.cpython-314.pyc
+    │           │   │   ├── envcontext.cpython-314.pyc
+    │           │   │   ├── error_handler.cpython-314.pyc
+    │           │   │   ├── errors.cpython-314.pyc
+    │           │   │   ├── file_lock.cpython-314.pyc
+    │           │   │   ├── git.cpython-314.pyc
+    │           │   │   ├── hook.cpython-314.pyc
+    │           │   │   ├── lang_base.cpython-314.pyc
+    │           │   │   ├── logging_handler.cpython-314.pyc
+    │           │   │   ├── main.cpython-314.pyc
+    │           │   │   ├── output.cpython-314.pyc
+    │           │   │   ├── parse_shebang.cpython-314.pyc
+    │           │   │   ├── prefix.cpython-314.pyc
+    │           │   │   ├── repository.cpython-314.pyc
+    │           │   │   ├── staged_files_only.cpython-314.pyc
+    │           │   │   ├── store.cpython-314.pyc
+    │           │   │   ├── util.cpython-314.pyc
+    │           │   │   ├── xargs.cpython-314.pyc
+    │           │   │   ├── yaml.cpython-314.pyc
+    │           │   │   └── yaml_rewrite.cpython-314.pyc
+    │           │   ├── all_languages.py
+    │           │   ├── clientlib.py
+    │           │   ├── color.py
+    │           │   ├── commands
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── autoupdate.cpython-314.pyc
+    │           │   │   │   ├── clean.cpython-314.pyc
+    │           │   │   │   ├── gc.cpython-314.pyc
+    │           │   │   │   ├── hazmat.cpython-314.pyc
+    │           │   │   │   ├── hook_impl.cpython-314.pyc
+    │           │   │   │   ├── init_templatedir.cpython-314.pyc
+    │           │   │   │   ├── install_uninstall.cpython-314.pyc
+    │           │   │   │   ├── migrate_config.cpython-314.pyc
+    │           │   │   │   ├── run.cpython-314.pyc
+    │           │   │   │   ├── sample_config.cpython-314.pyc
+    │           │   │   │   ├── try_repo.cpython-314.pyc
+    │           │   │   │   ├── validate_config.cpython-314.pyc
+    │           │   │   │   └── validate_manifest.cpython-314.pyc
+    │           │   │   ├── autoupdate.py
+    │           │   │   ├── clean.py
+    │           │   │   ├── gc.py
+    │           │   │   ├── hazmat.py
+    │           │   │   ├── hook_impl.py
+    │           │   │   ├── init_templatedir.py
+    │           │   │   ├── install_uninstall.py
+    │           │   │   ├── migrate_config.py
+    │           │   │   ├── run.py
+    │           │   │   ├── sample_config.py
+    │           │   │   ├── try_repo.py
+    │           │   │   ├── validate_config.py
+    │           │   │   └── validate_manifest.py
+    │           │   ├── constants.py
+    │           │   ├── envcontext.py
+    │           │   ├── error_handler.py
+    │           │   ├── errors.py
+    │           │   ├── file_lock.py
+    │           │   ├── git.py
+    │           │   ├── hook.py
+    │           │   ├── lang_base.py
+    │           │   ├── languages
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── conda.cpython-314.pyc
+    │           │   │   │   ├── coursier.cpython-314.pyc
+    │           │   │   │   ├── dart.cpython-314.pyc
+    │           │   │   │   ├── docker.cpython-314.pyc
+    │           │   │   │   ├── docker_image.cpython-314.pyc
+    │           │   │   │   ├── dotnet.cpython-314.pyc
+    │           │   │   │   ├── fail.cpython-314.pyc
+    │           │   │   │   ├── golang.cpython-314.pyc
+    │           │   │   │   ├── haskell.cpython-314.pyc
+    │           │   │   │   ├── julia.cpython-314.pyc
+    │           │   │   │   ├── lua.cpython-314.pyc
+    │           │   │   │   ├── node.cpython-314.pyc
+    │           │   │   │   ├── perl.cpython-314.pyc
+    │           │   │   │   ├── pygrep.cpython-314.pyc
+    │           │   │   │   ├── python.cpython-314.pyc
+    │           │   │   │   ├── r.cpython-314.pyc
+    │           │   │   │   ├── ruby.cpython-314.pyc
+    │           │   │   │   ├── rust.cpython-314.pyc
+    │           │   │   │   ├── swift.cpython-314.pyc
+    │           │   │   │   ├── unsupported.cpython-314.pyc
+    │           │   │   │   └── unsupported_script.cpython-314.pyc
+    │           │   │   ├── conda.py
+    │           │   │   ├── coursier.py
+    │           │   │   ├── dart.py
+    │           │   │   ├── docker.py
+    │           │   │   ├── docker_image.py
+    │           │   │   ├── dotnet.py
+    │           │   │   ├── fail.py
+    │           │   │   ├── golang.py
+    │           │   │   ├── haskell.py
+    │           │   │   ├── julia.py
+    │           │   │   ├── lua.py
+    │           │   │   ├── node.py
+    │           │   │   ├── perl.py
+    │           │   │   ├── pygrep.py
+    │           │   │   ├── python.py
+    │           │   │   ├── r.py
+    │           │   │   ├── ruby.py
+    │           │   │   ├── rust.py
+    │           │   │   ├── swift.py
+    │           │   │   ├── unsupported.py
+    │           │   │   └── unsupported_script.py
+    │           │   ├── logging_handler.py
+    │           │   ├── main.py
+    │           │   ├── meta_hooks
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── check_hooks_apply.cpython-314.pyc
+    │           │   │   │   ├── check_useless_excludes.cpython-314.pyc
+    │           │   │   │   └── identity.cpython-314.pyc
+    │           │   │   ├── check_hooks_apply.py
+    │           │   │   ├── check_useless_excludes.py
+    │           │   │   └── identity.py
+    │           │   ├── output.py
+    │           │   ├── parse_shebang.py
+    │           │   ├── prefix.py
+    │           │   ├── repository.py
+    │           │   ├── resources
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   └── empty_template_setup.cpython-314.pyc
+    │           │   │   ├── empty_template_.npmignore
+    │           │   │   ├── empty_template_Cargo.toml
+    │           │   │   ├── empty_template_LICENSE.renv
+    │           │   │   ├── empty_template_Makefile.PL
+    │           │   │   ├── empty_template_activate.R
+    │           │   │   ├── empty_template_environment.yml
+    │           │   │   ├── empty_template_go.mod
+    │           │   │   ├── empty_template_main.go
+    │           │   │   ├── empty_template_main.rs
+    │           │   │   ├── empty_template_package.json
+    │           │   │   ├── empty_template_pre-commit-package-dev-1.rockspec
+    │           │   │   ├── empty_template_pre_commit_placeholder_package.gemspec
+    │           │   │   ├── empty_template_pubspec.yaml
+    │           │   │   ├── empty_template_renv.lock
+    │           │   │   ├── empty_template_setup.py
+    │           │   │   ├── hook-tmpl
+    │           │   │   ├── rbenv.tar.gz
+    │           │   │   ├── ruby-build.tar.gz
+    │           │   │   └── ruby-download.tar.gz
+    │           │   ├── staged_files_only.py
+    │           │   ├── store.py
+    │           │   ├── util.py
+    │           │   ├── xargs.py
+    │           │   ├── yaml.py
+    │           │   └── yaml_rewrite.py
+    │           ├── pre_commit-4.6.0.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── LICENSE
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── REQUESTED
+    │           │   ├── WHEEL
+    │           │   ├── entry_points.txt
+    │           │   └── top_level.txt
+    │           ├── python_discovery
+    │           │   ├── __init__.py
+    │           │   ├── __pycache__
+    │           │   │   ├── __init__.cpython-314.pyc
+    │           │   │   ├── _cache.cpython-314.pyc
+    │           │   │   ├── _cached_py_info.cpython-314.pyc
+    │           │   │   ├── _compat.cpython-314.pyc
+    │           │   │   ├── _discovery.cpython-314.pyc
+    │           │   │   ├── _py_info.cpython-314.pyc
+    │           │   │   ├── _py_spec.cpython-314.pyc
+    │           │   │   └── _specifier.cpython-314.pyc
+    │           │   ├── _cache.py
+    │           │   ├── _cached_py_info.py
+    │           │   ├── _compat.py
+    │           │   ├── _discovery.py
+    │           │   ├── _py_info.py
+    │           │   ├── _py_spec.py
+    │           │   ├── _specifier.py
+    │           │   ├── _windows
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── _pep514.cpython-314.pyc
+    │           │   │   │   └── _propose.cpython-314.pyc
+    │           │   │   ├── _pep514.py
+    │           │   │   └── _propose.py
+    │           │   └── py.typed
+    │           ├── python_discovery-1.4.2.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   └── licenses
+    │           │       └── LICENSE
+    │           ├── pyyaml-6.0.3.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   ├── licenses
+    │           │   │   └── LICENSE
+    │           │   └── top_level.txt
+    │           ├── virtualenv
+    │           │   ├── __init__.py
+    │           │   ├── __main__.py
+    │           │   ├── __pycache__
+    │           │   │   ├── __init__.cpython-314.pyc
+    │           │   │   ├── __main__.cpython-314.pyc
+    │           │   │   ├── info.cpython-314.pyc
+    │           │   │   ├── report.cpython-314.pyc
+    │           │   │   └── version.cpython-314.pyc
+    │           │   ├── activation
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── activator.cpython-314.pyc
+    │           │   │   │   └── via_template.cpython-314.pyc
+    │           │   │   ├── activator.py
+    │           │   │   ├── bash
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   └── __init__.cpython-314.pyc
+    │           │   │   │   └── activate.sh
+    │           │   │   ├── batch
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   └── __init__.cpython-314.pyc
+    │           │   │   │   ├── activate.bat
+    │           │   │   │   ├── deactivate.bat
+    │           │   │   │   └── pydoc.bat
+    │           │   │   ├── cshell
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   └── __init__.cpython-314.pyc
+    │           │   │   │   └── activate.csh
+    │           │   │   ├── fish
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   └── __init__.cpython-314.pyc
+    │           │   │   │   └── activate.fish
+    │           │   │   ├── nushell
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   └── __init__.cpython-314.pyc
+    │           │   │   │   └── activate.nu
+    │           │   │   ├── powershell
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   └── __init__.cpython-314.pyc
+    │           │   │   │   └── activate.ps1
+    │           │   │   ├── python
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   └── activate_this.cpython-314.pyc
+    │           │   │   │   └── activate_this.py
+    │           │   │   ├── via_template.py
+    │           │   │   └── xonsh
+    │           │   │       ├── __init__.py
+    │           │   │       ├── __pycache__
+    │           │   │       │   └── __init__.cpython-314.pyc
+    │           │   │       └── activate.xsh
+    │           │   ├── app_data
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── base.cpython-314.pyc
+    │           │   │   │   ├── na.cpython-314.pyc
+    │           │   │   │   ├── read_only.cpython-314.pyc
+    │           │   │   │   ├── via_disk_folder.cpython-314.pyc
+    │           │   │   │   └── via_tempdir.cpython-314.pyc
+    │           │   │   ├── base.py
+    │           │   │   ├── na.py
+    │           │   │   ├── read_only.py
+    │           │   │   ├── via_disk_folder.py
+    │           │   │   └── via_tempdir.py
+    │           │   ├── config
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── convert.cpython-314.pyc
+    │           │   │   │   ├── env_var.cpython-314.pyc
+    │           │   │   │   └── ini.cpython-314.pyc
+    │           │   │   ├── cli
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   └── parser.cpython-314.pyc
+    │           │   │   │   └── parser.py
+    │           │   │   ├── convert.py
+    │           │   │   ├── env_var.py
+    │           │   │   └── ini.py
+    │           │   ├── create
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── creator.cpython-314.pyc
+    │           │   │   │   ├── debug.cpython-314.pyc
+    │           │   │   │   ├── describe.cpython-314.pyc
+    │           │   │   │   └── pyenv_cfg.cpython-314.pyc
+    │           │   │   ├── creator.py
+    │           │   │   ├── debug.py
+    │           │   │   ├── describe.py
+    │           │   │   ├── pyenv_cfg.py
+    │           │   │   └── via_global_ref
+    │           │   │       ├── __init__.py
+    │           │   │       ├── __pycache__
+    │           │   │       │   ├── __init__.cpython-314.pyc
+    │           │   │       │   ├── _virtualenv.cpython-314.pyc
+    │           │   │       │   ├── api.cpython-314.pyc
+    │           │   │       │   ├── store.cpython-314.pyc
+    │           │   │       │   └── venv.cpython-314.pyc
+    │           │   │       ├── _virtualenv.py
+    │           │   │       ├── api.py
+    │           │   │       ├── builtin
+    │           │   │       │   ├── __init__.py
+    │           │   │       │   ├── __pycache__
+    │           │   │       │   │   ├── __init__.cpython-314.pyc
+    │           │   │       │   │   ├── builtin_way.cpython-314.pyc
+    │           │   │       │   │   ├── ref.cpython-314.pyc
+    │           │   │       │   │   └── via_global_self_do.cpython-314.pyc
+    │           │   │       │   ├── builtin_way.py
+    │           │   │       │   ├── cpython
+    │           │   │       │   │   ├── __init__.py
+    │           │   │       │   │   ├── __pycache__
+    │           │   │       │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │       │   │   │   ├── common.cpython-314.pyc
+    │           │   │       │   │   │   ├── cpython3.cpython-314.pyc
+    │           │   │       │   │   │   └── mac_os.cpython-314.pyc
+    │           │   │       │   │   ├── common.py
+    │           │   │       │   │   ├── cpython3.py
+    │           │   │       │   │   └── mac_os.py
+    │           │   │       │   ├── graalpy
+    │           │   │       │   │   ├── __init__.py
+    │           │   │       │   │   └── __pycache__
+    │           │   │       │   │       └── __init__.cpython-314.pyc
+    │           │   │       │   ├── pypy
+    │           │   │       │   │   ├── __init__.py
+    │           │   │       │   │   ├── __pycache__
+    │           │   │       │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │       │   │   │   ├── common.cpython-314.pyc
+    │           │   │       │   │   │   └── pypy3.cpython-314.pyc
+    │           │   │       │   │   ├── common.py
+    │           │   │       │   │   └── pypy3.py
+    │           │   │       │   ├── ref.py
+    │           │   │       │   ├── rustpython
+    │           │   │       │   │   ├── __init__.py
+    │           │   │       │   │   └── __pycache__
+    │           │   │       │   │       └── __init__.cpython-314.pyc
+    │           │   │       │   └── via_global_self_do.py
+    │           │   │       ├── store.py
+    │           │   │       └── venv.py
+    │           │   ├── discovery
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── builtin.cpython-314.pyc
+    │           │   │   │   ├── cached_py_info.cpython-314.pyc
+    │           │   │   │   ├── discover.cpython-314.pyc
+    │           │   │   │   ├── py_info.cpython-314.pyc
+    │           │   │   │   └── py_spec.cpython-314.pyc
+    │           │   │   ├── builtin.py
+    │           │   │   ├── cached_py_info.py
+    │           │   │   ├── discover.py
+    │           │   │   ├── py_info.py
+    │           │   │   └── py_spec.py
+    │           │   ├── info.py
+    │           │   ├── py.typed
+    │           │   ├── report.py
+    │           │   ├── run
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   └── session.cpython-314.pyc
+    │           │   │   ├── plugin
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── activators.cpython-314.pyc
+    │           │   │   │   │   ├── base.cpython-314.pyc
+    │           │   │   │   │   ├── creators.cpython-314.pyc
+    │           │   │   │   │   ├── discovery.cpython-314.pyc
+    │           │   │   │   │   └── seeders.cpython-314.pyc
+    │           │   │   │   ├── activators.py
+    │           │   │   │   ├── base.py
+    │           │   │   │   ├── creators.py
+    │           │   │   │   ├── discovery.py
+    │           │   │   │   └── seeders.py
+    │           │   │   └── session.py
+    │           │   ├── seed
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   └── seeder.cpython-314.pyc
+    │           │   │   ├── embed
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── base_embed.cpython-314.pyc
+    │           │   │   │   │   └── pip_invoke.cpython-314.pyc
+    │           │   │   │   ├── base_embed.py
+    │           │   │   │   ├── pip_invoke.py
+    │           │   │   │   └── via_app_data
+    │           │   │   │       ├── __init__.py
+    │           │   │   │       ├── __pycache__
+    │           │   │   │       │   ├── __init__.cpython-314.pyc
+    │           │   │   │       │   └── via_app_data.cpython-314.pyc
+    │           │   │   │       ├── pip_install
+    │           │   │   │       │   ├── __init__.py
+    │           │   │   │       │   ├── __pycache__
+    │           │   │   │       │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │       │   │   ├── base.cpython-314.pyc
+    │           │   │   │       │   │   ├── copy.cpython-314.pyc
+    │           │   │   │       │   │   └── symlink.cpython-314.pyc
+    │           │   │   │       │   ├── base.py
+    │           │   │   │       │   ├── copy.py
+    │           │   │   │       │   └── symlink.py
+    │           │   │   │       └── via_app_data.py
+    │           │   │   ├── seeder.py
+    │           │   │   └── wheels
+    │           │   │       ├── __init__.py
+    │           │   │       ├── __pycache__
+    │           │   │       │   ├── __init__.cpython-314.pyc
+    │           │   │       │   ├── acquire.cpython-314.pyc
+    │           │   │       │   ├── bundle.cpython-314.pyc
+    │           │   │       │   ├── periodic_update.cpython-314.pyc
+    │           │   │       │   └── util.cpython-314.pyc
+    │           │   │       ├── acquire.py
+    │           │   │       ├── bundle.py
+    │           │   │       ├── embed
+    │           │   │       │   ├── __init__.py
+    │           │   │       │   ├── __pycache__
+    │           │   │       │   │   └── __init__.cpython-314.pyc
+    │           │   │       │   ├── pip-26.0.1-py3-none-any.whl
+    │           │   │       │   ├── pip-26.1.2-py3-none-any.whl
+    │           │   │       │   └── setuptools-82.0.1-py3-none-any.whl
+    │           │   │       ├── periodic_update.py
+    │           │   │       └── util.py
+    │           │   ├── util
+    │           │   │   ├── __init__.py
+    │           │   │   ├── __pycache__
+    │           │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   ├── error.cpython-314.pyc
+    │           │   │   │   ├── lock.cpython-314.pyc
+    │           │   │   │   └── zipapp.cpython-314.pyc
+    │           │   │   ├── error.py
+    │           │   │   ├── lock.py
+    │           │   │   ├── path
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   ├── __pycache__
+    │           │   │   │   │   ├── __init__.cpython-314.pyc
+    │           │   │   │   │   ├── _permission.cpython-314.pyc
+    │           │   │   │   │   ├── _sync.cpython-314.pyc
+    │           │   │   │   │   └── _win.cpython-314.pyc
+    │           │   │   │   ├── _permission.py
+    │           │   │   │   ├── _sync.py
+    │           │   │   │   └── _win.py
+    │           │   │   ├── subprocess
+    │           │   │   │   ├── __init__.py
+    │           │   │   │   └── __pycache__
+    │           │   │   │       └── __init__.cpython-314.pyc
+    │           │   │   └── zipapp.py
+    │           │   └── version.py
+    │           ├── virtualenv-21.5.1.dist-info
+    │           │   ├── INSTALLER
+    │           │   ├── METADATA
+    │           │   ├── RECORD
+    │           │   ├── WHEEL
+    │           │   ├── entry_points.txt
+    │           │   └── licenses
+    │           │       └── LICENSE
+    │           └── yaml
+    │               ├── __init__.py
+    │               ├── __pycache__
+    │               │   ├── __init__.cpython-314.pyc
+    │               │   ├── composer.cpython-314.pyc
+    │               │   ├── constructor.cpython-314.pyc
+    │               │   ├── cyaml.cpython-314.pyc
+    │               │   ├── dumper.cpython-314.pyc
+    │               │   ├── emitter.cpython-314.pyc
+    │               │   ├── error.cpython-314.pyc
+    │               │   ├── events.cpython-314.pyc
+    │               │   ├── loader.cpython-314.pyc
+    │               │   ├── nodes.cpython-314.pyc
+    │               │   ├── parser.cpython-314.pyc
+    │               │   ├── reader.cpython-314.pyc
+    │               │   ├── representer.cpython-314.pyc
+    │               │   ├── resolver.cpython-314.pyc
+    │               │   ├── scanner.cpython-314.pyc
+    │               │   ├── serializer.cpython-314.pyc
+    │               │   └── tokens.cpython-314.pyc
+    │               ├── _yaml.cpython-314-x86_64-linux-gnu.so
+    │               ├── composer.py
+    │               ├── constructor.py
+    │               ├── cyaml.py
+    │               ├── dumper.py
+    │               ├── emitter.py
+    │               ├── error.py
+    │               ├── events.py
+    │               ├── loader.py
+    │               ├── nodes.py
+    │               ├── parser.py
+    │               ├── reader.py
+    │               ├── representer.py
+    │               ├── resolver.py
+    │               ├── scanner.py
+    │               ├── serializer.py
+    │               └── tokens.py
+    ├── lib64 -> lib
+    └── pyvenv.cfg
+
+588 directories, 2894 files

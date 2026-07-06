@@ -22,6 +22,14 @@ VALID_TEX_SIZES = {8, 16, 32, 64, 128, 256, 512, 1024}
 # Banks A+B+D = 3 * 128KB = 384KB (C is reserved for sub-BG)
 NDS_VRAM_BUDGET = 384 * 1024
 
+# Marks the start/end of a single environment's generated block inside
+# environmentDb.cpp, so re-running the tool updates that block in place
+# instead of duplicating or clobbering other environments in the file.
+BLOCK_RE = re.compile(
+    r"// === ENVIRONMENT: (\w+) BEGIN ===.*?// === ENVIRONMENT: \1 END ===\n?",
+    re.DOTALL,
+)
+
 
 def _format_cpp_h_files(paths: list[str]) -> None:
     clang_format = shutil.which("clang-format")
@@ -38,6 +46,12 @@ def _format_cpp_h_files(paths: list[str]) -> None:
 
 def sanitize(name):
     return re.sub(r"[^a-zA-Z0-9_]", "_", name)
+
+
+def escape_c_string(s):
+    if not s:
+        return ""
+    return s.replace("\\", "\\\\").replace('"', '\\"')
 
 
 def floattov16(f):
@@ -86,6 +100,7 @@ def parse_obj(obj_path):
     vertices, texcoords, groups = [], [], []
     current_mat, current_faces = "__no_material__", []
     is_billboard = False
+    group_name = None
 
     def flush():
         if current_faces:
@@ -94,6 +109,9 @@ def parse_obj(obj_path):
                     "material": current_mat,
                     "faces": list(current_faces),
                     "is_billboard": is_billboard,
+                    # Raw "o"/"g" name in effect when these faces were parsed.
+                    # Used as BillboardData::name for debugging at runtime.
+                    "name": group_name,
                 }
             )
 
@@ -109,6 +127,7 @@ def parse_obj(obj_path):
                 texcoords.append((float(parts[1]), float(parts[2])))
             elif tok in ("o", "g"):
                 flush()
+                group_name = parts[1] if len(parts) > 1 else None
                 is_billboard = parts[1].startswith("BB_") if len(parts) > 1 else False
                 current_faces = []
             elif tok == "usemtl":
@@ -292,6 +311,153 @@ def check_vram_budget(dl_groups, tex_paths, bpp=2, budget=NDS_VRAM_BUDGET):
     return ok
 
 
+def find_project_root(output_dir, explicit=None):
+    """
+    Locate the project root (the directory containing both 'source' and 'data'),
+    so environmentDb.cpp can be found/written at <root>/source/data/environmentDb.cpp
+    regardless of where output_dir happens to be.
+
+    Preference order:
+    1. `explicit` (config["project_dir"], if the caller knows it)
+    2. Walk upward from output_dir looking for a dir with both source/ and data/
+    3. Fall back to assuming the fixed convention
+       <root>/data/environments/<env> == output_dir
+    """
+    if explicit:
+        return os.path.abspath(explicit)
+
+    cur = os.path.abspath(output_dir)
+    while True:
+        if os.path.isdir(os.path.join(cur, "source")) and os.path.isdir(
+            os.path.join(cur, "data")
+        ):
+            return cur
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            break
+        cur = parent
+
+    # Fallback: <root>/data/environments/<env> -> strip 3 levels
+    guess = os.path.abspath(os.path.join(output_dir, "..", "..", ".."))
+    return guess
+
+
+def generate_entry_block(
+    base_name,
+    dl_groups,
+    billboards,
+    world_offset_x,
+    world_offset_z,
+    world_width,
+    world_depth,
+    bin_runtime_path,
+):
+    """Build the self-contained '// === ENVIRONMENT: <n> ... ===' text block
+    that gets inserted into environmentDb.cpp for this environment, matching:
+
+        struct EnvironmentTexture { const char* name; int width; int height;
+                                     const unsigned int* bitmap; };
+        struct BillboardData { const char* name; v16 x, y, z;
+                                v16 halfWidth; v16 halfHeight; int texSlot;
+                                short u0, v0; short u1, v1; };
+        struct EnvironmentDbEntry { const char* name; const char* binaryFile;
+                                     float worldOffsetX; float worldOffsetZ;
+                                     float worldWidth; float worldDepth;
+                                     int textureCount; const EnvironmentTexture* textures;
+                                     int billboardCount; const BillboardData* billboards; };
+
+    `bitmap` is left NULL here; the loader/GRIT pipeline fills it in at runtime.
+    """
+    lines = [f"// === ENVIRONMENT: {base_name} BEGIN ==="]
+
+    # EnvironmentTexture[]
+    n_tex = len(dl_groups)
+    textures_symbol = "NULL"
+    if n_tex > 0:
+        textures_symbol = f"{base_name}_textures"
+        lines.append(f"static const EnvironmentTexture {textures_symbol}[{n_tex}] = {{")
+        for tex_key, _, tw, th in dl_groups:
+            if tex_key == "__no_texture__":
+                lines.append(f"    {{ NULL, {tw or 0}, {th or 0}, NULL }},")
+            else:
+                tex_base = sanitize(os.path.splitext(tex_key)[0])
+                lines.append(
+                    f'    {{ "{tex_base}.img.bin", {tw}, {th}, NULL }}, // {tex_key}'
+                )
+        lines.append("};")
+        lines.append("")
+
+    # BillboardData[]
+    n_bb = len(billboards)
+    billboards_symbol = "NULL"
+    if n_bb > 0:
+        billboards_symbol = f"{base_name}_billboards"
+        lines.append(f"static const BillboardData {billboards_symbol}[{n_bb}] = {{")
+        for b in billboards:
+            name = escape_c_string(b.get("name") or "")
+            lines.append(
+                f'    {{ "{name}", {to_signed_v16(b["cx"])}, {to_signed_v16(b["cy"])}, {to_signed_v16(b["cz"])}, '
+                f'{to_signed_v16(b["hw"])}, {to_signed_v16(b["hh"])}, {b["slot"]}, '
+                f'{b["u0_16"]}, {b["v0_16"]}, {b["u1_16"]}, {b["v1_16"]} }},'
+            )
+        lines.append("};")
+        lines.append("")
+
+    # EnvironmentDbEntry
+    lines.append(f"const EnvironmentDbEntry {base_name}EnvironmentDbEntry = {{")
+    lines.append(f'    "{base_name}",')
+    lines.append(f'    "{bin_runtime_path}",')
+    lines.append(
+        f"    {world_offset_x:.6f}f, {world_offset_z:.6f}f, "
+        f"{world_width:.6f}f, {world_depth:.6f}f,"
+    )
+    lines.append(f"    {n_tex}, {textures_symbol},")
+    lines.append(f"    {n_bb}, {billboards_symbol},")
+    lines.append("};")
+    lines.append(f"// === ENVIRONMENT: {base_name} END ===")
+    return "\n".join(lines) + "\n"
+
+
+def update_environment_db(db_path, base_name, new_block, struct_header):
+    """Insert or replace this environment's block in environmentDb.cpp, then
+    regenerate the g_environmentDb[] lookup array covering every block found."""
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+
+    blocks = {}
+    order = []
+
+    if os.path.exists(db_path):
+        with open(db_path, "r") as f:
+            content = f.read()
+        for m in BLOCK_RE.finditer(content):
+            name = m.group(1)
+            blocks[name] = m.group(0).rstrip("\n")
+            order.append(name)
+
+    if base_name not in blocks:
+        order.append(base_name)
+    blocks[base_name] = new_block.rstrip("\n")
+
+    with open(db_path, "w") as f:
+        f.write("// Auto-generated by obj2environment.py\n")
+        f.write(
+            "// DO NOT EDIT the ENVIRONMENT blocks by hand - regenerate from source .obj files.\n"
+        )
+        f.write(f'#include "{struct_header}"\n\n')
+
+        for name in order:
+            f.write(blocks[name])
+            f.write("\n\n")
+
+        f.write(f"const EnvironmentDbEntry* g_environmentDb[{len(order)}] = {{\n")
+        for name in order:
+            f.write(f"    &{name}EnvironmentDbEntry,\n")
+        f.write("};\n\n")
+        f.write(f"const int g_environmentDbCount = {len(order)};\n")
+
+    _format_cpp_h_files([db_path])
+
+
 def convert(obj_path, output_dir, config):
     scale = config.get("scale", None)
     target_size = config.get("target_size", 4.0)
@@ -327,6 +493,14 @@ def convert(obj_path, output_dir, config):
     obj_path = os.path.abspath(obj_path)
     output_dir = os.path.abspath(output_dir)
     os.makedirs(output_dir, exist_ok=True)
+
+    project_root = find_project_root(output_dir, config.get("project_dir"))
+    db_path = os.path.abspath(
+        config.get("db_path")
+        or os.path.join(project_root, "source", "data", "environmentDb.cpp")
+    )
+    struct_header = config.get("struct_header", "data/environmentDb.h")
+    bin_runtime_prefix = config.get("bin_runtime_prefix", "") or ""
 
     obj_dir = os.path.dirname(obj_path)
     base_name = sanitize(os.path.splitext(os.path.basename(obj_path))[0])
@@ -410,6 +584,7 @@ def convert(obj_path, output_dir, config):
                     v_min, v_max = v_min_raw, v_max_raw
             billboards.append(
                 {
+                    "name": (g.get("name") or "").removeprefix("BB_") or tex_key,
                     "cx": cx,
                     "cy": cy,
                     "cz": cz,
@@ -711,6 +886,21 @@ def convert(obj_path, output_dir, config):
             )
     print(f"Written: {base_name}_textures.txt")
 
+    # --- environmentDb.cpp entry --------------------------------------
+    bin_runtime_path = f"{bin_runtime_prefix}{base_name}.bin"
+    block = generate_entry_block(
+        base_name,
+        dl_groups,
+        billboards,
+        world_offset_x,
+        world_offset_z,
+        world_width,
+        world_depth,
+        bin_runtime_path,
+    )
+    update_environment_db(db_path, base_name, block, struct_header)
+    print(f"Updated: {db_path} (entry: {base_name})")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -735,6 +925,35 @@ if __name__ == "__main__":
         help="Cap texture dimensions (e.g. 64 or 128). "
         "Requires Pillow; resizes PNGs in-place.",
     )
+    parser.add_argument(
+        "--project-dir",
+        type=str,
+        default=None,
+        help="Explicit project root override (auto-detected otherwise by walking "
+        "up from output_dir looking for sibling source/ and data/ dirs)",
+    )
+    parser.add_argument(
+        "--db-path",
+        type=str,
+        default=None,
+        help="Override output path for environmentDb.cpp "
+        "(default: <project_root>/source/data/environmentDb.cpp)",
+    )
+    parser.add_argument(
+        "--struct-header",
+        type=str,
+        default="data/environmentDb.h",
+        help="Include path written at the top of environmentDb.cpp "
+        "(default: data/environmentDb.h)",
+    )
+    parser.add_argument(
+        "--bin-runtime-prefix",
+        type=str,
+        default="",
+        help="Prefix prepended to the .bin filename stored in binaryFile, "
+        "e.g. 'environments/<env>/' if the loader needs a full relative path "
+        "(default: none, just '<n>.bin')",
+    )
     args = parser.parse_args()
 
     cli_config = {
@@ -747,5 +966,9 @@ if __name__ == "__main__":
         "rgba_list": args.rgba_list,
         "color": args.color,
         "max_tex_size": args.max_tex_size,
+        "project_dir": args.project_dir,
+        "db_path": args.db_path,
+        "struct_header": args.struct_header,
+        "bin_runtime_prefix": args.bin_runtime_prefix,
     }
     convert(args.input, args.output_dir, cli_config)
