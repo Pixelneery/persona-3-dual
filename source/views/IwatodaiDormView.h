@@ -1,66 +1,45 @@
-#include "views/BaseView3D.h"
-#include <nds/arm9/console.h>
-// controllers
-#include "components/ui/DialogueScreen.h"
-#include "components/ui/MenuHUDScreen.h"
-#include "controllers/CharacterController.h"
-#include "controllers/DialogueController.h"
-#include "controllers/UIController.h"
-// environments
-#include "environments/iwatodai_dorm_floor_1.h"
+#pragma once
 
-class IwatodaiDormView : public BaseView3D
+#include "views/EnvironmentView.h"
+// maps
+#include "maps/iwatodai_dorm_floor_1.h"
+// data
+#include "data/environmentDb.h"
+
+// Only what's actually specific to this room now lives here: the map/movement
+// tuning, the music path, and the tile/dialogue content. Everything else
+// (screen setup, UI wiring, phase handling, camera, texture loading, the
+// Environment itself, draw/cleanup) lives in EnvironmentView.
+//
+// Note there is no more `#include "environments/iwatodai_dorm_floor_1.h"` -
+// that generated class is gone. EnvironmentView owns a single, generic
+// Environment member driven by iwatodai_dorm_floor_1EnvironmentDbEntry below.
+class IwatodaiDormView : public EnvironmentView
 {
   public:
-    void init() override;
-    ViewState update() override;
-    void cleanup() override;
-    void setupEnvironment() override;
+    // TODO: dont forget to clear in future
     IwatodaiDormView();
 
+  protected:
+    const EnvironmentDbEntry* getEnvironmentDbEntry() override
+    {
+        return g_environmentDb[0];
+    }
+    CharacterController* createPlayerController() override;
+    void setMusic() override;
+    ViewState onTileCheck(TileType tile, u32 pressed) override;
+    void onDialogueStart() override;
+
   private:
-    touchPosition touch;
-
-    // sub screen
-    int bgSharedSub1;
-    int bgSharedSub2;
-    int bgSharedSub3;
-    PrintConsole console;
-
-    // 3D
-    iwatodai_dorm_floor_1_Environment iwatodaiDormFloor1Env;
-
-    ViewPhase phase;
-    bool prevPauseState;
-    bool prevDialogueState;
-    bool prevEnvironmentState;
-
-    // controllers
-    CharacterController* playerCtrl;
-    // camera pos
-    CameraPosition camPos;
-    // world
-    const float tileSize = 0.062500f;
-    const float worldOffsetX = IWATODAI_DORM_FLOOR_1_WORLD_OFFSET_X;
-    const float worldOffsetZ = IWATODAI_DORM_FLOOR_1_WORLD_OFFSET_Z;
+    // movement and viewpoint tuning (this room's feel)
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
-    // movement and viewpoint
     const float speed = 0.03f;
     const float angleIncrement = 0.07f;
     const float distance = 0.8f;
     const float lookAhead = 0.2f;
     // set character initial translation position
     const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
-    const float height = 0.0;
-    const float angle = -1.6;
+    const float height = 0.0f;
+    const float angle = -1.6f;
     const float characterFacingAngle = 180.0f;
-    DialogueController dialogueCtrl;
-
-    void setMusic();
-
-    UIController* uiCtrl = UIController::getInstance();
-    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
-
-    DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
-    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
 };
