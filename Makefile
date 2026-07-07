@@ -99,62 +99,43 @@ ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH    :=  -march=armv5te -mtune=arm946e-s -mthumb
 
-CFLAGS  := $(OPT) $(ARCH) $(INCLUDE) -DARM9 -Wall $(LTO_FLAG) -ffunction-sections -fdata-sections
-CXXFLAGS    := $(CFLAGS) -fno-rtti -fno-exceptions
-
-ASFLAGS :=  -g $(ARCH)
-
-LDFLAGS =   -specs=ds_arm9.specs $(ARCH) $(LTO_FLAG) -Wl,--gc-sections -Wl,-Map,$(notdir $*.map)
+ARCH := -march=armv5te -mtune=arm946e-s -mthumb
 
 #---------------------------------------------------------------------------------
-# any extra libraries we wish to link with the project
+# Include paths
+# Must be defined BEFORE CFLAGS expansion
 #---------------------------------------------------------------------------------
-LIBS    := -lmm9 -lfat -lnds9
+
+export INCLUDE := $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
+                  $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+                  -I$(CURDIR)/$(BUILD)
+
+export LIBPATHS := $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 #---------------------------------------------------------------------------------
-# list of directories containing libraries, this must be the top level containing
-# include and lib
+# Compiler flags
+# Use recursive expansion because INCLUDE is generated above
 #---------------------------------------------------------------------------------
-LIBDIRS :=  $(LIBNDS) $(PORTLIBS)
 
-#---------------------------------------------------------------------------------
-ifneq ($(BUILD),$(notdir $(CURDIR)))
-#---------------------------------------------------------------------------------
-export TOPDIR   :=  $(CURDIR)
-export OUTPUT   :=  $(CURDIR)/$(TARGET)
+CFLAGS = $(OPT) $(ARCH) $(INCLUDE) \
+         -DARM9 \
+         -Wall \
+         $(LTO_FLAG) \
+         -ffunction-sections \
+         -fdata-sections
 
-export VPATH    :=  $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
-                    $(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
-                    $(foreach dir,$(ENV_OUT_DIRS),$(CURDIR)/$(dir))
+CXXFLAGS = $(CFLAGS) \
+           -fno-rtti \
+           -fno-exceptions
 
-export DEPSDIR  :=  $(CURDIR)/$(BUILD)
+ASFLAGS = -g $(ARCH)
 
-CFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES    :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-CPPFILES    +=  $(notdir $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=%_dialogue.cpp))
-CPPFILES    :=  $(sort $(CPPFILES))
-SFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-BINFILES    :=  soundbank.bin
-
-export SFXFILES :=  $(foreach dir,$(notdir $(wildcard $(SFX)/*.*)),$(CURDIR)/$(SFX)/$(dir))
-
-ifeq ($(strip $(CPPFILES)),)
-    export LD := $(CC)
-else
-    export LD := $(CXX)
-endif
-
-export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
-                    $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
-
-export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-                    $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-                    $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-                    -I$(CURDIR)/$(BUILD)
-
-export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
+LDFLAGS = -specs=ds_arm9.specs \
+          $(ARCH) \
+          $(LTO_FLAG) \
+          -Wl,--gc-sections \
+          -Wl,-Map,$(notdir $*.map)
 
 .PHONY: $(BUILD) clean assets dialogue music video environments jmaps models graphics sdcard help
 
