@@ -28,7 +28,15 @@ endif
 #---------------------------------------------------------------------------------
 TARGET      :=  persona-3-dual
 BUILD       :=  build
-SOURCES 	:= source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/helpers source/battleActions/armours source/battleActions/personas source/battleActions/shoes source/battleActions/weapons source/components/ui source/components/menu
+SOURCES := source source/views source/controllers source/core source/data source/dialogue source/models \
+           source/environment source/environments \
+           source/components source/battleActions \
+           source/battleActions/enemies source/battleActions/party \
+           source/battleActions/skills source/battleActions/actions \
+           source/helpers source/battleActions/armours \
+           source/battleActions/personas source/battleActions/shoes \
+           source/battleActions/weapons source/components/ui \
+           source/components/menu
 INCLUDES    :=  include source
 SFX         :=  assets/sfx
 
@@ -99,43 +107,62 @@ ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/source/environments
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
+ARCH    :=  -march=armv5te -mtune=arm946e-s -mthumb
 
-ARCH := -march=armv5te -mtune=arm946e-s -mthumb
+CFLAGS  := $(OPT) $(ARCH) $(INCLUDE) -DARM9 -Wall $(LTO_FLAG) -ffunction-sections -fdata-sections
+CXXFLAGS    := $(CFLAGS) -fno-rtti -fno-exceptions
 
-#---------------------------------------------------------------------------------
-# Include paths
-# Must be defined BEFORE CFLAGS expansion
-#---------------------------------------------------------------------------------
+ASFLAGS :=  -g $(ARCH)
 
-export INCLUDE := $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
-                  $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-                  -I$(CURDIR)/$(BUILD)
-
-export LIBPATHS := $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
+LDFLAGS =   -specs=ds_arm9.specs $(ARCH) $(LTO_FLAG) -Wl,--gc-sections -Wl,-Map,$(notdir $*.map)
 
 #---------------------------------------------------------------------------------
-# Compiler flags
-# Use recursive expansion because INCLUDE is generated above
+# any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
+LIBS    := -lmm9 -lfat -lnds9
 
-CFLAGS = $(OPT) $(ARCH) $(INCLUDE) \
-         -DARM9 \
-         -Wall \
-         $(LTO_FLAG) \
-         -ffunction-sections \
-         -fdata-sections
+#---------------------------------------------------------------------------------
+# list of directories containing libraries, this must be the top level containing
+# include and lib
+#---------------------------------------------------------------------------------
+LIBDIRS :=  $(LIBNDS) $(PORTLIBS)
 
-CXXFLAGS = $(CFLAGS) \
-           -fno-rtti \
-           -fno-exceptions
+#---------------------------------------------------------------------------------
+ifneq ($(BUILD),$(notdir $(CURDIR)))
+#---------------------------------------------------------------------------------
+export TOPDIR   :=  $(CURDIR)
+export OUTPUT   :=  $(CURDIR)/$(TARGET)
 
-ASFLAGS = -g $(ARCH)
+export VPATH    :=  $(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
+                    $(foreach dir,$(DATA),$(CURDIR)/$(dir)) \
+                    $(foreach dir,$(ENV_OUT_DIRS),$(CURDIR)/$(dir))
 
-LDFLAGS = -specs=ds_arm9.specs \
-          $(ARCH) \
-          $(LTO_FLAG) \
-          -Wl,--gc-sections \
-          -Wl,-Map,$(notdir $*.map)
+export DEPSDIR  :=  $(CURDIR)/$(BUILD)
+
+CFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
+CPPFILES    :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+CPPFILES    +=  $(notdir $(DLG_FILES:$(ASSETS_DIALOGUE)/%.dlg=%_dialogue.cpp))
+CPPFILES    :=  $(sort $(CPPFILES))
+SFILES      :=  $(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
+BINFILES    :=  soundbank.bin
+
+export SFXFILES :=  $(foreach dir,$(notdir $(wildcard $(SFX)/*.*)),$(CURDIR)/$(SFX)/$(dir))
+
+ifeq ($(strip $(CPPFILES)),)
+    export LD := $(CC)
+else
+    export LD := $(CXX)
+endif
+
+export OFILES   :=  $(addsuffix .o,$(BINFILES)) \
+                    $(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+
+export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
+                    $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+                    $(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+                    -I$(CURDIR)/$(BUILD)
+
+export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
 .PHONY: $(BUILD) clean assets dialogue music video environments jmaps models graphics sdcard help
 
@@ -235,33 +262,12 @@ $(foreach file,$(FAT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
 
 graphics: $(FAT_GRAPHICS_OUT)
 
-
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-
-	# Remove generated environment assets only
-	@find $(CURDIR)/source/environments -type f \
-		-name "*.h" \
-		! -name "Environment.h" \
-		-delete
-
-	@find $(CURDIR)/source/environments -type f \
-		-name "*.bin" \
-		-delete
-
-	@find $(CURDIR)/source/environments -type f \
-		-name "*_textures.txt" \
-		-delete
-
-	@find $(CURDIR)/source/environments -type d -empty -delete
-
-	@rm -rf $(CURDIR)/data/models/* \
-		$(CURDIR)/data/environments/* \
-		$(CURDIR)/data/graphics/*
-
+	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/*
 	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
