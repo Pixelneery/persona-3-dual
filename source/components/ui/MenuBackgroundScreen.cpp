@@ -18,3 +18,11 @@ MenuBackgroundScreen* MenuBackgroundScreen::getInstance()
 {
     return instance;
 }
+
+void MenuBackgroundScreen::load()
+{
+}
+
+void MenuBackgroundScreen::unload()
+{
+}

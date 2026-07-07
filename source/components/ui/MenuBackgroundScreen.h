@@ -13,6 +13,9 @@ class MenuBackgroundScreen : public UIScreen
     static void destroy();
     static MenuBackgroundScreen* getInstance();
 
+    void load() override;
+    void unload() override;
+
   private:
     MenuBackgroundScreen() {};
     ~MenuBackgroundScreen() {};
