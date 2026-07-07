@@ -18,6 +18,8 @@ class MenuBackgroundScreen : public UIScreen
     void load() override;
     void unload() override;
 
+    void showBackground(int bgIndex);
+
   private:
     MenuBackgroundScreen() {};
     ~MenuBackgroundScreen() {};
