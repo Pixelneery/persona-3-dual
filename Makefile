@@ -260,9 +260,27 @@ clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-	@find $(CURDIR)/source/environments -type f ! -name "Environment.h" ! -name "Environment.cpp" -delete
+
+	# Remove generated environment assets only
+	@find $(CURDIR)/source/environments -type f \
+		-name "*.h" \
+		! -name "Environment.h" \
+		-delete
+
+	@find $(CURDIR)/source/environments -type f \
+		-name "*.bin" \
+		-delete
+
+	@find $(CURDIR)/source/environments -type f \
+		-name "*_textures.txt" \
+		-delete
+
 	@find $(CURDIR)/source/environments -type d -empty -delete
-	@rm -rf $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/*
+
+	@rm -rf $(CURDIR)/data/models/* \
+		$(CURDIR)/data/environments/* \
+		$(CURDIR)/data/graphics/*
+
 	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
