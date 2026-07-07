@@ -8,4 +8,14 @@
 
 class MenuBackgroundScreen : public UIScreen
 {
+  public:
+    static void create();
+    static void destroy();
+    static MenuBackgroundScreen* getInstance();
+
+  private:
+    MenuBackgroundScreen() {};
+    ~MenuBackgroundScreen() {};
+
+    static MenuBackgroundScreen* instance;
 };
