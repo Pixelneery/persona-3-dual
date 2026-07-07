@@ -20,6 +20,8 @@ class MenuBackgroundScreen : public UIScreen
 
     void showBackground(int bgIndex);
 
+    std::string resolveBgName(int bgIndex) const;
+
   private:
     MenuBackgroundScreen() {};
     ~MenuBackgroundScreen() {};
