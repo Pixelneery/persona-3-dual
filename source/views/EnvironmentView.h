@@ -18,7 +18,7 @@
 
 // environments / data
 #include "data/environmentDb.h"
-#include "environments/Environment.h"
+#include "environment/Environment.h"
 
 class EnvironmentView : public BaseView3D
 {
