@@ -254,12 +254,15 @@ $(foreach file,$(FAT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
 
 graphics: $(FAT_GRAPHICS_OUT)
 
+
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/*
+	@find $(CURDIR)/source/environments -type f ! -name "Environment.h" ! -name "Environment.cpp" -delete
+	@find $(CURDIR)/source/environments -type d -empty -delete
+	@rm -rf $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/*
 	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
