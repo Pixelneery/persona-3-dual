@@ -46,3 +46,4 @@ persona-3-dual.lst
 sdcard.img
 sdcard.img.idx
 .venv/
+.idea/
