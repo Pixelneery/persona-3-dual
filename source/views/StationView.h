@@ -1,5 +1,6 @@
 #pragma once
 #include "components/ui/MenuHUDScreen.h"
+#include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
 #include "controllers/UIController.h"
 #include "environments/station.h"
@@ -31,6 +32,7 @@ class StationView : public BaseView3D
     station_Environment stationEnv;
 
     CharacterController* playerCtrl;
+    CameraController cameraCtrl;
     CameraPosition camPos;
     const float tileSize = 0.062500f;
     const float worldOffsetX = STATION_WORLD_OFFSET_X;

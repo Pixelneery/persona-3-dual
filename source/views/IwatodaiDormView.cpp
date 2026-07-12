@@ -8,6 +8,23 @@ IwatodaiDormView::IwatodaiDormView()
 {
 }
 
+// Test path
+static const CameraKeyframe dormTestFrames[] = {
+    //  { time,  camX,   camY,  camZ,   tarX,  tarY,  tarZ  }
+    {0, -0.40f, 0.60f, 2.82f, 0.4f, 0.1f, 2.80f},
+    {60, 0.40f, 0.80f, 1.80f, 0.4f, 0.1f, 2.80f},
+    {120, 1.20f, 0.60f, 2.82f, 0.4f, 0.1f, 2.80f},
+    {180, 0.40f, 0.40f, 3.80f, 0.4f, 0.1f, 2.80f},
+    {240, -0.40f, 0.60f, 2.82f, 0.4f, 0.1f, 2.80f},
+};
+static const CameraPath dormTestPath = {5, dormTestFrames};
+
+void IwatodaiDormView::configureCameraController()
+{
+    cameraCtrl.setPath(&dormTestPath);
+    camConfig.mode = CameraMode::Path;
+}
+
 void IwatodaiDormView::setMusic()
 {
     musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.831f, 65.907f);
@@ -23,14 +40,9 @@ CharacterController* IwatodaiDormView::createPlayerController()
                                    dbEntry->worldOffsetZ,
                                    characterSize,
                                    speed,
-                                   angleIncrement,
-                                   distance,
-                                   lookAhead,
-                                   angle,
                                    height,
                                    characterTranslate,
-                                   characterFacingAngle,
-                                   true);
+                                   characterFacingAngle);
 }
 
 ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)

@@ -17,5 +17,6 @@
     },
     // mount to /project
     "workspaceMount": "source=${localWorkspaceFolder},target=/project,type=bind,consistency=cached",
-    "workspaceFolder": "/project"
+    "workspaceFolder": "/project",
+    "remoteUser": "root"
 }

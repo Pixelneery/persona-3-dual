@@ -29,6 +29,7 @@ class IwatodaiDormView : public EnvironmentView
     void setMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
     void onDialogueStart() override;
+    void configureCameraController() override;
 
   private:
     // movement and viewpoint tuning (this room's feel)

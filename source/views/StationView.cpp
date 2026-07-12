@@ -86,14 +86,17 @@ void StationView::init()
                                          worldOffsetZ,
                                          characterSize,
                                          speed,
-                                         angleIncrement,
-                                         distance,
-                                         lookAhead,
-                                         angle,
                                          height,
                                          characterTranslate,
-                                         characterFacingAngle,
-                                         true);
+                                         characterFacingAngle);
+    CameraConfig config;
+    config.mode = CameraMode::Follow;
+    config.initialAngle = angle;
+    config.distance = distance;
+    config.height = height + 0.6f;
+    config.lookAhead = lookAhead;
+    config.angleIncrement = angleIncrement;
+    cameraCtrl.configure(config);
 
     // setup music
     musicCtrl->init(
@@ -186,7 +189,9 @@ ViewState StationView::update()
             prevEnvironmentState = true;
         }
 
-        camPos = playerCtrl->update(keys);
+        // move character
+        playerCtrl->update(keys, cameraCtrl.getMovementAngle(playerCtrl->isCharacterAt()));
+        camPos = cameraCtrl.update(keys, playerCtrl->isCharacterAt());
 
         // start pause menu
         if (pressed & KEY_START)
@@ -244,8 +249,9 @@ ViewState StationView::update()
                     (int)((charPos.x + worldOffsetX) / tileSize),
                     (int)((charPos.z + worldOffsetZ) / tileSize));
             iprintf("\x1b[22;0Hmtranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
-            iprintf(
-                "\x1b[23;0Hangle(w,c): %d, %d\033[37;1m", (int)(charPos.angle * 100), (int)(charPos.facingAngle * 100));
+            iprintf("\x1b[23;0Hangle(w,c): %d, %d\033[37;1m",
+                    (int)(cameraCtrl.getAngle() * 100),
+                    (int)(charPos.facingAngle * 100));
         }
         break;
     }

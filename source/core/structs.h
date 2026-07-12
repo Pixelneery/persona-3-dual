@@ -1,5 +1,6 @@
 #pragma once
 #include "core/enums.h"
+#include "core/geometry.h"
 #include <nds.h>
 #include <string>
 #include <vector>
@@ -48,7 +49,6 @@ struct MenuState
     int startIndex;
 };
 
-// From AnimationController.h
 struct Keyframe
 {
     int time;
@@ -128,7 +128,44 @@ struct AnimNode
     v16 pivotX, pivotY, pivotZ;
 };
 
-// From CharacterController.h
+enum class CameraMode
+{
+    Free,
+    Static,
+    CCTV,
+    Follow,
+    Path
+};
+
+struct CameraConfig
+{
+    CameraMode mode = CameraMode::Follow;
+
+    // Static / CCTV — fixed eye position
+    Vec3<float> eye = {};
+    Vec3<float> target = {}; // Static only
+
+    // Follow / Free
+    float initialAngle = 0.0f;
+    float distance = 1.5f;
+    float height = 0.6f;
+    float lookAhead = 0.5f;
+    float angleIncrement = 0.05f;
+};
+
+struct CameraKeyframe
+{
+    int time; // frame index
+    float cameraX, cameraY, cameraZ;
+    float targetX, targetY, targetZ;
+};
+
+struct CameraPath
+{
+    int keyframeCount;
+    const CameraKeyframe* keyframes;
+};
+
 struct CameraPosition
 {
     float cameraX;
@@ -147,7 +184,6 @@ struct CharacterPosition
     float x;
     float z;
     float y; // height
-    float angle;
     float facingAngle;
 };
 

@@ -2,6 +2,7 @@
 #include <nds/arm9/console.h>
 // controllers / components
 #include "components/ui/MenuHUDScreen.h"
+#include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
 #include "controllers/UIController.h"
 // environments
@@ -33,6 +34,7 @@ class PaulowniaMallView : public BaseView3D
     bool prevEnvironmentState;
 
     CharacterController* playerCtrl;
+    CameraController cameraCtrl;
 
     // camera pos
     CameraPosition camPos;

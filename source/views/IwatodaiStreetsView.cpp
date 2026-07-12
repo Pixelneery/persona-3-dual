@@ -53,6 +53,19 @@ void IwatodaiStreetsView::startBattle()
 }
 
 // ----------------------------
+// Camera
+// ----------------------------
+void IwatodaiStreetsView::configureCameraController()
+{
+    camConfig.mode = CameraMode::Follow;
+    camConfig.initialAngle = angle;
+    camConfig.distance = distance;
+    camConfig.height = height + 0.6f;
+    camConfig.lookAhead = lookAhead;
+    camConfig.angleIncrement = angleIncrement;
+}
+
+// ----------------------------
 // Player controller
 // ----------------------------
 CharacterController* IwatodaiStreetsView::createPlayerController()
@@ -65,14 +78,9 @@ CharacterController* IwatodaiStreetsView::createPlayerController()
                                    dbEntry->worldOffsetZ,
                                    characterSize,
                                    speed,
-                                   angleIncrement,
-                                   distance,
-                                   lookAhead,
-                                   angle,
                                    height,
                                    characterTranslate,
-                                   characterFacingAngle,
-                                   true);
+                                   characterFacingAngle);
 }
 
 // ----------------------------

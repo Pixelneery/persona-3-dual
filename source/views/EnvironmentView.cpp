@@ -105,6 +105,9 @@ void EnvironmentView::init()
     // setup player controller (room-specific map/tuning, generic call site)
     playerCtrl = createPlayerController();
 
+    configureCameraController();
+    cameraCtrl.configure(camConfig);
+
     // setup music (room-specific path/loop points)
     setMusic();
 
@@ -130,6 +133,7 @@ void EnvironmentView::init()
 
     // setup pause menu
     pauseMenuCmpt->init(bgSharedSub1);
+    pauseMenuCmpt->setCameraController(&cameraCtrl);
 
     // setup battle menu
     // setup battle menu
@@ -267,7 +271,9 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = true;
         }
 
-        camPos = playerCtrl->update(keys);
+        playerCtrl->update(keys, cameraCtrl.getMovementAngle(playerCtrl->isCharacterAt()));
+        CharacterPosition charPos = playerCtrl->isCharacterAt();
+        camPos = cameraCtrl.update(keys, charPos);
 
         if (pressed & KEY_START)
         {
@@ -316,8 +322,6 @@ ViewState EnvironmentView::update()
 
         glPushMatrix();
 
-        CharacterPosition charPos = playerCtrl->isCharacterAt();
-
         glTranslatef(charPos.x, charPos.y, charPos.z);
 
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
@@ -341,7 +345,7 @@ ViewState EnvironmentView::update()
             iprintf("\x1b[22;0Htranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
 
             iprintf("\x1b[23;0Hangle(w,c): %d, %d \033[37;1m",
-                    (int)(charPos.angle * 100),
+                    (int)(cameraCtrl.getAngle() * 100),
                     (int)(charPos.facingAngle * 100));
         }
 

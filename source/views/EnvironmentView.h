@@ -8,6 +8,7 @@
 #include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
 #include "controllers/BattleController.h"
+#include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
 #include "controllers/GraphicsController.h"
@@ -47,6 +48,10 @@ class EnvironmentView : public BaseView3D
     virtual void onDialogueStart() = 0;
 
     virtual void onSetupDialogueAndUI()
+    {
+    }
+
+    virtual void configureCameraController()
     {
     }
 
@@ -97,9 +102,14 @@ class EnvironmentView : public BaseView3D
 
     CharacterController* playerCtrl = nullptr;
 
+    CameraController cameraCtrl;
+
     CameraPosition camPos;
 
     const float tileSize = 0.062500f;
+
+    // Override fields in configureCameraController() — same struct for all modes
+    CameraConfig camConfig;
 
     // -------------------------------------------------
     // Controllers
