@@ -1,8 +1,8 @@
 #pragma once
 
 /**
- * @file GameExample.hpp
- * @brief EXAMPLE ONLY — reference game module built on top of Engine.hpp.
+ * @file engineExample.hpp
+ * @brief EXAMPLE ONLY — reference game module built on top of engine.hpp.
  *
  * None of this is part of the engine. It exists to demonstrate the pattern
  * a game should follow: define your own component-type enum, event ids,
