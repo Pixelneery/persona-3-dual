@@ -1,8 +1,8 @@
 #pragma once
 
 /**
- * @file Engine.hpp
- * @brief Mirage Game Engine - core EC/DOD hybrid framework.
+ * @file engine.hpp
+ * @brief Aegis Engine - core EC/DOD hybrid framework.
  *
  * @note This header defines no game-specific data. `ComponentTypeID` is a
  *       plain integer alias, and Components/Systems accept their message
