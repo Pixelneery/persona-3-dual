@@ -83,6 +83,29 @@ constexpr std::size_t MAX_MESSAGE_ROUTERS = 64;
  */
 inline etl::message_bus<EngineLimits::MAX_MESSAGE_ROUTERS> engineBus;
 
+/**
+ * @brief Publishes an event onto the global `engineBus` so every subscribed
+ *        Component/System (i.e. every `ComponentRouter`/`SystemRouter`
+ *        instance whose template argument list includes `TMessage`)
+ *        receives it via its `on_receive(const TMessage&)`.
+ *
+ * This is the "send" half of the two-way Pub/Sub design - the counterpart
+ * to the `on_receive(...)` overloads a component/system writes to
+ * "receive". Call it from anywhere a Component or System wants to
+ * broadcast, e.g.:
+ * @code
+ * BroadcastEvent(Event::Damage{15, 0});
+ * @endcode
+ *
+ * @tparam TMessage An `etl::message<ID>`-derived event type (see the
+ *                   `Event` namespace convention in the companion example).
+ * @param msg The event instance to broadcast.
+ */
+template <typename TMessage> inline void BroadcastEvent(const TMessage& msg)
+{
+    engineBus.receive(msg);
+}
+
 namespace detail
 {
 /**
