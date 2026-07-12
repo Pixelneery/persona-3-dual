@@ -14,6 +14,7 @@
  * @note Requires C++17 (use of inline variables).
  */
 
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
 #include <type_traits>
@@ -726,6 +727,24 @@ class Engine
     }
 
     /**
+     * @brief Toggles the input polling
+     * @param enabled
+     */
+    void SetPollingEnabled(bool enabled)
+    {
+        isPollingEnabled = enabled;
+    }
+
+    /**
+     * @brief Toggles the compute execution
+     * @param enabled
+     */
+    void SetComputeEnabled(bool enabled)
+    {
+        isComputeEnabled = enabled;
+    }
+
+    /**
      * @brief Installs the platform-specific input-polling hook, called at
      *        the start of every `Tick`. Left injectable (rather than
      *        hardcoded) to keep `Engine` hardware-agnostic. Only Managers
@@ -754,8 +773,10 @@ class Engine
      */
     void Tick(fixed_t dt)
     {
-        if (pollInputFn != nullptr)
+        if (isPollingEnabled)
         {
+            /// Assert that pollInputFn is not undefined
+            assert(pollInputFn != nullptr);
             pollInputFn();
         }
 
@@ -774,8 +795,10 @@ class Engine
             m->Process();
         }
 
-        if (computeFn != nullptr)
+        if (isComputeEnabled)
         {
+            /// Assert that computeFn is not undefined
+            assert(computeFn != nullptr);
             computeFn();
         }
     }
@@ -789,6 +812,8 @@ class Engine
     etl::vector<Manager*, MaxManagers> managers;
 
     EntityID nextEntityID = 1;
+    bool isPollingEnabled = true;
+    bool isComputeEnabled = true;
 
     void (*pollInputFn)() = nullptr;
     void (*computeFn)() = nullptr;

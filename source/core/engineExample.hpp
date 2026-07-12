@@ -499,14 +499,33 @@ int exampleMain()
 // =============================================================================
 // Engine test, run in main.cpp to ensure engine is working properly
 // =============================================================================
+void NDSPollInputCallback()
+{
+    scanKeys();
+
+    // ex. pass the states to Managers here
+    // uint32_t keys_pressed = keysDown();
+    // InputManager::GetInstance().Update(keys_pressed);
+}
+
+void NDSComputeCallback()
+{
+    //...
+}
 void engineExampleTest()
 {
     consoleDemoInit();
     iprintf("Engine test\n");
 
     static GameEngine engine;
+    engine.SetComputeCallback(&NDSComputeCallback);
+    engine.SetComputeEnabled(true);
+    engine.SetPollInputCallback(&NDSPollInputCallback);
+    engine.SetPollingEnabled(true);
+
     engine.RegisterManager(&RenderManager::GetInstance());
     engine.RegisterSystem(&BattleSystem::GetInstance());
+
     engine.InitAll();
 
     Entity* e = engine.CreateEntity();
