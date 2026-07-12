@@ -23,6 +23,30 @@
 
 #include "engine.hpp"
 
+/**
+ * @def ENGINE_DEBUG_TRACE
+ * @brief Opt-in tracing for Pub/Sub events, OFF by default.
+ *
+ * Components/Systems are supposed to stay hardware-agnostic (see engine.hpp's
+ * HAL notes), so this stays off unless a caller explicitly turns it on:
+ * @code
+ * #define ENGINE_DEBUG_TRACE 1
+ * #include "engineExample.hpp"
+ * @endcode
+ * When enabled it pulls in `<nds.h>` for `iprintf`. Remove/disable for any
+ * build that isn't targeting real NDS hardware or melonDS.
+ */
+#ifndef ENGINE_DEBUG_TRACE
+#define ENGINE_DEBUG_TRACE 1
+#endif
+
+#if ENGINE_DEBUG_TRACE
+#include <nds.h>
+#define ENGINE_TRACE(...) iprintf(__VA_ARGS__)
+#else
+#define ENGINE_TRACE(...) ((void)0)
+#endif
+
 // =============================================================================
 // Game-defined component types (NOT part of the engine)
 // =============================================================================
@@ -84,9 +108,13 @@ struct Audio : public etl::message<EventID::PlaySound>
 };
 
 /// System -> Component: change internal state (e.g. "Hurt", "Idle").
+/// `appliedAmount` carries whatever numeric result the System computed
+/// for this state change (e.g. final, rule-modified HP delta), its
+/// meaning is defined per `newStateID`, not globally.
 struct State : public etl::message<EventID::ChangeState>
 {
     std::int32_t newStateID;
+    std::int32_t appliedAmount;
 };
 
 /**
@@ -204,6 +232,7 @@ class HealthComponent : public ComponentRouter<HealthComponent, Event::State>
      */
     void TakeDamage(std::int32_t amount, std::int32_t element)
     {
+        ENGINE_TRACE("[HealthComponent] TakeDamage(%ld) HP before=%ld\n", (long)amount, (long)currentHP);
         BroadcastEvent(Event::StartBattleSystem{});
 
         Event::Damage msg;
@@ -212,11 +241,24 @@ class HealthComponent : public ComponentRouter<HealthComponent, Event::State>
         BroadcastEvent(msg);
     }
 
+    /// Debug/testing accessor — not required by the engine itself.
+    std::int32_t GetCurrentHP() const
+    {
+        return currentHP;
+    }
+
     /// Receives `Event::State` broadcast back by `BattleSystem` after it
-    /// finishes processing a `Damage` event.
+    /// finishes processing a `Damage` event. `BattleSystem` owns the rule
+    /// (e.g. elemental modifiers); this Component owns its own data and
+    /// applies the rule's result here.
     void on_receive(const Event::State& msg)
     {
+        currentHP -= msg.appliedAmount;
         currentStateID = msg.newStateID;
+        ENGINE_TRACE("[HealthComponent] <- BattleSystem State: applied=%ld, newState=%ld, HP after=%ld\n",
+                     (long)msg.appliedAmount,
+                     (long)msg.newStateID,
+                     (long)currentHP);
     }
 
     void on_receive_unknown(const etl::imessage&)
@@ -306,11 +348,18 @@ class BattleSystem : public SystemRouter<BattleSystem, Event::Damage, Event::Sta
         }
 
         // Apply battle rules to the queued hit (elemental modifiers, etc.)
-        const std::int32_t resultingStateID = pendingDamageAmount > 0 ? 1 /* "Hurt" */ : 0 /* "Idle" */;
+        // — passthrough here; extend this line with real rule logic later.
+        const std::int32_t appliedAmount = pendingDamageAmount;
+        const std::int32_t resultingStateID = appliedAmount > 0 ? 1 /* "Hurt" */ : 0 /* "Idle" */;
+
+        ENGINE_TRACE("[BattleSystem] Update: applying rule -> amount=%ld, newState=%ld\n",
+                     (long)appliedAmount,
+                     (long)resultingStateID);
 
         // System -> Component: broadcast the outcome back out.
         Event::State msg;
         msg.newStateID = resultingStateID;
+        msg.appliedAmount = appliedAmount;
         BroadcastEvent(msg);
 
         pendingDamageAmount = 0;
@@ -322,12 +371,14 @@ class BattleSystem : public SystemRouter<BattleSystem, Event::Damage, Event::Sta
     void on_receive(const Event::StartBattleSystem&)
     {
         isActive = true;
+        ENGINE_TRACE("[BattleSystem] <- StartBattleSystem (isActive=true)\n");
     }
 
     /// Component -> System: queues the hit for `Update()` to process.
     void on_receive(const Event::Damage& msg)
     {
         pendingDamageAmount = msg.amount;
+        ENGINE_TRACE("[BattleSystem] <- Damage: amount=%ld, element=%ld\n", (long)msg.amount, (long)msg.element);
     }
 
     void on_receive_unknown(const etl::imessage&)
@@ -381,7 +432,7 @@ void MyComputePusher()
 // Example main(), end-to-end usage
 // =============================================================================
 
-int main()
+int exampleMain()
 {
     // 1. Instantiate the Engine (owns all pools, keep off the stack on
     //    real hardware; a static/global here is fine for this example).
@@ -441,4 +492,31 @@ int main()
     engine.ShutdownAll();
 
     return 0;
+}
+
+// =============================================================================
+// Engine test, run in main.cpp to ensure engine is working properly
+// =============================================================================
+void engineExampleTest()
+{
+    consoleDemoInit();
+    iprintf("Engine test\n");
+
+    static GameEngine engine;
+    engine.RegisterManager(&RenderManager::GetInstance());
+    engine.RegisterSystem(&BattleSystem::GetInstance());
+    engine.InitAll();
+
+    Entity* e = engine.CreateEntity();
+    HealthComponent* hc = engine.CreateComponent<HealthComponent>();
+    e->AddComponent(hc);
+
+    iprintf("Initial HP: %d\n", hc->GetCurrentHP());
+    hc->TakeDamage(15, 0);
+    engine.Tick(fixed_t(1) / 60);
+    iprintf("Final HP: %d\n", hc->GetCurrentHP());
+
+    engine.DestroyComponent(hc);
+    engine.DestroyEntity(e);
+    engine.ShutdownAll();
 }
