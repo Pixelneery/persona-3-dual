@@ -16,6 +16,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <type_traits>
 #include <utility>
 
 #include <etl/generic_pool.h>
@@ -121,6 +122,17 @@ inline etl::message_router_id_t NextComponentRouterID()
     static etl::message_router_id_t next = 0;
     return next++;
 }
+
+/**
+* @brief SFINAE trait to verify a Component has defined TYPE_ID.
+*/
+template <typename, typename = void> struct has_type_id : std::false_type
+{
+};
+
+template <typename T> struct has_type_id<T, std::void_t<decltype(T::TYPE_ID)>> : std::true_type
+{
+};
 } // namespace detail
 
 // =============================================================================
@@ -198,7 +210,14 @@ class Entity
      * @param type The `ComponentTypeID` to search for.
      * @return The first attached Component of the given type, or `nullptr`.
      */
-    Component* GetComponent(ComponentTypeID type) const;
+    Component* GetComponentByID(ComponentTypeID type) const;
+
+    /**
+     * @brief Retrieves and safely casts a Component of the specified type.
+     * @tparam T The concrete Component type (must define `TYPE_ID`).
+     * @return Pointer to the component, or nullptr if not found.
+     */
+    template <typename T> T* GetComponent() const;
 
     /**
      * @brief Detaches the Component of the given type, calling its
@@ -209,7 +228,13 @@ class Entity
      *       one call without double-invoking `Destroy()`).
      * @param type The `ComponentTypeID` to remove.
      */
-    void RemoveComponent(ComponentTypeID type);
+    void RemoveComponentByID(ComponentTypeID type);
+
+    /**
+     * @brief Detaches and destroys a Component of the specified type.
+     * @tparam T The concrete Component type (must define `TYPE_ID`).
+     */
+    template <typename T> void RemoveComponent();
 
     /**
      * @brief Removes a component pointer from this entity's internal list
@@ -570,7 +595,10 @@ class Engine
      */
     template <typename T, typename... Args> T* CreateComponent(Args&&... args)
     {
-        static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+        static_assert(std::is_base_of<Component, T>::value, "\n\n[AE ERROR]: T must derive from Component");
+        static_assert(detail::has_type_id<T>::value,
+                      "\n\n[AE ERROR]: Component is missing its TYPE_ID\n"
+                      "You must define: static constexpr ComponentTypeID TYPE_ID = ...\n");
 
         T* component = componentPool.template create<T>(std::forward<Args>(args)...);
         if (component != nullptr)
@@ -782,7 +810,7 @@ inline void Entity::AddComponent(Component* c)
     components.push_back(c);
 }
 
-inline Component* Entity::GetComponent(ComponentTypeID type) const
+inline Component* Entity::GetComponentByID(ComponentTypeID type) const
 {
     for (Component* c : components)
     {
@@ -794,7 +822,15 @@ inline Component* Entity::GetComponent(ComponentTypeID type) const
     return nullptr;
 }
 
-inline void Entity::RemoveComponent(ComponentTypeID type)
+template <typename T> inline T* Entity::GetComponent() const
+{
+    static_assert(detail::has_type_id<T>::value,
+                  "\n\n[AE ERROR]: Component is missing its TYPE_ID\n"
+                  "You must define: static constexpr ComponentTypeID TYPE_ID = ...\n");
+    return static_cast<T*>(GetComponentByID(T::TYPE_ID));
+}
+
+inline void Entity::RemoveComponentByID(ComponentTypeID type)
 {
     for (auto it = components.begin(); it != components.end(); ++it)
     {
@@ -805,6 +841,14 @@ inline void Entity::RemoveComponent(ComponentTypeID type)
             return;
         }
     }
+}
+
+template <typename T> inline void Entity::RemoveComponent()
+{
+    static_assert(detail::has_type_id<T>::value,
+                  "\n\n[AE ERROR]: Component is missing its TYPE_ID\n"
+                  "You must define: static constexpr ComponentTypeID TYPE_ID = ...\n");
+    RemoveComponentById(T::TYPE_ID);
 }
 
 inline void Entity::DetachComponent(Component* c)

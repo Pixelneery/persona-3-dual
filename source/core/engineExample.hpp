@@ -204,6 +204,7 @@ class RenderManager : public Manager, public Singleton<RenderManager>
 class HealthComponent : public ComponentRouter<HealthComponent, Event::State>
 {
   public:
+    static constexpr ComponentTypeID TYPE_ID = static_cast<ComponentTypeID>(ComponentType::Health);
     void Init() override
     {
         currentHP = 100;
@@ -216,7 +217,7 @@ class HealthComponent : public ComponentRouter<HealthComponent, Event::State>
     }
     ComponentTypeID GetType() const override
     {
-        return static_cast<ComponentTypeID>(ComponentType::Health);
+        return TYPE_ID;
     }
 
     /**
@@ -283,6 +284,7 @@ class HealthComponent : public ComponentRouter<HealthComponent, Event::State>
 class MeshComponent : public Component
 {
   public:
+    static constexpr ComponentTypeID TYPE_ID = static_cast<ComponentTypeID>(ComponentType::Mesh);
     void Init() override
     {
     }
@@ -295,7 +297,7 @@ class MeshComponent : public Component
     }
     ComponentTypeID GetType() const override
     {
-        return static_cast<ComponentTypeID>(ComponentType::Mesh);
+        return TYPE_ID;
     }
 
   protected:
