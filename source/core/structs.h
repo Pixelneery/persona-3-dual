@@ -141,3 +141,13 @@ struct GraphicAsset
     void* map;
     u32 mapLen;
 };
+
+struct Glyph
+{
+    int xPos;
+    int yPos;
+    int width;
+    int height;
+    int xOffset;
+    int yOffset;
+};

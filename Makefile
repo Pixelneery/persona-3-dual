@@ -81,6 +81,8 @@ MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 
 # Recursively find all PNG files in graphics, environments, and models.
 FAT_PNG_FILES   := $(shell find $(CURDIR)/assets/graphics $(CURDIR)/assets/environments $(CURDIR)/assets/models -type f -name '*.png' 2>/dev/null)
+FONT_PNG_FILES   := $(shell find $(CURDIR)/assets/fonts -type f -name '*.png' 2>/dev/null)
+FONT_FNT_FILES   := $(shell find $(CURDIR)/assets/fonts -type f -name '*.fnt' 2>/dev/null)
 
 #---------------------------------------------------------------------------------
 # Derive output paths & dynamically add environment output dirs to SOURCES
@@ -156,7 +158,7 @@ export INCLUDE  :=  $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS :=  $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models graphics sdcard help
+.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models graphics font_bitmap sdcard help
 
 #---------------------------------------------------------------------------------
 $(BUILD):
@@ -169,10 +171,10 @@ help:
 	@echo "  make            Build everything"
 	@echo "  make assets     Run all asset converters"
 
-assets: dirs dialogue music video environments jmaps models graphics
+assets: dirs dialogue music video environments jmaps models graphics font_bitmap
 
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments $(CURDIR)/data/graphics
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments $(CURDIR)/data/graphics $(CURDIR)/data/fonts
 
 sdcard: sdcard.img
 #---------------------------------------------------------------------------------
@@ -255,11 +257,39 @@ $(foreach file,$(FAT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
 graphics: $(FAT_GRAPHICS_OUT)
 
 #---------------------------------------------------------------------------------
+# FONTS
+#---------------------------------------------------------------------------------
+
+FONT_BM_OUT := $(foreach file,$(FONT_PNG_FILES),$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
+FONT_FNT_OUT := $(foreach file,$(FONT_FNT_FILES),$(patsubst $(CURDIR)/assets/%.fnt,$(CURDIR)/data/%/$(notdir $(file)),$(file)))
+
+# Define a macro that acts as a blueprint for our build rule
+define GRIT_RULE
+$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
+	@echo "  GRIT  $$(notdir $$<)"
+	@mkdir -p $$(dir $$@)
+	@grit "$$<" -ftb -gb8 -fh! -o "$$(patsubst %.img.bin,%,$$@)"
+endef
+
+define COPY_FONT_RULE
+$(patsubst $(CURDIR)/assets/%.fnt,$(CURDIR)/data/%/$(notdir $(1)),$(1)): $(1)
+	@echo "  COPY  $$(notdir $$<)"
+	@mkdir -p $$(dir $$@)
+	@cp "$$<" "$$@"
+endef
+
+# Evaluate the macro for every single PNG found, dynamically scripting the rules into the Make environment
+$(foreach file,$(FONT_PNG_FILES),$(eval $(call GRIT_RULE,$(file))))
+$(foreach file,$(FONT_FNT_FILES),$(eval $(call COPY_FONT_RULE,$(file))))
+
+font_bitmap: $(FONT_BM_OUT) $(FONT_FNT_OUT)
+
+#---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(TARGET).elf $(TARGET).nds $(TARGET).ds.gba
 	@rm -f $(MUSIC_OUT) $(VIDEO_OUT) $(JMAP_OUT) $(MODEL_OUT) $(DIALOGUE_OUT) $(CURDIR)/source/dialogue/*_dialogue.h
-	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/*
+	@rm -rf $(CURDIR)/source/environments/* $(CURDIR)/data/models/* $(CURDIR)/data/environments/* $(CURDIR)/data/graphics/* $(CURDIR)/data/fonts/*
 	@rm -f sdcard.img sdcard.img.idx
 
 #---------------------------------------------------------------------------------
