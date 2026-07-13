@@ -41,6 +41,7 @@ class TextController
      * @brief Clears the screen.
      *
      * This function resets all pixels of the background, effectively clearing any previously drawn content.
+     * Should be used when removing text from screen, i.e. to draw new content.
      */
     void clearScreen();
 
@@ -116,7 +117,9 @@ class TextController
 
     Glyph fontGlyphs[256];
 
+    void drawPixel(int x, int y, int color);
     bool checkWordWrap(const std::string& text, int startX);
     int extractPixelValue(const int pixelIndex);
     int extractIntValue(const std::string& line, const std::string& key);
+    void haltOnError(const std::string& errorMessage);
 };

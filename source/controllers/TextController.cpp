@@ -18,29 +18,14 @@ TextController::TextController(const std::string& fontFilePath)
     bgSetPriority(bgID, 0);
 
     if (!loadFontBitmap(fullPath + ".img.bin"))
-    {
-        consoleDemoInit();
-        iprintf("Error: Failed to load font bitmap %s\n", (fullPath + ".img.bin").c_str());
-        while (1)
-            swiWaitForVBlank();
-    }
+        haltOnError("Failed to load font bitmap from \n" + fullPath + ".img.bin");
 
     if (!loadFontPalette(fullPath + ".pal.bin"))
-    {
-        consoleDemoInit();
-        iprintf("Error: Failed to load font palette %s\n", (fullPath + ".pal.bin").c_str());
-        while (1)
-            swiWaitForVBlank();
-    }
+        haltOnError("Failed to load font palette from \n" + fullPath + ".pal.bin");
 
     // Load metadata to learn bitmap dimensions
     if (!loadFontMetadata(fullPath + ".fnt"))
-    {
-        consoleDemoInit();
-        iprintf("Error: Failed to load font metadata from %s\n", (fullPath + ".fnt").c_str());
-        while (1)
-            swiWaitForVBlank();
-    }
+        haltOnError("Failed to load font metadata from \n" + fullPath + ".fnt");
 }
 
 TextController::~TextController()
@@ -239,7 +224,7 @@ void TextController::drawText(const std::string& text, int startX, int startY, i
 
         //Handle automatic word wrapping to prevent drawing outside the screen bounds
         //TODO: Look ahead for whole words (fix check word wrap)
-        if (cursorX + g.width > 256) //TODO: increase this to 256 when we have more space again
+        if (cursorX + g.width > 256)
         {
             cursorX = startX;
             cursorY += fontLineHeight + 2;
@@ -262,31 +247,13 @@ void TextController::drawText(const std::string& text, int startX, int startY, i
                 int pixelValue = fontBitmap[pixelIndex];
 
                 //If pixel is not black, draw it to screen (we're using 2 to try to filter out pixels that would be too dark to be seen)
-                if (pixelValue > 2)
+                if (pixelValue > 0)
                 {
                     int screenX = cursorX + x;
                     int screenY = cursorY + g.yOffset + y;
                     //Only draw if within screen bounds otherwise disregard (from my experience this shouldn't crash the game, but text wrapping around would still be a bit of a problem)
                     if (screenX >= 0 && screenX < 256 && screenY >= 0 && screenY < 192)
-                    {
-                        //TODO: We're basically writing to pixels with each loop here, could we adapt this so we we write both pixels and increment the index by 2
-                        //      This would halve the amount of loops and writes
-
-                        int wordIndex = (screenY * 256 + screenX) / 2;
-                        // 2. Read the current 16-bit value from VRAM
-                        u16 currentWord = videoBuffer[wordIndex];
-                        // 3. Check if we are modifying the even (left) or odd (right) pixel
-                        if (screenX % 2 == 0)
-                        {
-                            // Clear the lower 8 bits, then inject our 8-bit color index
-                            videoBuffer[wordIndex] = (currentWord & 0xFF00) | (fontPalette[pixelValue] & 0xFF);
-                        }
-                        else
-                        {
-                            // Clear the upper 8 bits, then inject our 8-bit color index shifted up
-                            videoBuffer[wordIndex] = (currentWord & 0x00FF) | ((fontPalette[pixelValue] & 0xFF) << 8);
-                        }
-                    }
+                        drawPixel(screenX, screenY, pixelValue);
                 }
             }
         }
@@ -300,6 +267,22 @@ void TextController::clearScreen()
 }
 
 // Helper Functions ======================================================
+
+void TextController::drawPixel(int x, int y, int paletteIndex)
+{
+    int wordIndex = (y * 256 + x) / 2;
+    u16 currentWord = videoBuffer[wordIndex];
+    if (x % 2 == 0)
+    {
+        // Clear the lower 8 bits, then inject our 8-bit color index
+        videoBuffer[wordIndex] = (currentWord & 0xFF00) | (fontPalette[paletteIndex] & 0xFF);
+    }
+    else
+    {
+        // Clear the upper 8 bits, then inject our 8-bit color index shifted up
+        videoBuffer[wordIndex] = (currentWord & 0x00FF) | ((fontPalette[paletteIndex] & 0xFF) << 8);
+    }
+}
 
 int TextController::extractIntValue(const std::string& line, const std::string& key)
 {
@@ -350,6 +333,14 @@ bool TextController::checkWordWrap(const std::string& word, int startX)
         return true; // Word exceeds screen width
     }
     return false; // Word fits within screen width
+}
+
+void TextController::haltOnError(const std::string& errorMessage)
+{
+    consoleDemoInit();
+    iprintf("Error: %s\n", errorMessage.c_str());
+    while (1)
+        swiWaitForVBlank();
 }
 
 // Test Functions ========================================================
