@@ -21,7 +21,11 @@
  *      `Component::SubmitToManager`).
  */
 
-#include "engine.hpp"
+#include <aegis/component.hpp>
+#include <aegis/engine.hpp>
+#include <aegis/entity.hpp>
+#include <aegis/manager.hpp>
+#include <aegis/system.hpp>
 
 /**
  * @def ENGINE_DEBUG_TRACE
@@ -55,7 +59,7 @@
  * @brief Identifies each concrete `Component` subclass this game defines.
  *        Underlying type must match `ComponentTypeID`.
  */
-enum class ComponentType : ComponentTypeID
+enum class ComponentType : ae::ComponentTypeID
 {
     None = 0,
     Mesh,
@@ -140,14 +144,14 @@ namespace Payload
 struct RenderMesh
 {
     std::int32_t modelID;
-    fixed_t matrix[16];
+    ae::fixed_t matrix[16];
 };
 
 struct CollisionHitbox
 {
-    fixed_t radius;
-    fixed_t x;
-    fixed_t y;
+    ae::fixed_t radius;
+    ae::fixed_t x;
+    ae::fixed_t y;
 };
 } // namespace Payload
 
@@ -159,7 +163,7 @@ struct CollisionHitbox
  * @brief Example Manager: owns rendering hardware, receives mesh data
  *        directly from `MeshComponent` (Component -> Manager, one-way).
  */
-class RenderManager : public Manager, public Singleton<RenderManager>
+class RenderManager : public ae::Manager, public ae::Singleton<RenderManager>
 {
   public:
     void Init() override
@@ -201,21 +205,21 @@ class RenderManager : public Manager, public Singleton<RenderManager>
  * - **Receives**: `on_receive(const Event::State&)` reacts when
  *   `BattleSystem` broadcasts a state change back.
  */
-class HealthComponent : public ComponentRouter<HealthComponent, Event::State>
+class HealthComponent : public ae::ComponentRouter<HealthComponent, Event::State>
 {
   public:
-    static constexpr ComponentTypeID TYPE_ID = static_cast<ComponentTypeID>(ComponentType::Health);
+    static constexpr ae::ComponentTypeID TYPE_ID = static_cast<ae::ComponentTypeID>(ComponentType::Health);
     void Init() override
     {
         currentHP = 100;
     }
-    void Update(fixed_t /*dt*/) override
+    void Update(ae::fixed_t /*dt*/) override
     {
     }
     void Destroy() override
     {
     }
-    ComponentTypeID GetType() const override
+    ae::ComponentTypeID GetType() const override
     {
         return TYPE_ID;
     }
@@ -234,12 +238,12 @@ class HealthComponent : public ComponentRouter<HealthComponent, Event::State>
     void TakeDamage(std::int32_t amount, std::int32_t element)
     {
         ENGINE_TRACE("[HealthComponent] TakeDamage(%ld) HP before=%ld\n", (long)amount, (long)currentHP);
-        BroadcastEvent(Event::StartBattleSystem{});
+        ae::BroadcastEvent(Event::StartBattleSystem{});
 
         Event::Damage msg;
         msg.amount = amount;
         msg.element = element;
-        BroadcastEvent(msg);
+        ae::BroadcastEvent(msg);
     }
 
     /// Debug/testing accessor — not required by the engine itself.
@@ -281,21 +285,21 @@ class HealthComponent : public ComponentRouter<HealthComponent, Event::State>
 // =============================================================================
 
 /// Example Component with no Pub/Sub needs, derives `Component` directly.
-class MeshComponent : public Component
+class MeshComponent : public ae::Component
 {
   public:
-    static constexpr ComponentTypeID TYPE_ID = static_cast<ComponentTypeID>(ComponentType::Mesh);
+    static constexpr ae::ComponentTypeID TYPE_ID = static_cast<ae::ComponentTypeID>(ComponentType::Mesh);
     void Init() override
     {
     }
-    void Update(fixed_t /*dt*/) override
+    void Update(ae::fixed_t /*dt*/) override
     {
         SubmitToManager();
     }
     void Destroy() override
     {
     }
-    ComponentTypeID GetType() const override
+    ae::ComponentTypeID GetType() const override
     {
         return TYPE_ID;
     }
@@ -326,8 +330,8 @@ constexpr etl::message_router_id_t kBattleSystemRouterID = 0;
  * - **Sends**: after `Update()` processes a queued hit, it broadcasts
  *   `Event::State` so components (e.g. `HealthComponent`) can react.
  */
-class BattleSystem : public SystemRouter<BattleSystem, Event::Damage, Event::StartBattleSystem>,
-                     public Singleton<BattleSystem>
+class BattleSystem : public ae::SystemRouter<BattleSystem, Event::Damage, Event::StartBattleSystem>,
+                     public ae::Singleton<BattleSystem>
 {
   public:
     void Init() override
@@ -342,7 +346,7 @@ class BattleSystem : public SystemRouter<BattleSystem, Event::Damage, Event::Sta
      *        applies the queued damage rule otherwise, then broadcasts
      *        the result.
      */
-    void Update(fixed_t /*dt*/) override
+    void Update(ae::fixed_t /*dt*/) override
     {
         if (!isActive)
         {
@@ -362,7 +366,7 @@ class BattleSystem : public SystemRouter<BattleSystem, Event::Damage, Event::Sta
         Event::State msg;
         msg.newStateID = resultingStateID;
         msg.appliedAmount = appliedAmount;
-        BroadcastEvent(msg);
+        ae::BroadcastEvent(msg);
 
         pendingDamageAmount = 0;
         isActive = false; // done processing; wait for the next StartBattleSystem
@@ -414,7 +418,7 @@ constexpr std::size_t kLargestComponentAlign = alignof(HealthComponent) > aligno
 } // namespace GameEngineConfig
 
 /// This game's concrete `Engine` specialization — see `Engine`'s class docs.
-using GameEngine = Engine<GameEngineConfig::kLargestComponentSize, GameEngineConfig::kLargestComponentAlign>;
+using GameEngine = ae::Engine<GameEngineConfig::kLargestComponentSize, GameEngineConfig::kLargestComponentAlign>;
 
 // =============================================================================
 // Example hardware hooks (HAL design, see Engine::SetPollInputCallback)
@@ -452,7 +456,7 @@ int exampleMain()
     engine.InitAll();
 
     // 5. Set up initial game state.
-    Entity* player = engine.CreateEntity();
+    ae::Entity* player = engine.CreateEntity();
     HealthComponent* health = nullptr;
 
     if (player != nullptr)
@@ -466,7 +470,7 @@ int exampleMain()
 
     // Fixed-point delta time, expressed in seconds (~16.67ms at 60 FPS).
     // On real NDS hardware this is a constant tied to VBlank, not measured.
-    const fixed_t dt = fixed_t(1) / 60;
+    const ae::fixed_t dt = ae::fixed_t(1) / 60;
 
     // 6. The main game loop.
     bool isRunning = true;
@@ -528,13 +532,13 @@ void engineExampleTest()
 
     engine.InitAll();
 
-    Entity* e = engine.CreateEntity();
+    ae::Entity* e = engine.CreateEntity();
     HealthComponent* hc = engine.CreateComponent<HealthComponent>();
     e->AddComponent(hc);
 
     iprintf("Initial HP: %d\n", hc->GetCurrentHP());
     hc->TakeDamage(15, 0);
-    engine.Tick(fixed_t(1) / 60);
+    engine.Tick(ae::fixed_t(1) / 60);
     iprintf("Final HP: %d\n", hc->GetCurrentHP());
 
     engine.DestroyComponent(hc);
