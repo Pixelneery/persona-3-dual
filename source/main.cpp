@@ -44,7 +44,7 @@
 #include "battleActions/weapons/WeaponDb.h"
 
 // debug
-#include "core/engineExample.hpp"
+#include "tests/engine/ndsExample.hpp"
 bool testEngine = true;
 
 // variables
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
 
     if (testEngine)
     {
-        engineExampleTest();
+        ndsExampleTest();
         while (1)
             swiWaitForVBlank();
     }

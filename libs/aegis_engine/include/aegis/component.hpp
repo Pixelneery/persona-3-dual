@@ -2,12 +2,19 @@
 
 /**
  * @file component.hpp
- * @brief Aegis Engine - component framework.
+ * @brief Aegis Engine — `Component`, the abstract base for gameplay
+ *        "plugins" attached to Entities, and `ComponentRouter<TDerived,
+ *        TMessageTypes...>`, the CRTP mixin that opts a concrete Component
+ *        into Pub/Sub.
  *
- * @note xyz
+ * @note `Component` itself has zero knowledge of message types; only
+ *       concrete subclasses (via `ComponentRouter`) declare which events
+ *       they subscribe to. See `types.hpp` for `BroadcastEvent`, the
+ *       corresponding "send" half of Pub/Sub.
  */
 
 #include "types.hpp"
+#include <etl/message_router.h>
 
 namespace aegis
 {

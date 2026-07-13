@@ -2,9 +2,13 @@
 
 /**
  * @file manager.hpp
- * @brief Aegis Engine - manager framework.
+ * @brief Aegis Engine — `Manager`, the abstract base for singleton
+ *        hardware-abstraction / heavy-computation / memory-management
+ *        subsystems (the DOD side of the engine).
  *
- * @note xyz
+ * @note Managers are the only code permitted to call platform/hardware
+ *       functions directly — see `Component::SubmitToManager` for how
+ *       Components hand data to them (one-way, not Pub/Sub).
  */
 
 namespace aegis

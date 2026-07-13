@@ -2,12 +2,16 @@
 
 /**
  * @file system.hpp
- * @brief Aegis Engine - system framework.
+ * @brief Aegis Engine — `System`, the abstract base for singleton game-rule
+ *        handlers (Battle, Dialogue, UI logic, ...), and `SystemRouter
+ *        TDerived, TMessageTypes...>`, the CRTP mixin that opts a concrete
+ *        System into Pub/Sub.
  *
- * @note xyz
+ * @note Mirrors `component.hpp`'s `ComponentRouter` design — see its
+ *       documentation for the shared CRTP contract.
  */
-
 #include <aegis/types.hpp>
+#include <etl/message_router.h>
 
 namespace aegis
 {

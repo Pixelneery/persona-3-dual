@@ -2,11 +2,23 @@
 
 /**
  * @file engine.hpp
- * @brief Aegis Engine - engine framework.
+ * @brief Aegis Engine — `Engine<...>`: owns the Entity/Component pools,
+ *        the System/Manager registry, and drives the Core Engine Loop
+ *        (Poll Input -> Update Systems -> Update Components -> Process
+ *        Managers -> Compute).
  *
- * @note xyz
+ * @note All pool/registry capacities are template parameters, not
+ *       hardcoded constants — size `Engine` per project/platform via
+ *       `using GameEngine = Engine<sizeof(Largest), alignof(Largest)>;`.
+ * @note Depends on complete definitions of `Entity`, `Component`, `System`,
+ *       and `Manager` (not just the forward declarations in `types.hpp`) —
+ *       include those headers, or the aggregate `aegis.hpp`, before this one.
  */
 
+#include <aegis/component.hpp>
+#include <aegis/entity.hpp>
+#include <aegis/manager.hpp>
+#include <aegis/system.hpp>
 #include <aegis/types.hpp>
 #include <etl/generic_pool.h>
 #include <etl/pool.h>

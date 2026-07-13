@@ -2,11 +2,12 @@
 
 /**
  * @file entity.hpp
- * @brief Aegis Engine - entiy framework.
+ * @brief Aegis Engine — `Entity`: an identity plus a fixed-capacity,
+ *        non-owning list of attached Components, with typed
+ *        (`GetComponent<T>`) and untyped (`GetComponentByID`) lookup.
  *
- * @note xyz
- *
- * @note Requires C++17 (use of inline variables).
+ * @note Entities do not own Component memory — see `Engine`'s pools.
+ * @note Requires C++17.
  */
 
 #include <aegis/component.hpp>
@@ -160,7 +161,7 @@ template <typename T> inline void Entity::RemoveComponent()
     static_assert(detail::has_type_id<T>::value,
                   "\n\n[AE ERROR]: Component is missing its TYPE_ID\n"
                   "You must define: static constexpr ComponentTypeID TYPE_ID = ...\n");
-    RemoveComponentById(T::TYPE_ID);
+    RemoveComponentByID(T::TYPE_ID);
 }
 
 inline void Entity::DetachComponent(Component* c)

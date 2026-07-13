@@ -2,14 +2,20 @@
 
 /**
  * @file types.hpp
- * @brief Aegis Engine - types and helpers.
+ * @brief Aegis Engine — core type aliases, fixed-point math type, default
+ *        engine capacity limits, the global Pub/Sub message bus, and the
+ *        small CRTP/SFINAE helpers (`Singleton`, `has_type_id`) shared by
+ *        every other Aegis header.
  *
- * @note xyz
- *
- * @note Requires C++17 (use of inline variables).
+ * @note This is the foundation header — every other file in the library
+ *       depends on it, directly or transitively. It defines no game-specific
+ *       data; game code supplies its own event, payload, and component-type
+ *       definitions on top of these primitives.
+ * @note Requires C++17 (inline variables, `std::void_t`).
  */
 
 #include <cstdint>
+#include <type_traits>
 
 #include <etl/message_bus.h>
 #include <fpm/fixed.hpp>

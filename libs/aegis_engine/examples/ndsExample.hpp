@@ -1,8 +1,7 @@
 #pragma once
 
 /**
- * @file engineExample.hpp
- * @brief EXAMPLE ONLY — reference game module built on top of engine.hpp.
+ * @file ndsExample.hpp
  *
  * None of this is part of the engine. It exists to demonstrate the pattern
  * a game should follow: define your own component-type enum, event ids,
@@ -27,24 +26,7 @@
 #include <aegis/manager.hpp>
 #include <aegis/system.hpp>
 
-/**
- * @def ENGINE_DEBUG_TRACE
- * @brief Opt-in tracing for Pub/Sub events, OFF by default.
- *
- * Components/Systems are supposed to stay hardware-agnostic (see engine.hpp's
- * HAL notes), so this stays off unless a caller explicitly turns it on:
- * @code
- * #define ENGINE_DEBUG_TRACE 1
- * #include "engineExample.hpp"
- * @endcode
- * When enabled it pulls in `<nds.h>` for `iprintf`. Remove/disable for any
- * build that isn't targeting real NDS hardware or melonDS.
- */
-#ifndef ENGINE_DEBUG_TRACE
-#define ENGINE_DEBUG_TRACE 1
-#endif
-
-#if ENGINE_DEBUG_TRACE
+#ifdef __NDS__
 #include <nds.h>
 #define ENGINE_TRACE(...) iprintf(__VA_ARGS__)
 #else
@@ -438,7 +420,7 @@ void MyComputePusher()
 // Example main(), end-to-end usage
 // =============================================================================
 
-int exampleMain()
+int ndsExampleMain()
 {
     // 1. Instantiate the Engine (owns all pools, keep off the stack on
     //    real hardware; a static/global here is fine for this example).
@@ -500,6 +482,7 @@ int exampleMain()
     return 0;
 }
 
+#ifdef __NDS__
 // =============================================================================
 // Engine test, run in main.cpp to ensure engine is working properly
 // =============================================================================
@@ -516,7 +499,7 @@ void NDSComputeCallback()
 {
     //...
 }
-void engineExampleTest()
+void ndsExampleTest()
 {
     consoleDemoInit();
     iprintf("Engine test\n");
@@ -545,3 +528,4 @@ void engineExampleTest()
     engine.DestroyEntity(e);
     engine.ShutdownAll();
 }
+#endif
