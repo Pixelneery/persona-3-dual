@@ -467,15 +467,6 @@ def convert(obj_path, output_dir, config):
     blender_source = config.get("source_blender", False)
     max_tex_size = config.get("max_tex_size", None)
 
-    rgba_all = config.get("rgba", False)
-    raw_rgba_list = config.get("rgba_list", [])
-    if isinstance(raw_rgba_list, str):
-        rgba_list = [x.strip() for x in raw_rgba_list.split(",") if x.strip()]
-    elif isinstance(raw_rgba_list, list):
-        rgba_list = [str(x).strip() for x in raw_rgba_list]
-    else:
-        rgba_list = []
-
     vertex_color = config.get("color", [255, 255, 255])
     if isinstance(vertex_color, list) and len(vertex_color) == 3:
         vertex_color = tuple(vertex_color)
@@ -652,7 +643,6 @@ def convert(obj_path, output_dir, config):
     billboards.sort(key=lambda b: b["slot"])
 
     n = len(dl_groups)
-    safe_n = max(n, 1)
     bin_path = os.path.join(output_dir, f"{base_name}.bin")
     tex_list_path = os.path.join(output_dir, f"{base_name}_textures.txt")
 
