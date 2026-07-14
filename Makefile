@@ -182,9 +182,8 @@ sdcard: sdcard.img
 #---------------------------------------------------------------------------------
 $(CURDIR)/source/dialogue/%_dialogue.cpp: $(ASSETS_DIALOGUE)/%.dlg $$(wildcard $(ASSETS_DIALOGUE)/$$*.build.json)
 	@echo "  DLG   $(notdir $<)"
-	@mkdir -p $(dir $@)
-	@cd $(CURDIR)/source/dialogue && \
-		$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$*"
+	@mkdir -p $(CURDIR)/source/dialogue
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/source/dialogue/$*"
 
 dialogue: $(DIALOGUE_OUT)
 
