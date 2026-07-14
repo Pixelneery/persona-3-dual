@@ -55,6 +55,7 @@ bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitm
     // dlSizes/textureIDs arrays instead of failing cleanly.
     if (!entry || entry->textureCount > MAX_ENVIRONMENT_TEXTURES)
     {
+        iprintf("EnvironmentDbEntry textures exceeds MAX_ENVIRONMENT_TEXTURES");
         return false;
     }
 
@@ -291,7 +292,7 @@ void Environment::drawBillboards(bool faceCamera, float camX, float camY, float 
         glEnd();
 }
 
-int Environment::getPolyCount() const
+int Environment::getVertexCount() const
 {
     if (!dbEntry)
         return 0;
@@ -311,7 +312,11 @@ int Environment::getPolyCount() const
 
             for (int b = 0; b < 4; b++)
             {
-                if (((w >> (b * 8)) & 0xFF) == 0x40)
+                u32 opcode = (w >> (b * 8)) & 0xFF;
+
+                // VTX_16, VTX_10, VTX_XY, VTX_XZ, VTX_YZ, VTX_DIFF -
+                // each one emits exactly one vertex.
+                if (opcode >= 0x23 && opcode <= 0x28)
                     total++;
             }
         }

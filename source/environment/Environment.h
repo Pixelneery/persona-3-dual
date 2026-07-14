@@ -37,7 +37,7 @@ class Environment
     void draw();
     void drawBillboards(bool faceCamera, float camX, float camY, float camZ);
     void cleanup();
-    int getPolyCount() const;
+    int getVertexCount() const;
 
   private:
     const EnvironmentDbEntry* dbEntry;

@@ -35,6 +35,10 @@ class EnvironmentView : public BaseView3D
     // -------------------------------------------------
     // Room-specific hooks
     // -------------------------------------------------
+    virtual float getCameraYOffset() const
+    {
+        return 0.1f;
+    } // default
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
 

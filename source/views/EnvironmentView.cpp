@@ -297,7 +297,7 @@ ViewState EnvironmentView::update()
         }
 
         gluLookAt(camPos.cameraX,
-                  camPos.cameraY + 0.1f,
+                  camPos.cameraY + getCameraYOffset(),
                   camPos.cameraZ,
                   camPos.targetX,
                   camPos.targetY,

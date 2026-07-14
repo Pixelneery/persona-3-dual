@@ -1,40 +1,39 @@
 #pragma once
-#include "components/ui/MenuHUDScreen.h"
-#include "controllers/CharacterController.h"
-#include "controllers/UIController.h"
-#include "environments/station.h"
-#include "views/BaseView3D.h"
-#include <nds/arm9/console.h>
 
-class StationView : public BaseView3D
+#include "views/EnvironmentView.h"
+// maps
+#include "maps/station.h"
+// data
+#include "data/environmentDb.h"
+
+// Only what's actually specific to this room now lives here: the map/movement
+// tuning, the music path, and the tile/dialogue content. Everything else
+// (screen setup, UI wiring, phase handling, camera, texture loading, the
+// Environment itself, draw/cleanup) lives in EnvironmentView.
+//
+// Note there is no more `#include "environments/station.h"` - that generated
+// class (station_Environment, STATION_TEX_* enum, world-offset macros) is
+// gone. EnvironmentView owns a single, generic Environment member driven by
+// stationEnvironmentDbEntry below, and worldOffsetX/Z now come from dbEntry
+// at runtime instead of compile-time macros. tileSize is likewise inherited
+// from EnvironmentView, not redeclared here.
+class StationView : public EnvironmentView
 {
   public:
-    void init() override;
-    ViewState update() override;
-    void cleanup() override;
-    void setupEnvironment() override;
+    StationView();
+
+  protected:
+    const EnvironmentDbEntry* getEnvironmentDbEntry() override
+    {
+        return g_environmentDb[3];
+    }
+    CharacterController* createPlayerController() override;
+    void setMusic() override;
+    ViewState onTileCheck(TileType tile, u32 pressed) override;
+    void onDialogueStart() override;
 
   private:
-    touchPosition touch;
-
-    ViewPhase phase;
-    bool prevPauseState;
-    bool prevEnvironmentState;
-
-    // sub screen
-    int bgSharedSub1;
-    int bgSharedSub2;
-    int bgSharedSub3;
-    PrintConsole console;
-
-    // 3D
-    station_Environment stationEnv;
-
-    CharacterController* playerCtrl;
-    CameraPosition camPos;
-    const float tileSize = 0.062500f;
-    const float worldOffsetX = STATION_WORLD_OFFSET_X;
-    const float worldOffsetZ = STATION_WORLD_OFFSET_Z;
+    // movement and viewpoint tuning (this room's feel)
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
     const float speed = 0.02f;
     const float angleIncrement = 0.05f;
@@ -45,8 +44,4 @@ class StationView : public BaseView3D
     const float height = 0.0f;
     const float angle = 1.5708f * 2; // 180 degrees (rad)
     const float characterFacingAngle = 180.0f;
-
-    UIController* uiCtrl = UIController::getInstance();
-    GraphicsController* graphicsCtrl = GraphicsController::getInstance();
-    MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
 };
