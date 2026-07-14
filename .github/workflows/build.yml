@@ -60,6 +60,7 @@ jobs:
         with:
           fetch-depth: 0
           lfs: false # Restored via cache below
+          submodules: recursive
 
       # --- 1. LFS cache ---
       # Generate a stable hash of all LFS pointers so the cache key changes
