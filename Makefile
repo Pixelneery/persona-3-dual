@@ -229,6 +229,7 @@ jmaps: $(JMAP_OUT)
 #---------------------------------------------------------------------------------
 # ALL GRAPHICS (Dynamic explicit rules using GNU Make Macros)
 #---------------------------------------------------------------------------------
+
 # Generate the exact target paths.
 FAT_GRAPHICS_OUT := $(foreach file,$(FAT_PNG_FILES),$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
 
