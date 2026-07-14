@@ -95,3 +95,18 @@ The open-source license applied to this codebase **does not** extend to any copy
 - **Attribution (BY)**: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
 - **NonCommercial (NC)**: You may not utilize this codebase for commercial purposes.
 - **ShareAlike (SA)**: If you remix, transform, or build upon the engine code, you must distribute your contributions under the same license as the original.
+
+### Libraries
+**[ETL](https://github.com/etlcpp/etl)**
+- Copyright © 2014–2026, Embedded Template Library
+- Licensed under the MIT License
+
+**[fpm](https://github.com/MikeLankamp/fpm)**
+- Copyright © 2019, Mike Lankamp
+- Licensed under the MIT License
+
+**[libnds](https://github.com/devkitPro/libnds)**
+- Copyright © 2005-2024, Michael Noland (joat), Jason Rogers (dovoto), Dave Murphy (WinterMute), fincs
+
+**[maxmod](https://github.com/devkitPro/maxmod)**
+- Copyright © 2008, Mukunda Johnson

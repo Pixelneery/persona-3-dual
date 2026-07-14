@@ -29,7 +29,7 @@ endif
 TARGET      :=  persona-3-dual
 BUILD       :=  build
 SOURCES 	:= source source/views source/controllers source/core source/data source/dialogue source/models source/environments source/components source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/helpers source/battleActions/armours source/battleActions/personas source/battleActions/shoes source/battleActions/weapons source/components/ui source/components/menu
-INCLUDES    :=  include source
+INCLUDES    :=  include source libs/aegis_engine/include libs/aegis_engine/libs/etl/include libs/aegis_engine/libs/fpm/include
 SFX         :=  assets/sfx
 
 GAME_TITLE     := Persona 3 Dual
@@ -291,9 +291,13 @@ ifneq ($(BUILD),$(notdir $(CURDIR)))
 DATA_FILES := $(shell find $(CURDIR)/data -type f)
 endif
 sdcard.img: $(OUTPUT).nds $(DATA_FILES)
+ifeq ($(SKIPSD), 1)
+	@echo "Skipping sdcard.img generation..."
+else
 	@echo "Generating sdcard.img (2GB)..."
 	@$(VENV_PYTHON) -c "with open('sdcard.img', 'wb') as f: f.truncate(512 * 1024 * 1024 * 4)"
 	@mformat -i sdcard.img -v P3D_SD -F ::
 	@mcopy -i sdcard.img $(OUTPUT).nds ::/
 	@mcopy -s -i sdcard.img $(CURDIR)/data ::/
 	@echo "Successfully built sdcard.img"
+endif

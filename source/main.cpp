@@ -22,16 +22,9 @@
 #include "views/VideoView.h"
 
 // controllers
-#include "controllers/AnimationController.h"
-#include "controllers/GraphicsController.h"
-#include "controllers/MusicController.h"
 #include "controllers/SaveController.h"
-#include "controllers/VideoController.h"
 
 // components
-#include "components/menu/BattleMenuComponent.h"
-#include "components/menu/PauseMenuComponent.h"
-#include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
 
 // sfx
@@ -50,21 +43,16 @@
 #include "battleActions/skills/SkillDb.h"
 #include "battleActions/weapons/WeaponDb.h"
 
+// debug
+#include "tests/engine/ndsExample.hpp"
+bool testEngine = true;
+
 // variables
 volatile int frame = 0;
 int fps = 0;
 int fpsTimer = 0;
 std::string fatBasePath = "";
 Save saveData;
-
-// controllers
-SaveController saveCtrl;
-MusicController musicCtrl;
-VideoController videoCtrl;
-AnimationController characterAnimationCtrl;
-SpriteController spriteCtrl;
-GraphicsController graphicsCtrl;
-UIController uiCtrl;
 
 // models
 unsigned int** bitmapsCharacter = nullptr;
@@ -76,21 +64,11 @@ static unsigned int* bitmapsMakoto[MODEL_MAKOTO_TEX_COUNT] = {nullptr};
 static unsigned int* loadCharacterTexture(const std::string& name, bool isFemc)
 {
     std::string basePath = fatBasePath + "models/" + (isFemc ? "kotone/" : "makoto/");
-    GraphicAsset asset = graphicsCtrl.loadGrit(basePath + name);
+    GraphicAsset asset = GraphicsController::getInstance()->loadGrit(basePath + name);
     unsigned int* tiles = reinterpret_cast<unsigned int*>(asset.tiles);
-    // graphicsCtrl.unloadGrit(asset);
+    // GraphicsController::getInstance()->unloadGrit(asset);
     return tiles;
 }
-
-// components
-PauseMenuComponent pauseMenuCmpt;
-bool enableBillboards = true;
-bool enableCharacterAnim = true;
-bool enableDebugPrint = false;
-bool isPauseMenuActive = false;
-BattleMenuComponent battleMenuCmpt;
-MenuHUDScreen menuHUDScreen;
-DialogueScreen dialogueScreen;
 
 BaseView* currentView = nullptr;
 bool prevFemcMode;
@@ -150,6 +128,13 @@ int main(int argc, char* argv[])
 {
     irqSet(IRQ_VBLANK, Vblank);
 
+    if (testEngine)
+    {
+        ndsExampleTest();
+        while (1)
+            swiWaitForVBlank();
+    }
+
     // Initialize DLDI/FAT instead
     if (!fatInitDefault())
     {
@@ -182,7 +167,7 @@ int main(int argc, char* argv[])
     mmInitDefaultMem((mm_addr)soundbank_bin);
 
     // load save data
-    if (!saveCtrl.read())
+    if (!SaveController::getInstance()->read())
     {
         consoleDemoInit();
         iprintf("Failed to read save data!\n");
@@ -205,6 +190,11 @@ int main(int argc, char* argv[])
     PersonaDb::Initialize();
     EnemyDb::Initialize();
     CharacterProfileDb::Initialize();
+    //Setup globals
+    Globals::enableDebugPrint = false;
+    Globals::enableBillboards = true;
+    Globals::enableCharacterAnim = true;
+    Globals::isPauseMenuActive = false;
 
     // seed random using DS hardware timer
     TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
