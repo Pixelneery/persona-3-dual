@@ -11,18 +11,37 @@
 
 namespace
 {
-// Loads a single .grit asset and returns its raw tile pointer, stashing the
-// owning GraphicAsset in `asset` so it can be unloaded once the texture has
-// been uploaded to VRAM.
+/**
+ * @brief Loads a single .grit asset and returns its raw tile pointer.
+ *
+ * Stashes the owning GraphicAsset in @p asset so the caller can unload it
+ * once the texture has been uploaded to VRAM.
+ *
+ * @param path  Full path (base path + grit base name) of the asset to load.
+ * @param asset Output parameter that receives the loaded GraphicAsset,
+ *              which the caller is responsible for unloading later.
+ * @return Raw pointer to the asset's tile data, reinterpreted as
+ *         unsigned int, suitable for passing to the texture upload code.
+ */
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = GraphicsController::getInstance()->loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
-// environmentDb.cpp stores the *compiled* texture filename, e.g.
-// "f007_002wall01.img.bin". loadGrit wants the .grit base name instead
-// (e.g. "f007_002wall01"), so strip the known suffix.
+/**
+ * @brief Strips the compiled ".img.bin" suffix from a texture filename to
+ *        recover the base name expected by loadGrit.
+ *
+ * environmentDb.cpp stores the *compiled* texture filename, e.g.
+ * "f007_002wall01.img.bin", but loadGrit wants the .grit base name instead
+ * (e.g. "f007_002wall01").
+ *
+ * @param compiledFileName The compiled texture filename as stored in the
+ *                          environment database (e.g. "name.img.bin").
+ * @return The same name with a trailing ".img.bin" suffix removed, or the
+ *         name unchanged if it does not end with that suffix.
+ */
 std::string gritBaseName(const char* compiledFileName)
 {
     std::string name(compiledFileName);
@@ -35,10 +54,19 @@ std::string gritBaseName(const char* compiledFileName)
 }
 } // namespace
 
+/**
+ * @brief Loads and uploads this room's environment geometry and textures,
+ *        driven entirely by dbEntry (environmentDb.cpp), with no per-room
+ *        texture-slot code and no per-room generated class needed.
+ *
+ * Loads each texture slot's .grit asset from disk, hands the resulting
+ * bitmap pointers to env.load() to build display lists and upload
+ * textures to VRAM, then unloads the now-redundant .grit assets. Logs a
+ * message if env.load() fails, since a failed load otherwise leaves env
+ * silently rendering nothing.
+ */
 void EnvironmentView::setupEnvironment()
 {
-    // setup environment model - fully data-driven from environmentDb.cpp,
-    // no per-room texture-slot code and no per-room generated class needed.
     GraphicAsset envTextures[MAX_ENVIRONMENT_TEXTURES] = {};
     const unsigned int* bitmapsEnv[MAX_ENVIRONMENT_TEXTURES] = {nullptr};
 
@@ -51,9 +79,6 @@ void EnvironmentView::setupEnvironment()
 
     if (!env.load(dbEntry, bitmapsEnv))
     {
-        // Previously ignored: a failed load() leaves dbEntry null inside
-        // env, so draw()/drawBillboards() quietly render nothing. Surface
-        // it instead of shipping another silent black screen.
         iprintf("EnvironmentView: failed to load environment '%s'\n", dbEntry->name);
     }
 
@@ -63,20 +88,27 @@ void EnvironmentView::setupEnvironment()
     }
 }
 
+/**
+ * @brief One-time setup for this room's view: resolves room metadata,
+ *        initializes sub-screen backgrounds/console, the player controller,
+ *        music, character model, environment geometry/textures, dialogue
+ *        target, pause/battle menus, and the UI screens.
+ *
+ * @note Resolves this room's EnvironmentDbEntry once, up front, into
+ *       dbEntry. Everything below (and setupEnvironment()/update()/
+ *       cleanup()) reads from that member instead of re-deriving it or
+ *       relying on a per-room generated type. If no entry can be resolved,
+ *       init() logs an error and returns immediately, since nothing below
+ *       this point can run without a valid entry (setupEnvironment()
+ *       immediately dereferences dbEntry->name).
+ */
 void EnvironmentView::init()
 {
     BaseView3D::init();
 
-    // resolve this room's metadata once, up front - everything below (and
-    // setupEnvironment/update/cleanup) reads from this instead of
-    // re-deriving it or knowing a per-room generated type.
     dbEntry = getEnvironmentDbEntry();
     if (!dbEntry)
     {
-        // Nothing below this point can run without a valid entry -
-        // setupEnvironment() immediately dereferences dbEntry->name. Fail
-        // loud here rather than crashing a few lines down or continuing on
-        // into yet another silent black screen.
         iprintf("EnvironmentView::init - no EnvironmentDbEntry for this room\n");
         return;
     }
@@ -132,7 +164,6 @@ void EnvironmentView::init()
     pauseMenuCmpt->init(bgSharedSub1);
 
     // setup battle menu
-    // setup battle menu
     battleMenuCmpt->init(-1, &isBattleMenuActive);
 
     // setup UI
@@ -161,6 +192,18 @@ void EnvironmentView::init()
     phase = ViewPhase::Environment;
 }
 
+/**
+ * @brief Per-frame update for this room's view: advances the current
+ *        ViewPhase (Battle, Pause, Dialogue, or Environment), updates
+ *        input, camera, environment rendering, character rendering, and
+ *        music, and reports whether a phase transition to a different
+ *        ViewState should occur.
+ *
+ * @return ViewState::KEEP_CURRENT to remain on this view for another
+ *         frame, or another ViewState value (as returned by the pause menu
+ *         or onTileCheck()) to signal that the caller should transition
+ *         away from this view entirely.
+ */
 ViewState EnvironmentView::update()
 {
     glMatrixMode(GL_MODELVIEW);
@@ -361,16 +404,18 @@ ViewState EnvironmentView::update()
     return ViewState::KEEP_CURRENT;
 }
 
+/**
+ * @brief Tears down everything this view set up: base view state, the
+ *        loaded environment (display lists/textures), the UI controller,
+ *        and the player controller.
+ */
 void EnvironmentView::cleanup()
 {
     BaseView::cleanup();
 
-    // cleanup environment
     env.cleanup();
-    // reset ui
     uiCtrl->cleanup();
 
-    // cleanup controllers
     delete playerCtrl;
     playerCtrl = nullptr;
 }

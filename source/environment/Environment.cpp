@@ -6,6 +6,16 @@
 #include <stdlib.h>
 #include <string>
 
+/**
+ * @brief Converts a raw texture dimension in pixels to the corresponding
+ *        libnds TEXTURE_SIZE_* enum value.
+ *
+ * @param size Texture width/height in pixels. Expected to be one of the
+ *             power-of-two values 8, 16, 32, 64, 128, 256, 512, or 1024.
+ * @return The matching TEXTURE_SIZE_* constant, or TEXTURE_SIZE_8 as a
+ *         fallback if @p size does not match a supported value (a message
+ *         is also printed to the debug console in that case).
+ */
 static int textureSizeEnum(int size)
 {
     switch (size)
@@ -32,6 +42,10 @@ static int textureSizeEnum(int size)
     }
 }
 
+/**
+ * @brief Constructs an empty Environment with all texture and display-list
+ *        slots cleared and no database entry attached.
+ */
 Environment::Environment() : dbEntry(nullptr)
 {
     for (int i = 0; i < MAX_ENVIRONMENT_TEXTURES; i++)
@@ -42,11 +56,43 @@ Environment::Environment() : dbEntry(nullptr)
     }
 }
 
+/**
+ * @brief Loads environment geometry (display lists) and textures from the
+ *        compiled .bin file described by an EnvironmentDbEntry.
+ *
+ * Always begins with a hard reset (cleanup()) of any previously loaded
+ * state, so this is safe to call repeatedly across room transitions
+ * without leaking display lists or GPU texture slots. On any failure the
+ * partially loaded state is cleaned up again before returning.
+ *
+ * @param entry   Pointer to the database entry describing this environment
+ *                (name, texture metadata/count, binary file name). Must be
+ *                non-null and have textureCount <= MAX_ENVIRONMENT_TEXTURES,
+ *                otherwise this fails immediately.
+ * @param bitmaps Array of raw bitmap pointers, one per texture slot, to be
+ *                uploaded to VRAM. May be null, or contain null entries, in
+ *                which case the corresponding texture slot(s) are skipped.
+ * @return true if the binary file was opened, validated, and fully loaded
+ *         (display lists and textures); false if @p entry was invalid, the
+ *         file could not be opened or failed magic/size validation, or an
+ *         allocation failed while reading display list data.
+ *
+ * @note entry->binaryFile is a build-time string baked in by
+ *       obj2environment.py (e.g. "environments/iwatodai_dorm/iwatodai_dorm.bin").
+ *       It cannot know the runtime fat/SD mount root, so - like every other
+ *       file load in this codebase (textures, music, models) - it must be
+ *       combined with fatBasePath before fopen() can find it.
+ *       ASSUMPTION: binaryFile already contains the full
+ *       "environments/<name>/" relative path, the same way it's referenced
+ *       on the export side. If the printed path below is missing that
+ *       folder, binaryFile is actually just the bare filename and this
+ *       needs to be fatBasePath + "environments/" + entry->name + "/" +
+ *       entry->binaryFile instead - check environmentDb.cpp's dorm entry to
+ *       confirm which.
+ */
 bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitmaps[])
 {
-    // ----------------------------------------------------
-    // HARD SAFE ENTRY RESET (prevents cross-scene corruption)
-    // ----------------------------------------------------
+    // Hard safe entry reset - prevents cross-scene corruption.
     cleanup();
 
     // Guard against a missing/oversized db entry before touching it. A null
@@ -61,19 +107,7 @@ bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitm
 
     dbEntry = entry;
 
-    // entry->binaryFile is a build-time string baked in by obj2environment.py
-    // (e.g. "environments/iwatodai_dorm/iwatodai_dorm.bin"). It cannot know
-    // the runtime fat/SD mount root, so - like every other file load in this
-    // codebase (textures, music, models) - it has to be combined with
-    // fatBasePath before fopen() can find it. This was previously missing
-    // here, which is the most likely reason the file silently failed to
-    // open on every load.
-    // ASSUMPTION: binaryFile already contains the full "environments/<name>/"
-    // relative path, the same way it's referenced on the export side. If the
-    // printed path below is missing that folder, binaryFile is actually just
-    // the bare filename and this needs to be
-    // fatBasePath + "environments/" + entry->name + "/" + entry->binaryFile
-    // instead - check environmentDb.cpp's dorm entry to confirm which.
+    // See @note above re: fatBasePath + ASSUMPTION about binaryFile's path.
     const std::string fullBinaryPath = fatBasePath + "environments/" + entry->name + "/" + entry->binaryFile;
 
     if (Globals::enableDebugPrint)
@@ -118,9 +152,8 @@ bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitm
         return false;
     }
 
-    // ----------------------------------------------------
-    // DISPLAY LIST LOAD (fully guarded)
-    // ----------------------------------------------------
+    /** @note Display list load - fully guarded against short reads and
+     *        allocation failure. */
     for (u32 i = 0; i < groupCount; i++)
     {
         if (fread(&dlSizes[i], sizeof(u32), 1, file) != 1)
@@ -156,9 +189,7 @@ bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitm
 
     fclose(file);
 
-    // ----------------------------------------------------
-    // TEXTURE UPLOAD (safe binding only)
-    // ----------------------------------------------------
+    /** @note Texture upload - safe binding only. */
     for (int i = 0; i < entry->textureCount; i++)
     {
         textureIDs[i] = 0;
@@ -182,6 +213,15 @@ bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitm
     return true;
 }
 
+/**
+ * @brief Renders every loaded texture/display-list pair for the currently
+ *        loaded environment.
+ *
+ * Does nothing if no environment is currently loaded (dbEntry is null).
+ * Skips any texture slot that has no bound texture ID, and skips the draw
+ * call itself (but still binds the texture) if that slot has no display
+ * list, guarding against corrupted or missing display-list pointers.
+ */
 void Environment::draw()
 {
     if (!dbEntry)
@@ -205,6 +245,27 @@ void Environment::draw()
     }
 }
 
+/**
+ * @brief Renders every billboard quad defined for the currently loaded
+ *        environment, batching consecutive billboards that share a texture
+ *        slot into a single glBegin/glEnd(GL_QUADS) block.
+ *
+ * Does nothing if no environment is loaded or it has no billboards. Any
+ * billboard referencing an out-of-range or unbound texture slot is
+ * skipped.
+ *
+ * @param faceCamera If true, each billboard's right vector is recomputed
+ *                    every call so it always faces the given camera
+ *                    position (classic screen-facing billboarding). If
+ *                    false, billboards use a fixed world-axis-aligned
+ *                    orientation.
+ * @param camX World-space X coordinate of the camera, used only when
+ *             @p faceCamera is true.
+ * @param camY World-space Y coordinate of the camera (unused; billboards
+ *             only rotate about the Y axis).
+ * @param camZ World-space Z coordinate of the camera, used only when
+ *             @p faceCamera is true.
+ */
 void Environment::drawBillboards(bool faceCamera, float camX, float camY, float camZ)
 {
     if (!dbEntry || dbEntry->billboardCount == 0)
@@ -292,50 +353,23 @@ void Environment::drawBillboards(bool faceCamera, float camX, float camY, float 
         glEnd();
 }
 
-int Environment::getVertexCount() const
-{
-    if (!dbEntry)
-        return 0;
-
-    int total = 0;
-
-    for (int i = 0; i < dbEntry->textureCount; i++)
-    {
-        if (!displayLists[i] || dlSizes[i] == 0)
-            continue;
-
-        const u32* dl = &displayLists[i][1];
-
-        for (u32 j = 0; j < dlSizes[i]; j++)
-        {
-            u32 w = dl[j];
-
-            for (int b = 0; b < 4; b++)
-            {
-                u32 opcode = (w >> (b * 8)) & 0xFF;
-
-                // VTX_16, VTX_10, VTX_XY, VTX_XZ, VTX_YZ, VTX_DIFF -
-                // each one emits exactly one vertex.
-                if (opcode >= 0x23 && opcode <= 0x28)
-                    total++;
-            }
-        }
-    }
-
-    return total;
-}
-
+/**
+ * @brief Frees all display lists and deletes all GPU textures owned by
+ *        this Environment, and clears the current database entry.
+ *
+ * Safe to call at any time, including when no environment is loaded (e.g.
+ * from load()'s own failure paths, before dbEntry is set, or on the very
+ * first load of a fresh Environment).
+ *
+ * @note Always sweeps the full fixed-size arrays rather than looping to
+ *       dbEntry->textureCount. Looping to the "current" entry's count
+ *       would mean a load() that failed partway through - or simply a room
+ *       with fewer texture slots than the one loaded before it - could
+ *       leave stale, un-freed pointers sitting past that count, silently
+ *       leaking memory and VRAM texture slots across room transitions.
+ */
 void Environment::cleanup()
 {
-    // Always sweep the full fixed-size arrays rather than looping to
-    // dbEntry->textureCount. Looping to the "current" entry's count meant a
-    // load() that failed partway through - or simply a room with fewer
-    // texture slots than the one loaded before it - could leave stale,
-    // un-freed pointers sitting past that count, silently leaking memory
-    // and VRAM texture slots across room transitions. Sweeping the full
-    // array unconditionally also makes this safe to call even when dbEntry
-    // is null (e.g. from load()'s own failure paths, before dbEntry is set,
-    // or on the very first load of a fresh Environment).
     for (int i = 0; i < MAX_ENVIRONMENT_TEXTURES; i++)
     {
         if (displayLists[i])
