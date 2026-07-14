@@ -119,14 +119,6 @@ ViewState MainMenuView::update()
 {
     scanKeys();
     int pressed = keysDown();
-    musicCtrl.update();
-
-    ViewState result = mainMenuCmpt.update(pressed);
-    if (result != ViewState::KEEP_CURRENT)
-    {
-        musicCtrl->pause();
-        return result;
-    }
     musicCtrl->update();
 
     if (isSilhouetteStillMoving)
@@ -169,7 +161,7 @@ ViewState MainMenuView::update()
     ViewState result = mainMenuCmpt.update(pressed);
     if (result != ViewState::KEEP_CURRENT)
     {
-        musicCtrl.pause();
+        musicCtrl->pause();
         return result;
     }
 
