@@ -17,8 +17,7 @@
 class TextControllerSub
 {
   public:
-    TextControllerSub(const std::string& fontFilePath = "skip-std-b/size-8/size-8",
-                      int bgID = -1); //TODO: REMOVE DEFAULT
+    TextControllerSub(const std::string& fontFilePath = "skip-std-b/size-8/size-8"); //TODO: REMOVE DEFAULT
     ~TextControllerSub();
 
     /**

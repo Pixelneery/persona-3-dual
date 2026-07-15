@@ -6,11 +6,12 @@
 
 //TODO: Make this more dynamic? i.e. let us choose video mode, vram bank, ...
 
-TextControllerSub::TextControllerSub(const std::string& fontFilePath, int bgID)
-    : fontBitmap(nullptr), fontBitmapWidth(0), fontBitmapHeight(0), fontLineHeight(0), fontPalette(nullptr), bgID(bgID)
+TextControllerSub::TextControllerSub(const std::string& fontFilePath)
+    : fontBitmap(nullptr), fontBitmapWidth(0), fontBitmapHeight(0), fontLineHeight(0), fontPalette(nullptr)
 {
     std::string fullPath = fatBasePath + "fonts/" + fontFilePath;
 
+    bgID = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
     //bgSetScale(bgID, 1 << 8, 1 << 8);
     videoBuffer = (uint16_t*)bgGetGfxPtr(bgID);
     bgSetPriority(bgID, 0);
