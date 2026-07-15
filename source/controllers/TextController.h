@@ -1,5 +1,5 @@
 /**
- * @file BitmapTextController.h
+ * @file TextController.h
  * @brief Controller for rendering text from a bitmap on the Nintendo DS.
  * @author ggmini
  */
