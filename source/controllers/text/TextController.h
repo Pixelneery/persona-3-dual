@@ -25,7 +25,7 @@ struct Text
 class TextController
 {
   public:
-    TextController(const std::string& fontFilePath = "skip-std-b/size-8/size-8"); //TODO: REMOVE DEFAULT
+    TextController(const std::string& fontFilePath = "cosmetica/size-32/size-32"); //TODO: REMOVE DEFAULT
     ~TextController();
 
     /**
@@ -119,7 +119,6 @@ class TextController
 
     void drawPixel(int x, int y, int color);
     bool checkWordWrap(const std::string& text, int startX);
-    int extractPixelValue(const int pixelIndex);
     int extractIntValue(const std::string& line, const std::string& key);
     void haltOnError(const std::string& errorMessage);
 };

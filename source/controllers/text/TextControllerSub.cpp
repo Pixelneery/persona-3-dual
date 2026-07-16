@@ -73,7 +73,7 @@ void* TextControllerSub::openFile(const std::string& path)
 
     return buffer;
 }
-
+//Can we combine these?
 void* TextControllerSub::openFile(const std::string& path, u32& size)
 {
     FILE* file = fopen(path.c_str(), "rb");
@@ -238,13 +238,10 @@ void TextControllerSub::drawText(const std::string& text, int startX, int startY
                 sassert(pixelIndex / 2 < fontBitmapWidth * fontBitmapHeight / 2,
                         "Pixel index out of bounds for font bitmap");
 
-                // TODO: check which fontlineheight is the minimum where we need to start doing this
-                //int pixelValue = fontLineHeight > 16 ? extractPixelValue(pixelIndex) : fontBitmap[pixelIndex];
-
                 int pixelValue = fontBitmap[pixelIndex];
 
                 //If pixel is not black, draw it to screen (we're using 2 to try to filter out pixels that would be too dark to be seen)
-                if (pixelValue > 0)
+                if (fontBitmap[pixelIndex] > 10 && pixelValue > 0)
                 {
                     int screenX = cursorX + x;
                     int screenY = cursorY + g.yOffset + y;
@@ -297,22 +294,6 @@ int TextControllerSub::extractIntValue(const std::string& line, const std::strin
     }
 
     return std::stoi(line.substr(dataStart, dataEnd - dataStart));
-}
-
-int TextControllerSub::extractPixelValue(const int pixelIndex)
-{
-    // Divide index by 2 to target the correct byte in memory
-    std::uint8_t rawByte = fontBitmap[pixelIndex / 2];
-
-    // Extract the proper 4-bit color index depending on pixel parity
-    if (pixelIndex % 2 == 0)
-    {
-        return rawByte & 0x0F; // First pixel is lower 4 bits
-    }
-    else
-    {
-        return (rawByte >> 4) & 0x0F; // Second pixel is upper 4 bits
-    }
 }
 
 //TODO: FIX: THIS IS CURRENTLY BROKEN

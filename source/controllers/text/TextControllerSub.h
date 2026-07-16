@@ -17,7 +17,7 @@
 class TextControllerSub
 {
   public:
-    TextControllerSub(const std::string& fontFilePath = "skip-std-b/size-8/size-8"); //TODO: REMOVE DEFAULT
+    TextControllerSub(const std::string& fontFilePath = "cosmetica/size-8/size-8"); //TODO: REMOVE DEFAULT
     ~TextControllerSub();
 
     /**
@@ -53,8 +53,6 @@ class TextControllerSub
     void testPalette();
 
   private:
-    uint16_t* videoBuffer;
-
     /**
      * @brief Loads the font bitmap from a file.
      *
@@ -100,6 +98,41 @@ class TextControllerSub
      */
     void* openFile(const std::string& path, u32& size);
 
+    /**
+     * @brief Draws a single pixel at the specified coordinates with the specified color.
+     *
+     * @param x The x-coordinate of the pixel to be drawn.
+     * @param y The y-coordinate of the pixel to be drawn.
+     * @param paletteIndex The index of the color in the palette to be used for the pixel.
+     */
+    void drawPixel(int x, int y, int paletteIndex);
+    /**
+     * @brief Checks if next word in a string will exceed the screen width when drawn.
+     *
+     * @param text The text to be printed.
+     * @param startX The x-coordinate from which to start drawing the word.
+     * @return true if the next word will exceed the screen width, false otherwise.
+     */
+    bool checkWordWrap(const std::string& text, int startX);
+    /**
+     * @brief Extracts an integer value from a line of text based on a specified key.
+     *
+     * @param line The line of text from which to extract the integer value.
+     * @param key The key that precedes the integer value in the line of text.
+     * @return The integer value extracted from the line of text.
+     * @note This function assumes that the line takes the form "key=value ".
+     */
+    int extractIntValue(const std::string& line, const std::string& key);
+    /**
+     * @brief Halts the program and displays an error message.
+     *
+     * @param errorMessage The error message to be displayed.
+     * @note This function will enter an infinite loop after displaying the error message, effectively halting the program.
+     * It is intended for use in critical error situations where continuing execution could lead to undefined behavior or further errors.
+     */
+    void haltOnError(const std::string& errorMessage);
+
+    uint16_t* videoBuffer;
     std::uint8_t* fontBitmap;
     std::uint16_t* fontPalette;
     int fontBitmapWidth;
@@ -108,10 +141,4 @@ class TextControllerSub
     uint16_t bgID; // Store the background ID for cleanup
 
     Glyph fontGlyphs[256];
-
-    void drawPixel(int x, int y, int color);
-    bool checkWordWrap(const std::string& text, int startX);
-    int extractPixelValue(const int pixelIndex);
-    int extractIntValue(const std::string& line, const std::string& key);
-    void haltOnError(const std::string& errorMessage);
 };
