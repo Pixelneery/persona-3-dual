@@ -11,7 +11,7 @@ TextControllerSub::TextControllerSub(const std::string& fontFilePath)
 {
     std::string fullPath = fatBasePath + "fonts/" + fontFilePath;
 
-    bgID = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 6, 0);
+    bgID = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 4, 0);
     //bgSetScale(bgID, 1 << 8, 1 << 8);
     videoBuffer = (uint16_t*)bgGetGfxPtr(bgID);
     bgSetPriority(bgID, 0);
