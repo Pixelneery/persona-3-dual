@@ -274,7 +274,7 @@ void TextController::drawText(const std::string& text, int startX, int startY, i
 
 void TextController::clearScreen()
 {
-    dmaFillHalfWords(0, videoBuffer, 256 * 256 * sizeof(uint16_t)); // Clear the video buffer
+    dmaFillHalfWords(0, videoBuffer, 256 * 256 * sizeof(uint8_t)); // Clear the video buffer
 }
 
 // Helper Functions ======================================================
