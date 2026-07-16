@@ -4,7 +4,11 @@
 #include <fstream>
 #include <sstream>
 
-//TODO: Make this more dynamic? i.e. let us choose video mode, vram bank, ...
+//TODO: Settings? i.e. video mode, vram bank, etc.
+//TODO: Colors
+//TODO: Fix Word wrapping
+//TODO: Multiple font files & singleton solution?
+//TODO: Wreorder warning
 
 TextController::TextController(const std::string& fontFilePath)
     : fontBitmap(nullptr), fontBitmapWidth(0), fontBitmapHeight(0), fontLineHeight(0), fontPalette(nullptr)
@@ -14,7 +18,7 @@ TextController::TextController(const std::string& fontFilePath)
     vramSetBankE(VRAM_E_MAIN_BG);
     int bgID = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
     bgSetScale(bgID, 1 << 8, 1 << 8);
-    videoBuffer = (uint16_t*)0x06080000; //bgGetGfxPtr(bgID);
+    videoBuffer = (uint16_t*)bgGetGfxPtr(bgID);
     bgSetPriority(bgID, 0);
 
     if (!loadFontBitmap(fullPath + ".img.bin"))
@@ -223,11 +227,21 @@ void TextController::drawText(const std::string& text, int startX, int startY, i
         Glyph g = fontGlyphs[static_cast<unsigned char>(c)];
 
         //Handle automatic word wrapping to prevent drawing outside the screen bounds
-        //TODO: Look ahead for whole words (fix check word wrap)
-        if (cursorX + g.width > 256)
+        if (c == ' ')
         {
-            cursorX = startX;
-            cursorY += fontLineHeight + 2;
+            std::string nextWord = "";
+            int i = 0;
+            while (i < text.size() && text[i] != ' ' && text[i] != '\n')
+            {
+                nextWord += text[i];
+                i++;
+            }
+            if (checkWordWrap(nextWord, cursorX))
+            {
+                cursorX = startX;
+                cursorY += fontLineHeight + 2;
+                continue;
+            }
         }
 
         for (int y = 0; y < g.height; y++)
@@ -299,7 +313,6 @@ int TextController::extractIntValue(const std::string& line, const std::string& 
     return std::stoi(line.substr(dataStart, dataEnd - dataStart));
 }
 
-//TODO: FIX: THIS IS CURRENTLY BROKEN
 bool TextController::checkWordWrap(const std::string& word, int startX)
 {
     int cursorX = startX;

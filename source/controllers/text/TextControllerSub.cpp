@@ -29,7 +29,7 @@ TextControllerSub::TextControllerSub(const std::string& fontFilePath)
 
 TextControllerSub::~TextControllerSub()
 {
-    //bgSetPriority(bgID, 3); //TODO: why dos this crash the game...on the second call
+    //bgSetPriority(bgID, 3); //TODO: This currently crashes the game on the second call, investigate why
     bgSetScroll(bgID, 0, 0);
     bgSetPriority(0, 0);
 
@@ -220,11 +220,21 @@ void TextControllerSub::drawText(const std::string& text, int startX, int startY
         Glyph g = fontGlyphs[static_cast<unsigned char>(c)];
 
         //Handle automatic word wrapping to prevent drawing outside the screen bounds
-        //TODO: Look ahead for whole words (fix check word wrap)
-        if (cursorX + g.width > 256)
+        if (c == ' ')
         {
-            cursorX = startX;
-            cursorY += fontLineHeight + 2;
+            std::string nextWord = "";
+            int i = 0;
+            while (i < text.size() && text[i] != ' ' && text[i] != '\n')
+            {
+                nextWord += text[i];
+                i++;
+            }
+            if (checkWordWrap(nextWord, cursorX))
+            {
+                cursorX = startX;
+                cursorY += fontLineHeight + 2;
+                continue;
+            }
         }
 
         for (int y = 0; y < g.height; y++)
@@ -296,7 +306,6 @@ int TextControllerSub::extractIntValue(const std::string& line, const std::strin
     return std::stoi(line.substr(dataStart, dataEnd - dataStart));
 }
 
-//TODO: FIX: THIS IS CURRENTLY BROKEN
 bool TextControllerSub::checkWordWrap(const std::string& word, int startX)
 {
     int cursorX = startX;
