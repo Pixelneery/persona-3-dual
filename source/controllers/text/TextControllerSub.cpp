@@ -4,8 +4,6 @@
 #include <fstream>
 #include <sstream>
 
-//TODO: Make this more dynamic? i.e. let us choose video mode, vram bank, ...
-
 TextControllerSub::TextControllerSub(const std::string& fontFilePath)
     : fontBitmap(nullptr), fontBitmapWidth(0), fontBitmapHeight(0), fontLineHeight(0), fontPalette(nullptr)
 {
@@ -217,8 +215,6 @@ void TextControllerSub::drawText(const std::string& text, int startX, int startY
             continue;
         }
 
-        Glyph g = fontGlyphs[static_cast<unsigned char>(c)];
-
         //Handle automatic word wrapping to prevent drawing outside the screen bounds
         if (c == ' ')
         {
@@ -235,33 +231,16 @@ void TextControllerSub::drawText(const std::string& text, int startX, int startY
                 cursorY += fontLineHeight + 2;
                 continue;
             }
-        }
-
-        for (int y = 0; y < g.height; y++)
-        {
-            for (int x = 0; x < g.width; x++)
+            else
             {
-                int srcX = g.xPos + x;
-                int srcY = g.yPos + y;
-                int pixelIndex = srcY * fontBitmapWidth + srcX;
-
-                sassert(pixelIndex / 2 < fontBitmapWidth * fontBitmapHeight / 2,
-                        "Pixel index out of bounds for font bitmap");
-
-                int pixelValue = fontBitmap[pixelIndex];
-
-                //If pixel is not black, draw it to screen (we're using 2 to try to filter out pixels that would be too dark to be seen)
-                if (fontBitmap[pixelIndex] > 10 && pixelValue > 0)
-                {
-                    int screenX = cursorX + x;
-                    int screenY = cursorY + g.yOffset + y;
-                    //Only draw if within screen bounds otherwise disregard (from my experience this shouldn't crash the game, but text wrapping around would still be a bit of a problem)
-                    if (screenX >= 0 && screenX < 256 && screenY >= 0 && screenY < 192)
-                        drawPixel(screenX, screenY, pixelValue);
-                }
+                cursorX += SPACE_WIDTH;
+                continue;
             }
         }
-        cursorX += g.width + 1;
+
+        Glyph g = fontGlyphs[static_cast<unsigned char>(c)];
+        drawGlyph(g, cursorX, cursorY, color);
+        cursorX += g.width + LETTER_SPACING;
     }
 }
 
@@ -271,6 +250,34 @@ void TextControllerSub::clearScreen()
 }
 
 // Helper Functions ======================================================
+
+void TextControllerSub::drawGlyph(const Glyph& glyph, int cursorX, int cursorY, int color)
+{
+    for (int y = 0; y < glyph.height; y++)
+    {
+        for (int x = 0; x < glyph.width; x++)
+        {
+            int srcX = glyph.xPos + x;
+            int srcY = glyph.yPos + y;
+            int pixelIndex = srcY * fontBitmapWidth + srcX;
+
+            sassert(pixelIndex / 2 < fontBitmapWidth * fontBitmapHeight / 2,
+                    "Pixel index out of bounds for font bitmap");
+
+            int pixelValue = fontBitmap[pixelIndex];
+
+            //If pixel is not black, draw it to screen (we're using 2 to try to filter out pixels that would be too dark to be seen)
+            if (fontBitmap[pixelIndex] > 10 && pixelValue > 0)
+            {
+                int screenX = cursorX + x;
+                int screenY = cursorY + glyph.yOffset + y;
+                //Only draw if within screen bounds otherwise disregard (from my experience this shouldn't crash the game, but text wrapping around would still be a bit of a problem)
+                if (screenX >= 0 && screenX < 256 && screenY >= 0 && screenY < 192)
+                    drawPixel(screenX, screenY, pixelValue);
+            }
+        }
+    }
+}
 
 void TextControllerSub::drawPixel(int x, int y, int paletteIndex)
 {

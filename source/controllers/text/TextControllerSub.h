@@ -29,6 +29,7 @@ class TextControllerSub
      * @param color The color of the text in ARGB16 format. Default is white.
      */
     void drawText(const std::string& text, int x, int y, int color = ARGB16(1, 31, 31, 31));
+    void drawGlyph(const Glyph& glyph, int x, int y, int color);
     /**
      * @brief Clears the screen.
      *
@@ -138,7 +139,9 @@ class TextControllerSub
     int fontBitmapWidth;
     int fontBitmapHeight;
     int fontLineHeight;
-    uint16_t bgID; // Store the background ID for cleanup
+    uint16_t bgID;
 
+    int LETTER_SPACING = 1;
+    int SPACE_WIDTH = 4;
     Glyph fontGlyphs[256];
 };
