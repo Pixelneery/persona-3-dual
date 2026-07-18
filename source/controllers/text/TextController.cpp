@@ -10,7 +10,7 @@
 //TODO: Wreorder warning
 
 TextController::TextController(const std::string& fontFilePath)
-    : fontBitmap(nullptr), fontBitmapWidth(0), fontBitmapHeight(0), fontLineHeight(0), fontPalette(nullptr)
+    : fontBitmap(nullptr), fontPalette(nullptr), fontBitmapWidth(0), fontBitmapHeight(0), fontLineHeight(0)
 {
     std::string fullPath = fatBasePath + "fonts/" + fontFilePath;
 
@@ -228,7 +228,7 @@ void TextController::drawText(const std::string& text, int startX, int startY, i
         {
             std::string nextWord = "";
             int i = 0;
-            while (i < text.size() && text[i] != ' ' && text[i] != '\n')
+            while (i < (int)text.size() && text[i] != ' ' && text[i] != '\n')
             {
                 nextWord += text[i];
                 i++;
