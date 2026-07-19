@@ -131,6 +131,7 @@ void EnvironmentView::init()
     // setup console
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 5, 0, false, true);
     consoleSelect(&console);
+    consoleClear();
 
     // adjust sub screen image and console to sit correctly on each other
     bgSetPriority(console.bgId, 0);
@@ -399,6 +400,8 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
+    // the console was setup in init(), so we can safely clear it here
+    consoleClear();
     BaseView::cleanup();
 
     env.cleanup();
