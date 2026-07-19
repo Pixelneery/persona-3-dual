@@ -23,12 +23,47 @@
 class EnvironmentView : public BaseView3D
 {
   public:
+    /**
+     * @brief One-time setup for a room
+     *
+     * @note Resolves a room's EnvironmentDbEntry once into
+     *       dbEntry. Everything below reads from that member instead of re-deriving it or
+     *       relying on a per-room generated type. If no entry can be resolved,
+     *       init() logs an error and returns immediately, since nothing below
+     *       this point can run without a valid entry (setupEnvironment()
+     *       immediately dereferences dbEntry->name).
+     */
     void init() override;
 
+    /**
+     * @brief Per-frame update for this room's view
+     *
+     * @note  Advances the current ViewPhase, updates Controllers,
+     *        and reports whether a phase transition to a different
+     *        ViewState should occur.
+     *
+     * @return ViewState::KEEP_CURRENT to remain on this view for another
+     *         frame, or another ViewState value to signal that the caller
+     *         should transition away from this view entirely.
+     */
     ViewState update() override;
 
+    /**
+     * @brief Tears down everything a room's view had set up
+     */
     void cleanup() override;
 
+    /**
+     * @brief Loads and uploads a room's environment geometry and textures,
+     *        driven entirely by dbEntry
+     *
+     * @note  No per-room texture-slot code and no per-room generated class needed.
+     *
+     * Loads each texture slot's texture assets to build display lists and upload
+     * textures to VRAM, then unloads the texture assets. Logs a message if environment
+     * loading fails, since a failed load otherwise leaves environments silently
+     * rendering nothing.
+     */
     void setupEnvironment() override;
 
   protected:

@@ -6,7 +6,7 @@
 // model
 #include "models/kotone.h"
 #include "models/makoto.h"
-// dialogue system wiring (not dialogue content - that's per-room)
+// demo dialogue
 #include "dialogue/demo_dialogue.h"
 
 namespace
@@ -54,17 +54,6 @@ std::string gritBaseName(const char* compiledFileName)
 }
 } // namespace
 
-/**
- * @brief Loads and uploads this room's environment geometry and textures,
- *        driven entirely by dbEntry (environmentDb.cpp), with no per-room
- *        texture-slot code and no per-room generated class needed.
- *
- * Loads each texture slot's .grit asset from disk, hands the resulting
- * bitmap pointers to env.load() to build display lists and upload
- * textures to VRAM, then unloads the now-redundant .grit assets. Logs a
- * message if env.load() fails, since a failed load otherwise leaves env
- * silently rendering nothing.
- */
 void EnvironmentView::setupEnvironment()
 {
     GraphicAsset envTextures[MAX_ENVIRONMENT_TEXTURES] = {};
@@ -88,20 +77,6 @@ void EnvironmentView::setupEnvironment()
     }
 }
 
-/**
- * @brief One-time setup for this room's view: resolves room metadata,
- *        initializes sub-screen backgrounds/console, the player controller,
- *        music, character model, environment geometry/textures, dialogue
- *        target, pause/battle menus, and the UI screens.
- *
- * @note Resolves this room's EnvironmentDbEntry once, up front, into
- *       dbEntry. Everything below (and setupEnvironment()/update()/
- *       cleanup()) reads from that member instead of re-deriving it or
- *       relying on a per-room generated type. If no entry can be resolved,
- *       init() logs an error and returns immediately, since nothing below
- *       this point can run without a valid entry (setupEnvironment()
- *       immediately dereferences dbEntry->name).
- */
 void EnvironmentView::init()
 {
     BaseView3D::init();
@@ -192,18 +167,6 @@ void EnvironmentView::init()
     phase = ViewPhase::Environment;
 }
 
-/**
- * @brief Per-frame update for this room's view: advances the current
- *        ViewPhase (Battle, Pause, Dialogue, or Environment), updates
- *        input, camera, environment rendering, character rendering, and
- *        music, and reports whether a phase transition to a different
- *        ViewState should occur.
- *
- * @return ViewState::KEEP_CURRENT to remain on this view for another
- *         frame, or another ViewState value (as returned by the pause menu
- *         or onTileCheck()) to signal that the caller should transition
- *         away from this view entirely.
- */
 ViewState EnvironmentView::update()
 {
     glMatrixMode(GL_MODELVIEW);
@@ -404,11 +367,6 @@ ViewState EnvironmentView::update()
     return ViewState::KEEP_CURRENT;
 }
 
-/**
- * @brief Tears down everything this view set up: base view state, the
- *        loaded environment (display lists/textures), the UI controller,
- *        and the player controller.
- */
 void EnvironmentView::cleanup()
 {
     BaseView::cleanup();
