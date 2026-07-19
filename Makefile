@@ -50,7 +50,7 @@ export GAME_ICON := $(CURDIR)/../icon.bmp
 # Python tool configuration
 #---------------------------------------------------------------------------------
 TOOLS_DIR       := $(CURDIR)/tools
-ifeq ($(OS),Windows_N_T)
+ifeq ($(OS),Windows_NT)
     VENV_PYTHON := $(HOME)/.venv/Scripts/python.exe
 else
     VENV_PYTHON := $(HOME)/.venv/bin/python3
