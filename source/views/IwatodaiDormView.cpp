@@ -1,7 +1,4 @@
 #include "IwatodaiDormView.h"
-#include "core/globals.h"
-// dialogue content for this room
-#include "dialogue/demo_dialogue.h"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()

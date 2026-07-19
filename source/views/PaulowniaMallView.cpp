@@ -1,5 +1,4 @@
 #include "PaulowniaMallView.h"
-#include "core/globals.h"
 
 PaulowniaMallView::PaulowniaMallView()
 {
@@ -60,5 +59,5 @@ ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
 
 void PaulowniaMallView::onDialogueStart()
 {
-    // No dialogue currently in Paulownia Mall.
+    // No dialogue currently
 }

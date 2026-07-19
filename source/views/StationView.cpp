@@ -1,5 +1,4 @@
 #include "StationView.h"
-#include "core/globals.h"
 
 StationView::StationView()
 {
@@ -46,5 +45,5 @@ ViewState StationView::onTileCheck(TileType tile, u32 pressed)
 
 void StationView::onDialogueStart()
 {
-    // No dialogue currently in Station.
+    // No dialogue currently
 }
