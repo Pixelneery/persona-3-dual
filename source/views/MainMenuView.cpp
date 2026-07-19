@@ -119,38 +119,50 @@ ViewState MainMenuView::update()
 {
     scanKeys();
     int pressed = keysDown();
+    musicCtrl->update();
 
+    if (isSilhouetteStillMoving)
+    {
+        // skip the animation if the user skipped it
+        if (pressed != 0)
+        {
+            silhouetteX = 0;
+            silhouetteY = 0;
+            isSilhouetteStillMoving = false;
+        }
+
+        // animate X (moving right towards 0)
+        if (silhouetteX < 0 && frame % 5 == 0)
+        {
+            silhouetteX += (-silhouetteX) / 6 + 1;
+        }
+
+        // animate Y (moving up towards 0)
+        if (silhouetteY > 0 && frame % 5 == 0)
+        {
+            silhouetteY -= (silhouetteY / 6) + 1;
+        }
+
+        if (silhouetteX >= 0)
+        {
+            isSilhouetteStillMoving = false;
+            silhouetteX = 0;
+        }
+        if (silhouetteY <= 0)
+        {
+            isSilhouetteStillMoving = false;
+            silhouetteY = 0;
+        }
+        bgSetScroll(bg[0], -silhouetteX, -silhouetteY);
+        return ViewState::KEEP_CURRENT;
+    }
+
+    // update mainComponent AFTER checking if the sillouhete is still moving
     ViewState result = mainMenuCmpt.update(pressed);
     if (result != ViewState::KEEP_CURRENT)
     {
         musicCtrl->pause();
         return result;
-    }
-    musicCtrl->update();
-
-    // scroll silhouette background
-    // animate X (moving right towards 0)
-    if (silhouetteX < 0 && frame % 5 == 0)
-    {
-        silhouetteX += (-silhouetteX) / 6 + 1;
-        if (silhouetteX > 0)
-            silhouetteX = 0;
-    }
-
-    // animate Y (moving up towards 0)
-    if (silhouetteY > 0 && frame % 5 == 0)
-    {
-        silhouetteY -= (silhouetteY / 6) + 1;
-        if (silhouetteY < 0)
-            silhouetteY = 0;
-    }
-
-    bgSetScroll(bg[0], -silhouetteX, -silhouetteY);
-
-    // perform code after silhouette slide-in
-    if (silhouetteX < 0 || silhouetteY < 0)
-    {
-        return ViewState::KEEP_CURRENT;
     }
 
     // fade in bottom screen text
