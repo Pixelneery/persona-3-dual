@@ -45,7 +45,7 @@
 
 // debug
 #include "tests/engine/ndsExample.hpp"
-bool testEngine = true;
+bool testEngine = false;
 
 // variables
 volatile int frame = 0;
