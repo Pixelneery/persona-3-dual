@@ -1,7 +1,9 @@
 #pragma once
 
-#include "views/BaseView3D.h"
+#include "views/BaseView.h"
 #include <nds/arm9/console.h>
+// #include "core/globals.h"
+// #include <nds.h>
 
 // controllers
 #include "components/menu/BattleMenuComponent.h"
@@ -20,7 +22,7 @@
 #include "data/environmentDb.h"
 #include "environment/Environment.h"
 
-class EnvironmentView : public BaseView3D
+class EnvironmentView : public BaseView
 {
   public:
     /**
@@ -64,7 +66,7 @@ class EnvironmentView : public BaseView3D
      * loading fails, since a failed load otherwise leaves environments silently
      * rendering nothing.
      */
-    void setupEnvironment() override;
+    void setupEnvironment();
 
   protected:
     // -------------------------------------------------
