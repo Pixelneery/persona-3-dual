@@ -2,25 +2,22 @@
 
 #include "views/BaseView.h"
 #include <nds/arm9/console.h>
-// #include "core/globals.h"
-// #include <nds.h>
 
-// controllers
+// core
+#include "core/enums.h"
+// environments/data
+#include "data/environmentDb.h"
+#include "environment/Environment.h"
+// components
 #include "components/menu/BattleMenuComponent.h"
 #include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
+// controllers
 #include "controllers/BattleController.h"
 #include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
 #include "controllers/GraphicsController.h"
 #include "controllers/UIController.h"
-
-// core
-#include "core/enums.h"
-
-// environments / data
-#include "data/environmentDb.h"
-#include "environment/Environment.h"
 
 class EnvironmentView : public BaseView
 {
@@ -69,9 +66,7 @@ class EnvironmentView : public BaseView
     void setupEnvironment();
 
   protected:
-    // -------------------------------------------------
     // Room-specific hooks
-    // -------------------------------------------------
     virtual float getCameraYOffset() const
     {
         return 0.1f;
@@ -91,19 +86,7 @@ class EnvironmentView : public BaseView
     {
     }
 
-    // -------------------------------------------------
     // Battle
-    //
-    // The room owns:
-    // - enemies
-    // - party members
-    // - player
-    // - battle start condition
-    //
-    // The room passes this data to BattleController.
-    // EnvironmentView only controls the battle phase.
-    // -------------------------------------------------
-
     virtual void startBattle()
     {
     }
@@ -112,10 +95,7 @@ class EnvironmentView : public BaseView
     {
     }
 
-    // -------------------------------------------------
     // Shared state
-    // -------------------------------------------------
-
     touchPosition touch;
 
     int bgSharedSub1;
@@ -123,48 +103,28 @@ class EnvironmentView : public BaseView
     int bgSharedSub3;
 
     PrintConsole console;
-
     ViewPhase phase;
 
     bool prevPauseState = false;
-
     bool prevDialogueState = false;
-
     bool prevEnvironmentState = false;
-
     bool prevBattleState = false;
-
     bool isBattleMenuActive = false;
 
     CharacterController* playerCtrl = nullptr;
-
     CameraPosition camPos;
-
     const float tileSize = 0.062500f;
 
-    // -------------------------------------------------
     // Controllers
-    // -------------------------------------------------
-
     DialogueController dialogueCtrl;
-
     UIController* uiCtrl = UIController::getInstance();
-
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
-
     DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
-
     MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
-
     BattleController* battleController = BattleController::getInstance();
-
     BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
 
-    // -------------------------------------------------
     // Environment
-    // -------------------------------------------------
-
     Environment env;
-
     const EnvironmentDbEntry* dbEntry = nullptr;
 };

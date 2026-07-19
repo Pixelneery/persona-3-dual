@@ -6,8 +6,6 @@
 // model
 #include "models/kotone.h"
 #include "models/makoto.h"
-// demo dialogue
-#include "dialogue/demo_dialogue.h"
 
 namespace
 {
