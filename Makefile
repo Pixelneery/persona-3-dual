@@ -28,16 +28,9 @@ endif
 #---------------------------------------------------------------------------------
 TARGET      :=  persona-3-dual
 BUILD       :=  build
-SOURCES 	:= source source/views source/controllers source/core source/data source/dialogue source/models \
-			   source/environment \
-			   source/components source/battleActions \
-			   source/battleActions/enemies source/battleActions/party \
-			   source/battleActions/skills source/battleActions/actions \
-			   source/helpers source/battleActions/armours \
-			   source/battleActions/personas source/battleActions/shoes \
-			   source/battleActions/weapons source/components/ui \
-			   source/components/menu
-
+SOURCES 	:= source source/views source/controllers source/core source/data source/dialogue source/models source/environment source/components source/helpers source/tests \
+			   source/components/ui source/components/menu \
+               source/battleActions source/battleActions/enemies source/battleActions/party source/battleActions/skills source/battleActions/actions source/battleActions/armours source/battleActions/personas source/battleActions/shoes source/battleActions/weapons
 INCLUDES    := include source libs/aegis_engine/include libs/aegis_engine/libs/etl/include libs/aegis_engine/libs/fpm/include
 SFX         := assets/sfx
 
