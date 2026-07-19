@@ -52,7 +52,8 @@ Environment::Environment() : dbEntry(nullptr)
     }
 }
 
-bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitmaps[])
+bool Environment::load(const EnvironmentDbEntry* entry,
+                       std::array<const unsigned int*, MAX_ENVIRONMENT_TEXTURES> bitmaps)
 {
     cleanup();
 
@@ -150,7 +151,7 @@ bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitm
     {
         textureIDs[i] = 0;
 
-        if (!bitmaps || !bitmaps[i])
+        if (bitmaps.empty() || !bitmaps[i])
             continue;
 
         glGenTextures(1, &textureIDs[i]);

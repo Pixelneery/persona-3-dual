@@ -1,5 +1,6 @@
 #pragma once
 #include "controllers/GraphicsController.h"
+#include <array>
 #include <nds.h>
 
 #include "data/environmentDb.h"
@@ -32,8 +33,9 @@ class Environment
      *                non-null and have textureCount <= MAX_ENVIRONMENT_TEXTURES,
      *                otherwise this fails immediately.
      * @param bitmaps Array of raw bitmap pointers, one per texture slot, to be
-     *                uploaded to VRAM. May be null, or contain null entries, in
-     *                which case the corresponding texture slot(s) are skipped.
+     *                uploaded to VRAM. Max size of MAX_ENVIRONMENT_TEXTURES.
+     *                May be null, or contain null entries, in which case the
+     *                corresponding texture slot(s) are skipped.
      * @return true if the binary file was opened, validated, and fully loaded
      *         (display lists and textures); false if @p entry was invalid, the
      *         file could not be opened or failed magic/size validation, or an
@@ -49,7 +51,7 @@ class Environment
      *       entry->binaryFile instead. Check environmentDb.cpp's entry to
      *       confirm behaviour.
      */
-    bool load(const EnvironmentDbEntry* entry, const unsigned int* bitmaps[]);
+    bool load(const EnvironmentDbEntry* entry, std::array<const unsigned int*, MAX_ENVIRONMENT_TEXTURES> bitmaps);
 
     /**
      * @brief Renders every loaded texture/display-list pair for the currently

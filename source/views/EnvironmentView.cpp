@@ -55,7 +55,7 @@ std::string gritBaseName(const char* compiledFileName)
 void EnvironmentView::setupEnvironment()
 {
     GraphicAsset envTextures[MAX_ENVIRONMENT_TEXTURES] = {};
-    const unsigned int* bitmapsEnv[MAX_ENVIRONMENT_TEXTURES] = {nullptr};
+    std::array<const unsigned int*, MAX_ENVIRONMENT_TEXTURES> bitmapsEnv = {nullptr};
 
     const std::string basePath = fatBasePath + "environments/" + dbEntry->name + "/";
 
