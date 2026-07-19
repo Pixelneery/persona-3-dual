@@ -57,6 +57,10 @@ RUN python3 -m venv /root/.venv \
 # Put the venv on PATH so bare `python3` and `pip` also work interactively.
 ENV PATH="/root/.venv/bin:$PATH"
 
+# Install pre-commit
+RUN pip install --no-cache-dir pre-commit==4.6.0 \
+    && pre-commit install
+
 # Working directory
 # Mount your repo here:  -v "$(pwd)":/project
 WORKDIR /project
