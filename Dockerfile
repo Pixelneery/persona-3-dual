@@ -45,7 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # NDS toolchain
 # devkitARM is already in the base image; nds-dev adds the NDS-specific libs.
-RUN dkp-pacman -Sy --noconfirm nds-dev
+RUN dkp-pacman -Syu --noconfirm nds-dev
 
 # Python virtual environment
 # The Makefile calls /root/.venv/bin/python3 directly (matching the GitHub
