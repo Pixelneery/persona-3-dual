@@ -52,6 +52,7 @@ endif
 ASSETS_DIALOGUE := $(CURDIR)/assets/dialogue
 ASSETS_MUSIC    := $(CURDIR)/assets/music
 ASSETS_VIDEO    := $(CURDIR)/assets/video
+ASSETS_ENVIRONMENTS := $(CURDIR)/assets/environments
 ASSETS_MODELS   := $(CURDIR)/assets/models
 ASSETS_MAPS     := $(CURDIR)/assets/maps
 
@@ -76,12 +77,13 @@ export MMUTIL
 DLG_FILES       := $(wildcard $(ASSETS_DIALOGUE)/*.dlg)
 MP3_FILES       := $(shell find $(ASSETS_MUSIC) -type f -name '*.mp3' 2>/dev/null)
 MP4_FILES       := $(wildcard $(ASSETS_VIDEO)/*.mp4)
+ENV_OBJ_FILES   := $(wildcard $(ASSETS_ENVIRONMENTS)/*/*.obj)
 JMAP_FILES      := $(wildcard $(ASSETS_MAPS)/*.jmap)
 
 MODEL_JSON_FILES := $(wildcard $(ASSETS_MODELS)/*/*.json)
 
 # Recursively find all PNG files in graphics and models.
-FAT_PNG_FILES   := $(shell find $(CURDIR)/assets/graphics $(CURDIR)/assets/models -type f -name '*.png' 2>/dev/null)
+FAT_PNG_FILES   := $(shell find $(CURDIR)/assets/graphics $(CURDIR)/assets/environments $(CURDIR)/assets/models -type f -name '*.png' 2>/dev/null)
 
 #---------------------------------------------------------------------------------
 # Derive output paths
@@ -92,6 +94,11 @@ VIDEO_OUT    := $(MP4_FILES:$(ASSETS_VIDEO)/%.mp4=$(DATA_VIDEO)/%.vid)
 JMAP_OUT     := $(JMAP_FILES:$(ASSETS_MAPS)/%.jmap=$(CURDIR)/source/maps/%.h)
 
 MODEL_OUT    := $(foreach file,$(MODEL_JSON_FILES),$(CURDIR)/source/models/$(notdir $(file:.json=.h)))
+
+# Environments are now built entirely into .bin files by obj2environment.py
+# and integrated into source/data/environmentDb.cpp, no .h headers needed
+# Map obj files to sentinel files in data/environments/<name>/.sentinel
+ENVIRONMENT_OUT := $(foreach file,$(ENV_OBJ_FILES),$(CURDIR)/data/environments/$(notdir $(patsubst %/,%,$(dir $(file))))/.sentinel)
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -152,7 +159,7 @@ export INCLUDE  := $(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 
 export LIBPATHS := $(foreach dir,$(LIBDIRS),-L$(dir)/lib)
 
-.PHONY: $(BUILD) clean assets dialogue music video jmaps models graphics sdcard help
+.PHONY: $(BUILD) clean assets dialogue music video environments jmaps models graphics sdcard help
 
 #---------------------------------------------------------------------------------
 $(BUILD):
@@ -165,10 +172,10 @@ help:
 	@echo "  make            Build everything"
 	@echo "  make assets     Run all asset converters"
 
-assets: dirs dialogue music video jmaps models graphics
+assets: dirs dialogue music video environments jmaps models graphics
 
 dirs:
-	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/graphics
+	@mkdir -p $(CURDIR)/source/dialogue $(CURDIR)/source/maps $(CURDIR)/source/models $(CURDIR)/source/environments $(DATA_MUSIC) $(DATA_VIDEO) $(CURDIR)/data/models $(CURDIR)/data/environments $(CURDIR)/data/graphics
 
 sdcard: sdcard.img
 
@@ -196,6 +203,22 @@ $(DATA_VIDEO)/%.vid: $(ASSETS_VIDEO)/%.mp4 $$(wildcard $(ASSETS_VIDEO)/$$*.build
 	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(basename $@)"
 
 video: $(VIDEO_OUT)
+
+#---------------------------------------------------------------------------------
+# ENVIRONMENTS: Sentinel file to track build completion
+# No .h files are produced—everything is in .bin + environmentDb.cpp
+#---------------------------------------------------------------------------------
+$(CURDIR)/data/environments/%/.sentinel: $(ASSETS_ENVIRONMENTS)/%/$$*.obj \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.png) \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/*.mtl) \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/%/$$*.build.json) \
+		$$(wildcard $(ASSETS_ENVIRONMENTS)/$$*.build.json)
+	@echo "  ENV   $*"
+	@mkdir -p $(dir $@) $(CURDIR)/data/environments/$*
+	@$(VENV_PYTHON) $(TOOLS_DIR)/build_asset.py "$<" "$(CURDIR)/data/environments/$*"
+	@touch $@
+
+environments: $(ENVIRONMENT_OUT)
 
 #---------------------------------------------------------------------------------
 # MODELS: Appended /$* to force output into a specific subdirectory
