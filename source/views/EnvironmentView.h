@@ -127,4 +127,12 @@ class EnvironmentView : public BaseView
     // Environment
     Environment env;
     const EnvironmentDbEntry* dbEntry = nullptr;
+
+  private:
+    // fog properties
+    int shift = 1;
+    // how thick (translucent) the fog is
+    int mass = 1;
+    // how far the fog is (0x0000 to 0x8000)
+    int depth = 0x6000;
 };

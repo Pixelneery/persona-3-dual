@@ -45,7 +45,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # NDS toolchain
 # devkitARM is already in the base image; nds-dev adds the NDS-specific libs.
-RUN dkp-pacman -Sy --noconfirm nds-dev
+RUN dkp-pacman -Syu --noconfirm nds-dev
 
 # Python virtual environment
 # The Makefile calls /root/.venv/bin/python3 directly (matching the GitHub
@@ -58,10 +58,6 @@ RUN python3 -m venv /root/.venv \
 
 # Put the venv on PATH so bare `python3` and `pip` also work interactively.
 ENV PATH="/root/.venv/bin:$PATH"
-
-# Install pre-commit
-RUN pip install --no-cache-dir pre-commit==4.6.0 \
-    && pre-commit install
 
 # Working directory
 # Mount your repo here:  -v "$(pwd)":/project
