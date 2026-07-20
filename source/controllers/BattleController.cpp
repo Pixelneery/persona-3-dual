@@ -10,6 +10,27 @@ BattleController::BattleController()
 {
 }
 
+/**
+ * @brief init function of battlesystem
+ *
+ * This gets called each time a new battle is made and resets
+ * certain varaibles.
+ *
+ * @param player set player, we need to specifically know him for some things all the time
+ * @param partyMembers all players currently on the field, handling
+ * @param enemies all enemies
+ * @param battleParticipants all enemies and partyMembers
+ * @param battleStartCondition conditon like player advantage, enemy advante or even. used to decide turn order
+ *
+ * @details
+ * Called before every new battle. At the moment we give in actuall battle participants which sucks
+ * massivley. In the future i just want to pass participant profiles so the Battlecontroller
+ * actually just manages everything itself.
+ * Then proceeds to set music, setting variables and doing various cleanup.
+ * Finally turn order is calculated with the battleStartConditon and battle gets started.
+ *
+ * @author Nolan Kolb (TrueGiles / themoonwalker8692)
+*/
 void BattleController::execute(Player* player,
                                std::vector<PartyMember*>* partyMembers,
                                std::vector<Enemy*>* enemies,
@@ -46,6 +67,22 @@ void BattleController::execute(Player* player,
     phase = currentParticipantTurn->getInitalTurnPhase();
 }
 
+/**
+ * @brief Actual Battle
+ *
+ * This is where the battle is controlled from.
+ *
+ * @param keys passes input
+ *
+ * @details
+ * Controlls battle. Theres a phase switch which decides which menu point you are currently on
+ * or stuff like enemy turn.
+ * We have a system to build alerts (with a pendingAlert string) to then display these
+ * in the ShowAlert phase after each action.
+ * battleMenuCmpt is used to show the diffrent menu option in console.
+ *
+ * @author Nolan Kolb (TrueGiles / themoonwalker8692)
+ */
 BattleResult BattleController::update(u32 keys)
 {
     if (!active)
@@ -277,7 +314,6 @@ BattleResult BattleController::update(u32 keys)
 
                 for (BattleParticipant* enemy : aliveEnemies)
                 {
-                    //TODO: get participant count over virtual canParticipate method
                     u32 damage = BattleCalcs::allOutAttack(*player, *enemy, participantCount);
                     enemy->knockedDown = false;
                     TurnResult turnResult = {true, -(s32)damage, false, enemy->name + ": "};
