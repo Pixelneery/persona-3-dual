@@ -2,6 +2,7 @@
 
 #include "components/menu/BattleMenuComponent.h"
 #include "controllers/MusicController.h"
+
 #include <algorithm>
 #include <array>
 #include <nds.h>
@@ -26,6 +27,12 @@
 class BattleController
 {
   private:
+    // Singleton
+    BattleController();
+
+    BattleController(const BattleController&) = delete;
+    BattleController& operator=(const BattleController&) = delete;
+
     static constexpr u32 ACTION_ATTACK = 0;
     static constexpr u32 ACTION_GUARD = 1;
     static constexpr u32 ACTION_PERSONA = 2;
@@ -36,6 +43,7 @@ class BattleController
 
     BattlePhase phase;
     BattleResult battleResult;
+
     BattleParticipant* currentParticipantTurn = nullptr;
     u32 currentParticipantIndex = 0;
 
@@ -51,6 +59,7 @@ class BattleController
 
     bool allOutAttackWasPossibleThisKnockDown = false;
 
+    // Current battle data
     std::vector<BattleParticipant*>* battleParticipants = nullptr;
     std::vector<Enemy*>* enemies = nullptr;
     std::vector<PartyMember*>* partyMembers = nullptr;
@@ -58,6 +67,7 @@ class BattleController
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 
+    // Actions
     AttackAction attack;
     Guard guard;
     PersonaAction persona;
@@ -65,28 +75,38 @@ class BattleController
 
     std::array<ActionBase*, 4> actions = {&attack, &guard, &persona, &switchPersona};
 
+    // Internal helpers
     void applyResult(const TurnResult& r, BattleParticipant* target = nullptr);
     void advanceTurn();
     void setNextPhase(BattlePhase nextPhase);
     void calculateTurnOrder();
     void handleDeadParticipants();
+
     std::vector<BattleParticipant*> getAliveEnemies();
+
     bool allEnemiesKnockedDown();
     bool isSingleTarget(SkillType type);
 
     static bool getParticipantByHigherAgility(BattleParticipant* a, BattleParticipant* b)
     {
         return a->currentTurnOrderAgility > b->currentTurnOrderAgility;
-    };
+    }
 
     MusicController* musicCtrl = MusicController::getInstance();
     BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
 
   public:
+    static BattleController* getInstance()
+    {
+        static BattleController instance;
+        return &instance;
+    }
+
     bool isActive() const
     {
         return active;
     }
+
     BattlePhase getPhase() const
     {
         return phase;
@@ -97,10 +117,11 @@ class BattleController
                  std::vector<Enemy*>* enemies,
                  std::vector<BattleParticipant*>* battleParticipants,
                  BattleStartCondition battleStartCondition);
+
     BattleResult update(u32 keys);
+
     void exit();
 
-    BattleController();
     ~BattleController()
     {
     }

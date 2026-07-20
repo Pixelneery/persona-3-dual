@@ -41,7 +41,7 @@ void BattleController::execute(Player* player,
 
     std::string path =
         fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
-    musicCtrl->init(path.c_str(), 0.0f, saveData.femcMode ? 78.315f : 84.767f);
+    musicCtrl->init(path.c_str(), 0.0f, -1.0f);
 
     this->player = player;
     this->partyMembers = partyMembers;
@@ -376,10 +376,25 @@ void BattleController::exit()
 {
     consoleClear();
     musicCtrl->pause();
+
     active = false;
     phase = BattlePhase::Done;
 
+    turnsTaken = 0;
+    currentParticipantIndex = 0;
+
     currentParticipantTurn = nullptr;
+
+    selectedSkill = nullptr;
+
+    pendingAlert.clear();
+
+    pendingPersonaSwitch = false;
+    switchedPersonaThisTurn = false;
+    personaBeforeSwitch = nullptr;
+
+    allOutAttackWasPossibleThisKnockDown = false;
+
     player = nullptr;
     battleParticipants = nullptr;
     enemies = nullptr;
