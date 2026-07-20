@@ -14,7 +14,6 @@
             "version": "1.0.3"
         }
     },
-    "postCreateCommand": "pre-commit install",
     "customizations": {
         "vscode": {
             "extensions": [
