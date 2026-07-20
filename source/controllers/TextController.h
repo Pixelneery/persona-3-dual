@@ -27,10 +27,9 @@ struct Glyph
 struct Font
 {
     std::uint8_t* bitmap = nullptr;
-    std::uint16_t* palette = nullptr;
-    int bitmapWidth;
-    int bitmapHeight;
-    int lineHeight;
+    int bitmapWidth = 256;
+    int bitmapHeight = 256;
+    int lineHeight = 32;
     Glyph glyphs[256];
 };
 

@@ -4,8 +4,23 @@
 #include <fstream>
 #include <sstream>
 
+static const uint16_t customPalette[256] = {
+    ARGB16(1, 0, 0, 0),    // Transparent
+    ARGB16(1, 0, 0, 0),    // Black
+    ARGB16(1, 31, 31, 31), // White
+    ARGB16(1, 31, 0, 0),   // Red
+    ARGB16(1, 0, 31, 0),   // Green
+    ARGB16(1, 0, 0, 31),   // Blue
+    ARGB16(1, 31, 31, 0),  // Yellow
+    ARGB16(1, 31, 0, 31),  // Magenta
+    ARGB16(1, 0, 31, 31),  // Cyan
+    ARGB16(1, 15, 15, 15), // Gray
+};
+
 TextController::TextController()
 {
+    dmaCopy(customPalette, BG_PALETTE, 256 * sizeof(uint16_t));
+    dmaCopy(customPalette, BG_PALETTE_SUB, 256 * sizeof(uint16_t));
 }
 
 // Loading Functions =====================================================
@@ -17,9 +32,6 @@ Font* TextController::loadFont(const std::string& fontFilePath)
     font->bitmap = loadFontBitmap(fullPath + ".img.bin");
     if (!font->bitmap)
         haltOnError("Failed to load font bitmap from \n" + fullPath + ".img.bin");
-    font->palette = loadFontPalette(fullPath + ".pal.bin");
-    if (!font->palette)
-        haltOnError("Failed to load font palette from \n" + fullPath + ".pal.bin");
     if (!loadFontMetadata(fullPath + ".fnt", font))
         haltOnError("Failed to load font metadata from \n" + fullPath + ".fnt");
     return font;
@@ -89,7 +101,7 @@ std::uint16_t* TextController::loadFontPalette(const std::string& path)
     if (buffer == nullptr)
         return nullptr;
     std::uint16_t* fontPalette = reinterpret_cast<std::uint16_t*>(buffer);
-    dmaCopy(fontPalette, BG_PALETTE, 256 * sizeof(uint16_t));
+    //dmaCopy(fontPalette, BG_PALETTE, 256 * sizeof(uint16_t));
     return fontPalette;
 }
 
@@ -197,12 +209,12 @@ void TextController::drawGlyph(
             sassert(bitmapIndex < font->bitmapWidth * font->bitmapHeight, "Bitmap index out of bounds");
 
             int pixelValue = font->bitmap[bitmapIndex];
-            if (font->bitmap[bitmapIndex] > 10 && pixelValue > 0)
+            if (pixelValue > 0)
             {
                 int screenX = cursorX + x;
                 int screenY = cursorY + glyph.yOffset + y;
                 if (screenX >= 0 && screenX < 256 && screenY >= 0 && screenY < 192)
-                    drawPixel(videoBuffer, screenX, screenY, font->palette[pixelValue]);
+                    drawPixel(videoBuffer, screenX, screenY, color);
             }
         }
     }
@@ -265,10 +277,19 @@ void TextController::haltOnError(const std::string& errorMessage)
 
 void TextController::testBitmap(Font* font, uint16_t* videoBuffer)
 {
-    dmaCopy(font->bitmap, videoBuffer, font->bitmapWidth * font->bitmapHeight * sizeof(uint8_t));
+    for (int y = 0; y < 256; y++)
+    {
+        for (int x = 0; x < 256; x++)
+        {
+            videoBuffer[(y * 256 + x) / 2] = font->bitmap[y * font->bitmapWidth + x] | BIT(15);
+        }
+    }
 }
 
 void TextController::testPalette(Font* font, uint16_t* videoBuffer)
 {
-    dmaCopy(font->palette, BG_PALETTE, 256 * sizeof(uint16_t));
+    for (int i = 0; i < (256 * 256); i++)
+    {
+        videoBuffer[i] = customPalette[i % 256] | BIT(15);
+    }
 }
