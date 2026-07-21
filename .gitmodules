@@ -1,6 +1,3 @@
 [submodule "libs/aegis_engine"]
 	path = libs/aegis_engine
 	url = https://github.com/p3d-project/aegis-engine.git
-[submodule "aegis-engine"]
-	path = aegis-engine
-	url = https://github.com/p3d-project/aegis-engine.git
