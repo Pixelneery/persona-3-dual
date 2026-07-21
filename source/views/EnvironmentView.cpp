@@ -172,9 +172,6 @@ void EnvironmentView::init()
     // setup player controller (room-specific map/tuning, generic call site)
     playerCtrl = createPlayerController();
 
-    // setup music (room-specific path/loop points)
-    setMusic();
-
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
     characterAnimationCtrl->loadModel(
@@ -215,6 +212,9 @@ void EnvironmentView::init()
     uiCtrl->registerScreen(menuHUDScreen, false);
     uiCtrl->registerScreen(dialogueScreen, false);
     uiCtrl->show(menuHUDScreen, false);
+
+    // setup music (room-specific path/loop points)
+    setMusic();
 
     onSetupDialogueAndUI();
 
