@@ -20,13 +20,13 @@ A Nintendo DS demake of **Persona 3**, developed in C++ using devkitPro. Based o
 ---
 
 ## Installing the Game
-See [Installing the Game](https://p3dual.com/docs/guides/install-game/) for details
+See [Installing the Game](https://docs.p3dual.com/guides/install-game/) for details
 
 ---
 
 ## Roadmap
 - See the [Project Board](https://github.com/orgs/p3d-project/projects/1) for current progress and open issues.
-- See the [P3D Roadmap](https://docs.google.com/document/d/1VUxY2xVGtKzGWCES0VeZ_-vMpKSifB5vTW2ZkXJMPJM/edit?usp=sharing) document for progress on Milestones
+- See the [Roadmap](https://docs.p3dual.com/roadmap/) document for progress on Milestones
 
 ---
 
