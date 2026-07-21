@@ -7,7 +7,7 @@ IwatodaiDormView::IwatodaiDormView()
 
 void IwatodaiDormView::setMusic()
 {
-    musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.831f, 65.907f);
+    musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.300f, -1.000f);
 }
 
 CharacterController* IwatodaiDormView::createPlayerController()
