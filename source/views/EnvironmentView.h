@@ -1,12 +1,18 @@
 #pragma once
 
-#include "views/BaseView3D.h"
+#include "views/BaseView.h"
 #include <nds/arm9/console.h>
 
-// controllers
+// core
+#include "core/enums.h"
+// environments/data
+#include "data/environmentDb.h"
+#include "environment/Environment.h"
+// components
 #include "components/menu/BattleMenuComponent.h"
 #include "components/ui/DialogueScreen.h"
 #include "components/ui/MenuHUDScreen.h"
+// controllers
 #include "controllers/BattleController.h"
 #include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
@@ -14,28 +20,58 @@
 #include "controllers/GraphicsController.h"
 #include "controllers/UIController.h"
 
-// core
-#include "core/enums.h"
-
-// environments / data
-#include "data/environmentDb.h"
-#include "environment/Environment.h"
-
-class EnvironmentView : public BaseView3D
+class EnvironmentView : public BaseView
 {
   public:
+    /**
+     * @brief One-time setup for a room
+     *
+     * @note Resolves a room's EnvironmentDbEntry once into
+     *       dbEntry. Everything below reads from that member instead of re-deriving it or
+     *       relying on a per-room generated type. If no entry can be resolved,
+     *       init() logs an error and returns immediately, since nothing below
+     *       this point can run without a valid entry (setupEnvironment()
+     *       immediately dereferences dbEntry->name).
+     */
     void init() override;
 
+    /**
+     * @brief Per-frame update for this room's view
+     *
+     * @note  Advances the current ViewPhase, updates Controllers,
+     *        and reports whether a phase transition to a different
+     *        ViewState should occur.
+     *
+     * @return ViewState::KEEP_CURRENT to remain on this view for another
+     *         frame, or another ViewState value to signal that the caller
+     *         should transition away from this view entirely.
+     */
     ViewState update() override;
 
+    /**
+     * @brief Tears down everything a room's view had set up
+     */
     void cleanup() override;
 
-    void setupEnvironment() override;
+    /**
+     * @brief Loads and uploads a room's environment geometry and textures,
+     *        driven entirely by dbEntry
+     *
+     * @note  No per-room texture-slot code and no per-room generated class needed.
+     *
+     * Loads each texture slot's texture assets to build display lists and upload
+     * textures to VRAM, then unloads the texture assets. Logs a message if environment
+     * loading fails, since a failed load otherwise leaves environments silently
+     * rendering nothing.
+     */
+    void setupEnvironment();
 
   protected:
-    // -------------------------------------------------
     // Room-specific hooks
-    // -------------------------------------------------
+    virtual float getCameraYOffset() const
+    {
+        return 0.1f;
+    } // default
 
     virtual const EnvironmentDbEntry* getEnvironmentDbEntry() = 0;
 
@@ -57,17 +93,6 @@ class EnvironmentView : public BaseView3D
 
     // -------------------------------------------------
     // Battle
-    //
-    // The room owns:
-    // - enemies
-    // - party members
-    // - player
-    // - battle start condition
-    //
-    // The room passes this data to BattleController.
-    // EnvironmentView only controls the battle phase.
-    // -------------------------------------------------
-
     virtual void startBattle()
     {
     }
@@ -76,10 +101,7 @@ class EnvironmentView : public BaseView3D
     {
     }
 
-    // -------------------------------------------------
     // Shared state
-    // -------------------------------------------------
-
     touchPosition touch;
 
     int bgSharedSub1;
@@ -87,17 +109,12 @@ class EnvironmentView : public BaseView3D
     int bgSharedSub3;
 
     PrintConsole console;
-
     ViewPhase phase;
 
     bool prevPauseState = false;
-
     bool prevDialogueState = false;
-
     bool prevEnvironmentState = false;
-
     bool prevBattleState = false;
-
     bool isBattleMenuActive = false;
 
     CharacterController* playerCtrl = nullptr;
@@ -105,7 +122,6 @@ class EnvironmentView : public BaseView3D
     CameraController cameraCtrl;
 
     CameraPosition camPos;
-
     const float tileSize = 0.062500f;
 
     // Override fields in configureCameraController() — same struct for all modes
@@ -113,27 +129,23 @@ class EnvironmentView : public BaseView3D
 
     // -------------------------------------------------
     // Controllers
-    // -------------------------------------------------
-
     DialogueController dialogueCtrl;
-
     UIController* uiCtrl = UIController::getInstance();
-
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
-
     DialogueScreen* dialogueScreen = DialogueScreen::getInstance();
-
     MenuHUDScreen* menuHUDScreen = MenuHUDScreen::getInstance();
-
     BattleController* battleController = BattleController::getInstance();
-
     BattleMenuComponent* battleMenuCmpt = BattleMenuComponent::getInstance();
 
-    // -------------------------------------------------
     // Environment
-    // -------------------------------------------------
-
     Environment env;
-
     const EnvironmentDbEntry* dbEntry = nullptr;
+
+  private:
+    // fog properties
+    int shift = 1;
+    // how thick (translucent) the fog is
+    int mass = 1;
+    // how far the fog is (0x0000 to 0x8000)
+    int depth = 0x6000;
 };

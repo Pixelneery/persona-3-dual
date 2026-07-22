@@ -1,7 +1,4 @@
 #include "IwatodaiDormView.h"
-#include "core/globals.h"
-// dialogue content for this room
-#include "dialogue/demo_dialogue.h"
 
 // TODO: dont forget to clear in future
 IwatodaiDormView::IwatodaiDormView()
@@ -27,7 +24,7 @@ void IwatodaiDormView::configureCameraController()
 
 void IwatodaiDormView::setMusic()
 {
-    musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.831f, 65.907f);
+    musicCtrl->init((fatBasePath + "music/locations/iwatodaiDorm/iwatodai_dorm.pcm").c_str(), 1.300f, -1.000f);
 }
 
 CharacterController* IwatodaiDormView::createPlayerController()

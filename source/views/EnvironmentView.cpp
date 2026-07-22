@@ -6,23 +6,40 @@
 // model
 #include "models/kotone.h"
 #include "models/makoto.h"
-// dialogue system wiring (not dialogue content - that's per-room)
-#include "dialogue/demo_dialogue.h"
 
 namespace
 {
-// Loads a single .grit asset and returns its raw tile pointer, stashing the
-// owning GraphicAsset in `asset` so it can be unloaded once the texture has
-// been uploaded to VRAM.
+/**
+ * @brief Loads a single .grit asset and returns its raw tile pointer.
+ *
+ * Stashes the owning GraphicAsset in @p asset so the caller can unload it
+ * once the texture has been uploaded to VRAM.
+ *
+ * @param path  Full path (base path + grit base name) of the asset to load.
+ * @param asset Output parameter that receives the loaded GraphicAsset,
+ *              which the caller is responsible for unloading later.
+ * @return Raw pointer to the asset's tile data, reinterpreted as
+ *         unsigned int, suitable for passing to the texture upload code.
+ */
 const unsigned int* loadEnvironmentBitmap(const std::string& path, GraphicAsset& asset)
 {
     asset = GraphicsController::getInstance()->loadGrit(path);
     return reinterpret_cast<const unsigned int*>(asset.tiles);
 }
 
-// environmentDb.cpp stores the *compiled* texture filename, e.g.
-// "f007_002wall01.img.bin". loadGrit wants the .grit base name instead
-// (e.g. "f007_002wall01"), so strip the known suffix.
+/**
+ * @brief Strips the compiled ".img.bin" suffix from a texture filename to
+ *        recover the base name expected by loadGrit.
+ *
+ * environmentDb.cpp stores the *compiled* texture filename, e.g.
+ * "f007_002wall01.img.bin", but loadGrit wants the .grit base name instead
+ * (e.g. "f007_002wall01").
+ *
+ * @param compiledFileName The compiled texture filename as stored in the
+ *                          environment database (e.g. "name.img.bin").
+ * @return The same name with a trailing ".img.bin" suffix removed, or the
+ *         name unchanged if it does not end with that suffix.
+ */
 std::string gritBaseName(const char* compiledFileName)
 {
     std::string name(compiledFileName);
@@ -37,10 +54,8 @@ std::string gritBaseName(const char* compiledFileName)
 
 void EnvironmentView::setupEnvironment()
 {
-    // setup environment model - fully data-driven from environmentDb.cpp,
-    // no per-room texture-slot code and no per-room generated class needed.
     GraphicAsset envTextures[MAX_ENVIRONMENT_TEXTURES] = {};
-    const unsigned int* bitmapsEnv[MAX_ENVIRONMENT_TEXTURES] = {nullptr};
+    std::array<const unsigned int*, MAX_ENVIRONMENT_TEXTURES> bitmapsEnv = {nullptr};
 
     const std::string basePath = fatBasePath + "environments/" + dbEntry->name + "/";
 
@@ -51,9 +66,6 @@ void EnvironmentView::setupEnvironment()
 
     if (!env.load(dbEntry, bitmapsEnv))
     {
-        // Previously ignored: a failed load() leaves dbEntry null inside
-        // env, so draw()/drawBillboards() quietly render nothing. Surface
-        // it instead of shipping another silent black screen.
         iprintf("EnvironmentView: failed to load environment '%s'\n", dbEntry->name);
     }
 
@@ -65,18 +77,72 @@ void EnvironmentView::setupEnvironment()
 
 void EnvironmentView::init()
 {
-    BaseView3D::init();
+    // set modes
+    videoSetMode(MODE_0_3D);
+    videoSetModeSub(MODE_0_2D);
 
-    // resolve this room's metadata once, up front - everything below (and
-    // setupEnvironment/update/cleanup) reads from this instead of
-    // re-deriving it or knowing a per-room generated type.
+    // set vram
+    vramSetBankA(VRAM_A_TEXTURE_SLOT0); // texture slot 0
+    vramSetBankB(VRAM_B_TEXTURE_SLOT1); // texture slot 1
+
+    vramSetBankC(VRAM_C_SUB_BG);
+    vramSetBankD(VRAM_D_SUB_SPRITE);
+    vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
+    vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
+    bgExtPaletteEnableSub();
+
+    // 3D init
+    glInit();
+    glEnable(GL_ANTIALIAS);  // cleans up edges
+    glEnable(GL_TEXTURE_2D); // for textures
+    // glEnable(GL_BLEND);      // useful for UI
+    glEnable(GL_FOG);     // fog effect
+    glEnable(GL_OUTLINE); // stylistic outline
+
+    glClearColor(0, 0, 0, 31);
+    glClearPolyID(63);
+    glClearDepth(0x7FFF);
+
+    // viewport
+    glViewport(0, 0, 255, 191);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // zNear is how close the camera can see, zFar is the maximum draw distance
+    gluPerspective(55, 256.0 / 192.0, 0.1, 40);
+
+    // outline
+    glSetOutlineColor(0, RGB15(0, 0, 0));
+
+    // fog
+    // setup color
+    glFogColor(22, 25, 28, 31); // daytime blue
+    // glFogColor(30, 25, 16, 31);  // evening orange
+    // glFogColor(16, 17, 19, 31);  // rainy gray
+
+    // how much depth difference there is between table entries
+    glFogShift(shift);
+    // depth at which the fog starts (and the table starts applying)
+    glFogOffset(depth);
+
+    // generate a linear density table
+    int density = 0;
+    for (int i = 0; i < 32; i++) // it has 32 steps
+    {
+        glFogDensity(i, density);
+        // exponentially increase mass the furthur back the fog is
+        density += (mass * i) >> 2;
+
+        // entries are 7 bit, so cap the density to 127
+        if (density > 127)
+            density = 127;
+    }
+
+    glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG);
+    glColor3b(255, 255, 255);
+
     dbEntry = getEnvironmentDbEntry();
     if (!dbEntry)
     {
-        // Nothing below this point can run without a valid entry -
-        // setupEnvironment() immediately dereferences dbEntry->name. Fail
-        // loud here rather than crashing a few lines down or continuing on
-        // into yet another silent black screen.
         iprintf("EnvironmentView::init - no EnvironmentDbEntry for this room\n");
         return;
     }
@@ -94,6 +160,7 @@ void EnvironmentView::init()
     // setup console
     consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 5, 0, false, true);
     consoleSelect(&console);
+    consoleClear();
 
     // adjust sub screen image and console to sit correctly on each other
     bgSetPriority(console.bgId, 0);
@@ -107,9 +174,6 @@ void EnvironmentView::init()
 
     configureCameraController();
     cameraCtrl.configure(camConfig);
-
-    // setup music (room-specific path/loop points)
-    setMusic();
 
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
@@ -135,7 +199,6 @@ void EnvironmentView::init()
     pauseMenuCmpt->init(bgSharedSub1);
     pauseMenuCmpt->setCameraController(&cameraCtrl);
 
-    // setup battle menu
     // setup battle menu
     battleMenuCmpt->init(-1, &isBattleMenuActive);
 
@@ -271,7 +334,7 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = true;
         }
 
-        playerCtrl->update(keys, cameraCtrl.getMovementAngle(playerCtrl->isCharacterAt()));
+        playerCtrl->update(keys, &cameraCtrl);
         CharacterPosition charPos = playerCtrl->isCharacterAt();
         camPos = cameraCtrl.update(keys, charPos);
 
@@ -303,7 +366,7 @@ ViewState EnvironmentView::update()
         }
 
         gluLookAt(camPos.cameraX,
-                  camPos.cameraY + 0.1f,
+                  camPos.cameraY + getCameraYOffset(),
                   camPos.cameraZ,
                   camPos.targetX,
                   camPos.targetY,
@@ -312,22 +375,20 @@ ViewState EnvironmentView::update()
                   camPos.upY,
                   camPos.upZ);
 
+        // environment
         glPushMatrix();
-
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(0));
         env.draw();
-
         env.drawBillboards(Globals::enableBillboards, camPos.cameraX, camPos.cameraY, camPos.cameraZ);
-
         glPopMatrix(1);
 
+        // model
         glPushMatrix();
 
         glTranslatef(charPos.x, charPos.y, charPos.z);
-
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
-
+        glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(1));
         characterAnimationCtrl->render();
-
         glPopMatrix(1);
 
         glFlush(0);
@@ -367,14 +428,13 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
+    // the console was setup in init(), so we can safely clear it here
+    consoleClear();
     BaseView::cleanup();
 
-    // cleanup environment
     env.cleanup();
-    // reset ui
     uiCtrl->cleanup();
 
-    // cleanup controllers
     delete playerCtrl;
     playerCtrl = nullptr;
 }

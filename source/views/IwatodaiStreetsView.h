@@ -1,9 +1,12 @@
 #pragma once
 
-#include "data/environmentDb.h"
-#include "maps/iwatodai_streets.h"
 #include "views/EnvironmentView.h"
 
+// data
+#include "data/environmentDb.h"
+// maps
+#include "maps/iwatodai_streets.h"
+// battle
 #include "./battleActions/BattleParticipant.h"
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/Enemy.h"
@@ -41,25 +44,20 @@ class IwatodaiStreetsView : public EnvironmentView
     void startBattle() override;
 
   private:
-    // movement tuning
-
+    // movement and camera
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
-
     const float speed = 0.03f;
     const float angleIncrement = 0.05f;
     const float distance = 1.0f;
     const float lookAhead = 0.2f;
 
+    // character position
     const Point2D<float> characterTranslate = Point2D<float>(0.60f, 0.60f);
-
     const float height = 0.05f;
     const float angle = 1.5708f * 2;
     const float characterFacingAngle = 0.0f;
 
-    // ----------------------------
-    // Battle data owned by room
-    // ----------------------------
-
+    // battle
     Enemy* mercilessMaya = nullptr;
     Enemy* cowardlyMaya = nullptr;
 

@@ -1,19 +1,14 @@
 #pragma once
 
 #include "views/EnvironmentView.h"
-// maps
-#include "maps/iwatodai_dorm_floor_1.h"
+
 // data
 #include "data/environmentDb.h"
+// maps
+#include "maps/iwatodai_dorm_floor_1.h"
+// dialogue
+#include "dialogue/demo_dialogue.h"
 
-// Only what's actually specific to this room now lives here: the map/movement
-// tuning, the music path, and the tile/dialogue content. Everything else
-// (screen setup, UI wiring, phase handling, camera, texture loading, the
-// Environment itself, draw/cleanup) lives in EnvironmentView.
-//
-// Note there is no more `#include "environments/iwatodai_dorm_floor_1.h"` -
-// that generated class is gone. EnvironmentView owns a single, generic
-// Environment member driven by iwatodai_dorm_floor_1EnvironmentDbEntry below.
 class IwatodaiDormView : public EnvironmentView
 {
   public:
@@ -32,13 +27,14 @@ class IwatodaiDormView : public EnvironmentView
     void configureCameraController() override;
 
   private:
-    // movement and viewpoint tuning (this room's feel)
+    // movement and camera
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
     const float speed = 0.03f;
     const float angleIncrement = 0.07f;
     const float distance = 0.8f;
     const float lookAhead = 0.2f;
-    // set character initial translation position
+
+    // character position
     const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
     const float height = 0.0f;
     const float angle = -1.6f;

@@ -1,19 +1,8 @@
 #include "IwatodaiStreetsView.h"
-#include "core/globals.h"
 
-#include "maps/iwatodai_streets.h"
-
-#include <stdio.h>
-
-// ----------------------------
-// Construction
-// ----------------------------
 IwatodaiStreetsView::IwatodaiStreetsView()
 {
-    // ----------------------------
     // Battle setup
-    // ----------------------------
-
     mercilessMaya = new Enemy(EnemyDb::mercilessMaya);
     cowardlyMaya = new Enemy(EnemyDb::cowardlyMaya);
 
@@ -29,9 +18,6 @@ IwatodaiStreetsView::IwatodaiStreetsView()
     partyMembers = {player, yukari, junpei};
 }
 
-// ----------------------------
-// Destruction
-// ----------------------------
 IwatodaiStreetsView::~IwatodaiStreetsView()
 {
     for (BattleParticipant* participant : battleParticipants)
@@ -44,9 +30,6 @@ IwatodaiStreetsView::~IwatodaiStreetsView()
     partyMembers.clear();
 }
 
-// ----------------------------
-// Battle
-// ----------------------------
 void IwatodaiStreetsView::startBattle()
 {
     battleController->execute(player, &partyMembers, &enemies, &battleParticipants, battleStartCondition);
@@ -83,17 +66,11 @@ CharacterController* IwatodaiStreetsView::createPlayerController()
                                    characterFacingAngle);
 }
 
-// ----------------------------
-// Music
-// ----------------------------
 void IwatodaiStreetsView::setMusic()
 {
     musicCtrl->init((fatBasePath + "music/locations/iwatodaiStreets/changing_seasons.pcm").c_str(), 31.0f, 177.587f);
 }
 
-// ----------------------------
-// Tile interactions
-// ----------------------------
 ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
 {
     switch (tile)
@@ -130,10 +107,7 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     return ViewState::KEEP_CURRENT;
 }
 
-// ----------------------------
-// Dialogue
-// ----------------------------
 void IwatodaiStreetsView::onDialogueStart()
 {
-    // No dialogue currently in Iwatodai Streets.
+    // No dialogue currently
 }

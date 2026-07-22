@@ -6,6 +6,16 @@
 #include <stdlib.h>
 #include <string>
 
+/**
+ * @brief Converts a raw texture dimension in pixels to the corresponding
+ *        libnds TEXTURE_SIZE_* enum value.
+ *
+ * @param size Texture width/height in pixels. Expected to be one of the
+ *             power-of-two values 8, 16, 32, 64, 128, 256, 512, or 1024.
+ * @return The matching TEXTURE_SIZE_* constant, or TEXTURE_SIZE_8 as a
+ *         fallback if @p size does not match a supported value (a message
+ *         is also printed to the debug console in that case).
+ */
 static int textureSizeEnum(int size)
 {
     switch (size)
@@ -42,37 +52,20 @@ Environment::Environment() : dbEntry(nullptr)
     }
 }
 
-bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitmaps[])
+bool Environment::load(const EnvironmentDbEntry* entry,
+                       std::array<const unsigned int*, MAX_ENVIRONMENT_TEXTURES> bitmaps)
 {
-    // ----------------------------------------------------
-    // HARD SAFE ENTRY RESET (prevents cross-scene corruption)
-    // ----------------------------------------------------
     cleanup();
 
-    // Guard against a missing/oversized db entry before touching it. A null
-    // entry would otherwise crash on entry->binaryFile a few lines down; an
-    // oversized one would silently overflow the fixed-size displayLists/
-    // dlSizes/textureIDs arrays instead of failing cleanly.
+    // Guard against a missing/oversized db entry before touching it
     if (!entry || entry->textureCount > MAX_ENVIRONMENT_TEXTURES)
     {
+        iprintf("EnvironmentDbEntry textures exceeds MAX_ENVIRONMENT_TEXTURES");
         return false;
     }
 
     dbEntry = entry;
 
-    // entry->binaryFile is a build-time string baked in by obj2environment.py
-    // (e.g. "environments/iwatodai_dorm/iwatodai_dorm.bin"). It cannot know
-    // the runtime fat/SD mount root, so - like every other file load in this
-    // codebase (textures, music, models) - it has to be combined with
-    // fatBasePath before fopen() can find it. This was previously missing
-    // here, which is the most likely reason the file silently failed to
-    // open on every load.
-    // ASSUMPTION: binaryFile already contains the full "environments/<name>/"
-    // relative path, the same way it's referenced on the export side. If the
-    // printed path below is missing that folder, binaryFile is actually just
-    // the bare filename and this needs to be
-    // fatBasePath + "environments/" + entry->name + "/" + entry->binaryFile
-    // instead - check environmentDb.cpp's dorm entry to confirm which.
     const std::string fullBinaryPath = fatBasePath + "environments/" + entry->name + "/" + entry->binaryFile;
 
     if (Globals::enableDebugPrint)
@@ -117,9 +110,7 @@ bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitm
         return false;
     }
 
-    // ----------------------------------------------------
-    // DISPLAY LIST LOAD (fully guarded)
-    // ----------------------------------------------------
+    // Display list load
     for (u32 i = 0; i < groupCount; i++)
     {
         if (fread(&dlSizes[i], sizeof(u32), 1, file) != 1)
@@ -155,14 +146,12 @@ bool Environment::load(const EnvironmentDbEntry* entry, const unsigned int* bitm
 
     fclose(file);
 
-    // ----------------------------------------------------
-    // TEXTURE UPLOAD (safe binding only)
-    // ----------------------------------------------------
+    // Texture upload
     for (int i = 0; i < entry->textureCount; i++)
     {
         textureIDs[i] = 0;
 
-        if (!bitmaps || !bitmaps[i])
+        if (bitmaps.empty() || !bitmaps[i])
             continue;
 
         glGenTextures(1, &textureIDs[i]);
@@ -195,7 +184,7 @@ void Environment::draw()
 
         if (displayLists[i])
         {
-            // IMPORTANT: guard against corrupted DL pointers
+            // Guard against corrupted DL pointers
             glCallList(displayLists[i]);
         }
 
@@ -291,46 +280,8 @@ void Environment::drawBillboards(bool faceCamera, float camX, float camY, float 
         glEnd();
 }
 
-int Environment::getPolyCount() const
-{
-    if (!dbEntry)
-        return 0;
-
-    int total = 0;
-
-    for (int i = 0; i < dbEntry->textureCount; i++)
-    {
-        if (!displayLists[i] || dlSizes[i] == 0)
-            continue;
-
-        const u32* dl = &displayLists[i][1];
-
-        for (u32 j = 0; j < dlSizes[i]; j++)
-        {
-            u32 w = dl[j];
-
-            for (int b = 0; b < 4; b++)
-            {
-                if (((w >> (b * 8)) & 0xFF) == 0x40)
-                    total++;
-            }
-        }
-    }
-
-    return total;
-}
-
 void Environment::cleanup()
 {
-    // Always sweep the full fixed-size arrays rather than looping to
-    // dbEntry->textureCount. Looping to the "current" entry's count meant a
-    // load() that failed partway through - or simply a room with fewer
-    // texture slots than the one loaded before it - could leave stale,
-    // un-freed pointers sitting past that count, silently leaking memory
-    // and VRAM texture slots across room transitions. Sweeping the full
-    // array unconditionally also makes this safe to call even when dbEntry
-    // is null (e.g. from load()'s own failure paths, before dbEntry is set,
-    // or on the very first load of a fresh Environment).
     for (int i = 0; i < MAX_ENVIRONMENT_TEXTURES; i++)
     {
         if (displayLists[i])

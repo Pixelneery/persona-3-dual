@@ -43,6 +43,10 @@
 #include "battleActions/skills/SkillDb.h"
 #include "battleActions/weapons/WeaponDb.h"
 
+// debug
+#include "tests/engine/ndsExample.hpp"
+bool testEngine = false;
+
 // variables
 volatile int frame = 0;
 int fps = 0;
@@ -123,6 +127,13 @@ void loadModels(bool isFemc)
 int main(int argc, char* argv[])
 {
     irqSet(IRQ_VBLANK, Vblank);
+
+    if (testEngine)
+    {
+        ndsExampleTest();
+        while (1)
+            swiWaitForVBlank();
+    }
 
     // Initialize DLDI/FAT instead
     if (!fatInitDefault())
