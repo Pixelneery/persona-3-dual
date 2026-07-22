@@ -162,8 +162,7 @@ struct CameraKeyframe
 
 struct CameraPath
 {
-    int keyframeCount;
-    const CameraKeyframe* keyframes;
+    std::vector<CameraKeyframe> keyframes;
 };
 
 struct CameraPosition

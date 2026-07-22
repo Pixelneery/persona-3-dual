@@ -6,20 +6,24 @@ IwatodaiDormView::IwatodaiDormView()
 }
 
 // Test path
-static const CameraKeyframe dormTestFrames[] = {
-    //  { time,  camX,   camY,  camZ,   tarX,  tarY,  tarZ  }
+static const CameraPath dormTestPath = {{
+    {120, -0.40f, 0.60f, 2.82f, 0.4f, 0.1f, 2.80f},
     {0, -0.40f, 0.60f, 2.82f, 0.4f, 0.1f, 2.80f},
     {60, 0.40f, 0.80f, 1.80f, 0.4f, 0.1f, 2.80f},
     {120, 1.20f, 0.60f, 2.82f, 0.4f, 0.1f, 2.80f},
     {180, 0.40f, 0.40f, 3.80f, 0.4f, 0.1f, 2.80f},
     {240, -0.40f, 0.60f, 2.82f, 0.4f, 0.1f, 2.80f},
-};
-static const CameraPath dormTestPath = {5, dormTestFrames};
+}};
 
 void IwatodaiDormView::configureCameraController()
 {
-    cameraCtrl.setPath(&dormTestPath);
     camConfig.mode = CameraMode::Path;
+    camConfig.initialAngle = angle;
+    camConfig.distance = distance;
+    camConfig.height = height + 0.6f;
+    camConfig.lookAhead = lookAhead;
+    camConfig.angleIncrement = angleIncrement;
+    cameraCtrl.setPath(&dormTestPath);
 }
 
 void IwatodaiDormView::setMusic()

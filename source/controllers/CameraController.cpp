@@ -68,7 +68,6 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
 
     case CameraMode::CCTV:
     {
-        // Eye is fixed, target tracks the character
         cam.cameraX = currentPos.x;
         cam.cameraY = currentPos.y;
         cam.cameraZ = currentPos.z;
@@ -145,12 +144,13 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
 
     case CameraMode::Path:
     {
-        if (!path || path->keyframeCount < 2)
+        if (!path || path->keyframes.size() < 2)
             break;
 
         pathFrame++;
 
-        while (pathKeyIndex + 2 < path->keyframeCount && pathFrame >= path->keyframes[pathKeyIndex + 1].time)
+        while (pathKeyIndex + 2 < static_cast<int>(path->keyframes.size()) &&
+               pathFrame >= path->keyframes[pathKeyIndex + 1].time)
         {
             pathKeyIndex++;
         }
@@ -158,7 +158,7 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
         const CameraKeyframe& kf0 = path->keyframes[pathKeyIndex];
         const CameraKeyframe& kf1 = path->keyframes[pathKeyIndex + 1];
 
-        if (pathFrame >= kf1.time && pathKeyIndex + 2 >= path->keyframeCount)
+        if (pathFrame >= kf1.time && pathKeyIndex + 2 >= static_cast<int>(path->keyframes.size()))
         {
             pathDone = true;
             mode = CameraMode::Follow;
@@ -172,7 +172,7 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
         }
 
         int span = kf1.time - kf0.time;
-        float t = (span > 0) ? (float)(pathFrame - kf0.time) / (float)span : 1.0f;
+        float t = (span > 0) ? static_cast<float>(pathFrame - kf0.time) / static_cast<float>(span) : 1.0f;
 
         cam.cameraX = kf0.cameraX + (kf1.cameraX - kf0.cameraX) * t;
         cam.cameraY = kf0.cameraY + (kf1.cameraY - kf0.cameraY) * t;
