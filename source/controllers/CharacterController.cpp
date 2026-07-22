@@ -59,8 +59,9 @@ CharacterPosition CharacterController::isCharacterAt()
     return charPos;
 }
 
-void CharacterController::update(u32 keys, float cameraAngle)
+void CharacterController::update(u32 keys, CameraController* camera)
 {
+    float cameraAngle = camera->getMovementAngle(isCharacterAt());
     float forwardX;
     float forwardZ;
     float rightX;

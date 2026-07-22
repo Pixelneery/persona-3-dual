@@ -2,6 +2,7 @@
 #include <stdint.h>
 
 #include "controllers/AnimationController.h"
+#include "controllers/CameraController.h"
 #include "core/enums.h"
 #include "core/geometry.h"
 #include "core/globals.h"
@@ -59,7 +60,7 @@ class CharacterController
         characterFacingAngle = iCharacterFacingAngle;
     };
 
-    void update(u32 keys, float cameraAngle);
+    void update(u32 keys, CameraController* camera);
     CharacterPosition isCharacterAt();
     TileType isTileAt();
 
