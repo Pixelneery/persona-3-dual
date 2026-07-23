@@ -162,7 +162,7 @@ void TextController::drawText(
         if (c == '\n')
         {
             cursorX = startX;
-            cursorY += font->lineHeight + 2;
+            cursorY += font->lineHeight + LINE_SPACING;
             continue;
         }
 
@@ -183,6 +183,11 @@ void TextController::drawText(
                 continue;
             }
             else
+            {
+                cursorX += SPACE_WIDTH;
+                continue;
+            }
+            if (font->glyphs[static_cast<unsigned char>(c)].width == 0)
             {
                 cursorX += SPACE_WIDTH;
                 continue;

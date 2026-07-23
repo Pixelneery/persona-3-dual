@@ -15,7 +15,7 @@ struct Glyph
 {
     int xPos;
     int yPos;
-    int width;
+    int width = 0;
     int height;
     int xOffset;
     int yOffset;
@@ -103,6 +103,7 @@ class TextController
 
   private:
     int LETTER_SPACING = 1;
+    int LINE_SPACING = 4;
     int SPACE_WIDTH = 4;
 
     TextController();
