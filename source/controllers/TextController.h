@@ -33,6 +33,32 @@ struct Font
     Glyph glyphs[256];
 };
 
+enum TextColor
+{
+    Transparent = 0,
+    Black = 1,
+    White = 2,
+    DualGreen = 3,
+    DualGreen2 = 4,
+    DarkGreen = 5,
+    DarkerGreen = 6,
+    DarkestGreen = 7,
+    LightBlue = 8,
+    RichBlue = 9,
+    DarkBlue = 10,
+    NavyBlue = 11,
+    DarkestBlue = 12,
+    LightOrange = 13,
+    LightPurple = 14,
+    Red = 15,
+    Green = 16,
+    Blue = 17,
+    Yellow = 18,
+    Magenta = 19,
+    Cyan = 20,
+    Gray = 21
+};
+
 /**
  * @brief A class that handles rendering text from a bitmap on the Nintendo DS.
  *
@@ -58,6 +84,26 @@ class TextController
      * @return Pointer to the loaded font, or nullptr if loading failed.
      */
     Font* loadFont(const std::string& fontFilePath = "cosmetica/size-32/size-32");
+
+    /**
+     * @brief Loads the predefined default palette.
+     */
+    void loadDefaultPalette();
+
+    /**
+     * @brief Load a palette from a file.
+     * @param paletteFilePath The path to the palette file.
+     * @param sub Whether to load the palette for the sub screen.
+     * @return true if the palette was loaded successfully, false otherwise.
+     * @note This palette will apply for all text that is being drawn.
+     */
+    bool loadPalette(const std::string& paletteFilePath, bool sub = false);
+
+    /**
+     * @brief Unload the current palettes.
+     * @note This function unloads the palettes from both the main and sub screens.
+     */
+    void unloadPalette();
 
     /**
      * @brief Draw text to the screen.
@@ -87,19 +133,18 @@ class TextController
     void clearScreen(uint16_t* videoBuffer);
 
     /**
-     * @brief Test function to draw the font bitmap to the screen for debugging purposes.
+     * @brief Test function to draw the font bitmap to the screen.
      * @param font Pointer to the font to test.
      * @param videoBuffer Pointer to the video buffer to draw to.
      * @note This function is intended for testing purposes.
      */
     void testBitmap(Font* font, uint16_t* videoBuffer);
     /**
-     * @brief Test function to draw the font palette to the screen for debugging purposes.
-     * @param font Pointer to the font to test.
+     * @brief Test function to draw the currently loaded palette to the screen.
      * @param videoBuffer Pointer to the video buffer to draw to.
      * @note This function is intended for testing purposes.
      */
-    void testPalette(Font* font, uint16_t* videoBuffer);
+    void testPalette(uint16_t* videoBuffer);
 
   private:
     int LETTER_SPACING = 1;
@@ -109,19 +154,13 @@ class TextController
     TextController(const TextController&) = delete;
     TextController& operator=(const TextController&) = delete;
 
-    //Helper Functions
+    // Loader Functions
     /**
      * @brief Load the font bitmap from a file.
      * @param path The path to the font bitmap file.
      * @return Pointer to the loaded font bitmap, or nullptr if loading failed.
      */
     std::uint8_t* loadFontBitmap(const std::string& path);
-    /**
-     * @brief Load the font palette from a file.
-     * @param path The path to the font palette file.
-     * @return Pointer to the loaded font palette, or nullptr if loading failed.
-     */
-    std::uint16_t* loadFontPalette(const std::string& path);
     /**
      * @brief Load the font metadata from a file.
      * @param path The path to the font metadata file.
@@ -130,6 +169,7 @@ class TextController
      */
     bool loadFontMetadata(const std::string& path, Font* font);
 
+    // Helper Functions
     /**
      * @brief Open a file and return a pointer to its contents.
      * @param path The path to the file to open.
