@@ -217,6 +217,9 @@ void EnvironmentView::init()
     uiCtrl->registerScreen(dialogueScreen, false);
     uiCtrl->show(menuHUDScreen, false);
 
+    // setup music (room-specific path/loop points)
+    setMusic();
+
     onSetupDialogueAndUI();
 
     // setup view phases
