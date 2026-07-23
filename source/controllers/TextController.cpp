@@ -4,23 +4,37 @@
 #include <fstream>
 #include <sstream>
 
+// Helper macro to convert 8 bit RGB values to 5 bit RGB values for the Nintendo DS
+#define NDS_RGB(r, g, b) (uint16_t)((r) >> 3) | (((g) >> 3) << 5) | (((b) >> 3) << 10) | BIT(15)
+
 static const uint16_t customPalette[256] = {
-    ARGB16(1, 0, 0, 0),    // Transparent
-    ARGB16(1, 0, 0, 0),    // Black
-    ARGB16(1, 31, 31, 31), // White
-    ARGB16(1, 31, 0, 0),   // Red
-    ARGB16(1, 0, 31, 0),   // Green
-    ARGB16(1, 0, 0, 31),   // Blue
-    ARGB16(1, 31, 31, 0),  // Yellow
-    ARGB16(1, 31, 0, 31),  // Magenta
-    ARGB16(1, 0, 31, 31),  // Cyan
-    ARGB16(1, 15, 15, 15), // Gray
+    ARGB16(0, 0, 0, 0),     // Transparent   0
+    ARGB16(1, 0, 0, 0),     // Black         1
+    ARGB16(1, 31, 31, 31),  // White         2
+    NDS_RGB(0, 202, 105),   // Dual Green    3
+    NDS_RGB(18, 168, 88),   // Dual Green 2  4
+    NDS_RGB(28, 118, 55),   // Dark Green    5
+    NDS_RGB(0, 69, 40),     // Darker Green  6
+    NDS_RGB(4, 34, 18),     // Darkest Green 7
+    NDS_RGB(121, 206, 255), // Light Blue    8
+    NDS_RGB(9, 137, 253),   // Rich Blue     9
+    NDS_RGB(0, 104, 208),   // Dark Blue     10
+    NDS_RGB(0, 44, 208),    // Navy Blue     11
+    NDS_RGB(0, 0, 36),      // Darkest Blue  12
+    NDS_RGB(245, 198, 164), // Light Orange  13
+    NDS_RGB(198, 164, 245), // Light Purple  14
+    //Defaults
+    ARGB16(1, 31, 0, 0),   // Red           15
+    ARGB16(1, 0, 31, 0),   // Green         16
+    ARGB16(1, 0, 0, 31),   // Blue          17
+    ARGB16(1, 31, 31, 0),  // Yellow        18
+    ARGB16(1, 31, 0, 31),  // Magenta       19
+    ARGB16(1, 0, 31, 31),  // Cyan          20
+    ARGB16(1, 15, 15, 15), // Gray          21
 };
 
 TextController::TextController()
 {
-    dmaCopy(customPalette, BG_PALETTE, 256 * sizeof(uint16_t));
-    dmaCopy(customPalette, BG_PALETTE_SUB, 256 * sizeof(uint16_t));
 }
 
 // Loading Functions =====================================================
@@ -35,6 +49,18 @@ Font* TextController::loadFont(const std::string& fontFilePath)
     if (!loadFontMetadata(fullPath + ".fnt", font))
         haltOnError("Failed to load font metadata from \n" + fullPath + ".fnt");
     return font;
+}
+
+void TextController::loadDefaultPalette()
+{
+    dmaCopy(customPalette, BG_PALETTE, 256 * sizeof(uint16_t));
+    dmaCopy(customPalette, BG_PALETTE_SUB, 256 * sizeof(uint16_t));
+}
+
+void TextController::unloadPalette()
+{
+    dmaFillHalfWords(0, BG_PALETTE, 256 * sizeof(uint16_t));
+    dmaFillHalfWords(0, BG_PALETTE_SUB, 256 * sizeof(uint16_t));
 }
 
 void* TextController::openFile(const std::string& path)
@@ -95,14 +121,17 @@ std::uint8_t* TextController::loadFontBitmap(const std::string& path)
     return fontBitmap;
 }
 
-std::uint16_t* TextController::loadFontPalette(const std::string& path)
+bool TextController::loadPalette(const std::string& path, bool sub)
 {
     void* buffer = openFile(path);
     if (buffer == nullptr)
-        return nullptr;
+        return false;
     std::uint16_t* fontPalette = reinterpret_cast<std::uint16_t*>(buffer);
-    //dmaCopy(fontPalette, BG_PALETTE, 256 * sizeof(uint16_t));
-    return fontPalette;
+    if (sub)
+        dmaCopy(fontPalette, BG_PALETTE_SUB, 256 * sizeof(uint16_t));
+    else
+        dmaCopy(fontPalette, BG_PALETTE, 256 * sizeof(uint16_t));
+    return true;
 }
 
 bool TextController::loadFontMetadata(const std::string& path, Font* font)
@@ -281,15 +310,30 @@ void TextController::testBitmap(Font* font, uint16_t* videoBuffer)
     {
         for (int x = 0; x < 256; x++)
         {
-            videoBuffer[(y * 256 + x) / 2] = font->bitmap[y * font->bitmapWidth + x] | BIT(15);
+            int index = font->bitmap[y * font->bitmapWidth + x];
+            int pixelValue = font->bitmap[index];
+            if (pixelValue > 0)
+                drawPixel(videoBuffer, x, y, DualGreen);
         }
     }
 }
 
-void TextController::testPalette(Font* font, uint16_t* videoBuffer)
+void TextController::testPalette(uint16_t* videoBuffer)
 {
-    for (int i = 0; i < (256 * 256); i++)
+    for (int i = 0; i < 128; i += 2)
     {
-        videoBuffer[i] = customPalette[i % 256] | BIT(15);
+        for (int y = 0; y < 50; y++)
+        {
+            drawPixel(videoBuffer, i, y, i);
+            drawPixel(videoBuffer, i + 1, y, i);
+        }
+    }
+    for (int i = 0; i < 128; i += 2)
+    {
+        for (int y = 0; y < 50; y++)
+        {
+            drawPixel(videoBuffer, i, y + 50, i + 128);
+            drawPixel(videoBuffer, i + 1, y + 50, i + 128);
+        }
     }
 }
