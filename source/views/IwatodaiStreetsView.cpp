@@ -32,6 +32,7 @@ IwatodaiStreetsView::~IwatodaiStreetsView()
 
 void IwatodaiStreetsView::startBattle()
 {
+    battleController->textVideoBufferSub = textVideoBufferSub;
     battleController->execute(player, &partyMembers, &enemies, &battleParticipants, battleStartCondition);
 }
 
@@ -78,8 +79,11 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
 
     case TileType::SHD_W:
     {
-        iprintf("\x1b[0;0HBattle Zone");
-
+        if (!promptDrawn)
+        {
+            textCtrl->drawText("Battle Zone", consoleFont, textVideoBufferSub, 0, 0, TextColor::White);
+            promptDrawn = true;
+        }
         if (pressed & KEY_A)
         {
             phase = ViewPhase::Battle;
@@ -90,6 +94,11 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     }
 
     default:
+        if (promptDrawn)
+        {
+            textCtrl->clearScreen(textVideoBufferSub);
+            promptDrawn = false;
+        }
         break;
     }
 

@@ -110,6 +110,7 @@ class EnvironmentView : public BaseView
     bool prevEnvironmentState = false;
     bool prevBattleState = false;
     bool isBattleMenuActive = false;
+    bool promptDrawn = false;
 
     CharacterController* playerCtrl = nullptr;
     CameraPosition camPos;
@@ -127,6 +128,11 @@ class EnvironmentView : public BaseView
     // Environment
     Environment env;
     const EnvironmentDbEntry* dbEntry = nullptr;
+
+    uint16_t* textVideoBuffer;
+    uint16_t* textVideoBufferSub;
+    Font* consoleFont = nullptr;
+    TextController* textCtrl = TextController::getInstance();
 
   private:
     // fog properties

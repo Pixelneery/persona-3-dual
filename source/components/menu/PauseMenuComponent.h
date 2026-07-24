@@ -184,6 +184,8 @@ class PauseMenuComponent : public BaseMenu
 
     void init(int iBgSlot,
               bool* isActive = &Globals::isPauseMenuActive,
+              uint16_t* iTextVideoBuffer = nullptr,
+              uint16_t* iTextVideoBufferSub = nullptr,
               const std::string& iPauseMessage = "Pause") override;
     ViewState update(int keys) override;
 };

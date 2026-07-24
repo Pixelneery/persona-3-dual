@@ -78,9 +78,13 @@ void PauseMenuComponent::loadBg(int bgIndex)
     graphicsCtrl->unloadGrit(bg);
 }
 
-void PauseMenuComponent::init(int iBgSlot, bool* isActive, const std::string& iPauseMessage)
+void PauseMenuComponent::init(int iBgSlot,
+                              bool* isActive,
+                              uint16_t* iTextVideoBuffer,
+                              uint16_t* iTextVideoBufferSub,
+                              const std::string& iPauseMessage)
 {
-    BaseMenu::init(iBgSlot, isActive, iPauseMessage);
+    BaseMenu::init(iBgSlot, isActive, iTextVideoBuffer, iTextVideoBufferSub, iPauseMessage);
     options = menuOptions;
     optionCount = MENU_OPTIONS;
 }
@@ -224,7 +228,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
         consoleClear();
         demo_yukari_kenji_argument_load();
         dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-        dialogueCtrl.start(demo_yukari_kenji_argument_first());
+        dialogueCtrl.start(demo_yukari_kenji_argument_first(), font, textVideoBufferSub);
         selectedView = ViewState::KEEP_CURRENT;
         break;
     case DebugOption::TOGGLE_BILLBOARDS:
