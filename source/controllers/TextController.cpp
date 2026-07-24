@@ -39,23 +39,23 @@ TextController::TextController()
 
 void TextController::update()
 {
-    if (text != nullptr)
+    if (appearingText != nullptr)
     {
-        if (text->cursorPos < (int)text->content.size())
+        if (appearingText->cursorPos < (int)appearingText->content.size())
         {
-            if (text->counter <= 0)
+            if (appearingText->counter <= 0)
             {
-                drawNextFromText(text);
-                text->cursorPos++;
-                text->counter = APPEAR_DELAY; // Reset the counter for the next character
+                drawNextFromText(appearingText);
+                appearingText->cursorPos++;
+                appearingText->counter = APPEAR_DELAY; // Reset the counter for the next character
             }
             else
-                text->counter--;
+                appearingText->counter--;
         }
         else //this text has finished appearing, so we can clear the storage
         {
-            delete text;
-            text = nullptr;
+            delete appearingText;
+            appearingText = nullptr;
         }
     }
 }
@@ -244,17 +244,19 @@ void TextController::drawText(
 void TextController::appearText(
     const std::string& content, Font* font, uint16_t* videoBuffer, int startX, int startY, int color)
 {
-    text = createText(content, font, videoBuffer, startX, startY, color);
+    if (appearingText != nullptr)
+        delete appearingText;
+    appearingText = createText(content, font, videoBuffer, startX, startY, color);
 }
 
 void TextController::appearTextSkip()
 {
-    if (text != nullptr)
+    if (appearingText != nullptr)
     {
-        while (text->cursorPos < (int)text->content.size())
+        while (appearingText->cursorPos < (int)appearingText->content.size())
         {
-            drawNextFromText(text);
-            text->cursorPos++;
+            drawNextFromText(appearingText);
+            appearingText->cursorPos++;
         }
     }
 }

@@ -187,7 +187,7 @@ class TextController
     void testPalette(uint16_t* videoBuffer);
 
   private:
-    Text* text;
+    Text* appearingText;
     int APPEAR_DELAY = 5;
     int LETTER_SPACING = 1;
     int SPACE_WIDTH = 4;
