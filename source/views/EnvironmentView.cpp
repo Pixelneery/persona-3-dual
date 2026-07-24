@@ -368,21 +368,21 @@ ViewState EnvironmentView::update()
             return tileResult;
         }
 
-        gluLookAt(camPos.cameraX,
-                  camPos.cameraY + getCameraYOffset(),
-                  camPos.cameraZ,
-                  camPos.targetX,
-                  camPos.targetY,
-                  camPos.targetZ,
-                  camPos.upX,
-                  camPos.upY,
-                  camPos.upZ);
+        gluLookAt(camPos.eye.x,
+                  camPos.eye.y + getCameraYOffset(),
+                  camPos.eye.z,
+                  camPos.target.x,
+                  camPos.target.y,
+                  camPos.target.z,
+                  camPos.up.x,
+                  camPos.up.y,
+                  camPos.up.z);
 
         // environment
         glPushMatrix();
         glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(0));
         env.draw();
-        env.drawBillboards(Globals::enableBillboards, camPos.cameraX, camPos.cameraY, camPos.cameraZ);
+        env.drawBillboards(Globals::enableBillboards, camPos.eye.x, camPos.eye.y, camPos.eye.z);
         glPopMatrix(1);
 
         // model

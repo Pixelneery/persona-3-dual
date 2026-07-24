@@ -1,5 +1,17 @@
 #include "CameraController.h"
 #include <math.h>
+#include <nds/arm9/trig_lut.h>
+
+static const float RAD_TO_LIBNDS = 32768.0f / (2.0f * 3.14159265f);
+
+static inline float hw_sinf(float r)
+{
+    return sinLerp((s16)(r * RAD_TO_LIBNDS)) / 4096.0f;
+}
+static inline float hw_cosf(float r)
+{
+    return cosLerp((s16)(r * RAD_TO_LIBNDS)) / 4096.0f;
+}
 
 void CameraController::configure(const CameraConfig& config)
 {
@@ -51,29 +63,29 @@ float CameraController::getMovementAngle(const CharacterPosition& charPos) const
 CameraPosition CameraController::update(u32 keys, const CharacterPosition& charPos)
 {
     CameraPosition cam = {};
-    cam.upY = 1.0f;
+    cam.up.y = 1.0f;
 
     switch (mode)
     {
     case CameraMode::Static:
     {
-        cam.cameraX = currentPos.x;
-        cam.cameraY = currentPos.y;
-        cam.cameraZ = currentPos.z;
-        cam.targetX = targetPos.x;
-        cam.targetY = targetPos.y;
-        cam.targetZ = targetPos.z;
+        cam.eye.x = currentPos.x;
+        cam.eye.y = currentPos.y;
+        cam.eye.z = currentPos.z;
+        cam.target.x = targetPos.x;
+        cam.target.y = targetPos.y;
+        cam.target.z = targetPos.z;
         break;
     }
 
     case CameraMode::CCTV:
     {
-        cam.cameraX = currentPos.x;
-        cam.cameraY = currentPos.y;
-        cam.cameraZ = currentPos.z;
-        cam.targetX = charPos.x;
-        cam.targetY = charPos.y;
-        cam.targetZ = charPos.z;
+        cam.eye.x = currentPos.x;
+        cam.eye.y = currentPos.y;
+        cam.eye.z = currentPos.z;
+        cam.target.x = charPos.x;
+        cam.target.y = charPos.y;
+        cam.target.z = charPos.z;
         break;
     }
 
@@ -84,13 +96,13 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
         if (keys & KEY_R)
             angle += angleIncrement;
 
-        cam.cameraX = charPos.x + sinf(angle) * distance;
-        cam.cameraY = charPos.y + height;
-        cam.cameraZ = charPos.z - cosf(angle) * distance;
+        cam.eye.x = charPos.x + hw_sinf(angle) * distance;
+        cam.eye.y = charPos.y + height;
+        cam.eye.z = charPos.z - hw_cosf(angle) * distance;
 
-        cam.targetX = charPos.x - sinf(angle) * lookAhead;
-        cam.targetY = charPos.y + 0.1f;
-        cam.targetZ = charPos.z + cosf(angle) * lookAhead;
+        cam.target.x = charPos.x - hw_sinf(angle) * lookAhead;
+        cam.target.y = charPos.y + 0.1f;
+        cam.target.z = charPos.z + hw_cosf(angle) * lookAhead;
         break;
     }
 
@@ -109,8 +121,8 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
         if (keys & KEY_R)
             angle += angleIncrement;
 
-        const float fwdX = -sinf(angle) * freeCameraSpeed;
-        const float fwdZ = cosf(angle) * freeCameraSpeed;
+        const float fwdX = -hw_sinf(angle) * freeCameraSpeed;
+        const float fwdZ = hw_cosf(angle) * freeCameraSpeed;
 
         if (keys & KEY_UP)
         {
@@ -133,12 +145,12 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
             currentPos.z -= fwdX;
         }
 
-        cam.cameraX = currentPos.x;
-        cam.cameraY = currentPos.y;
-        cam.cameraZ = currentPos.z;
-        cam.targetX = currentPos.x - sinf(angle);
-        cam.targetY = currentPos.y;
-        cam.targetZ = currentPos.z + cosf(angle);
+        cam.eye.x = currentPos.x;
+        cam.eye.y = currentPos.y;
+        cam.eye.z = currentPos.z;
+        cam.target.x = currentPos.x - hw_sinf(angle);
+        cam.target.y = currentPos.y;
+        cam.target.z = currentPos.z + hw_cosf(angle);
         break;
     }
 
@@ -162,24 +174,24 @@ CameraPosition CameraController::update(u32 keys, const CharacterPosition& charP
         {
             pathDone = true;
             mode = CameraMode::Follow;
-            cam.cameraX = kf1.cameraX;
-            cam.cameraY = kf1.cameraY;
-            cam.cameraZ = kf1.cameraZ;
-            cam.targetX = kf1.targetX;
-            cam.targetY = kf1.targetY;
-            cam.targetZ = kf1.targetZ;
+            cam.eye.x = kf1.eye.x;
+            cam.eye.y = kf1.eye.y;
+            cam.eye.z = kf1.eye.z;
+            cam.target.x = kf1.target.x;
+            cam.target.y = kf1.target.y;
+            cam.target.z = kf1.target.z;
             break;
         }
 
         int span = kf1.time - kf0.time;
         float t = (span > 0) ? static_cast<float>(pathFrame - kf0.time) / static_cast<float>(span) : 1.0f;
 
-        cam.cameraX = kf0.cameraX + (kf1.cameraX - kf0.cameraX) * t;
-        cam.cameraY = kf0.cameraY + (kf1.cameraY - kf0.cameraY) * t;
-        cam.cameraZ = kf0.cameraZ + (kf1.cameraZ - kf0.cameraZ) * t;
-        cam.targetX = kf0.targetX + (kf1.targetX - kf0.targetX) * t;
-        cam.targetY = kf0.targetY + (kf1.targetY - kf0.targetY) * t;
-        cam.targetZ = kf0.targetZ + (kf1.targetZ - kf0.targetZ) * t;
+        cam.eye.x = kf0.eye.x + (kf1.eye.x - kf0.eye.x) * t;
+        cam.eye.y = kf0.eye.y + (kf1.eye.y - kf0.eye.y) * t;
+        cam.eye.z = kf0.eye.z + (kf1.eye.z - kf0.eye.z) * t;
+        cam.target.x = kf0.target.x + (kf1.target.x - kf0.target.x) * t;
+        cam.target.y = kf0.target.y + (kf1.target.y - kf0.target.y) * t;
+        cam.target.z = kf0.target.z + (kf1.target.z - kf0.target.z) * t;
         break;
     }
 

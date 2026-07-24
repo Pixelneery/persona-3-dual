@@ -128,56 +128,6 @@ struct AnimNode
     v16 pivotX, pivotY, pivotZ;
 };
 
-enum class CameraMode
-{
-    Free,
-    Static,
-    CCTV,
-    Follow,
-    Path
-};
-
-struct CameraConfig
-{
-    CameraMode mode = CameraMode::Follow;
-
-    // Static / CCTV — fixed eye position
-    Vec3<float> eye = {};
-    Vec3<float> target = {}; // Static only
-
-    // Follow / Free
-    float initialAngle = 0.0f;
-    float distance = 1.5f;
-    float height = 0.6f;
-    float lookAhead = 0.5f;
-    float angleIncrement = 0.05f;
-};
-
-struct CameraKeyframe
-{
-    int time; // frame index
-    float cameraX, cameraY, cameraZ;
-    float targetX, targetY, targetZ;
-};
-
-struct CameraPath
-{
-    std::vector<CameraKeyframe> keyframes;
-};
-
-struct CameraPosition
-{
-    float cameraX;
-    float cameraY;
-    float cameraZ;
-    float targetX;
-    float targetY;
-    float targetZ;
-    float upX;
-    float upY;
-    float upZ;
-};
-
 struct CharacterPosition
 {
     float x;
