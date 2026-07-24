@@ -37,6 +37,29 @@ TextController::TextController()
 {
 }
 
+void TextController::update()
+{
+    if (appearingText != nullptr)
+    {
+        if (appearingText->cursorPos < (int)appearingText->content.size())
+        {
+            if (appearingText->counter <= 0)
+            {
+                drawNextFromText(appearingText);
+                appearingText->cursorPos++;
+                appearingText->counter = APPEAR_DELAY; // Reset the counter for the next character
+            }
+            else
+                appearingText->counter--;
+        }
+        else //this text has finished appearing, so we can clear the storage
+        {
+            delete appearingText;
+            appearingText = nullptr;
+        }
+    }
+}
+
 // Loading Functions =====================================================
 
 Font* TextController::loadFont(const std::string& fontFilePath)
@@ -198,13 +221,7 @@ void TextController::drawText(
         //Handle automatic word wrapping to prevent drawing outside screen bounds
         if (c == ' ')
         {
-            std::string nextWord = "";
-            int i = 0; //TODO: set i properly
-            while (i < (int)text.size() && text[i] != ' ' && text[i] != '\n')
-            {
-                nextWord += text[i];
-                i++;
-            }
+            std::string nextWord = getNextWord(text.substr(cursorX + 1));
             if (checkWordWrap(nextWord, font, cursorX))
             {
                 cursorX = startX;
@@ -221,6 +238,26 @@ void TextController::drawText(
         Glyph g = font->glyphs[static_cast<unsigned char>(c)];
         drawGlyph(g, font, videoBuffer, cursorX, cursorY, color);
         cursorX += g.width + LETTER_SPACING;
+    }
+}
+
+void TextController::appearText(
+    const std::string& content, Font* font, uint16_t* videoBuffer, int startX, int startY, int color)
+{
+    if (appearingText != nullptr)
+        delete appearingText;
+    appearingText = createText(content, font, videoBuffer, startX, startY, color);
+}
+
+void TextController::appearTextSkip()
+{
+    if (appearingText != nullptr)
+    {
+        while (appearingText->cursorPos < (int)appearingText->content.size())
+        {
+            drawNextFromText(appearingText);
+            appearingText->cursorPos++;
+        }
     }
 }
 
@@ -256,6 +293,53 @@ void TextController::clearScreen(uint16_t* videoBuffer)
 
 // Helper Functions ======================================================
 
+void TextController::drawNextFromText(Text* text)
+{
+    char c = text->content[text->cursorPos];
+
+    //Handle Newline
+    if (c == '\n')
+    {
+        text->cursorX = text->startX;
+        text->cursorY += text->font->lineHeight + 2;
+    }
+    else if (c == ' ')
+    {
+        std::string nextWord = getNextWord(text->content.substr(text->cursorPos + 1));
+        if (checkWordWrap(nextWord, text->font, text->cursorX))
+        {
+            text->cursorX = text->startX;
+            text->cursorY += text->font->lineHeight + 2;
+        }
+        else
+        {
+            text->cursorX += SPACE_WIDTH;
+        }
+    }
+    else
+    {
+        Glyph g = text->font->glyphs[static_cast<unsigned char>(c)];
+        drawGlyph(g, text->font, text->videoBuffer, text->cursorX, text->cursorY, text->color);
+        text->cursorX += g.width + LETTER_SPACING;
+    }
+}
+
+Text* TextController::createText(
+    const std::string& text, Font* font, uint16_t* videoBuffer, int startX, int startY, int color)
+{
+    Text* newText = new Text();
+    newText->cursorX = startX;
+    newText->cursorY = startY;
+    newText->startX = startX;
+    newText->startY = startY;
+    newText->content = text;
+    newText->color = color;
+    newText->font = font;
+    newText->videoBuffer = videoBuffer;
+    newText->cursorPos = 0; // Start at the beginning of the text
+    return newText;
+}
+
 void TextController::drawPixel(uint16_t* videoBuffer, int x, int y, int paletteValue)
 {
     int wordIndex = (y * 256 + x) / 2;
@@ -278,6 +362,18 @@ int TextController::extractIntValue(const std::string& line, const std::string& 
         dataEnd++;
 
     return std::stoi(line.substr(dataStart, dataEnd - dataStart));
+}
+
+std::string TextController::getNextWord(const std::string& text)
+{
+    std::string nextWord = "";
+    int i = 0;
+    while (i < (int)text.size() && text[i] != ' ' && text[i] != '\n')
+    {
+        nextWord += text[i];
+        i++;
+    }
+    return nextWord;
 }
 
 bool TextController::checkWordWrap(const std::string& text, Font* font, int startX)
