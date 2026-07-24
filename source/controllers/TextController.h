@@ -34,6 +34,52 @@ struct Font
 };
 
 /**
+ * @brief Human Readable enum for text colors.
+ */
+enum TextColor
+{
+    Transparent = 0,
+    Black = 1,
+    White = 2,
+    DualGreen = 3,
+    DualGreen2 = 4,
+    DarkGreen = 5,
+    DarkerGreen = 6,
+    DarkestGreen = 7,
+    LightBlue = 8,
+    RichBlue = 9,
+    DarkBlue = 10,
+    NavyBlue = 11,
+    DarkestBlue = 12,
+    LightOrange = 13,
+    LightPurple = 14,
+    Red = 15,
+    Green = 16,
+    Blue = 17,
+    Yellow = 18,
+    Magenta = 19,
+    Cyan = 20,
+    Gray = 21
+};
+
+/**
+ * @brief A struct that represents a block of text being rendered on the screen.
+ */
+struct Text
+{
+    int cursorX;
+    int cursorY;
+    int startX;
+    int startY;
+    std::string content;
+    int color;
+    Font* font;
+    uint16_t* videoBuffer;
+    int cursorPos;
+    int counter;
+};
+
+/**
  * @brief A class that handles rendering text from a bitmap on the Nintendo DS.
  *
  * This class provides functionality to load a font from a bitmap and render text to the screen.
@@ -53,11 +99,36 @@ class TextController
     }
 
     /**
+     * @brief Frame update function to be called every frame.
+     */
+    void update();
+
+    /**
      * @brief Load a font from a file.
      * @param fontFilePath The path to the font file without file extension.
      * @return Pointer to the loaded font, or nullptr if loading failed.
      */
     Font* loadFont(const std::string& fontFilePath = "cosmetica/size-32/size-32");
+
+    /**
+     * @brief Loads the predefined default palette.
+     */
+    void loadDefaultPalette();
+
+    /**
+     * @brief Load a palette from a file.
+     * @param paletteFilePath The path to the palette file.
+     * @param sub Whether to load the palette for the sub screen.
+     * @return true if the palette was loaded successfully, false otherwise.
+     * @note This palette will apply for all text that is being drawn.
+     */
+    bool loadPalette(const std::string& paletteFilePath, bool sub = false);
+
+    /**
+     * @brief Unload the current palettes.
+     * @note This function unloads the palettes from both the main and sub screens.
+     */
+    void unloadPalette();
 
     /**
      * @brief Draw text to the screen.
@@ -70,6 +141,21 @@ class TextController
      */
     void drawText(
         const std::string& text, Font* font, uint16_t* videoBuffer, int x, int y, int color = ARGB16(1, 31, 31, 31));
+    /**
+     * @brief Create a Text object and renders each character with a delay to simulate typing effect.
+     * @param text The text to render.
+     * @param font Pointer to the font to use for rendering.
+     * @param videoBuffer Pointer to the video buffer to draw to.
+     * @param x The x-coordinate to start drawing the text.
+     * @param y The y-coordinate to start drawing the text.
+     * @param color The color to use for the text (default is white).
+     */
+    void appearText(
+        const std::string& text, Font* font, uint16_t* videoBuffer, int x, int y, int color = ARGB16(1, 31, 31, 31));
+    /**
+     * @brief If a text is currently being rendered with appearText, this function will immediately render the rest of the text without delay.
+     */
+    void appearTextSkip();
     /**
      * @brief Draw a single glyph to the screen.
      * @param glyph The glyph to draw.
@@ -87,21 +173,22 @@ class TextController
     void clearScreen(uint16_t* videoBuffer);
 
     /**
-     * @brief Test function to draw the font bitmap to the screen for debugging purposes.
+     * @brief Test function to draw the font bitmap to the screen.
      * @param font Pointer to the font to test.
      * @param videoBuffer Pointer to the video buffer to draw to.
      * @note This function is intended for testing purposes.
      */
     void testBitmap(Font* font, uint16_t* videoBuffer);
     /**
-     * @brief Test function to draw the font palette to the screen for debugging purposes.
-     * @param font Pointer to the font to test.
+     * @brief Test function to draw the currently loaded palette to the screen.
      * @param videoBuffer Pointer to the video buffer to draw to.
      * @note This function is intended for testing purposes.
      */
-    void testPalette(Font* font, uint16_t* videoBuffer);
+    void testPalette(uint16_t* videoBuffer);
 
   private:
+    Text* appearingText;
+    int APPEAR_DELAY = 5;
     int LETTER_SPACING = 1;
     int LINE_SPACING = 4;
     int SPACE_WIDTH = 4;
@@ -110,19 +197,13 @@ class TextController
     TextController(const TextController&) = delete;
     TextController& operator=(const TextController&) = delete;
 
-    //Helper Functions
+    // Loader Functions
     /**
      * @brief Load the font bitmap from a file.
      * @param path The path to the font bitmap file.
      * @return Pointer to the loaded font bitmap, or nullptr if loading failed.
      */
     std::uint8_t* loadFontBitmap(const std::string& path);
-    /**
-     * @brief Load the font palette from a file.
-     * @param path The path to the font palette file.
-     * @return Pointer to the loaded font palette, or nullptr if loading failed.
-     */
-    std::uint16_t* loadFontPalette(const std::string& path);
     /**
      * @brief Load the font metadata from a file.
      * @param path The path to the font metadata file.
@@ -131,6 +212,7 @@ class TextController
      */
     bool loadFontMetadata(const std::string& path, Font* font);
 
+    // Helper Functions
     /**
      * @brief Open a file and return a pointer to its contents.
      * @param path The path to the file to open.
@@ -145,7 +227,22 @@ class TextController
      * @note This function is useful when you need to know the size of the file being opened.
      */
     void* openFile(const std::string& path, u32& size);
-
+    /**
+     * @brief Draw the next character from the text struct to the screen.
+     * @note Used to draw text which appears character by character.
+     */
+    void drawNextFromText(Text* text);
+    /**
+     * @brief Create a Text object and initialize its properties.
+     * @param text The text content for the Text object.
+     * @param font Pointer to the font to use for rendering the text.
+     * @param videoBuffer Pointer to the video buffer to draw to.
+     * @param startX The x-coordinate to start drawing the text.
+     * @param startY The y-coordinate to start drawing the text.
+     * @param color The color to use for the text.
+     * @return Pointer to the newly created Text object.
+     */
+    Text* createText(const std::string& text, Font* font, uint16_t* videoBuffer, int startX, int startY, int color);
     /**
      * @brief Draw a single pixel to the video buffer.
      * @param videoBuffer Pointer to the video buffer to draw to.
@@ -154,6 +251,12 @@ class TextController
      * @param paletteValue The color index in the palette to use for the pixel.
      */
     void drawPixel(uint16_t* videoBuffer, int x, int y, int paletteValue);
+    /**
+     * @brief Get the next word from a given text string.
+     * @param text The text string to extract the next word from.
+     * @return The next word in the text string, or an empty string if there are no more words.
+     */
+    std::string getNextWord(const std::string& text);
     /**
      * @brief Check if a given text string will exceed the screen width when rendered with the specified font.
      * @param text The text string to check.
