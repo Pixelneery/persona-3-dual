@@ -33,6 +33,9 @@ struct Font
     Glyph glyphs[256];
 };
 
+/**
+ * @brief Human Readable enum for text colors.
+ */
 enum TextColor
 {
     Transparent = 0,
@@ -60,6 +63,23 @@ enum TextColor
 };
 
 /**
+ * @brief A struct that represents a block of text being rendered on the screen.
+ */
+struct Text
+{
+    int cursorX;
+    int cursorY;
+    int startX;
+    int startY;
+    std::string content;
+    int color;
+    Font* font;
+    uint16_t* videoBuffer;
+    int cursorPos;
+    int counter;
+};
+
+/**
  * @brief A class that handles rendering text from a bitmap on the Nintendo DS.
  *
  * This class provides functionality to load a font from a bitmap and render text to the screen.
@@ -77,6 +97,11 @@ class TextController
         static TextController instance;
         return &instance;
     }
+
+    /**
+     * @brief Frame update function to be called every frame.
+     */
+    void update();
 
     /**
      * @brief Load a font from a file.
@@ -117,6 +142,21 @@ class TextController
     void drawText(
         const std::string& text, Font* font, uint16_t* videoBuffer, int x, int y, int color = ARGB16(1, 31, 31, 31));
     /**
+     * @brief Create a Text object and renders each character with a delay to simulate typing effect.
+     * @param text The text to render.
+     * @param font Pointer to the font to use for rendering.
+     * @param videoBuffer Pointer to the video buffer to draw to.
+     * @param x The x-coordinate to start drawing the text.
+     * @param y The y-coordinate to start drawing the text.
+     * @param color The color to use for the text (default is white).
+     */
+    void appearText(
+        const std::string& text, Font* font, uint16_t* videoBuffer, int x, int y, int color = ARGB16(1, 31, 31, 31));
+    /**
+     * @brief If a text is currently being rendered with appearText, this function will immediately render the rest of the text without delay.
+     */
+    void appearTextSkip();
+    /**
      * @brief Draw a single glyph to the screen.
      * @param glyph The glyph to draw.
      * @param font Pointer to the font that contains the glyph.
@@ -147,6 +187,8 @@ class TextController
     void testPalette(uint16_t* videoBuffer);
 
   private:
+    Text* text;
+    int APPEAR_DELAY = 5;
     int LETTER_SPACING = 1;
     int SPACE_WIDTH = 4;
 
@@ -184,7 +226,22 @@ class TextController
      * @note This function is useful when you need to know the size of the file being opened.
      */
     void* openFile(const std::string& path, u32& size);
-
+    /**
+     * @brief Draw the next character from the text struct to the screen.
+     * @note Used to draw text which appears character by character.
+     */
+    void drawNextFromText(Text* text);
+    /**
+     * @brief Create a Text object and initialize its properties.
+     * @param text The text content for the Text object.
+     * @param font Pointer to the font to use for rendering the text.
+     * @param videoBuffer Pointer to the video buffer to draw to.
+     * @param startX The x-coordinate to start drawing the text.
+     * @param startY The y-coordinate to start drawing the text.
+     * @param color The color to use for the text.
+     * @return Pointer to the newly created Text object.
+     */
+    Text* createText(const std::string& text, Font* font, uint16_t* videoBuffer, int startX, int startY, int color);
     /**
      * @brief Draw a single pixel to the video buffer.
      * @param videoBuffer Pointer to the video buffer to draw to.
@@ -193,6 +250,12 @@ class TextController
      * @param paletteValue The color index in the palette to use for the pixel.
      */
     void drawPixel(uint16_t* videoBuffer, int x, int y, int paletteValue);
+    /**
+     * @brief Get the next word from a given text string.
+     * @param text The text string to extract the next word from.
+     * @return The next word in the text string, or an empty string if there are no more words.
+     */
+    std::string getNextWord(const std::string& text);
     /**
      * @brief Check if a given text string will exceed the screen width when rendered with the specified font.
      * @param text The text string to check.
