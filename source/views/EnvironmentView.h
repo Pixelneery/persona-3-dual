@@ -1,7 +1,6 @@
 #pragma once
 
 #include "views/BaseView.h"
-#include <nds/arm9/console.h>
 
 // core
 #include "core/enums.h"
@@ -108,7 +107,6 @@ class EnvironmentView : public BaseView
     int bgSharedSub2;
     int bgSharedSub3;
 
-    PrintConsole console;
     ViewPhase phase;
 
     bool prevPauseState = false;
