@@ -56,19 +56,8 @@ class IwatodaiStreetsView : public EnvironmentView
     const float characterFacingAngle = 0.0f;
 
     // battle
-    Enemy* mercilessMaya = nullptr;
-    Enemy* cowardlyMaya = nullptr;
-
-    Player* player = nullptr;
-
-    PartyMember* yukari = nullptr;
-    PartyMember* junpei = nullptr;
-
-    std::vector<BattleParticipant*> battleParticipants;
-
-    std::vector<Enemy*> enemies;
-
-    std::vector<PartyMember*> partyMembers;
+    std::vector<CharacterProfile> partyMemberProfiles;
+    std::vector<EnemyProfile> enemyProfiles;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 };

@@ -29,12 +29,11 @@ BattleController::BattleController()
  * Then proceeds to set music, setting variables and doing various cleanup.
  * Finally turn order is calculated with the battleStartConditon and battle gets started.
  *
- * @author Nolan Kolb (TrueGiles / themoonwalker8692)
+ * @author Nolan Kolb (themoonwalker8692 / TrueGiles)
 */
-void BattleController::execute(Player* player,
-                               std::vector<PartyMember*>* partyMembers,
-                               std::vector<Enemy*>* enemies,
-                               std::vector<BattleParticipant*>* battleParticipants,
+void BattleController::execute(CharacterProfile& player,
+                               std::vector<CharacterProfile>& partyMembers,
+                               std::vector<EnemyProfile>& enemies,
                                BattleStartCondition battleStartCondition)
 {
     active = true;
@@ -43,10 +42,24 @@ void BattleController::execute(Player* player,
         fatBasePath + "music/battle/" + (saveData.femcMode ? "wiping_all_out.pcm" : "mass_destruction.pcm");
     musicCtrl->init(path.c_str(), 0.0f, -1.0f);
 
-    this->player = player;
-    this->partyMembers = partyMembers;
-    this->enemies = enemies;
-    this->battleParticipants = battleParticipants;
+    this->player = new Player(player);
+    battleParticipants.push_back(this->player);
+    this->partyMembers.push_back(this->player);
+
+    for (CharacterProfile& characterProfile : partyMembers)
+    {
+        PartyMember* partyMember = new PartyMember(characterProfile);
+        this->partyMembers.push_back(partyMember);
+        battleParticipants.push_back(partyMember);
+    }
+
+    for (EnemyProfile& enemyProfile : enemies)
+    {
+        Enemy* enemey = new Enemy(enemyProfile);
+        this->enemies.push_back(enemey);
+        battleParticipants.push_back(enemey);
+    }
+
     this->battleStartCondition = battleStartCondition;
 
     turnsTaken = 0;
@@ -61,7 +74,7 @@ void BattleController::execute(Player* player,
 
     calculateTurnOrder();
 
-    currentParticipantTurn = battleParticipants->at(0);
+    currentParticipantTurn = battleParticipants[0];
 
     menuIndex = -1;
     phase = currentParticipantTurn->getInitalTurnPhase();
@@ -221,14 +234,14 @@ BattleResult BattleController::update(u32 keys)
         std::vector<BattleParticipant*> targets;
         if (healTarget)
         {
-            for (PartyMember* partyMember : *partyMembers)
+            for (PartyMember* partyMember : partyMembers)
             {
                 targets.push_back(partyMember);
             }
         }
         else
         {
-            for (Enemy* enemy : *enemies)
+            for (Enemy* enemy : enemies)
             {
                 targets.push_back(enemy);
             }
@@ -304,7 +317,7 @@ BattleResult BattleController::update(u32 keys)
                 std::vector<BattleParticipant*> aliveEnemies = getAliveEnemies();
 
                 uint8_t participantCount = 0;
-                for (PartyMember* partyMember : *partyMembers)
+                for (PartyMember* partyMember : partyMembers)
                 {
                     if (partyMember->canParticipateInAllOutAttack())
                     {
@@ -351,7 +364,7 @@ BattleResult BattleController::update(u32 keys)
         Skill* skill = enemy->pickSkill();
         std::vector<BattleParticipant*> targets;
         //TODO: branch in future if using healing / buff
-        for (PartyMember* partyMember : *partyMembers)
+        for (PartyMember* partyMember : partyMembers)
         {
             targets.push_back(partyMember);
         }
@@ -395,10 +408,15 @@ void BattleController::exit()
 
     allOutAttackWasPossibleThisKnockDown = false;
 
+    for (BattleParticipant* participant : battleParticipants)
+    {
+        delete participant;
+    }
+
+    battleParticipants.clear();
+    partyMembers.clear();
+    enemies.clear();
     player = nullptr;
-    battleParticipants = nullptr;
-    enemies = nullptr;
-    partyMembers = nullptr;
 }
 
 void BattleController::applyResult(const TurnResult& turnResult, BattleParticipant* target)
@@ -472,13 +490,13 @@ void BattleController::advanceTurn()
 
     currentParticipantTurn->knockedDown = false;
 
-    u32 next = (currentParticipantIndex + 1) % battleParticipants->size();
-    while (battleParticipants->at(next)->hp <= 0)
-        next = (next + 1) % battleParticipants->size();
+    u32 next = (currentParticipantIndex + 1) % battleParticipants.size();
+    while (battleParticipants.at(next)->hp <= 0)
+        next = (next + 1) % battleParticipants.size();
 
     currentParticipantIndex = next;
     turnsTaken++;
-    currentParticipantTurn = battleParticipants->at(next);
+    currentParticipantTurn = battleParticipants.at(next);
 
     menuIndex = -1;
     BattlePhase nextPhase = currentParticipantTurn->getInitalTurnPhase();
@@ -506,59 +524,59 @@ void BattleController::calculateTurnOrder()
     // random boost from 1.2 to 1.4 that priorizes party
     float boost = 1.2f + (randf() * 0.2f);
 
-    for (BattleParticipant* battleParticipant : *battleParticipants)
+    for (BattleParticipant* battleParticipant : battleParticipants)
     {
         battleParticipant->setCurrentTurnOrderAgility(boost);
     }
 
-    std::sort(partyMembers->begin(), partyMembers->end(), getParticipantByHigherAgility);
-    std::sort(enemies->begin(), enemies->end(), getParticipantByHigherAgility);
+    std::sort(partyMembers.begin(), partyMembers.end(), getParticipantByHigherAgility);
+    std::sort(enemies.begin(), enemies.end(), getParticipantByHigherAgility);
 
-    battleParticipants->clear();
+    battleParticipants.clear();
 
     if (battleStartCondition == BattleStartCondition::PartyAdvantage)
     {
-        for (auto p : *partyMembers)
+        for (auto p : partyMembers)
         {
-            battleParticipants->push_back(p);
+            battleParticipants.push_back(p);
         }
-        for (auto e : *enemies)
+        for (auto e : enemies)
         {
-            battleParticipants->push_back(e);
+            battleParticipants.push_back(e);
         }
     }
     else if (battleStartCondition == BattleStartCondition::EnemyAdvantage)
     {
-        for (auto e : *enemies)
+        for (auto e : enemies)
         {
-            battleParticipants->push_back(e);
+            battleParticipants.push_back(e);
         }
-        for (auto p : *partyMembers)
+        for (auto p : partyMembers)
         {
-            battleParticipants->push_back(p);
+            battleParticipants.push_back(p);
         }
     }
     else
     {
-        std::merge(partyMembers->begin(),
-                   partyMembers->end(),
-                   enemies->begin(),
-                   enemies->end(),
-                   std::back_inserter(*battleParticipants),
+        std::merge(partyMembers.begin(),
+                   partyMembers.end(),
+                   enemies.begin(),
+                   enemies.end(),
+                   std::back_inserter(battleParticipants),
                    getParticipantByHigherAgility);
     }
 }
 
 void BattleController::handleDeadParticipants()
 {
-    for (u32 i = 0; i < battleParticipants->size(); i++)
+    for (u32 i = 0; i < battleParticipants.size(); i++)
     {
-        if (battleParticipants->at(i)->hp > 0)
+        if (battleParticipants.at(i)->hp > 0)
         {
             continue;
         }
 
-        BattleParticipant* dead = battleParticipants->at(i);
+        BattleParticipant* dead = battleParticipants.at(i);
 
         dead->onDead(battleResult);
 
@@ -570,7 +588,7 @@ void BattleController::handleDeadParticipants()
     }
 
     bool enemiesAlive = false;
-    for (BattleParticipant* enemy : *enemies)
+    for (BattleParticipant* enemy : enemies)
     {
         if (enemy->hp > 0)
         {
@@ -589,7 +607,7 @@ void BattleController::handleDeadParticipants()
 std::vector<BattleParticipant*> BattleController::getAliveEnemies()
 {
     std::vector<BattleParticipant*> alive;
-    for (BattleParticipant* enemy : *enemies)
+    for (BattleParticipant* enemy : enemies)
     {
         if (enemy->hp > 0)
             alive.push_back(enemy);
@@ -601,7 +619,7 @@ bool BattleController::allEnemiesKnockedDown()
 {
     uint8_t aliveCount = 0;
     uint8_t knockedDownCount = 0;
-    for (BattleParticipant* enemy : *enemies)
+    for (BattleParticipant* enemy : enemies)
     {
         if (enemy->hp > 0)
         {

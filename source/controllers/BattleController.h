@@ -61,9 +61,9 @@ class BattleController
     bool allOutAttackWasPossibleThisKnockDown = false;
 
     // Current battle data
-    std::vector<BattleParticipant*>* battleParticipants = nullptr;
-    std::vector<Enemy*>* enemies = nullptr;
-    std::vector<PartyMember*>* partyMembers = nullptr;
+    std::vector<BattleParticipant*> battleParticipants;
+    std::vector<Enemy*> enemies;
+    std::vector<PartyMember*> partyMembers;
     Player* player = nullptr;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
@@ -113,10 +113,9 @@ class BattleController
         return phase;
     }
 
-    void execute(CharacterProfile* player,
-                 std::vector<CharacterProfile*>* partyMembers,
-                 std::vector<Enemy*>* enemies,
-                 std::vector<BattleParticipant*>* battleParticipants,
+    void execute(CharacterProfile& player,
+                 std::vector<CharacterProfile>& partyMembers,
+                 std::vector<EnemyProfile>& enemies,
                  BattleStartCondition battleStartCondition);
 
     BattleResult update(u32 keys);

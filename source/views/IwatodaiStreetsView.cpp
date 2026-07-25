@@ -3,36 +3,22 @@
 IwatodaiStreetsView::IwatodaiStreetsView()
 {
     // Battle setup
-    mercilessMaya = new Enemy(EnemyProfileDb::mercilessMaya);
-    cowardlyMaya = new Enemy(EnemyProfileDb::cowardlyMaya);
+    partyMemberProfiles.push_back(CharacterProfileDb::junpei);
+    partyMemberProfiles.push_back(CharacterProfileDb::yukari);
 
-    player = new Player(CharacterProfileDb::player);
-
-    yukari = new PartyMember(CharacterProfileDb::yukari);
-    junpei = new PartyMember(CharacterProfileDb::junpei);
-
-    battleParticipants = {mercilessMaya, cowardlyMaya, player, yukari, junpei};
-
-    enemies = {mercilessMaya, cowardlyMaya};
-
-    partyMembers = {player, yukari, junpei};
+    enemyProfiles.push_back(EnemyProfileDb::cowardlyMaya);
+    enemyProfiles.push_back(EnemyProfileDb::mercilessMaya);
 }
 
 IwatodaiStreetsView::~IwatodaiStreetsView()
 {
-    for (BattleParticipant* participant : battleParticipants)
-    {
-        delete participant;
-    }
-
-    battleParticipants.clear();
-    enemies.clear();
-    partyMembers.clear();
+    enemyProfiles.clear();
+    partyMemberProfiles.clear();
 }
 
 void IwatodaiStreetsView::startBattle()
 {
-    battleController->execute(player, &partyMembers, &enemies, &battleParticipants, battleStartCondition);
+    battleController->execute(CharacterProfileDb::player, partyMemberProfiles, enemyProfiles, battleStartCondition);
 }
 
 CharacterController* IwatodaiStreetsView::createPlayerController()

@@ -1,5 +1,6 @@
 #pragma once
 #include "../ParticipantType.h"
+#include "../ProfileBase.h"
 #include "../personas/PersonaBase.h"
 #include "../shoes/Shoe.h"
 #include "../skills/Skill.h"
@@ -17,7 +18,7 @@
  *
  * @author Nolan Kolb (TrueGiles / themoonwalker8692)
  */
-struct CharacterProfile
+struct CharacterProfile : ProfileBase
 {
     ParticipantType participantType;
 
