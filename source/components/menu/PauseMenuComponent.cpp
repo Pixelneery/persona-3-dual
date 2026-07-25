@@ -249,7 +249,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
         selectedView = ViewState::CUTSCENE_2;
         break;
     case DebugOption::DEBUG_DIALOGUE:
-        consoleClear();
+        textCtrl->clearScreen(textVideoBufferSub);
         demo_yukari_kenji_argument_load();
         dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
         dialogueCtrl.start(demo_yukari_kenji_argument_first(), font, textVideoBufferSub);

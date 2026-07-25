@@ -159,7 +159,7 @@ void IntroView::init()
     musicCtrl->init((fatBasePath + "music/menus/title/tightrope.pcm").c_str(), 17.962f, 66.082f);
 
     // hide sub screen text and attribution text layer
-    REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG2 | BLEND_SRC_BG0 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
+    REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG3 | BLEND_SRC_BG0 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
     REG_BLDALPHA_SUB = 0 | (16 << 8);
 
     // hide main skyBackground
@@ -267,10 +267,6 @@ ViewState IntroView::update()
 
     if (animateText)
     {
-        // NOTE: The text uses ansi escape sequences.
-        // The bottom screen has 24 lines, 32 columns (from 0 -> 23, 0 -> 32)
-        // Center the text by doing (32 / 2) - (len / 2)
-
         textCtrl->drawText("Press Any Button", font, textVideoBufferSub, 80, 88, TextColor::White);
 
         durationCounter++;
@@ -291,7 +287,7 @@ ViewState IntroView::update()
                 textAlphaDirection = 1; // Start fading in
             }
 
-            REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG2 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
+            REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG3 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
             REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
         }
     }
@@ -352,7 +348,7 @@ ViewState IntroView::update()
     if (logoOpacity >= 16 && !animateText)
     {
         animateText = true;
-        REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG2 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
+        REG_BLDCNT_SUB = BLEND_ALPHA | BLEND_SRC_BG3 | BLEND_DST_BG0 | BLEND_DST_BG1 | BLEND_DST_BACKDROP;
         REG_BLDALPHA_SUB = textAlpha | ((16 - textAlpha) << 8);
     }
 

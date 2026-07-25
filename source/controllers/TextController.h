@@ -16,7 +16,7 @@ struct Glyph
 {
     int xPos;
     int yPos;
-    int width = 0;
+    int width = 0; //used to check if the glyph was read in correctly. Setting it to 0 here wipes any old data
     int height;
     int xOffset;
     int yOffset;

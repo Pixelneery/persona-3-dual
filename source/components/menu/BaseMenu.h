@@ -47,12 +47,6 @@ class BaseMenu
     ViewState changeMenu(MenuOption* newOptions, int newOptionCount);
     void prevOption();
 
-    void setTextVideoBuffer(uint16_t* iTextVideoBuffer, uint16_t* iTextVideoBufferSub)
-    {
-        textVideoBuffer = iTextVideoBuffer;
-        textVideoBufferSub = iTextVideoBufferSub;
-    }
-
   protected:
     MusicController* musicCtrl = MusicController::getInstance();
     TextController* textCtrl = TextController::getInstance();
