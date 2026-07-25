@@ -1,16 +1,15 @@
-#include "EnemyDb.h"
+#include "EnemyProfileDb.h"
 #include "../armours/ArmourDb.h"
-#include "../personas/PersonaDb.h"
 #include "../shoes/ShoeDb.h"
 #include "../skills/SkillDb.h"
 
-Enemy EnemyDb::mercilessMaya;
-Enemy EnemyDb::cowardlyMaya;
+EnemyProfile EnemyProfileDb::mercilessMaya;
+EnemyProfile EnemyProfileDb::cowardlyMaya;
 
-Skill* EnemyDb::mercilessMayaSkills[1];
-Skill* EnemyDb::cowardlyMayaSkills[1];
+Skill* EnemyProfileDb::mercilessMayaSkills[1];
+Skill* EnemyProfileDb::cowardlyMayaSkills[1];
 
-void EnemyDb::Initialize()
+void EnemyProfileDb::Initialize()
 {
     /*--------------MERCILESS MAYA--------------*/
     mercilessMaya.name = "Merciless Maya";

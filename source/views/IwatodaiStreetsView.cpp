@@ -3,8 +3,8 @@
 IwatodaiStreetsView::IwatodaiStreetsView()
 {
     // Battle setup
-    mercilessMaya = new Enemy(EnemyDb::mercilessMaya);
-    cowardlyMaya = new Enemy(EnemyDb::cowardlyMaya);
+    mercilessMaya = new Enemy(EnemyProfileDb::mercilessMaya);
+    cowardlyMaya = new Enemy(EnemyProfileDb::cowardlyMaya);
 
     player = new Player(CharacterProfileDb::player);
 

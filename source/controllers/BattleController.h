@@ -20,6 +20,7 @@
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/TurnResult.h"
 #include "./battleActions/enemies/Enemy.h"
+#include "./battleActions/enemies/EnemyProfileDb.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/Player.h"
@@ -112,8 +113,8 @@ class BattleController
         return phase;
     }
 
-    void execute(Player* player,
-                 std::vector<PartyMember*>* partyMembers,
+    void execute(CharacterProfile* player,
+                 std::vector<CharacterProfile*>* partyMembers,
                  std::vector<Enemy*>* enemies,
                  std::vector<BattleParticipant*>* battleParticipants,
                  BattleStartCondition battleStartCondition);

@@ -10,7 +10,7 @@
 #include "./battleActions/BattleParticipant.h"
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/enemies/EnemyDb.h"
+#include "./battleActions/enemies/EnemyProfileDb.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/Player.h"

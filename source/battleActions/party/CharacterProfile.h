@@ -19,23 +19,13 @@
  */
 struct CharacterProfile
 {
-    std::string name;
-    s32 maxHp;
-    s32 hp;
-    s32 maxSp;
-    s32 sp;
-    u32 lv;
     ParticipantType participantType;
 
     ArmourType armourType;
-    Armour armour;
-    Shoe shoe;
 
     WeaponType weaponType;
     Weapon weapon;
 
-    Skill* baseAttackAction;
     std::vector<PersonaBase*> personas;
-
     PersonaBase* curPersona;
 };

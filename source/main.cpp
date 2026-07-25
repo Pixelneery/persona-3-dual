@@ -36,7 +36,7 @@
 
 // DBs
 #include "battleActions/armours/ArmourDb.h"
-#include "battleActions/enemies/EnemyDb.h"
+#include "battleActions/enemies/EnemyProfileDb.h"
 #include "battleActions/party/CharacterProfileDb.h"
 #include "battleActions/personas/PersonaDb.h"
 #include "battleActions/shoes/ShoeDb.h"
@@ -188,7 +188,7 @@ int main(int argc, char* argv[])
     ArmourDb::Initialize();
     ShoeDb::Initialize();
     PersonaDb::Initialize();
-    EnemyDb::Initialize();
+    EnemyProfileDb::Initialize();
     CharacterProfileDb::Initialize();
     //Setup globals
     Globals::enableDebugPrint = false;

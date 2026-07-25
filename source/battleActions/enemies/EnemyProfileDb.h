@@ -1,10 +1,10 @@
 #pragma once
-#include "Enemy.h"
+#include "EnemyProfile.h"
 
-struct EnemyDb
+struct EnemyProfileDb
 {
-    static Enemy mercilessMaya;
-    static Enemy cowardlyMaya;
+    static EnemyProfile mercilessMaya;
+    static EnemyProfile cowardlyMaya;
 
     static void Initialize();
 
