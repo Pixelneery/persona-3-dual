@@ -144,7 +144,7 @@ class EnvironmentView : public BaseView
 
     uint16_t* textVideoBuffer;
     uint16_t* textVideoBufferSub;
-    Font* consoleFont = nullptr;
+    Font* cosmeticaFont = nullptr;
     TextController* textCtrl = TextController::getInstance();
 
   private:

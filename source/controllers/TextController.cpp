@@ -300,7 +300,7 @@ void TextController::drawNextFromText(Text* text)
     if (c == '\n')
     {
         text->cursorX = text->startX;
-        text->cursorY += text->font->lineHeight + 2;
+        text->cursorY += text->font->lineHeight + LINE_SPACING;
     }
     else if (c == ' ')
     {
@@ -308,13 +308,15 @@ void TextController::drawNextFromText(Text* text)
         if (checkWordWrap(nextWord, text->font, text->cursorX))
         {
             text->cursorX = text->startX;
-            text->cursorY += text->font->lineHeight + 2;
+            text->cursorY += text->font->lineHeight + LINE_SPACING;
         }
         else
         {
             text->cursorX += SPACE_WIDTH;
         }
     }
+    else if (text->font->glyphs[static_cast<unsigned char>(c)].width == 0)
+        text->cursorX += SPACE_WIDTH; // If the glyph width is 0, skip it (char has not been defined in the font)
     else
     {
         Glyph g = text->font->glyphs[static_cast<unsigned char>(c)];

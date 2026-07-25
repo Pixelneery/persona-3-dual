@@ -204,8 +204,8 @@ class TextController
     Text* appearingText;
     int APPEAR_DELAY = 2;
     int LETTER_SPACING = 1;
-    int LINE_SPACING = 4;
-    int SPACE_WIDTH = 4;
+    int LINE_SPACING = 2;
+    int SPACE_WIDTH = 2;
 
     TextController();
     TextController(const TextController&) = delete;

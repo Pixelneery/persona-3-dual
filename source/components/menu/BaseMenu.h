@@ -56,7 +56,7 @@ class BaseMenu
   protected:
     MusicController* musicCtrl = MusicController::getInstance();
     TextController* textCtrl = TextController::getInstance();
-    Font* font = textCtrl->loadFont();
+    Font* font = textCtrl->loadFont("cosmetica/size-12/size-12");
     uint16_t* textVideoBuffer = nullptr;
     uint16_t* textVideoBufferSub = nullptr;
 };

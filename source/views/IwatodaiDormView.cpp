@@ -58,7 +58,7 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
         // start dialogue
         if (!promptDrawn)
         {
-            textCtrl->drawText("Talk", consoleFont, textVideoBufferSub, 0, 0, TextColor::White);
+            textCtrl->drawText("Talk", cosmeticaFont, textVideoBufferSub, 0, 0, TextColor::White);
             promptDrawn = true;
         }
         if (pressed & KEY_A)
@@ -82,5 +82,5 @@ void IwatodaiDormView::onDialogueStart()
 {
     demo_yukari_kenji_argument_load();
     dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-    dialogueCtrl.start(demo_yukari_kenji_argument_first(), consoleFont, textVideoBufferSub);
+    dialogueCtrl.start(demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub);
 }

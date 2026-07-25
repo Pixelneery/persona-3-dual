@@ -21,24 +21,24 @@ void DialogueController::advanceTo(Dialogue* next)
 // print the text up to animIndex using a precision field
 void DialogueController::renderAnimFrame()
 {
-    textCtrl->drawText(current->characterName, font, textVideoBufferSub, 32, 120, TextColor::White);
-    textCtrl->appearText(current->text, font, textVideoBufferSub, 0, 136, TextColor::White);
+    textCtrl->drawText(current->characterName, font, textVideoBufferSub, 32, 115, TextColor::White);
+    textCtrl->appearText(current->text, font, textVideoBufferSub, 0, 130, TextColor::White);
 }
 
 void DialogueController::renderOptions()
 {
     // reprint the complete line then list choices below it
     textCtrl->clearScreen(textVideoBufferSub);
-    textCtrl->drawText(current->characterName, font, textVideoBufferSub, 32, 120, TextColor::White);
-    textCtrl->drawText(current->text, font, textVideoBufferSub, 0, 136, TextColor::White);
+    textCtrl->drawText(current->characterName, font, textVideoBufferSub, 32, 115, TextColor::White);
+    textCtrl->drawText(current->text, font, textVideoBufferSub, 0, 130, TextColor::White);
     //TODO: The options are currently drawn outside the textbox, do we want to add an extra overlay for them similar to the actual game?
     for (int i = 0; i < optionCount; i++)
     {
         if (i == selectedOption)
-            textCtrl->drawText(current->selections[i].text, font, textVideoBufferSub, 19, 170 + i * 8, TextColor::Blue);
+            textCtrl->drawText(current->selections[i].text, font, textVideoBufferSub, 128, 50 + i * 8, TextColor::Blue);
         else
             textCtrl->drawText(
-                current->selections[i].text, font, textVideoBufferSub, 19, 170 + i * 8, TextColor::White);
+                current->selections[i].text, font, textVideoBufferSub, 128, 50 + i * 8, TextColor::White);
     }
 }
 

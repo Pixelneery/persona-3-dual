@@ -54,11 +54,13 @@ ViewState BaseMenu::update(int keys)
     if (selectedOption < startIndex)
     {
         startIndex = selectedOption;
+        textCtrl->clearScreen(textVideoBufferSub);
     }
 
     if (selectedOption >= startIndex + visibleOptions)
     {
         startIndex = selectedOption - visibleOptions + 1;
+        textCtrl->clearScreen(textVideoBufferSub);
     }
     else if (keys & KEY_A)
     {
@@ -110,9 +112,9 @@ ViewState BaseMenu::update(int keys)
     {
         int option = startIndex + i;
         if (option == selectedOption)
-            textCtrl->drawText(options[option].name, font, textVideoBufferSub, 10, 8 + i * 6, TextColor::Blue);
+            textCtrl->drawText(options[option].name, font, textVideoBufferSub, 10, 8 + i * 8, TextColor::Blue);
         else
-            textCtrl->drawText(options[option].name, font, textVideoBufferSub, 10, 8 + i * 6, TextColor::White);
+            textCtrl->drawText(options[option].name, font, textVideoBufferSub, 10, 8 + i * 8, TextColor::White);
     }
 
     // load selectedOption's background

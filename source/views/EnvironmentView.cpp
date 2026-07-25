@@ -67,7 +67,7 @@ void EnvironmentView::setupEnvironment()
     if (!env.load(dbEntry, bitmapsEnv))
     {
         textCtrl->drawText("EnvironmentView: failed to load environment " + std::string(dbEntry->name),
-                           consoleFont,
+                           cosmeticaFont,
                            textVideoBufferSub,
                            0,
                            0,
@@ -199,7 +199,7 @@ void EnvironmentView::init()
     textVideoBufferSub = (uint16_t*)bgGetGfxPtr(bgTextSub);
     bgSetPriority(bgTextSub, 0);
 
-    consoleFont = textCtrl->loadFont("console/size-5/size-5");
+    cosmeticaFont = textCtrl->loadFont("cosmetica/size-12/size-12");
     textCtrl->loadDefaultPalette();
 
     // setup environment geometry/textures (fully generic, data-driven)
@@ -415,7 +415,7 @@ ViewState EnvironmentView::update()
         {
             if (frame % 60 == 30) //restricting this 2Hz otherwise it tanks performance
             {
-                textCtrl->clearArea(textVideoBufferSub, 0, 160, 128, 32);
+                textCtrl->clearArea(textVideoBufferSub, 1, 120, 128, 72);
                 char buf[128];
                 std::string debugText = "";
                 std::sprintf(buf, "Touch x = %04X, %04X\n", touch.rawx, touch.px);
@@ -432,7 +432,7 @@ ViewState EnvironmentView::update()
                 std::sprintf(
                     buf, "angle(w,c): %d, %d\n", (int)(cameraCtrl.getAngle() * 100), (int)(charPos.facingAngle * 100));
                 debugText += buf;
-                textCtrl->drawText(debugText, consoleFont, textVideoBufferSub, 0, 160, TextColor::Red);
+                textCtrl->drawText(debugText, cosmeticaFont, textVideoBufferSub, 1, 120, TextColor::Red);
             }
         }
 
