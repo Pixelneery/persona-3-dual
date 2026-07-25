@@ -24,18 +24,15 @@ class IwatodaiDormView : public EnvironmentView
     void setMusic() override;
     ViewState onTileCheck(TileType tile, u32 pressed) override;
     void onDialogueStart() override;
+    void configureCameraController() override;
 
   private:
     // movement and camera
     const Point2D<float> characterSize = Point2D<float>(0.1f, 0.1f);
     const float speed = 0.03f;
-    const float angleIncrement = 0.07f;
-    const float distance = 0.8f;
-    const float lookAhead = 0.2f;
 
     // character position
     const Point2D<float> characterTranslate = Point2D<float>(0.4f, 2.8f);
     const float height = 0.0f;
-    const float angle = -1.6f;
     const float characterFacingAngle = 180.0f;
 };

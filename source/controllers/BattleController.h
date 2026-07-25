@@ -125,4 +125,6 @@ class BattleController
     ~BattleController()
     {
     }
+
+    uint16_t* textVideoBufferSub;
 };

@@ -205,39 +205,12 @@ bool TextController::loadFontMetadata(const std::string& path, Font* font)
 void TextController::drawText(
     const std::string& text, Font* font, uint16_t* videoBuffer, int startX, int startY, int color)
 {
-    int cursorX = startX;
-    int cursorY = startY;
+    Text textObj = {startX, startY, startX, startY, text, color, font, videoBuffer, 0};
 
-    for (char c : text)
+    while (textObj.cursorPos < (int)textObj.content.size())
     {
-        //Handle Newline
-        if (c == '\n')
-        {
-            cursorX = startX;
-            cursorY += font->lineHeight + 2;
-            continue;
-        }
-
-        //Handle automatic word wrapping to prevent drawing outside screen bounds
-        if (c == ' ')
-        {
-            std::string nextWord = getNextWord(text.substr(cursorX + 1));
-            if (checkWordWrap(nextWord, font, cursorX))
-            {
-                cursorX = startX;
-                cursorY += font->lineHeight + 2;
-                continue;
-            }
-            else
-            {
-                cursorX += SPACE_WIDTH;
-                continue;
-            }
-        }
-
-        Glyph g = font->glyphs[static_cast<unsigned char>(c)];
-        drawGlyph(g, font, videoBuffer, cursorX, cursorY, color);
-        cursorX += g.width + LETTER_SPACING;
+        drawNextFromText(&textObj);
+        textObj.cursorPos++;
     }
 }
 
@@ -259,6 +232,16 @@ void TextController::appearTextSkip()
             appearingText->cursorPos++;
         }
     }
+}
+
+bool TextController::appearTextDone()
+{
+    if (appearingText == nullptr)
+        return true;
+    if (appearingText->cursorPos >=
+        (int)appearingText->content.size()) // not really sure if this is needed but it should be safe to check anyway
+        return true;
+    return false;
 }
 
 void TextController::drawGlyph(
@@ -291,6 +274,22 @@ void TextController::clearScreen(uint16_t* videoBuffer)
     dmaFillHalfWords(0, videoBuffer, 256 * 256 * sizeof(uint8_t));
 }
 
+void TextController::clearArea(uint16_t* videoBuffer, int x, int y, int width, int height)
+{
+    for (int row = 0; row < height; ++row)
+    {
+        for (int col = 0; col < width; ++col)
+        {
+            int pixelX = x + col;
+            int pixelY = y + row;
+            if (pixelX >= 0 && pixelX < 256 && pixelY >= 0 && pixelY < 192)
+            {
+                drawPixel(videoBuffer, pixelX, pixelY, TextColor::Transparent);
+            }
+        }
+    }
+}
+
 // Helper Functions ======================================================
 
 void TextController::drawNextFromText(Text* text)
@@ -301,7 +300,7 @@ void TextController::drawNextFromText(Text* text)
     if (c == '\n')
     {
         text->cursorX = text->startX;
-        text->cursorY += text->font->lineHeight + 2;
+        text->cursorY += text->font->lineHeight + LINE_SPACING;
     }
     else if (c == ' ')
     {
@@ -309,13 +308,15 @@ void TextController::drawNextFromText(Text* text)
         if (checkWordWrap(nextWord, text->font, text->cursorX))
         {
             text->cursorX = text->startX;
-            text->cursorY += text->font->lineHeight + 2;
+            text->cursorY += text->font->lineHeight + LINE_SPACING;
         }
         else
         {
             text->cursorX += SPACE_WIDTH;
         }
     }
+    else if (text->font->glyphs[static_cast<unsigned char>(c)].width == 0)
+        text->cursorX += SPACE_WIDTH; // If the glyph width is 0, skip it (char has not been defined in the font)
     else
     {
         Glyph g = text->font->glyphs[static_cast<unsigned char>(c)];

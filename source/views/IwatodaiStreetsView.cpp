@@ -18,9 +18,26 @@ IwatodaiStreetsView::~IwatodaiStreetsView()
 
 void IwatodaiStreetsView::startBattle()
 {
+    battleController->textVideoBufferSub = textVideoBufferSub;
     battleController->execute(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
 }
 
+// ----------------------------
+// Camera
+// ----------------------------
+void IwatodaiStreetsView::configureCameraController()
+{
+    camConfig.mode = CameraMode::Follow;
+    camConfig.initialAngle = 1.5708f * 2;
+    camConfig.distance = 1.0f;
+    camConfig.height = height + 0.6f;
+    camConfig.lookAhead = 0.2f;
+    camConfig.angleIncrement = 0.05f;
+}
+
+// ----------------------------
+// Player controller
+// ----------------------------
 CharacterController* IwatodaiStreetsView::createPlayerController()
 {
     return new CharacterController(IWATODAI_STREETS_MAP_WIDTH,
@@ -31,14 +48,9 @@ CharacterController* IwatodaiStreetsView::createPlayerController()
                                    dbEntry->worldOffsetZ,
                                    characterSize,
                                    speed,
-                                   angleIncrement,
-                                   distance,
-                                   lookAhead,
-                                   angle,
                                    height,
                                    characterTranslate,
-                                   characterFacingAngle,
-                                   true);
+                                   characterFacingAngle);
 }
 
 void IwatodaiStreetsView::setMusic()
@@ -64,8 +76,11 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
 
     case TileType::SHD_W:
     {
-        iprintf("\x1b[0;0HBattle Zone");
-
+        if (!promptDrawn)
+        {
+            textCtrl->drawText("Battle Zone", cosmeticaFont, textVideoBufferSub, 0, 0, TextColor::White);
+            promptDrawn = true;
+        }
         if (pressed & KEY_A)
         {
             phase = ViewPhase::Battle;
@@ -76,6 +91,11 @@ ViewState IwatodaiStreetsView::onTileCheck(TileType tile, u32 pressed)
     }
 
     default:
+        if (promptDrawn)
+        {
+            textCtrl->clearScreen(textVideoBufferSub);
+            promptDrawn = false;
+        }
         break;
     }
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "views/BaseView.h"
-#include <nds/arm9/console.h>
 
 // core
 #include "core/enums.h"
@@ -14,6 +13,7 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/BattleController.h"
+#include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
 #include "controllers/GraphicsController.h"
@@ -86,6 +86,11 @@ class EnvironmentView : public BaseView
     {
     }
 
+    virtual void configureCameraController()
+    {
+    }
+
+    // -------------------------------------------------
     // Battle
     virtual void startBattle()
     {
@@ -102,7 +107,6 @@ class EnvironmentView : public BaseView
     int bgSharedSub2;
     int bgSharedSub3;
 
-    PrintConsole console;
     ViewPhase phase;
 
     bool prevPauseState = false;
@@ -110,11 +114,19 @@ class EnvironmentView : public BaseView
     bool prevEnvironmentState = false;
     bool prevBattleState = false;
     bool isBattleMenuActive = false;
+    bool promptDrawn = false;
 
     CharacterController* playerCtrl = nullptr;
+
+    CameraController cameraCtrl;
+
     CameraPosition camPos;
     const float tileSize = 0.062500f;
 
+    // Override fields in configureCameraController() — same struct for all modes
+    CameraConfig camConfig;
+
+    // -------------------------------------------------
     // Controllers
     DialogueController dialogueCtrl;
     UIController* uiCtrl = UIController::getInstance();
@@ -127,6 +139,11 @@ class EnvironmentView : public BaseView
     // Environment
     Environment env;
     const EnvironmentDbEntry* dbEntry = nullptr;
+
+    uint16_t* textVideoBuffer;
+    uint16_t* textVideoBufferSub;
+    Font* cosmeticaFont = nullptr;
+    TextController* textCtrl = TextController::getInstance();
 
   private:
     // fog properties

@@ -1,9 +1,10 @@
 /**
  * @file TextController.h
  * @brief Controller for rendering text from a bitmap on the Nintendo DS.
- * @author ggmini
+ * @author Gregory Munroo (ggmini)
  */
 
+#pragma once
 #include "nds.h"
 #include <cstdint>
 #include <string>
@@ -15,7 +16,7 @@ struct Glyph
 {
     int xPos;
     int yPos;
-    int width;
+    int width = 0; //used to check if the glyph was read in correctly. Setting it to 0 here wipes any old data
     int height;
     int xOffset;
     int yOffset;
@@ -108,7 +109,7 @@ class TextController
      * @param fontFilePath The path to the font file without file extension.
      * @return Pointer to the loaded font, or nullptr if loading failed.
      */
-    Font* loadFont(const std::string& fontFilePath = "cosmetica/size-32/size-32");
+    Font* loadFont(const std::string& fontFilePath = "console/size-5/size-5");
 
     /**
      * @brief Loads the predefined default palette.
@@ -140,7 +141,7 @@ class TextController
      * @param color The color to use for the text (default is white).
      */
     void drawText(
-        const std::string& text, Font* font, uint16_t* videoBuffer, int x, int y, int color = ARGB16(1, 31, 31, 31));
+        const std::string& text, Font* font, uint16_t* videoBuffer, int x, int y, int color = TextColor::White);
     /**
      * @brief Create a Text object and renders each character with a delay to simulate typing effect.
      * @param text The text to render.
@@ -151,11 +152,16 @@ class TextController
      * @param color The color to use for the text (default is white).
      */
     void appearText(
-        const std::string& text, Font* font, uint16_t* videoBuffer, int x, int y, int color = ARGB16(1, 31, 31, 31));
+        const std::string& text, Font* font, uint16_t* videoBuffer, int x, int y, int color = TextColor::White);
     /**
      * @brief If a text is currently being rendered with appearText, this function will immediately render the rest of the text without delay.
      */
     void appearTextSkip();
+    /**
+     * @brief Check if the text being rendered with appearText has finished appearing.
+     * @return true if the text has finished appearing, false otherwise.
+     */
+    bool appearTextDone();
     /**
      * @brief Draw a single glyph to the screen.
      * @param glyph The glyph to draw.
@@ -171,7 +177,15 @@ class TextController
      * @param videoBuffer Pointer to the video buffer to clear.
      */
     void clearScreen(uint16_t* videoBuffer);
-
+    /**
+     * @brief Clear a rectangular area of the text video buffer.
+     * @param videoBuffer Pointer to the video buffer to clear.
+     * @param x The x-coordinate of the top-left corner of the area to clear.
+     * @param y The y-coordinate of the top-left corner of the area to clear.
+     * @param width The width of the area to clear.
+     * @param height The height of the area to clear.
+     */
+    void clearArea(uint16_t* videoBuffer, int x, int y, int width, int height);
     /**
      * @brief Test function to draw the font bitmap to the screen.
      * @param font Pointer to the font to test.
@@ -188,9 +202,10 @@ class TextController
 
   private:
     Text* appearingText;
-    int APPEAR_DELAY = 5;
+    int APPEAR_DELAY = 2;
     int LETTER_SPACING = 1;
-    int SPACE_WIDTH = 4;
+    int LINE_SPACING = 2;
+    int SPACE_WIDTH = 2;
 
     TextController();
     TextController(const TextController&) = delete;

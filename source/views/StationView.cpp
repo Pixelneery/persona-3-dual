@@ -20,14 +20,9 @@ CharacterController* StationView::createPlayerController()
                                    dbEntry->worldOffsetZ,
                                    characterSize,
                                    speed,
-                                   angleIncrement,
-                                   distance,
-                                   lookAhead,
-                                   angle,
                                    height,
                                    characterTranslate,
-                                   characterFacingAngle,
-                                   true);
+                                   characterFacingAngle);
 }
 
 ViewState StationView::onTileCheck(TileType tile, u32 pressed)

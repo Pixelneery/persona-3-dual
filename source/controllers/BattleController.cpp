@@ -114,7 +114,7 @@ BattleResult BattleController::update(u32 keys)
 
         if ((menuIndex != -1) && (keys & KEY_A) && actor->actorCanUse(actions[menuIndex]))
         {
-            consoleClear();
+            TextController::getInstance()->clearScreen(textVideoBufferSub);
             if (menuIndex == ACTION_ATTACK)
             {
                 selectedSkill = actor->baseAttackAction;
@@ -387,7 +387,7 @@ BattleResult BattleController::update(u32 keys)
 
 void BattleController::exit()
 {
-    consoleClear();
+    TextController::getInstance()->clearScreen(textVideoBufferSub);
     musicCtrl->pause();
 
     active = false;

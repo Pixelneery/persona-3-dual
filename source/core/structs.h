@@ -1,5 +1,6 @@
 #pragma once
 #include "core/enums.h"
+#include "core/geometry.h"
 #include <nds.h>
 #include <string>
 #include <vector>
@@ -48,7 +49,6 @@ struct MenuState
     int startIndex;
 };
 
-// From AnimationController.h
 struct Keyframe
 {
     int time;
@@ -128,26 +128,11 @@ struct AnimNode
     v16 pivotX, pivotY, pivotZ;
 };
 
-// From CharacterController.h
-struct CameraPosition
-{
-    float cameraX;
-    float cameraY;
-    float cameraZ;
-    float targetX;
-    float targetY;
-    float targetZ;
-    float upX;
-    float upY;
-    float upZ;
-};
-
 struct CharacterPosition
 {
     float x;
     float z;
     float y; // height
-    float angle;
     float facingAngle;
 };
 
