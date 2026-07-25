@@ -14,6 +14,7 @@
 #include "components/ui/MenuHUDScreen.h"
 // controllers
 #include "controllers/BattleController.h"
+#include "controllers/CameraController.h"
 #include "controllers/CharacterController.h"
 #include "controllers/DialogueController.h"
 #include "controllers/GraphicsController.h"
@@ -86,6 +87,11 @@ class EnvironmentView : public BaseView
     {
     }
 
+    virtual void configureCameraController()
+    {
+    }
+
+    // -------------------------------------------------
     // Battle
     virtual void startBattle()
     {
@@ -113,9 +119,16 @@ class EnvironmentView : public BaseView
     bool promptDrawn = false;
 
     CharacterController* playerCtrl = nullptr;
+
+    CameraController cameraCtrl;
+
     CameraPosition camPos;
     const float tileSize = 0.062500f;
 
+    // Override fields in configureCameraController() — same struct for all modes
+    CameraConfig camConfig;
+
+    // -------------------------------------------------
     // Controllers
     DialogueController dialogueCtrl;
     UIController* uiCtrl = UIController::getInstance();

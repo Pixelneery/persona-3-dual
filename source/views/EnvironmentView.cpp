@@ -172,6 +172,9 @@ void EnvironmentView::init()
     // setup player controller (room-specific map/tuning, generic call site)
     playerCtrl = createPlayerController();
 
+    configureCameraController();
+    cameraCtrl.configure(camConfig);
+
     // setup character model (identical across rooms)
     std::string modelPath = fatBasePath + "models/";
     characterAnimationCtrl->loadModel(
@@ -207,6 +210,7 @@ void EnvironmentView::init()
 
     // setup pause menu
     pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textVideoBuffer, textVideoBufferSub);
+    pauseMenuCmpt->setCameraController(&cameraCtrl);
 
     // setup battle menu
     battleMenuCmpt->init(-1, &isBattleMenuActive, textVideoBuffer, textVideoBufferSub);
@@ -347,7 +351,9 @@ ViewState EnvironmentView::update()
             prevEnvironmentState = true;
         }
 
-        camPos = playerCtrl->update(keys);
+        playerCtrl->update(keys, &cameraCtrl);
+        CharacterPosition charPos = playerCtrl->isCharacterAt();
+        camPos = cameraCtrl.update(keys, charPos);
 
         if (pressed & KEY_START)
         {
@@ -377,26 +383,26 @@ ViewState EnvironmentView::update()
             return tileResult;
         }
 
-        gluLookAt(camPos.cameraX,
-                  camPos.cameraY + getCameraYOffset(),
-                  camPos.cameraZ,
-                  camPos.targetX,
-                  camPos.targetY,
-                  camPos.targetZ,
-                  camPos.upX,
-                  camPos.upY,
-                  camPos.upZ);
+        gluLookAt(camPos.eye.x,
+                  camPos.eye.y + getCameraYOffset(),
+                  camPos.eye.z,
+                  camPos.target.x,
+                  camPos.target.y,
+                  camPos.target.z,
+                  camPos.up.x,
+                  camPos.up.y,
+                  camPos.up.z);
 
         // environment
         glPushMatrix();
         glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(0));
         env.draw();
-        env.drawBillboards(Globals::enableBillboards, camPos.cameraX, camPos.cameraY, camPos.cameraZ);
+        env.drawBillboards(Globals::enableBillboards, camPos.eye.x, camPos.eye.y, camPos.eye.z);
         glPopMatrix(1);
 
         // model
         glPushMatrix();
-        CharacterPosition charPos = playerCtrl->isCharacterAt();
+
         glTranslatef(charPos.x, charPos.y, charPos.z);
         glRotatef(charPos.facingAngle, 0.0f, 1.0f, 0.0f);
         glPolyFmt(POLY_ALPHA(31) | POLY_CULL_BACK | POLY_FOG | POLY_ID(1));
@@ -418,6 +424,7 @@ ViewState EnvironmentView::update()
                 debugText += "translate(x,z): " + std::to_string((int)(charPos.x * 100)) + ", " +
                              std::to_string((int)(charPos.z * 100)) + "\n";
                 debugText += "angle(w,c): " + std::to_string((int)(charPos.angle * 100)) + ", " +
+                             std::to_string((int)(cameraCtrl.getAngle() * 100)) + ", " +
                              std::to_string((int)(charPos.facingAngle * 100)) + "\n";
                 textCtrl->drawText(debugText, consoleFont, textVideoBufferSub, 0, 160, TextColor::Red);
             }

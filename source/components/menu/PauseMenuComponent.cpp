@@ -105,6 +105,30 @@ ViewState PauseMenuComponent::update(int keys)
 
 ViewState PauseMenuComponent::openDebugMenu()
 {
+    if (cameraCtrl)
+    {
+        switch (cameraCtrl->getMode())
+        {
+        case CameraMode::Follow:
+            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Follow";
+            break;
+        case CameraMode::Static:
+            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Static";
+            break;
+        case CameraMode::CCTV:
+            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: CCTV";
+            break;
+        case CameraMode::Free:
+            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Free";
+            break;
+        case CameraMode::Path:
+            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: Path";
+            break;
+        default:
+            debugOptions[static_cast<int>(DebugOption::CYCLE_CAMERA_MODE)].name = "Camera: ?";
+            break;
+        }
+    }
     return changeMenu(debugOptions, DEBUG_OPTIONS);
 }
 
@@ -240,6 +264,21 @@ ViewState PauseMenuComponent::debugOptionSelected()
         Globals::enableDebugPrint = !Globals::enableDebugPrint;
         *isActivePtr = false;
         selectedView = ViewState::KEEP_CURRENT;
+        break;
+    case DebugOption::CYCLE_CAMERA_MODE:
+        if (cameraCtrl)
+        {
+            if (cameraCtrl->getMode() == CameraMode::Path)
+            {
+                cameraCtrl->setMode(CameraMode::Follow);
+            }
+            else
+            {
+                cameraCtrl->setMode(cameraModes[(static_cast<int>(cameraCtrl->getMode()) + 1) % cameraModes.size()]);
+            }
+        }
+        *isActivePtr = false;
+        openDebugMenu();
         break;
     default:
         selectedView = ViewState::KEEP_CURRENT;
