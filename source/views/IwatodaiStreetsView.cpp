@@ -3,8 +3,8 @@
 IwatodaiStreetsView::IwatodaiStreetsView()
 {
     // Battle setup
-    partyMemberProfiles.push_back(CharacterProfileDb::junpei);
-    partyMemberProfiles.push_back(CharacterProfileDb::yukari);
+    characterProfiles.push_back(CharacterProfileDb::junpei);
+    characterProfiles.push_back(CharacterProfileDb::yukari);
 
     enemyProfiles.push_back(EnemyProfileDb::cowardlyMaya);
     enemyProfiles.push_back(EnemyProfileDb::mercilessMaya);
@@ -13,12 +13,12 @@ IwatodaiStreetsView::IwatodaiStreetsView()
 IwatodaiStreetsView::~IwatodaiStreetsView()
 {
     enemyProfiles.clear();
-    partyMemberProfiles.clear();
+    characterProfiles.clear();
 }
 
 void IwatodaiStreetsView::startBattle()
 {
-    battleController->execute(CharacterProfileDb::player, partyMemberProfiles, enemyProfiles, battleStartCondition);
+    battleController->execute(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
 }
 
 CharacterController* IwatodaiStreetsView::createPlayerController()

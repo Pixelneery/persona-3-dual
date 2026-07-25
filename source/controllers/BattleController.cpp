@@ -46,14 +46,14 @@ void BattleController::execute(CharacterProfile& player,
     battleParticipants.push_back(this->player);
     this->partyMembers.push_back(this->player);
 
-    for (CharacterProfile& characterProfile : partyMembers)
+    for (CharacterProfile& characterProfile : characterProfiles)
     {
         PartyMember* partyMember = new PartyMember(characterProfile);
         this->partyMembers.push_back(partyMember);
         battleParticipants.push_back(partyMember);
     }
 
-    for (EnemyProfile& enemyProfile : enemies)
+    for (EnemyProfile& enemyProfile : enemyProfiles)
     {
         Enemy* enemy = new Enemy(enemyProfile);
         this->enemies.push_back(enemy);
