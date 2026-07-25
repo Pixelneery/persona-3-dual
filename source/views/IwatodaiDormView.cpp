@@ -56,7 +56,11 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
         return ViewState::IWATODAI_STREETS;
     case TileType::C_AK:
         // start dialogue
-        iprintf("\x1b[0;0HTalk");
+        if (!promptDrawn)
+        {
+            textCtrl->drawText("Talk", cosmeticaFont, textVideoBufferSub, 0, 0, TextColor::White);
+            promptDrawn = true;
+        }
         if (pressed & KEY_A)
         {
             prevEnvironmentState = false;
@@ -64,7 +68,11 @@ ViewState IwatodaiDormView::onTileCheck(TileType tile, u32 pressed)
         }
         break;
     default:
-        consoleClear();
+        if (promptDrawn)
+        {
+            textCtrl->clearScreen(textVideoBufferSub);
+            promptDrawn = false;
+        }
         break;
     }
     return ViewState::KEEP_CURRENT;
@@ -74,5 +82,5 @@ void IwatodaiDormView::onDialogueStart()
 {
     demo_yukari_kenji_argument_load();
     dialogueCtrl.setLoader(demo_yukari_kenji_argument_load_bg);
-    dialogueCtrl.start(demo_yukari_kenji_argument_first());
+    dialogueCtrl.start(demo_yukari_kenji_argument_first(), cosmeticaFont, textVideoBufferSub);
 }

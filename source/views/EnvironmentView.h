@@ -1,7 +1,6 @@
 #pragma once
 
 #include "views/BaseView.h"
-#include <nds/arm9/console.h>
 
 // core
 #include "core/enums.h"
@@ -108,7 +107,6 @@ class EnvironmentView : public BaseView
     int bgSharedSub2;
     int bgSharedSub3;
 
-    PrintConsole console;
     ViewPhase phase;
 
     bool prevPauseState = false;
@@ -116,6 +114,7 @@ class EnvironmentView : public BaseView
     bool prevEnvironmentState = false;
     bool prevBattleState = false;
     bool isBattleMenuActive = false;
+    bool promptDrawn = false;
 
     CharacterController* playerCtrl = nullptr;
 
@@ -140,6 +139,11 @@ class EnvironmentView : public BaseView
     // Environment
     Environment env;
     const EnvironmentDbEntry* dbEntry = nullptr;
+
+    uint16_t* textVideoBuffer;
+    uint16_t* textVideoBufferSub;
+    Font* cosmeticaFont = nullptr;
+    TextController* textCtrl = TextController::getInstance();
 
   private:
     // fog properties

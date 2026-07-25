@@ -52,5 +52,9 @@ class MainMenuComponent : public BaseMenu
     GraphicsController* graphicsCtrl = GraphicsController::getInstance();
 
   public:
-    void init(int iBgSlot, bool* isActive, const std::string& iPauseMessage = "") override;
+    void init(int iBgSlot,
+              bool* isActive,
+              uint16_t* iTextVideoBuffer,
+              uint16_t* iTextVideoBufferSub,
+              const std::string& iPauseMessage = "") override;
 };

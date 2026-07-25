@@ -66,7 +66,12 @@ void EnvironmentView::setupEnvironment()
 
     if (!env.load(dbEntry, bitmapsEnv))
     {
-        iprintf("EnvironmentView: failed to load environment '%s'\n", dbEntry->name);
+        textCtrl->drawText("EnvironmentView: failed to load environment " + std::string(dbEntry->name),
+                           cosmeticaFont,
+                           textVideoBufferSub,
+                           0,
+                           0,
+                           TextColor::Red);
     }
 
     for (int i = 0; i < dbEntry->textureCount; ++i)
@@ -78,8 +83,8 @@ void EnvironmentView::setupEnvironment()
 void EnvironmentView::init()
 {
     // set modes
-    videoSetMode(MODE_0_3D);
-    videoSetModeSub(MODE_0_2D);
+    videoSetMode(MODE_5_3D | DISPLAY_BG3_ACTIVE);
+    videoSetModeSub(MODE_3_2D | DISPLAY_BG3_ACTIVE);
 
     // set vram
     vramSetBankA(VRAM_A_TEXTURE_SLOT0); // texture slot 0
@@ -87,6 +92,7 @@ void EnvironmentView::init()
 
     vramSetBankC(VRAM_C_SUB_BG);
     vramSetBankD(VRAM_D_SUB_SPRITE);
+    vramSetBankE(VRAM_E_MAIN_BG);
     vramSetBankH(VRAM_H_SUB_BG_EXT_PALETTE);
     vramSetBankI(VRAM_I_SUB_SPRITE_EXT_PALETTE);
     bgExtPaletteEnableSub();
@@ -143,27 +149,21 @@ void EnvironmentView::init()
     dbEntry = getEnvironmentDbEntry();
     if (!dbEntry)
     {
-        iprintf("EnvironmentView::init - no EnvironmentDbEntry for this room\n");
+        sassert(false, "EnvironmentView::init - no EnvironmentDbEntry for this room");
         return;
     }
 
     // setup sub screen
     // https://mtheall.com/vram.html#SUB=1&T0=1&NT0=512&MB0=2&TB0=1&S0=0&T1=3&NT1=128&MB1=5&TB1=0&T2=1&NT2=512&MB2=3&TB2=3&S2=0&T3=1&NT3=512&MB3=4&TB3=5&S3=0
-    bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 2, 1);
-    bgSharedSub2 = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 3, 3);
-    bgSharedSub3 = bgInitSub(3, BgType_Text8bpp, BgSize_T_256x256, 4, 5);
+    bgSharedSub1 = bgInitSub(0, BgType_Text8bpp, BgSize_T_256x256, 0, 1);
+    bgSharedSub2 = bgInitSub(2, BgType_Text8bpp, BgSize_T_256x256, 2, 2);
+    bgSharedSub3 = bgInitSub(1, BgType_Text8bpp, BgSize_T_256x256, 4, 3);
 
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub1), 2048);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub2), 2048);
     dmaFillHalfWords(0, bgGetMapPtr(bgSharedSub3), 2048);
 
-    // setup console
-    consoleInit(&console, 1, BgType_Text4bpp, BgSize_T_256x256, 5, 0, false, true);
-    consoleSelect(&console);
-    consoleClear();
-
     // adjust sub screen image and console to sit correctly on each other
-    bgSetPriority(console.bgId, 0);
     bgSetPriority(bgSharedSub1, 1);
     bgSetPriority(bgSharedSub2, 2);
     bgSetPriority(bgSharedSub3, 3);
@@ -189,6 +189,19 @@ void EnvironmentView::init()
         makoto_loadTextures(*characterAnimationCtrl, (const unsigned int**)bitmapsCharacter);
     }
 
+    //setup main screen text engine
+    int bgText = bgInit(3, BgType_Bmp8, BgSize_B8_256x256, 0, 0);
+    textVideoBuffer = (uint16_t*)bgGetGfxPtr(bgText);
+    bgSetPriority(bgText, 0); //set text layer on main to be on top of 3D view
+
+    //setup sub screen text engine
+    int bgTextSub = bgInitSub(3, BgType_Bmp8, BgSize_B8_256x256, 4, 0);
+    textVideoBufferSub = (uint16_t*)bgGetGfxPtr(bgTextSub);
+    bgSetPriority(bgTextSub, 0);
+
+    cosmeticaFont = textCtrl->loadFont("cosmetica/size-12/size-12");
+    textCtrl->loadDefaultPalette();
+
     // setup environment geometry/textures (fully generic, data-driven)
     setupEnvironment();
 
@@ -196,11 +209,11 @@ void EnvironmentView::init()
     demo_dialogue_bg_slot = bgSharedSub1;
 
     // setup pause menu
-    pauseMenuCmpt->init(bgSharedSub1);
+    pauseMenuCmpt->init(bgSharedSub1, &Globals::isPauseMenuActive, textVideoBuffer, textVideoBufferSub);
     pauseMenuCmpt->setCameraController(&cameraCtrl);
 
     // setup battle menu
-    battleMenuCmpt->init(-1, &isBattleMenuActive);
+    battleMenuCmpt->init(-1, &isBattleMenuActive, textVideoBuffer, textVideoBufferSub);
 
     // setup UI
     // NOTE: bg 0 is the 3D view
@@ -229,6 +242,8 @@ void EnvironmentView::init()
     isBattleMenuActive = false;
     prevBattleState = false;
     phase = ViewPhase::Environment;
+
+    bgSetPriority(0, 2); //set 3D view on main to be behind text layer
 }
 
 ViewState EnvironmentView::update()
@@ -292,8 +307,7 @@ ViewState EnvironmentView::update()
 
         if (pressed & KEY_START)
         {
-            consoleClear();
-
+            textCtrl->clearScreen(textVideoBufferSub);
             prevPauseState = false;
             phase = ViewPhase::Environment;
             prevEnvironmentState = false;
@@ -343,6 +357,7 @@ ViewState EnvironmentView::update()
 
         if (pressed & KEY_START)
         {
+            textCtrl->clearScreen(textVideoBufferSub);
             prevEnvironmentState = false;
             phase = ViewPhase::Pause;
             break;
@@ -398,19 +413,27 @@ ViewState EnvironmentView::update()
 
         if (Globals::enableDebugPrint)
         {
-            iprintf("\x1b[19;0H\033[31mTouch x = %04X, %04X\n", touch.rawx, touch.px);
-
-            iprintf("\x1b[20;0HTouch y = %04X, %04X\n", touch.rawy, touch.py);
-
-            iprintf("\x1b[21;0Htile(x,z): %d, %d",
-                    (int)((charPos.x + dbEntry->worldOffsetX) / tileSize),
-                    (int)((charPos.z + dbEntry->worldOffsetZ) / tileSize));
-
-            iprintf("\x1b[22;0Htranslate(x,z): %d, %d", (int)(charPos.x * 100), (int)(charPos.z * 100));
-
-            iprintf("\x1b[23;0Hangle(w,c): %d, %d \033[37;1m",
-                    (int)(cameraCtrl.getAngle() * 100),
-                    (int)(charPos.facingAngle * 100));
+            if (frame % 60 == 30) //restricting this 2Hz otherwise it tanks performance
+            {
+                textCtrl->clearArea(textVideoBufferSub, 1, 120, 128, 72);
+                char buf[128];
+                std::string debugText = "";
+                std::sprintf(buf, "Touch x = %04X, %04X\n", touch.rawx, touch.px);
+                debugText += buf;
+                std::sprintf(buf, "Touch y = %04X, %04X\n", touch.rawy, touch.py);
+                debugText += buf;
+                std::sprintf(buf,
+                             "tile(x,z): %d, %d\n",
+                             (int)((charPos.x + dbEntry->worldOffsetX) / tileSize),
+                             (int)((charPos.z + dbEntry->worldOffsetZ) / tileSize));
+                debugText += buf;
+                std::sprintf(buf, "translate(x,z): %d, %d\n", (int)(charPos.x * 100), (int)(charPos.z * 100));
+                debugText += buf;
+                std::sprintf(
+                    buf, "angle(w,c): %d, %d\n", (int)(cameraCtrl.getAngle() * 100), (int)(charPos.facingAngle * 100));
+                debugText += buf;
+                textCtrl->drawText(debugText, cosmeticaFont, textVideoBufferSub, 1, 120, TextColor::Red);
+            }
         }
 
         break;
@@ -431,8 +454,11 @@ ViewState EnvironmentView::update()
 
 void EnvironmentView::cleanup()
 {
+    textCtrl->clearScreen(textVideoBuffer);
+    textCtrl->clearScreen(textVideoBufferSub);
+    textCtrl->unloadPalette();
     // the console was setup in init(), so we can safely clear it here
-    consoleClear();
+    //consoleClear();
     BaseView::cleanup();
 
     env.cleanup();
