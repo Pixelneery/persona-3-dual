@@ -20,14 +20,9 @@ CharacterController* PaulowniaMallView::createPlayerController()
                                    dbEntry->worldOffsetZ,
                                    characterSize,
                                    speed,
-                                   angleIncrement,
-                                   distance,
-                                   lookAhead,
-                                   angle,
                                    height,
                                    characterTranslate,
-                                   characterFacingAngle,
-                                   true);
+                                   characterFacingAngle);
 }
 
 ViewState PaulowniaMallView::onTileCheck(TileType tile, u32 pressed)
