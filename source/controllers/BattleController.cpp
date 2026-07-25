@@ -32,8 +32,8 @@ BattleController::BattleController()
  * @author Nolan Kolb (themoonwalker8692 / TrueGiles)
 */
 void BattleController::execute(CharacterProfile& player,
-                               std::vector<CharacterProfile>& partyMembers,
-                               std::vector<EnemyProfile>& enemies,
+                               std::vector<CharacterProfile>& characterProfiles,
+                               std::vector<EnemyProfile>& enemyProfiles,
                                BattleStartCondition battleStartCondition)
 {
     active = true;
@@ -55,9 +55,9 @@ void BattleController::execute(CharacterProfile& player,
 
     for (EnemyProfile& enemyProfile : enemies)
     {
-        Enemy* enemey = new Enemy(enemyProfile);
-        this->enemies.push_back(enemey);
-        battleParticipants.push_back(enemey);
+        Enemy* enemy = new Enemy(enemyProfile);
+        this->enemies.push_back(enemy);
+        battleParticipants.push_back(enemy);
     }
 
     this->battleStartCondition = battleStartCondition;

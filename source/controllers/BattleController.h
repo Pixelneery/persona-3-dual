@@ -114,8 +114,8 @@ class BattleController
     }
 
     void execute(CharacterProfile& player,
-                 std::vector<CharacterProfile>& partyMembers,
-                 std::vector<EnemyProfile>& enemies,
+                 std::vector<CharacterProfile>& characterProfiles,
+                 std::vector<EnemyProfile>& enemyProfiles,
                  BattleStartCondition battleStartCondition);
 
     BattleResult update(u32 keys);

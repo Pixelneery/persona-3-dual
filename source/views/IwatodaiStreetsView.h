@@ -56,7 +56,7 @@ class IwatodaiStreetsView : public EnvironmentView
     const float characterFacingAngle = 0.0f;
 
     // battle
-    std::vector<CharacterProfile> partyMemberProfiles;
+    std::vector<CharacterProfile> characterProfiles;
     std::vector<EnemyProfile> enemyProfiles;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
