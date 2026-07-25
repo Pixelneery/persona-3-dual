@@ -416,16 +416,22 @@ ViewState EnvironmentView::update()
             if (frame % 60 == 30) //restricting this 2Hz otherwise it tanks performance
             {
                 textCtrl->clearArea(textVideoBufferSub, 0, 160, 128, 32);
+                char buf[128];
                 std::string debugText = "";
-                debugText += "Touch x = " + std::to_string(touch.rawx) + ", " + std::to_string(touch.px) + "\n";
-                debugText += "Touch y = " + std::to_string(touch.rawy) + ", " + std::to_string(touch.py) + "\n";
-                debugText += "tile(x,z): " + std::to_string((int)((charPos.x + dbEntry->worldOffsetX) / tileSize)) +
-                             ", " + std::to_string((int)((charPos.z + dbEntry->worldOffsetZ) / tileSize)) + "\n";
-                debugText += "translate(x,z): " + std::to_string((int)(charPos.x * 100)) + ", " +
-                             std::to_string((int)(charPos.z * 100)) + "\n";
-                debugText += "angle(w,c): " + std::to_string((int)(charPos.angle * 100)) + ", " +
-                             std::to_string((int)(cameraCtrl.getAngle() * 100)) + ", " +
-                             std::to_string((int)(charPos.facingAngle * 100)) + "\n";
+                std::sprintf(buf, "Touch x = %04X, %04X\n", touch.rawx, touch.px);
+                debugText += buf;
+                std::sprintf(buf, "Touch y = %04X, %04X\n", touch.rawy, touch.py);
+                debugText += buf;
+                std::sprintf(buf,
+                             "tile(x,z): %d, %d\n",
+                             (int)((charPos.x + dbEntry->worldOffsetX) / tileSize),
+                             (int)((charPos.z + dbEntry->worldOffsetZ) / tileSize));
+                debugText += buf;
+                std::sprintf(buf, "translate(x,z): %d, %d\n", (int)(charPos.x * 100), (int)(charPos.z * 100));
+                debugText += buf;
+                std::sprintf(
+                    buf, "angle(w,c): %d, %d\n", (int)(cameraCtrl.getAngle() * 100), (int)(charPos.facingAngle * 100));
+                debugText += buf;
                 textCtrl->drawText(debugText, consoleFont, textVideoBufferSub, 0, 160, TextColor::Red);
             }
         }
