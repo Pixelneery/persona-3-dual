@@ -1,3 +1,9 @@
+/**
+ * @file EnemyProfileDb.cpp
+ * @brief Holds / Populates the EnemyProfile's
+ * @author Nolan Kolb (theMoonWalker8692 / TrueGiles)
+ */
+
 #include "EnemyProfileDb.h"
 #include "../armours/ArmourDb.h"
 #include "../shoes/ShoeDb.h"

@@ -1,3 +1,9 @@
+/**
+ * @file EnemyProfile.h
+ * @brief Holds enemy data which an enemy is created from
+ * @author Nolan Kolb (themoonwalker8692 / TrueGiles)
+ */
+
 #pragma once
 #include "../BattleStats.h"
 #include "../ProfileBase.h"
