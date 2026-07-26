@@ -279,6 +279,7 @@ ViewState PauseMenuComponent::debugOptionSelected()
         }
         *isActivePtr = false;
         openDebugMenu();
+        selectedView = ViewState::KEEP_CURRENT;
         break;
     default:
         selectedView = ViewState::KEEP_CURRENT;
