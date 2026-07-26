@@ -294,6 +294,7 @@ ViewState EnvironmentView::update()
         if (!prevPauseState)
         {
             uiCtrl->hideAll();
+            pauseMenuCmpt->reset();
             prevPauseState = true;
         }
 
