@@ -3,37 +3,23 @@
 IwatodaiStreetsView::IwatodaiStreetsView()
 {
     // Battle setup
-    mercilessMaya = new Enemy(EnemyDb::mercilessMaya);
-    cowardlyMaya = new Enemy(EnemyDb::cowardlyMaya);
+    characterProfiles.push_back(CharacterProfileDb::junpei);
+    characterProfiles.push_back(CharacterProfileDb::yukari);
 
-    player = new Player(CharacterProfileDb::player);
-
-    yukari = new PartyMember(CharacterProfileDb::yukari);
-    junpei = new PartyMember(CharacterProfileDb::junpei);
-
-    battleParticipants = {mercilessMaya, cowardlyMaya, player, yukari, junpei};
-
-    enemies = {mercilessMaya, cowardlyMaya};
-
-    partyMembers = {player, yukari, junpei};
+    enemyProfiles.push_back(EnemyProfileDb::cowardlyMaya);
+    enemyProfiles.push_back(EnemyProfileDb::mercilessMaya);
 }
 
 IwatodaiStreetsView::~IwatodaiStreetsView()
 {
-    for (BattleParticipant* participant : battleParticipants)
-    {
-        delete participant;
-    }
-
-    battleParticipants.clear();
-    enemies.clear();
-    partyMembers.clear();
+    enemyProfiles.clear();
+    characterProfiles.clear();
 }
 
 void IwatodaiStreetsView::startBattle()
 {
     battleController->textVideoBufferSub = textVideoBufferSub;
-    battleController->execute(player, &partyMembers, &enemies, &battleParticipants, battleStartCondition);
+    battleController->execute(CharacterProfileDb::player, characterProfiles, enemyProfiles, battleStartCondition);
 }
 
 // ----------------------------

@@ -20,6 +20,7 @@
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/TurnResult.h"
 #include "./battleActions/enemies/Enemy.h"
+#include "./battleActions/enemies/EnemyProfileDb.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/Player.h"
@@ -60,9 +61,9 @@ class BattleController
     bool allOutAttackWasPossibleThisKnockDown = false;
 
     // Current battle data
-    std::vector<BattleParticipant*>* battleParticipants = nullptr;
-    std::vector<Enemy*>* enemies = nullptr;
-    std::vector<PartyMember*>* partyMembers = nullptr;
+    std::vector<BattleParticipant*> battleParticipants;
+    std::vector<Enemy*> enemies;
+    std::vector<PartyMember*> partyMembers;
     Player* player = nullptr;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
@@ -112,10 +113,9 @@ class BattleController
         return phase;
     }
 
-    void execute(Player* player,
-                 std::vector<PartyMember*>* partyMembers,
-                 std::vector<Enemy*>* enemies,
-                 std::vector<BattleParticipant*>* battleParticipants,
+    void execute(CharacterProfile& player,
+                 std::vector<CharacterProfile>& characterProfiles,
+                 std::vector<EnemyProfile>& enemyProfiles,
                  BattleStartCondition battleStartCondition);
 
     BattleResult update(u32 keys);

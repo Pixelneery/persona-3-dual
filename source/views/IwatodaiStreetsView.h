@@ -10,7 +10,7 @@
 #include "./battleActions/BattleParticipant.h"
 #include "./battleActions/BattleStartCondition.h"
 #include "./battleActions/enemies/Enemy.h"
-#include "./battleActions/enemies/EnemyDb.h"
+#include "./battleActions/enemies/EnemyProfileDb.h"
 #include "./battleActions/party/CharacterProfileDb.h"
 #include "./battleActions/party/PartyMember.h"
 #include "./battleActions/party/Player.h"
@@ -54,19 +54,8 @@ class IwatodaiStreetsView : public EnvironmentView
     const float characterFacingAngle = 0.0f;
 
     // battle
-    Enemy* mercilessMaya = nullptr;
-    Enemy* cowardlyMaya = nullptr;
-
-    Player* player = nullptr;
-
-    PartyMember* yukari = nullptr;
-    PartyMember* junpei = nullptr;
-
-    std::vector<BattleParticipant*> battleParticipants;
-
-    std::vector<Enemy*> enemies;
-
-    std::vector<PartyMember*> partyMembers;
+    std::vector<CharacterProfile> characterProfiles;
+    std::vector<EnemyProfile> enemyProfiles;
 
     BattleStartCondition battleStartCondition = BattleStartCondition::Even;
 };
