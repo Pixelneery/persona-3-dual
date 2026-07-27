@@ -316,12 +316,44 @@ void TextController::drawNextFromText(Text* text)
             text->cursorX += SPACE_WIDTH;
         }
     }
+    else if (c == '[')
+    {
+        int codeSize = 1;
+        std::string colorCode = "";
+        while (text->cursorPos + codeSize < (int)text->content.size() &&
+               text->content[text->cursorPos + codeSize] != ']')
+        {
+            colorCode += text->content[text->cursorPos + codeSize];
+            codeSize++;
+        }
+        if (colorCode == "def") //reset to base color
+        {
+            text->activeColor = text->baseColor;
+        }
+        else
+        {
+            bool onlyDigits = true;
+            for (char& c : colorCode)
+            {
+                if (onlyDigits && !isdigit(c))
+                    onlyDigits =
+                        false; //colorcode contains non-digit characters, so we won't try to convert it to an int (would cause a crash)
+            }
+            if (onlyDigits)
+            {
+                int newColor = std::stoi(colorCode);
+                if (newColor >= 0 && newColor < 256)
+                    text->activeColor = newColor;
+            }
+        }
+        text->cursorPos += codeSize; // Skip the color code characters
+    }
     else if (text->font->glyphs[static_cast<unsigned char>(c)].width == 0)
         text->cursorX += SPACE_WIDTH; // If the glyph width is 0, skip it (char has not been defined in the font)
     else
     {
         Glyph g = text->font->glyphs[static_cast<unsigned char>(c)];
-        drawGlyph(g, text->font, text->videoBuffer, text->cursorX, text->cursorY, text->color);
+        drawGlyph(g, text->font, text->videoBuffer, text->cursorX, text->cursorY, text->activeColor);
         text->cursorX += g.width + LETTER_SPACING;
     }
 }
@@ -335,7 +367,8 @@ Text* TextController::createText(
     newText->startX = startX;
     newText->startY = startY;
     newText->content = text;
-    newText->color = color;
+    newText->baseColor = color;
+    newText->activeColor = color;
     newText->font = font;
     newText->videoBuffer = videoBuffer;
     newText->cursorPos = 0; // Start at the beginning of the text

@@ -73,10 +73,11 @@ struct Text
     int startX;
     int startY;
     std::string content;
-    int color;
     Font* font;
     uint16_t* videoBuffer;
     int cursorPos;
+    int baseColor;
+    int activeColor;
     int counter;
 };
 
