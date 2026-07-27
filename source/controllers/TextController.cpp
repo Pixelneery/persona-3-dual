@@ -205,13 +205,14 @@ bool TextController::loadFontMetadata(const std::string& path, Font* font)
 void TextController::drawText(
     const std::string& text, Font* font, uint16_t* videoBuffer, int startX, int startY, int color)
 {
-    Text textObj = {startX, startY, startX, startY, text, color, font, videoBuffer, 0};
+    Text* textObj = createText(text, font, videoBuffer, startX, startY, color);
 
-    while (textObj.cursorPos < (int)textObj.content.size())
+    while (textObj->cursorPos < (int)textObj->content.size())
     {
-        drawNextFromText(&textObj);
-        textObj.cursorPos++;
+        drawNextFromText(textObj);
+        textObj->cursorPos++;
     }
+    delete textObj;
 }
 
 void TextController::appearText(
