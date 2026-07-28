@@ -295,9 +295,9 @@ void TextController::clearArea(uint16_t* videoBuffer, int x, int y, int width, i
 
 void TextController::drawNextFromText(Text* text)
 {
-    char c = text->content[text->cursorPos];
+    unsigned char c = text->content[text->cursorPos];
 
-    //Handle Newline
+    ///Handle Newline
     if (c == '\n')
     {
         text->cursorX = text->startX;
@@ -312,50 +312,35 @@ void TextController::drawNextFromText(Text* text)
             text->cursorY += text->font->lineHeight + LINE_SPACING;
         }
         else
-        {
             text->cursorX += SPACE_WIDTH;
-        }
     }
-    else if (c == '[')
+    if (c == 0xFF)
     {
-        int codeSize = 1;
-        std::string colorCode = "";
-        while (text->cursorPos + codeSize < (int)text->content.size() &&
-               text->content[text->cursorPos + codeSize] != ']')
+        c = getNextChar(text);
+        if (c == 0x01) /// Color change
         {
-            colorCode += text->content[text->cursorPos + codeSize];
-            codeSize++;
+            c = getNextChar(text);
+            if (c == 0xFF) /// Reset to base color
+                text->activeColor = text->baseColor;
+            else if (c < 256) /// bg palette only has 256 colors
+                text->activeColor = static_cast<int>(c);
         }
-        if (colorCode == "def") //reset to base color
-        {
-            text->activeColor = text->baseColor;
-        }
-        else
-        {
-            bool onlyDigits = true;
-            for (char& c : colorCode)
-            {
-                if (onlyDigits && !isdigit(c))
-                    onlyDigits =
-                        false; //colorcode contains non-digit characters, so we won't try to convert it to an int (would cause a crash)
-            }
-            if (onlyDigits)
-            {
-                int newColor = std::stoi(colorCode);
-                if (newColor >= 0 && newColor < 256)
-                    text->activeColor = newColor;
-            }
-        }
-        text->cursorPos += codeSize; // Skip the color code characters
     }
-    else if (text->font->glyphs[static_cast<unsigned char>(c)].width == 0)
-        text->cursorX += SPACE_WIDTH; // If the glyph width is 0, skip it (char has not been defined in the font)
+    else if (text->font->glyphs[c].width == 0)
+        text->cursorX += SPACE_WIDTH; /// If the glyph width is 0, skip it (char has not been defined in the font)
     else
     {
-        Glyph g = text->font->glyphs[static_cast<unsigned char>(c)];
+        Glyph g = text->font->glyphs[c];
         drawGlyph(g, text->font, text->videoBuffer, text->cursorX, text->cursorY, text->activeColor);
         text->cursorX += g.width + LETTER_SPACING;
     }
+}
+
+char TextController::getNextChar(Text* text)
+{
+    if (text->cursorPos + 1 < (int)text->content.size())
+        return text->content[++text->cursorPos];
+    return 0xFE; /// Return a special value indicating no more characters
 }
 
 Text* TextController::createText(
