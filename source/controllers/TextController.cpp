@@ -248,10 +248,13 @@ bool TextController::appearTextDone()
 }
 
 void TextController::drawGlyph(
-    const Glyph& glyph, Font* font, uint16_t* videoBuffer, int cursorX, int cursorY, int color)
+    const Glyph& glyph, Font* font, uint16_t* videoBuffer, int cursorX, int cursorY, int color, bool italic)
 {
     for (int y = 0; y < glyph.height; y++)
     {
+        int distY = italic ? glyph.height - 1 - y : 0; /// Distance from baseline
+        int italicOffset =
+            italic ? (distY * SLANT_FACTOR) >> 8 : 0; /// Integer math equivalent of distY * (SLANT_FACTOR/256)
         for (int x = 0; x < glyph.width; x++)
         {
             int bitmapX = glyph.xPos + x;
@@ -263,7 +266,7 @@ void TextController::drawGlyph(
             int pixelValue = font->bitmap[bitmapIndex];
             if (pixelValue > 0)
             {
-                int screenX = cursorX + x;
+                int screenX = cursorX + x + italicOffset;
                 int screenY = cursorY + glyph.yOffset + y;
                 if (screenX >= 0 && screenX < 256 && screenY >= 0 && screenY < 192)
                     drawPixel(videoBuffer, screenX, screenY, color);

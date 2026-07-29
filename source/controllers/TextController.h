@@ -180,8 +180,9 @@ class TextController
      * @param x The x-coordinate to start drawing the glyph.
      * @param y The y-coordinate to start drawing the glyph.
      * @param color The color to use for the glyph.
+     * @param italic Whether the glyph should be sheared to simulate italic text.
      */
-    void drawGlyph(const Glyph& glyph, Font* font, uint16_t* videoBuffer, int x, int y, int color);
+    void drawGlyph(const Glyph& glyph, Font* font, uint16_t* videoBuffer, int x, int y, int color, bool italic = false);
     /**
      * @brief Clear the text layer by filling the video buffer with black.
      * @param videoBuffer Pointer to the video buffer to clear.
@@ -216,6 +217,8 @@ class TextController
     int LETTER_SPACING = 1;
     int LINE_SPACING = 2;
     int SPACE_WIDTH = 2;
+    /// 128 = 1 pixel shift every 2 rows, 64 = 1 pixel shift every 4 rows
+    int SLANT_FACTOR = 64;
 
     TextController();
     TextController(const TextController&) = delete;
