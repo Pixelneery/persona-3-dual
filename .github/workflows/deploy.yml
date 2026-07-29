@@ -31,6 +31,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy docs/doxygen --project-name=persona-3-dual
+          command: pages deploy docs/doxygen/html --project-name=persona-3-dual --commit-dirty=true
           # Optional: Enable this if you want to have GitHub Deployments triggered
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
