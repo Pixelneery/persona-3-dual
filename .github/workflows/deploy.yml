@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
+      pull_requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -34,3 +35,20 @@ jobs:
           command: pages deploy docs/doxygen/html --project-name=persona-3-dual --commit-dirty=true
           # Optional: Enable this if you want to have GitHub Deployments triggered
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Post PR Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Cloudflare Pages formats branch URLs by lowercasing and replacing special characters with hyphens
+            const branchName = context.payload.pull_request.head.ref.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+            const previewUrl = `https://${branchName}.persona-3-dual.pages.dev`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Documentation Preview Deployed!**\n\nTake a peek over at: ${previewUrl}`
+            })
