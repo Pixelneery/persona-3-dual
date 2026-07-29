@@ -5,7 +5,7 @@ on:
   # including fork PRs. Uses workflow_run so secrets are always available
   # (GitHub blocks secret access on pull_request events from forks).
   workflow_run:
-    workflows: ["Build ROM", "Deploy Docs to Cloudflare Pages"]
+    workflows: ["Build ROM"]
     types: [completed]
 
   # Fires when a PR is opened, closed, or reopened.
