@@ -268,19 +268,19 @@ graphics: $(FAT_GRAPHICS_OUT)
 # FONTS
 #---------------------------------------------------------------------------------
 
-FONT_BM_OUT := $(foreach file,$(FONT_PNG_FILES),$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(file:.png=.img.bin)),$(file)))
-FONT_FNT_OUT := $(foreach file,$(FONT_FNT_FILES),$(patsubst $(CURDIR)/assets/%.fnt,$(CURDIR)/data/%/$(notdir $(file)),$(file)))
+FONT_BM_OUT := $(foreach file,$(FONT_PNG_FILES),$(patsubst $(CURDIR)/assets/fonts/%.png,$(CURDIR)/data/fonts/%.img.bin,$(file)))
+FONT_FNT_OUT := $(foreach file,$(FONT_FNT_FILES),$(patsubst $(CURDIR)/assets/fonts/%.fnt,$(CURDIR)/data/fonts/%.fnt,$(file)))
 
 # Define a macro that acts as a blueprint for our build rule
 define GRIT_RULE
-$(patsubst $(CURDIR)/assets/%.png,$(CURDIR)/data/%/$(notdir $(1:.png=.img.bin)),$(1)): $(1) $$(wildcard $$(1:.png=.grit))
+$(patsubst $(CURDIR)/assets/fonts/%.png,$(CURDIR)/data/fonts/%.img.bin,$(1)): $(1) $$(wildcard $$(1:.png=.grit))
 	@echo "  GRIT  $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
 	@grit "$$<" -ftb -gb8 -fh! -o "$$(patsubst %.img.bin,%,$$@)"
 endef
 
 define COPY_FONT_RULE
-$(patsubst $(CURDIR)/assets/%.fnt,$(CURDIR)/data/%/$(notdir $(1)),$(1)): $(1)
+$(patsubst $(CURDIR)/assets/fonts/%.fnt,$(CURDIR)/data/fonts/%.fnt,$(1)): $(1)
 	@echo "  COPY  $$(notdir $$<)"
 	@mkdir -p $$(dir $$@)
 	@cp "$$<" "$$@"
