@@ -73,7 +73,11 @@ enum TextColor
 enum TextInstruction
 {
     ColorChange = 0x01,
-    ResetColor = 0xFF
+    StyleChange = 0x02,
+    StyleBold = 0x01,
+    StyleItalic = 0x02,
+    StyleUnderline = 0x04,
+    Reset = 0xFF
 };
 
 /**
@@ -92,6 +96,9 @@ struct Text
     int baseColor;
     int activeColor;
     int counter;
+    bool bold;
+    bool italic;
+    bool underline;
 };
 
 /**
@@ -187,6 +194,7 @@ class TextController
      * @param x The x-coordinate to start drawing the glyph.
      * @param y The y-coordinate to start drawing the glyph.
      * @param color The color to use for the glyph.
+     * @param bold Whether to use the bold version of the bitmap.
      * @param italic Whether the glyph should be sheared to simulate italic text.
      * @param underline Whether the glyph should be underlined.
      */
@@ -196,8 +204,9 @@ class TextController
                    int x,
                    int y,
                    int color,
+                   bool bold = false,
                    bool italic = false,
-                   bool underline = true);
+                   bool underline = false);
     /**
      * @brief Clear the text layer by filling the video buffer with black.
      * @param videoBuffer Pointer to the video buffer to clear.
@@ -314,7 +323,7 @@ class TextController
      * @param startX The starting x-coordinate for rendering the text.
      * @return true if the text will exceed the screen width, false otherwise.
      */
-    bool checkWordWrap(const std::string& text, Font* font, int startX);
+    bool checkWordWrap(const std::string& text, Font* font, int startX, bool bold = false);
     /**
      * @brief Extract an integer value from a line of text based on a specified key.
      * @param line The line of text to extract the value from.
@@ -323,6 +332,17 @@ class TextController
      * @note This function assumes that the line takes the form "key=value ".
      */
     int extractIntValue(const std::string& line, const std::string& key);
+    /**
+     * @brief Underline a specificed area.
+     * @param startX The starting x-coordinate of the area to underline.
+     * @param y The y-coordinate of the area to underline.
+     * @param width The width of the area to underline.
+     * @param videoBuffer Pointer to the video buffer to draw to.
+     * @param color The color to use for the underline.
+     * @details This function draws a horizontal line of the specified width at the specified y-coordinate, starting from the specified x-coordinate.
+     * It should be used to underline gaps in the text, that are not handled by the regular text rendering, i.e. the gaps between letters or spaces.
+     */
+    void underlineGap(int startX, int y, int width, uint16_t* videoBuffer, int color);
     /**
      * @brief Halts the program and displays an error message.
      *
