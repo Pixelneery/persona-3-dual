@@ -64,15 +64,25 @@ void TextController::update()
 
 // Loading Functions =====================================================
 
-Font* TextController::loadFont(const std::string& fontFilePath)
+Font* TextController::loadFont(const std::string& name, int size)
 {
     Font* font = new Font();
-    std::string fullPath = fatBasePath + "fonts/" + fontFilePath;
+    std::string fullPath = fatBasePath + "fonts/" + name + "/size-" + std::to_string(size);
     font->bitmap = loadFontBitmap(fullPath + ".img.bin");
     if (!font->bitmap)
         haltOnError("Failed to load font bitmap from \n" + fullPath + ".img.bin");
     if (!loadFontMetadata(fullPath + ".fnt", font))
         haltOnError("Failed to load font metadata from \n" + fullPath + ".fnt");
+    font->bitmapBold = loadFontBitmap(fullPath + "-bold.img.bin");
+    if (!font->bitmapBold || !loadFontMetadata(fullPath + "-bold.fnt", font, true))
+    {
+        font->boldLoaded = false;
+        delete font->bitmapBold;
+        font->bitmapBold = nullptr;
+    }
+    else
+        font->boldLoaded = true;
+
     return font;
 }
 
@@ -159,7 +169,7 @@ bool TextController::loadPalette(const std::string& path, bool sub)
     return true;
 }
 
-bool TextController::loadFontMetadata(const std::string& path, Font* font)
+bool TextController::loadFontMetadata(const std::string& path, Font* font, bool forBoldBitmap)
 {
     u32 size;
     void* buffer = openFile(path, size);
@@ -173,7 +183,7 @@ bool TextController::loadFontMetadata(const std::string& path, Font* font)
     std::string line;
     while (std::getline(iss, line))
     {
-        if (line.rfind("common ", 0) == 0)
+        if (line.rfind("common ", 0) == 0 && !forBoldBitmap)
         {
             font->lineHeight = extractIntValue(line, "lineHeight=");
             font->bitmapWidth = extractIntValue(line, "scaleW=");
@@ -196,7 +206,10 @@ bool TextController::loadFontMetadata(const std::string& path, Font* font)
         glyph.height = extractIntValue(line, "height=");
         glyph.xOffset = extractIntValue(line, "xoffset=");
         glyph.yOffset = extractIntValue(line, "yoffset=");
-        font->glyphs[charID] = glyph;
+        if (forBoldBitmap)
+            font->boldGlyphs[charID] = glyph;
+        else
+            font->glyphs[charID] = glyph;
     }
 
     return true;
@@ -247,11 +260,21 @@ bool TextController::appearTextDone()
     return false;
 }
 
-void TextController::drawGlyph(
-    const Glyph& glyph, Font* font, uint16_t* videoBuffer, int cursorX, int cursorY, int color)
+void TextController::drawGlyph(const Glyph& glyph,
+                               Font* font,
+                               uint16_t* videoBuffer,
+                               int cursorX,
+                               int cursorY,
+                               int color,
+                               bool bold,
+                               bool italic,
+                               bool underline)
 {
     for (int y = 0; y < glyph.height; y++)
     {
+        int distY = italic ? glyph.height - 1 - y : 0; /// Distance from baseline
+        int italicOffset =
+            italic ? (distY * SLANT_FACTOR) >> 8 : 0; /// Integer math equivalent of distY * (SLANT_FACTOR/256)
         for (int x = 0; x < glyph.width; x++)
         {
             int bitmapX = glyph.xPos + x;
@@ -260,14 +283,24 @@ void TextController::drawGlyph(
 
             sassert(bitmapIndex < font->bitmapWidth * font->bitmapHeight, "Bitmap index out of bounds");
 
-            int pixelValue = font->bitmap[bitmapIndex];
+            int pixelValue = bold ? font->bitmapBold[bitmapIndex] : font->bitmap[bitmapIndex];
             if (pixelValue > 0)
             {
-                int screenX = cursorX + x;
+                int screenX = cursorX + x + italicOffset;
                 int screenY = cursorY + glyph.yOffset + y;
                 if (screenX >= 0 && screenX < 256 && screenY >= 0 && screenY < 192)
                     drawPixel(videoBuffer, screenX, screenY, color);
             }
+        }
+    }
+    if (underline)
+    {
+        int underlineY = cursorY + font->lineHeight - 2; /// Position the underline just below the glyph
+        for (int x = 0; x < glyph.width; x++)
+        {
+            int screenX = cursorX + x;
+            if (screenX >= 0 && screenX < 256 && underlineY >= 0 && underlineY < 192)
+                drawPixel(videoBuffer, screenX, underlineY, color);
         }
     }
 }
@@ -308,13 +341,23 @@ void TextController::drawNextFromText(Text* text)
     else if (c == ' ')
     {
         std::string nextWord = getNextWord(text->content.substr(text->cursorPos + 1));
-        if (checkWordWrap(nextWord, text->font, text->cursorX))
+        if (checkWordWrap(nextWord, text->font, text->cursorX, text->bold))
         {
             text->cursorX = text->startX;
             text->cursorY += text->font->lineHeight + LINE_SPACING;
         }
         else
+        {
+            if (text->underline)
+            {
+                underlineGap(text->cursorX,
+                             text->cursorY + text->font->lineHeight - 2,
+                             SPACE_WIDTH,
+                             text->videoBuffer,
+                             text->activeColor);
+            }
             text->cursorX += SPACE_WIDTH;
+        }
     }
     if (c == INSTRUCTION_BIT) /// Handle special instructions for text formatting
     {
@@ -322,18 +365,52 @@ void TextController::drawNextFromText(Text* text)
         if (c == TextInstruction::ColorChange) /// Color change
         {
             c = getNextChar(text);
-            if (c == TextInstruction::ResetColor) /// Reset to base color
+            if (c == TextInstruction::Reset) /// Reset to base color
                 text->activeColor = text->baseColor;
             else if (c < 256) /// bg palette only has 256 colors
                 text->activeColor = static_cast<int>(c);
+        }
+        else if (c == TextInstruction::StyleChange)
+        {
+            c = getNextChar(text);
+            if (c == TextInstruction::Reset) /// Reset all styles
+            {
+                text->bold = false;
+                text->italic = false;
+                text->underline = false;
+            }
+            else
+            {
+                /// Extract style flags from indivudual bits
+                text->bold = (c & TextInstruction::StyleBold) != 0 &&
+                             text->font->boldLoaded; /// Only apply bold if the font has a bold bitmap
+                text->italic = (c & TextInstruction::StyleItalic) != 0;
+                text->underline = (c & TextInstruction::StyleUnderline) != 0;
+            }
         }
     }
     else if (text->font->glyphs[c].width == 0)
         text->cursorX += SPACE_WIDTH; /// If the glyph width is 0, skip it (char has not been defined in the font)
     else
     {
-        Glyph g = text->font->glyphs[c];
-        drawGlyph(g, text->font, text->videoBuffer, text->cursorX, text->cursorY, text->activeColor);
+        Glyph g = text->bold ? text->font->boldGlyphs[c] : text->font->glyphs[c];
+        drawGlyph(g,
+                  text->font,
+                  text->videoBuffer,
+                  text->cursorX,
+                  text->cursorY,
+                  text->activeColor,
+                  text->bold,
+                  text->italic,
+                  text->underline);
+        if (text->underline)
+        {
+            underlineGap(text->cursorX + g.width,
+                         text->cursorY + text->font->lineHeight - 2,
+                         LETTER_SPACING,
+                         text->videoBuffer,
+                         text->activeColor);
+        }
         text->cursorX += g.width + LETTER_SPACING;
     }
 }
@@ -359,6 +436,9 @@ Text* TextController::createText(
     newText->font = font;
     newText->videoBuffer = videoBuffer;
     newText->cursorPos = 0; // Start at the beginning of the text
+    newText->bold = false;
+    newText->italic = false;
+    newText->underline = false;
     return newText;
 }
 
@@ -398,17 +478,27 @@ std::string TextController::getNextWord(const std::string& text)
     return nextWord;
 }
 
-bool TextController::checkWordWrap(const std::string& text, Font* font, int startX)
+bool TextController::checkWordWrap(const std::string& text, Font* font, int startX, bool bold)
 {
     int cursorX = startX;
     for (char c : text)
     {
-        Glyph g = font->glyphs[static_cast<unsigned char>(c)];
+        Glyph g = bold ? font->boldGlyphs[static_cast<unsigned char>(c)] : font->glyphs[static_cast<unsigned char>(c)];
         cursorX += g.width + LETTER_SPACING;
     }
     if (cursorX > 256)
         return true; // Word exceeds screen width
     return false;
+}
+
+void TextController::underlineGap(int startX, int y, int width, uint16_t* videoBuffer, int color)
+{
+    for (int x = 0; x < width; x++)
+    {
+        int screenX = startX + x;
+        if (screenX >= 0 && screenX < 256 && y >= 0 && y < 192)
+            drawPixel(videoBuffer, screenX, y, color);
+    }
 }
 
 void TextController::haltOnError(const std::string& errorMessage)
