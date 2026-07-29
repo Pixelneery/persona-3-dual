@@ -42,6 +42,9 @@ class BaseMenu
                       uint16_t* iTextVideoBuffer,
                       uint16_t* iTextVideoBufferSub,
                       const std::string& iPauseMessage = "Pause");
+    /**
+     * @brief Resets the menu to its initial state.
+     */
     virtual void reset();
     virtual ViewState update(int keys);
     void cancelSFX();
