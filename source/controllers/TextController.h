@@ -64,6 +64,15 @@ enum TextColor
 };
 
 /**
+ * @brief Human readable enum for text instructions.
+ */
+enum TextInstruction
+{
+    ColorChange = 0x01,
+    ResetColor = 0xFF
+};
+
+/**
  * @brief A struct that represents a block of text being rendered on the screen.
  */
 struct Text

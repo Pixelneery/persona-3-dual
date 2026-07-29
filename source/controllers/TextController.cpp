@@ -33,6 +33,8 @@ static const uint16_t customPalette[256] = {
     ARGB16(1, 15, 15, 15), // Gray          21
 };
 
+constexpr char INSTRUCTION_BIT = 0xFF; /// Special value used to indicate that the next byte is an instruction
+
 TextController::TextController()
 {
 }
@@ -314,13 +316,13 @@ void TextController::drawNextFromText(Text* text)
         else
             text->cursorX += SPACE_WIDTH;
     }
-    if (c == 0xFF)
+    if (c == INSTRUCTION_BIT) /// Handle special instructions for text formatting
     {
         c = getNextChar(text);
-        if (c == 0x01) /// Color change
+        if (c == TextInstruction::ColorChange) /// Color change
         {
             c = getNextChar(text);
-            if (c == 0xFF) /// Reset to base color
+            if (c == TextInstruction::ResetColor) /// Reset to base color
                 text->activeColor = text->baseColor;
             else if (c < 256) /// bg palette only has 256 colors
                 text->activeColor = static_cast<int>(c);
