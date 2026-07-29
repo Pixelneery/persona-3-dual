@@ -64,6 +64,15 @@ enum TextColor
 };
 
 /**
+ * @brief Human readable enum for text instructions.
+ */
+enum TextInstruction
+{
+    ColorChange = 0x01,
+    ResetColor = 0xFF
+};
+
+/**
  * @brief A struct that represents a block of text being rendered on the screen.
  */
 struct Text
@@ -73,10 +82,11 @@ struct Text
     int startX;
     int startY;
     std::string content;
-    int color;
     Font* font;
     uint16_t* videoBuffer;
     int cursorPos;
+    int baseColor;
+    int activeColor;
     int counter;
 };
 
@@ -265,6 +275,13 @@ class TextController
      * @param paletteValue The color index in the palette to use for the pixel.
      */
     void drawPixel(uint16_t* videoBuffer, int x, int y, int paletteValue);
+    /**
+     * @brief Get the next character from a given Text object.
+     * @param text Pointer to the Text object to extract the next character from.
+     * @return The next character in the Text object's content, or a nullptr if there are no more characters.
+     * @note This function automatically increments the cursor position in the Text object.
+     */
+    char getNextChar(Text* text);
     /**
      * @brief Get the next word from a given text string.
      * @param text The text string to extract the next word from.

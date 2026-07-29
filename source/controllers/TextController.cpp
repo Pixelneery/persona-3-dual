@@ -33,6 +33,8 @@ static const uint16_t customPalette[256] = {
     ARGB16(1, 15, 15, 15), // Gray          21
 };
 
+constexpr char INSTRUCTION_BIT = 0xFF; /// Special value used to indicate that the next byte is an instruction
+
 TextController::TextController()
 {
 }
@@ -205,13 +207,14 @@ bool TextController::loadFontMetadata(const std::string& path, Font* font)
 void TextController::drawText(
     const std::string& text, Font* font, uint16_t* videoBuffer, int startX, int startY, int color)
 {
-    Text textObj = {startX, startY, startX, startY, text, color, font, videoBuffer, 0};
+    Text* textObj = createText(text, font, videoBuffer, startX, startY, color);
 
-    while (textObj.cursorPos < (int)textObj.content.size())
+    while (textObj->cursorPos < (int)textObj->content.size())
     {
-        drawNextFromText(&textObj);
-        textObj.cursorPos++;
+        drawNextFromText(textObj);
+        textObj->cursorPos++;
     }
+    delete textObj;
 }
 
 void TextController::appearText(
@@ -294,9 +297,9 @@ void TextController::clearArea(uint16_t* videoBuffer, int x, int y, int width, i
 
 void TextController::drawNextFromText(Text* text)
 {
-    char c = text->content[text->cursorPos];
+    unsigned char c = text->content[text->cursorPos];
 
-    //Handle Newline
+    ///Handle Newline
     if (c == '\n')
     {
         text->cursorX = text->startX;
@@ -311,18 +314,35 @@ void TextController::drawNextFromText(Text* text)
             text->cursorY += text->font->lineHeight + LINE_SPACING;
         }
         else
-        {
             text->cursorX += SPACE_WIDTH;
+    }
+    if (c == INSTRUCTION_BIT) /// Handle special instructions for text formatting
+    {
+        c = getNextChar(text);
+        if (c == TextInstruction::ColorChange) /// Color change
+        {
+            c = getNextChar(text);
+            if (c == TextInstruction::ResetColor) /// Reset to base color
+                text->activeColor = text->baseColor;
+            else if (c < 256) /// bg palette only has 256 colors
+                text->activeColor = static_cast<int>(c);
         }
     }
-    else if (text->font->glyphs[static_cast<unsigned char>(c)].width == 0)
-        text->cursorX += SPACE_WIDTH; // If the glyph width is 0, skip it (char has not been defined in the font)
+    else if (text->font->glyphs[c].width == 0)
+        text->cursorX += SPACE_WIDTH; /// If the glyph width is 0, skip it (char has not been defined in the font)
     else
     {
-        Glyph g = text->font->glyphs[static_cast<unsigned char>(c)];
-        drawGlyph(g, text->font, text->videoBuffer, text->cursorX, text->cursorY, text->color);
+        Glyph g = text->font->glyphs[c];
+        drawGlyph(g, text->font, text->videoBuffer, text->cursorX, text->cursorY, text->activeColor);
         text->cursorX += g.width + LETTER_SPACING;
     }
+}
+
+char TextController::getNextChar(Text* text)
+{
+    if (text->cursorPos + 1 < (int)text->content.size())
+        return text->content[++text->cursorPos];
+    return 0xFE; /// Return a special value indicating no more characters
 }
 
 Text* TextController::createText(
@@ -334,7 +354,8 @@ Text* TextController::createText(
     newText->startX = startX;
     newText->startY = startY;
     newText->content = text;
-    newText->color = color;
+    newText->baseColor = color;
+    newText->activeColor = color;
     newText->font = font;
     newText->videoBuffer = videoBuffer;
     newText->cursorPos = 0; // Start at the beginning of the text
