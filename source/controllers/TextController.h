@@ -181,8 +181,16 @@ class TextController
      * @param y The y-coordinate to start drawing the glyph.
      * @param color The color to use for the glyph.
      * @param italic Whether the glyph should be sheared to simulate italic text.
+     * @param underline Whether the glyph should be underlined.
      */
-    void drawGlyph(const Glyph& glyph, Font* font, uint16_t* videoBuffer, int x, int y, int color, bool italic = false);
+    void drawGlyph(const Glyph& glyph,
+                   Font* font,
+                   uint16_t* videoBuffer,
+                   int x,
+                   int y,
+                   int color,
+                   bool italic = false,
+                   bool underline = true);
     /**
      * @brief Clear the text layer by filling the video buffer with black.
      * @param videoBuffer Pointer to the video buffer to clear.

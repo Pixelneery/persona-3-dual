@@ -247,8 +247,14 @@ bool TextController::appearTextDone()
     return false;
 }
 
-void TextController::drawGlyph(
-    const Glyph& glyph, Font* font, uint16_t* videoBuffer, int cursorX, int cursorY, int color, bool italic)
+void TextController::drawGlyph(const Glyph& glyph,
+                               Font* font,
+                               uint16_t* videoBuffer,
+                               int cursorX,
+                               int cursorY,
+                               int color,
+                               bool italic,
+                               bool underline)
 {
     for (int y = 0; y < glyph.height; y++)
     {
@@ -271,6 +277,16 @@ void TextController::drawGlyph(
                 if (screenX >= 0 && screenX < 256 && screenY >= 0 && screenY < 192)
                     drawPixel(videoBuffer, screenX, screenY, color);
             }
+        }
+    }
+    if (underline)
+    {
+        int underlineY = cursorY + font->lineHeight - 2; /// Position the underline just below the glyph
+        for (int x = 0; x < glyph.width; x++)
+        {
+            int screenX = cursorX + x;
+            if (screenX >= 0 && screenX < 256 && underlineY >= 0 && underlineY < 192)
+                drawPixel(videoBuffer, screenX, underlineY, color);
         }
     }
 }
