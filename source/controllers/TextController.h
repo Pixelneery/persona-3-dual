@@ -16,7 +16,7 @@ struct Glyph
 {
     int xPos;
     int yPos;
-    int width = 0; //used to check if the glyph was read in correctly. Setting it to 0 here wipes any old data
+    int width = 0; /// Used to check if the glyph was read in correctly. Setting it to 0 here wipes any old data
     int height;
     int xOffset;
     int yOffset;
@@ -24,14 +24,18 @@ struct Glyph
 
 /**
  * @brief Stores data for a font.
+ * @note Assumes that the regular and bold (if present) font bitmaps are the same size.
  */
 struct Font
 {
     std::uint8_t* bitmap = nullptr;
+    std::uint8_t* bitmapBold = nullptr;
     int bitmapWidth = 256;
     int bitmapHeight = 256;
     int lineHeight = 32;
     Glyph glyphs[256];
+    Glyph boldGlyphs[256];
+    bool boldLoaded = false;
 };
 
 /**
@@ -116,10 +120,13 @@ class TextController
 
     /**
      * @brief Load a font from a file.
-     * @param fontFilePath The path to the font file without file extension.
+     * @param name Name of the font.
+     * @param size Size of the font.
      * @return Pointer to the loaded font, or nullptr if loading failed.
+     * @note This function assumes that the font files are located in the "fonts" directory and follow the naming convention "<name>/size-<size>".
+     * @warning This function will halt the program if the regular font fails to load. If the bold font fails to load, it will simply set the boldLoaded flag to false and continue.
      */
-    Font* loadFont(const std::string& fontFilePath = "console/size-5/size-5");
+    Font* loadFont(const std::string& name, int size);
 
     /**
      * @brief Loads the predefined default palette.
@@ -243,9 +250,10 @@ class TextController
      * @brief Load the font metadata from a file.
      * @param path The path to the font metadata file.
      * @param font Pointer to the font to populate with metadata.
+     * @param forBoldBitmap Whether the metadata being loaded is for the bold version of the font.
      * @return true if loading was successful, false otherwise.
      */
-    bool loadFontMetadata(const std::string& path, Font* font);
+    bool loadFontMetadata(const std::string& path, Font* font, bool forBoldBitmap = false);
 
     // Helper Functions
     /**

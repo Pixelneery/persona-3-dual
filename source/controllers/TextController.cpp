@@ -64,15 +64,25 @@ void TextController::update()
 
 // Loading Functions =====================================================
 
-Font* TextController::loadFont(const std::string& fontFilePath)
+Font* TextController::loadFont(const std::string& name, int size)
 {
     Font* font = new Font();
-    std::string fullPath = fatBasePath + "fonts/" + fontFilePath;
+    std::string fullPath = fatBasePath + "fonts/" + name + "/size-" + std::to_string(size);
     font->bitmap = loadFontBitmap(fullPath + ".img.bin");
     if (!font->bitmap)
         haltOnError("Failed to load font bitmap from \n" + fullPath + ".img.bin");
     if (!loadFontMetadata(fullPath + ".fnt", font))
         haltOnError("Failed to load font metadata from \n" + fullPath + ".fnt");
+    font->bitmapBold = loadFontBitmap(fullPath + "-bold.img.bin");
+    if (!font->bitmapBold || !loadFontMetadata(fullPath + "-bold.fnt", font, true))
+    {
+        font->boldLoaded = false;
+        delete font->bitmapBold;
+        font->bitmapBold = nullptr;
+    }
+    else
+        font->boldLoaded = true;
+
     return font;
 }
 
@@ -159,7 +169,7 @@ bool TextController::loadPalette(const std::string& path, bool sub)
     return true;
 }
 
-bool TextController::loadFontMetadata(const std::string& path, Font* font)
+bool TextController::loadFontMetadata(const std::string& path, Font* font, bool forBoldBitmap)
 {
     u32 size;
     void* buffer = openFile(path, size);
@@ -173,7 +183,7 @@ bool TextController::loadFontMetadata(const std::string& path, Font* font)
     std::string line;
     while (std::getline(iss, line))
     {
-        if (line.rfind("common ", 0) == 0)
+        if (line.rfind("common ", 0) == 0 && !forBoldBitmap)
         {
             font->lineHeight = extractIntValue(line, "lineHeight=");
             font->bitmapWidth = extractIntValue(line, "scaleW=");
@@ -196,7 +206,10 @@ bool TextController::loadFontMetadata(const std::string& path, Font* font)
         glyph.height = extractIntValue(line, "height=");
         glyph.xOffset = extractIntValue(line, "xoffset=");
         glyph.yOffset = extractIntValue(line, "yoffset=");
-        font->glyphs[charID] = glyph;
+        if (forBoldBitmap)
+            font->boldGlyphs[charID] = glyph;
+        else
+            font->glyphs[charID] = glyph;
     }
 
     return true;
