@@ -36,6 +36,14 @@ void BaseMenu::init(int iBgSlot,
     nextViewState = ViewState::KEEP_CURRENT;
 }
 
+void BaseMenu::reset()
+{
+    selectedOption = 0;
+    startIndex = 0;
+    while (!prevOptions.empty())
+        prevOptions.pop();
+}
+
 ViewState BaseMenu::update(int keys)
 {
     // navigate options
