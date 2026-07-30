@@ -340,6 +340,10 @@ void TextController::drawNextFromText(Text* text)
     }
     else if (c == ' ')
     {
+        if (text->cursorX == text->startX)
+        {
+            return; /// Don't add a space at the beginning of a line
+        }
         std::string nextWord = getNextWord(text->content.substr(text->cursorPos + 1));
         if (checkWordWrap(nextWord, text->font, text->cursorX, text->bold))
         {
@@ -359,7 +363,7 @@ void TextController::drawNextFromText(Text* text)
             text->cursorX += SPACE_WIDTH;
         }
     }
-    if (c == INSTRUCTION_BIT) /// Handle special instructions for text formatting
+    else if (c == INSTRUCTION_BIT) /// Handle special instructions for text formatting
     {
         c = getNextChar(text);
         if (c == TextInstruction::ColorChange) /// Color change
